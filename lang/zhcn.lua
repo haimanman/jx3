@@ -711,5 +711,5 @@ data = {
 	[" degree"] = "度",
 	["The sector radius"] = "扇形的半径",
 	["The sector transparency"] = "扇形透明度",
-	["Target face"] = "目标面向",
+	["Target face"] = "目标扇形面向",
 }
