@@ -4,11 +4,14 @@
 这是在国产大型3D网游《剑网3》中使用的辅助插件，遵循简单实用原则，侧重于 PVP 并且全部开源免费。
 
 
-网址
+下载
 -----
 
-  * 官方发布站：<http://haimanchajian.com>
-  * 各版本下载：<https://github.com/haimanman/jx3/downloads>
+下载
+
+  * 最新版本：[HM-1.5.3b3.zip](https://github.com/downloads/haimanman/jx3/HM-1.5.3b3.zip)
+  * 官方网站：<http://haimanchajian.com>
+  * 历史版本：<https://github.com/haimanman/jx3/downloads>
   * 建议&BUG报告：<https://github.com/haimanman/jx3/issues>
   * 用户交流`YY`群： _6685583_
 
@@ -32,8 +35,7 @@
 安装&使用
 ----------
 
-  * 下载最新版本：<https://github.com/downloads/haimanman/jx3/HM-1.5.3b3.zip>
-  * 解压 `zip` 到 _JX3游戏目录_ 下的 `bin/zhcn/interface` 目录
+  * 解压下载的 `zip` 到 _JX3游戏目录_ 下的 `bin/zhcn/interface` 目录
   * 小退可在插件管理界面看到默认打勾的“海鳗插件”，保持打勾进入游戏
   * 进入游戏后在玩家头像附近有一个褐色的 `HM` 小按纽，点击可以做插件设置
   * ESC 进入快捷键设置，有一个分组“海鳗、实用插件集”，可详细设置相关快捷键
