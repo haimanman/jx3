@@ -559,7 +559,7 @@ _HM_Marker.PS.OnPanelActive = function(frame)
 	ui:Append("WndTrackBar", { txt = "%", x = nX + 5, y = nY + 244 })
 	:Range(0, 100, 50):Value(HM_Marker.nIgnoreHP):Change(function(nVal) HM_Marker.nIgnoreHP = nVal end)
 	nX = ui:Append("Text", { txt = _L["Ignore when focused target too far"], x = 13, y = nY + 268 }):Pos_()
-	ui:Append("WndTrackBar", { txt = _L["feet"], x = nX + 5, y = nY + 272 })
+	ui:Append("WndTrackBar", { txt = _L[" feet"], x = nX + 5, y = nY + 272 })
 	:Range(4, 34, 30):Value(HM_Marker.nIgnoreDis):Change(function(nVal) HM_Marker.nIgnoreDis = nVal end)
 end
 

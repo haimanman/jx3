@@ -1,4 +1,4 @@
--- language data (zhcn) updated at 2012/12/07 23:56:09
+-- language data (zhcn) updated at 2012/12/08 21:31:46
 data = {
 	 -- HM.lua --
 	["HM, JX3 Plug-in Collection"] = "海鳗、实用插件集",
@@ -703,4 +703,13 @@ data = {
 	["Current map"] = "本地图帮众",
 	["Submit"] = "确定发送",
 	["Misc toolbox"] = "实用小工具",
+	 -- src/HM_Marker.lua --
+	[" feet"] = " 尺",
+	 -- src/HM_TargetFace.lua --
+	["Display the sector of target facing, change color"] = "显示目标的扇形面向，设置颜色",
+	["The sector angle"] = "扇形的角度",
+	[" degree"] = "度",
+	["The sector radius"] = "扇形的半径",
+	["The sector transparency"] = "扇形透明度",
+	["Target face"] = "目标面向",
 }

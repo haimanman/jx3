@@ -2569,7 +2569,7 @@ HM.RegisterEvent("LOADING_END", function()
 	if _HM.tConflict then
 		for _, v in ipairs(_HM.tConflict) do v() end
 		_HM.tConflict = nil
-		HM.Sysmsg(string.format(HM_String.WELCOME, GetClientPlayer().szName) .. "/" .. HM.GetVersion())
+		HM.Sysmsg(_L("%s are welcome to use HM plug-in", GetClientPlayer().szName) .. "/" .. HM.GetVersion())
 	end
 	-- reseting frame count (FIXED BUG FOR Cross Server)
 	for k, v in pairs(_HM.tBreatheCall) do
