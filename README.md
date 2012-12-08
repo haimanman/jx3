@@ -32,7 +32,7 @@
 安装&使用
 ----------
 
-  * 下载最新版本：<https://github.com/downloads/haimanman/jx3/HM-1.255.255b1.zip>
+  * 下载最新版本：<https://github.com/downloads/haimanman/jx3/HM-1.5.3b3.zip>
   * 解压 `zip` 到 _JX3游戏目录_ 下的 `bin/zhcn/interface` 目录
   * 小退可在插件管理界面看到默认打勾的“海鳗插件”，保持打勾进入游戏
   * 进入游戏后在玩家头像附近有一个褐色的 `HM` 小按纽，点击可以做插件设置
