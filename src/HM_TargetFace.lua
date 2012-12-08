@@ -51,8 +51,9 @@ _HM_TargetFace.OnUpdateRender = function()
     if not nX then return end
 	local col, nRadius = HM_TargetFace.tColor, HM_TargetFace.nRadius * 64
 	local nAlpha = 2 * (100 - HM_TargetFace.nAlpha)
-    local dwRad1 = math.pi * (tar.nFaceDirection - 32) / 128
-    if tar.nFaceDirection > 224 then
+	local nFace = math.ceil(128 * HM_TargetFace.nDegree / 360)
+    local dwRad1 = math.pi * (tar.nFaceDirection - nFace) / 128
+    if tar.nFaceDirection > (256 - nFace) then
         dwRad1 = dwRad1 - math.pi - math.pi
     end
     local dwRad2 = dwRad1 + (HM_TargetFace.nDegree / 180 * math.pi)
