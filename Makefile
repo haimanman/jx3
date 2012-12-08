@@ -32,7 +32,12 @@ sync:
 	$(PHP) dev/upload_github.php
 	$(MAKE) sync-page
 
-archive:
+lang/zhtw.lua: lang/zhcn.lua
+	big2gb -r < lang/zhcn.lua | sed 's#zhcn#zhtw#' > tmp.lang
+	$(PHP) -r 'echo mb_convert_encoding(file_get_contents("tmp.lang"), "utf8", "big5");' > lang/zhtw.lua
+	rm -f tmp.lang
+
+archive: lang/zhtw.lua
 	git ci -a -m "Release "`cat VERSION`
 	git tag `cat VERSION`
 	git archive --format zip --prefix HM/ -o dist/HM-`cat VERSION`.zip HEAD
@@ -42,7 +47,7 @@ beta: clean-check
 	$(MAKE) archive
 	$(MAKE) sync
 
-stable: master-check clean-check 
+stable: master-check clean-check
 	$(PHP) dev/pre_release.php stable
 	$(MAKE) archive
 	$(MAKE) sync
