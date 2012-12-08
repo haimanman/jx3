@@ -70,5 +70,5 @@ file_put_contents('info.ini', $info);
 
 // --- UPDATE README.md ---
 echo "updateing README.md ...\n";
-$body = preg_replace('#HM\-(.+?).zip#', 'HM-' . $version_str . '.zip', file_get_contents('README.md'));
+$body = preg_replace('#HM\-(.+?)\.zip#', 'HM-' . $version_str . '.zip', file_get_contents('README.md'));
 file_put_contents('README.md', $body);

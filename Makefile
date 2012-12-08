@@ -19,9 +19,18 @@ master-check:
 clean-check:
 	git status | grep "working directory clean" > /dev/null 2>&1
 
+sync-page:
+	git co gh-pages
+	git co master -- LICENSE.txt
+	$(PHP) update_version.php
+	git ci -a -m "Update gh-pages to "`cat VERSION`
+	git push
+	git co master
+
 sync:
 	git push --tags
 	$(PHP) dev/upload_github.php
+	$(MAKE) sync-page
 
 archive:
 	git ci -a -m "Release "`cat VERSION`
