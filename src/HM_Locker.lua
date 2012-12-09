@@ -274,6 +274,7 @@ end
 _HM_Locker.AddLocker(_HM_Locker.CheckLockFight)
 _HM_Locker.AddLocker(_HM_Locker.CheckLockTiger)
 _HM_Locker.AddLocker(_HM_Locker.CheckLockScoff)
+_HM_Locker.AddLocker(_HM_Locker.CheckLockScoff2)
 
 -------------------------------------
 -- …Ë÷√ΩÁ√Ê
