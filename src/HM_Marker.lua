@@ -579,7 +579,7 @@ HM.RegisterEvent("CUSTOM_DATA_LOADED", function()
 end)
 
 -- add to HM panel
-HM.RegisterPanel(_L["Team mark/focus"], 1457, nil, _HM_Marker.PS)
+HM.RegisterPanel(_L["Team mark/focus"], 1457, nil, { OnPanelActive = _HM_Marker.PS.OnPanelActive })
 HM.RegisterPanel(_L["Team mark/focus"], 1457, _L["Battle"], _HM_Marker.PS)
 
 -- hotkey
