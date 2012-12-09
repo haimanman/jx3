@@ -3,6 +3,7 @@
 #
 PHP=php
 DISTDIR=./dist
+VERSION=
 
 all:
 	@echo "------------------------------------------"
@@ -48,6 +49,6 @@ beta: clean-check
 	$(MAKE) sync
 
 stable: master-check clean-check
-	$(PHP) dev/pre_release.php stable
+	$(PHP) dev/pre_release.php stable $(VERSION)
 	$(MAKE) archive
 	$(MAKE) sync

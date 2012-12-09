@@ -1,6 +1,8 @@
 <?php
 // pre_release to update version, generate new info.ini
+// usage: pre_release.php <beta|stable> [version]
 $type = isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : 'beta';
+$version_str = isset($_SERVER['argv'][2]) ? $_SERVER['argv'][2] : '';
 
 // --- CONFIG ---
 $name = 'HM, JX3 Plug-in';
@@ -11,28 +13,53 @@ $tag_version = "\tdwVersion = ";
 $tag_build = "\tszBuildDate = \"";
 
 // --- UPDATE HM.lua ---
-echo "updating version & build date ...\n";
+echo "updating version & build date ... ";
 $version = 0;
 $body = file_get_contents('src/HM.lua');
 if (($pos1 = strpos($body, $tag_version)))
 {
 	$pos1 = $pos1 + strlen($tag_version);
 	$pos2 = strpos($body, ',', $pos1);
-	$version = hexdec(substr($body, $pos1, $pos2 - $pos1));
-	$min = ($version >> 8) & 0xff;
-	if ($type == 'beta')
+	if ($version_str != '' && preg_match('/(\d+)\.(\d+)\.(\d+)(?:b(\d+))?/', $version_str, $match))
 	{
-		$version += 1;
-		if (($min & 1) == 0)
-			$version += 0x100;
+		// man-version
+		$version = (intval($match[1]) << 24) | (intval($match[2]) << 16);
+		$min = intval($match[3]);
+		$version |= ($min << 8);
+		if ($type == 'beta')
+		{
+			$version += (isset($match[4]) ? intval($match[4]) : 1);
+			if (($min & 1) == 0)
+				$version += 0x100;
+		}
+		else
+		{
+			if (($min & 1) == 1)
+				$version += 0x100;
+		}
 	}
 	else
 	{
-		$version -= ($version & 0xff);
-		$version += ($min & 1) ? 0x100 : 0x200;
+		// auto-version
+		$version = hexdec(substr($body, $pos1, $pos2 - $pos1));
+		$min = ($version >> 8) & 0xff;
+		if ($type == 'beta')
+		{
+			$version += 1;
+			if (($min & 1) == 0)
+				$version += 0x100;
+		}
+		else
+		{
+			$version -= ($version & 0xff);
+			$version += ($min & 1) ? 0x100 : 0x200;
+		}
 	}
 	$body = substr_replace($body, sprintf('0x%x', $version), $pos1, $pos2 - $pos1);
 }
+$version_str = sprintf('%d.%d.%d', $version>>24, ($version>>16)&0xff, ($version>>8)&0xff);
+if ($version & 0xff)
+	$version_str .= sprintf('b%d', $version & 0xff);
 if (($pos1 = strpos($body, $tag_build)))
 {
 	$pos1 = $pos1 + strlen($tag_build);
@@ -41,9 +68,7 @@ if (($pos1 = strpos($body, $tag_build)))
 	$body = substr_replace($body, date('Ymd'), $pos1, $pos2 - $pos1);
 }
 file_put_contents('src/HM.lua', $body);
-$version_str = sprintf('%d.%d.%d', $version>>24, ($version>>16)&0xff, ($version>>8)&0xff);
-if ($version & 0xff)
-	$version_str .= sprintf('b%d', $version & 0xff);
+echo " $version_str\n";
 
 // --- UPDATE VERSION file ---
 echo "creating new VERSION ...\n";
