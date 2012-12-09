@@ -98,6 +98,7 @@ _HM_Locker.CheckLockTiger = function(dwCurID, dwLastID)
 		local tar = HM.GetTarget(dwLastID)
 		if tar and HM.GetDistance(tar) < 15 then
 			--_HM_Locker.Sysmsg(_L["Keep attack target in HUPAO loops"])
+			_HM_Locker.Debug("keep attack taret in hupao loops")
 			return true
 		end
 	end

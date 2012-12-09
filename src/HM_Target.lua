@@ -615,7 +615,7 @@ _HM_Target.OnSkillCast = function(dwCaster, dwID, dwLevel, szEvent)
 			-- save & debug
 			if szEvent == "DO_SKILL_CAST" or not _HM_Target.tChannel[dwCaster] then
 				_HM_Target.tChannel[dwCaster] = { szSkill, nFrame, nChannel, dwID }
-				HM.Debug("[#" .. dwCaster .. "] cast channel skill [" .. szSkill .. "#" .. szEvent .. "]")
+				HM.Debug2("[#" .. dwCaster .. "] cast channel skill [" .. szSkill .. "#" .. szEvent .. "]")
 			end
 		end
 	end
