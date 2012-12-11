@@ -166,6 +166,7 @@ _HM_TargetList.AddFocus = function(dwID)
 		HM_TargetList.bShowFocus = true
 		_HM_TargetList.UpdateSize(true)
 	end
+	FireUIEvent("HM_ADD_FOCUS_TARGET", dwID)
 end
 
 -- del focus

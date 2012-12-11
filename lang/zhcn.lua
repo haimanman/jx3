@@ -1,4 +1,4 @@
--- language data (zhcn) updated at 2012/12/08 21:31:46
+-- language data (zhcn) updated at 2012/12/12 00:22:06
 data = {
 	 -- HM.lua --
 	["HM, JX3 Plug-in Collection"] = "海鳗、实用插件集",
@@ -712,4 +712,10 @@ data = {
 	["The sector radius"] = "扇形的半径",
 	["The sector transparency"] = "扇形透明度",
 	["Target face"] = "目标扇形面向",
+	["Display the sector of focus facing, change color"] = "显示焦点的扇形面向，设置颜色",
+	["Display the foot shape of target, change color"] = "显示目标底部的圈圈，设置颜色",
+	["Display the foot shape of focus, change color"] = "显示焦点底部的圈圈，设置颜色",
+	["The foot shape radius"] = "圈圈半径",
+	["The foot shape transparency"] = "圈圈透明度",
+	["Only show the facing and foot shape of the last added focus target"] = "只会显示最后设置的焦点目标的面向和圈圈",
 }
