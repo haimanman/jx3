@@ -31,6 +31,14 @@
   * 娱乐聊天助手，发布个人数据，ROLL 点娱乐等
 
 
+wiki & 文档
+------------
+
+  * [如何删除不必要的功能模块](https://github.com/haimanman/jx3/wiki/%E5%A6%82%E4%BD%95%E5%88%A0%E9%99%A4%E4%B8%8D%E5%BF%85%E8%A6%81%E7%9A%84%E5%8A%9F%E8%83%BD%E6%A8%A1%E5%9D%97)
+  * [如何启用英文界面](https://github.com/haimanman/jx3/wiki/%E5%A6%82%E4%BD%95%E5%90%AF%E7%94%A8%E8%8B%B1%E6%96%87%E7%95%8C%E9%9D%A2)
+  * [更多](https://github.com/haimanman/jx3/wiki/_pages)
+
+
 安装&使用
 ----------
 
