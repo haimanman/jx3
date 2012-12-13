@@ -2572,6 +2572,7 @@ HM.RegisterEvent("LOADING_END", function()
 		HM.Sysmsg(_L("%s are welcome to use HM plug-in", GetClientPlayer().szName) .. "/" .. HM.GetVersion())
 	end
 	-- reseting frame count (FIXED BUG FOR Cross Server)
+	_HM.nTempFrame = nil
 	for k, v in pairs(_HM.tBreatheCall) do
 		v.nNext = GetLogicFrameCount()
 	end

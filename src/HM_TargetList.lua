@@ -291,7 +291,7 @@ _HM_TargetList.GetSkillPrepareState = function(tar)
 	if not dwSkillID and (not IsPlayer(tar.dwID) or tar.GetOTActionState() == 1) then
 		local dwType, dwID = GetClientPlayer().GetTarget()
 		if HM_Locker then
-			HM_Locker.AddIgnore(1)
+			HM_Locker.AddIgnore(2)
 		end
 		if TargetPanel_SetOpenState then
 			TargetPanel_SetOpenState(true)

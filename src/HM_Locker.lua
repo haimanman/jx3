@@ -53,7 +53,9 @@ _HM_Locker.SetPrevTarget = function()
 	local nFrame = GetLogicFrameCount() - _HM_Locker.nLastFrame
 	if _HM_Locker.dwPrevID ~= 0 and nFrame >= 0 and nFrame < 16 then
 		local tar = HM.GetTarget(_HM_Locker.dwPrevID)
-		if tar then
+		if tar and tar.nMoveState ~= MOVE_STATE.ON_DEATH then
+			_HM_Locker.AddIgnore(1)
+			_HM_Locker.dwLastID = tar.dwID
 			HM.SetTarget(tar.dwID)
 			return _HM_Locker.Sysmsg(_L("Restore previous target [%s]", tar.szName))
 		end
@@ -160,8 +162,8 @@ _HM_Locker.OnUpdateTarget = function()
 	end
 	local me = GetClientPlayer()
 	local dwType, dwID = me.GetTarget()
-	--_HM_Locker.Debug("update target [#" .. dwType .. "#" .. dwID .. "]")
 	if _HM_Locker.dwLastID ~= dwID then
+		_HM_Locker.Debug("update target [#" .. dwType .. "#" .. dwID .. "]")
 		-- always allowed to selectself
 		if dwID ~= me.dwID and _HM_Locker.dwLastID ~= 0 then
 			local tar0 = HM.GetTarget(_HM_Locker.dwLastID)
