@@ -1,6 +1,6 @@
--- language data (zhcn) updated at 2012/12/12 00:22:06
+-- language data (zhcn) updated at 2012/12/13 21:06:10
 data = {
-	 -- HM.lua --
+	-- HM.lua --
 	["HM, JX3 Plug-in Collection"] = "海鳗、实用插件集",
 	["HM Plug"] = "海鳗插件",
 	["General"] = "常用",
@@ -18,7 +18,7 @@ data = {
 	["The 1st arg for adding component must be a [WndXxx]"] = "添加窗体组件时第一参数必须是窗体 [WndXxx]",
 	["The 1st arg for adding item must be a [Handle]"] = "添加容器组件时第一参数必须是容器 [Handle]",
 	["Open HM setting panel"] = "开启海鳗设置面板",
-	 -- HM_About.lua --
+	-- HM_About.lua --
 	["Simple, Utility, Focus on PVP"] = "简单、实用、专注 PVP",
 	["This is an auxiliary PVP plug-in of JX3 game written by player named HMM, Follow the white list API, does not destroy the game balance."] = "这是玩家海鳗鳗开发的剑网三 PVP 辅助插件，遵循白名单，绿色和谐，不破坏游戏平衡。",
 	["The plug-in is developed based on my own needs and interests, no any WARRANTIES, please understand that!"] = "本插件基于个人需求和兴趣开发，无法提供任何责任担保，请谅解！",
@@ -39,7 +39,7 @@ data = {
 	["<Set hotkeys>"] = "<设置快捷键>",
 	["haiman"] = "海鳗",
 	["Good %s, thank you for choosing and using HM plug-in!"] = "%s乖，感谢您选择&使用海鳗插件！",
-	 -- HM_Area.lua --
+	-- HM_Area.lua --
 	["Own"] = "自己",
 	["Team"] = "团队",
 	["Enemy"] = "敌对",
@@ -56,7 +56,7 @@ data = {
 	["Tips"] = "小提示",
 	["Vesting is based on skill cast time, may incorrect when lots of players"] = "归属是根据时间差大致判断的，人多时有可能不正确",
 	["Gas/Organ range"] = "气场/机关范围",
-	 -- HM_Battle.lua --
+	-- HM_Battle.lua --
 	["Northwest"] = "西北",
 	["Northeast"] = "东北",
 	["Southwest"] = "西南",
@@ -85,7 +85,7 @@ data = {
 	["Auto enter battlefield (need not click, prevent desertion)"] = "自动进入战场（不用点确定，防止开小差错过）",
 	["Auto enter arean (same as above)"] = "自动进入竞技场（同上）",
 	["Battle/Arean"] = "战场/竞技助手",
-	 -- HM_Camp.lua --
+	-- HM_Camp.lua --
 	["Shield NPC"] = "屏蔽NPC",
 	["Shield player"] = "屏蔽人物",
 	["Shield gas field"] = "屏蔽气场",
@@ -146,7 +146,7 @@ data = {
 	["Camp helper"] = "阵营活动助手",
 	["Auto camp target"] = "一键攻防目标",
 	["Super shield"] = "一键攻防屏蔽",
-	 -- HM_Ent.lua --
+	-- HM_Ent.lua --
 	["Meteor shower"] = "流星雨",
 	[".:'* . . ;#:~ ,:'.:. *:. .:'* . . ;#:~ ,:'.:. *:. .:'* . . ;#:~ ,:'.:. *:. .:'* . . ;#:~ ,:'.:. *:."] = "∴°★．☆° ．★°∴°∴°★．☆° ．★°∴°★．☆∴°★．☆° ．★°∴°∴°★．☆° ．★°∴°★．☆∴°★．☆° ．★°∴°∴",
 	["Lara hand"] = "拉拉手",
@@ -189,7 +189,7 @@ data = {
 	["Select item"] = "选择项目",
 	["Publish to talk channel"] = "发布到当前频道",
 	["Entertainment"] = "休闲娱乐助手",
-	 -- HM_Force.lua --
+	-- HM_Force.lua --
 	["Your pet [%s] disappeared!"] = "您的宠物 [%s] 消失了！",
 	["Enable auto sword dance"] = "自动剑舞已开启",
 	["Disable auto sword dance"] = "自动剑舞已关闭",
@@ -207,7 +207,9 @@ data = {
 	["Except own"] = "自己除外",
 	["Show dance buff and its stack num of 7X"] = "显示七秀剑舞 BUFF 及层数",
 	["School feature"] = "职业特色辅助",
-	 -- HM_Guding.lua --
+	["Your debuff of type [%s] reached [%d]"] = "您身上的 [%s] debuff 达到 [%d] 个",
+	["Alert when my same type of debuff reached a certain number "] = "提醒自身同类型 debuff 达到一定数量",
+	-- HM_Guding.lua --
 	["I have put the GUDING, hurry to eat if you lack of mana. *la la la*"] = "法宝 [仙王蛊鼎] 已祭出，没蓝的抓紧了，用海鳗插件看得见还能自动吃~#玫瑰#玫瑰~~",
 	["HM_Guding"] = "海鳗蛊鼎",
 	["Auto use GUDING"] = "自动吃一下蛊鼎",
@@ -218,7 +220,7 @@ data = {
 	["Auto talk in team channel after puting GUDING"] = "摆鼎后自动喊话提醒队友来吃",
 	["Talk message"] = "喊话内容",
 	["5D GUDING"] = "五毒蛊鼎助手",
-	 -- HM_Jabber.lua --
+	-- HM_Jabber.lua --
 	["Kill"] = "击杀",
 	["$killer successfully kill $dead"] = "$killer 成功斩杀了 $dead",
 	["Killed"] = "被杀",
@@ -289,7 +291,7 @@ data = {
 	["Import successfully, but modify content will lead to link broken"] = "导入成功，直接修改内容会导致链接失效",
 	["Start yelling"] = "开始喊话",
 	["Skill/Kill jabber"] = "技能/击杀喊话",
-	 -- HM_Locker.lua --
+	-- HM_Locker.lua --
 	["HM_Locker"] = "海鳗锁定",
 	["Restore previous target [%s]"] = "还原前目标 [%s]",
 	["Keep attack target in fighting"] = "战斗中保持攻击目标",
@@ -315,7 +317,7 @@ data = {
 	["Enable TAB select player only"] = "开启 Tab 只选玩家",
 	["Lock/Select"] = "目标锁定/选择",
 	["TAB player only"] = "TAB 只选玩家",
-	 -- HM_Marker.lua --
+	-- HM_Marker.lua --
 	["Cloud"] = "云",
 	["Sword"] = "剑",
 	["Ax"] = "斧",
@@ -374,7 +376,7 @@ data = {
 	["HM marker bar"] = "海鳗标记/集火",
 	["Mark"] = "标",
 	["Clear"] = "清",
-	 -- HM_PVPSound2.lua --
+	-- HM_PVPSound2.lua --
 	--["Killing"] = "杀",
 	["Not dead?"] = "还不死",
 	["Kill one"] = "杀一下",
@@ -386,7 +388,7 @@ data = {
 	["PVP kill effect"] = "PVP斩杀特效",
 	["Play sound after killing"] = "播放成功斩杀后的声音效果",
 	["Show red text after killing"] = "显示成功斩杀的大红字效果",
-	 -- HM_RedName.lua --
+	-- HM_RedName.lua --
 	[" [%s: %d players"] = "【%s：%d人",
 	[" %d dead"] = " %d死",
 	[" [enemy: %d"] = "【红名：%d人",
@@ -428,7 +430,7 @@ data = {
 	["2. Press M to view shared information in middle map"] = "2. 建立共享连接后按 M 进地图可看对方身边的统计信息",
 	["3. Team leader can build connection with member witouth confirmation"] = "3. 组队时团长不需同意即可主动建立连接，密 22 可发起请求",
 	[": "] = "：",
-	 -- HM_Roll.lua --
+	-- HM_Roll.lua --
 	["%s: "] = "%s：",
 	["(%d times)"] = "（%d局）",
 	["(Dealer)"] = "(庄)",
@@ -450,7 +452,7 @@ data = {
 	["3. Team leader become dealer automatically."] = "3. 团长坐庄，变更时会自动清除所有数据，每局完成自动发布一次数据。",
 	["4. Twice score when lost with 1 point or win with 100 point."] = "4. 输的一方点数为 1 或赢的一方点数为 100 时记双倍分。",
 	["Roll lottery"] = "ROLL点娱乐",
-	 -- HM_Suit2.lua --
+	-- HM_Suit2.lua --
 	["HM_Suit"] = "海鳗换装",
 	["Shared equip for No.1/2 suit"] = "1/2套共用装备：",
 	["Equipments to unmount: "] = "要脱的装备：",
@@ -473,7 +475,7 @@ data = {
 	["Suit helper"] = "套换更换/脱光",
 	["Tak on/off equip"] = "一键脱/穿装备",
 	["Chg"] = "换",
-	 -- HM_Target.lua --
+	-- HM_Target.lua --
 	["Set connected line color"] = "设置连接线颜色",
 	["Set connected line width"] = "设置连接线宽度",
 	["Connected line opacity"] = "连接线不透明度",
@@ -512,7 +514,7 @@ data = {
 	["Status"] = "显示状态",
 	["Distance"] = "距离",
 	["Larger icon"] = "图标放大",
-	 -- HM_TargetList.lua --
+	-- HM_TargetList.lua --
 	["DH1"] = "DH八国联军",
 	["DH2"] = "龙啸神州",
 	["DH3"] = "荣耀",
@@ -593,7 +595,7 @@ data = {
 	["HM, focus targetlist"] = "海鳗焦点列表",
 	["HM Focus, TargetList"] = "海鳗焦点、目标列表",
 	["Arean ongoing: "] = "竞技场进行中：",
-	 -- HM_TargetMon.lua --
+	-- HM_TargetMon.lua --
 	["Call pet"] = "召唤宠物",
 	["Invincible"] = "无敌",
 	["Silence"] = "沉默",
@@ -645,7 +647,7 @@ data = {
 	["1. Press SHIFT-U to adjust the monitor position"] = "1. BUFF/技能显示位置请按住 SHIFT-U 进入调整模式",
 	["2. As buff name often conflict, please tell me if you find wrong"] = "2. 由于 BUFF 名字冲突现象严重，发现错误归类的请告诉我",
 	["Target BUFF/CD"] = "目标BUFF/CD",
-	 -- HM_Team.lua --
+	-- HM_Team.lua --
 	["Ally"] = "盟友",
 	["Neutral"] = "中立",
 	["HM_Team"] = "海鳗团队",
@@ -683,7 +685,7 @@ data = {
 	["2. Restore team list in battle map, save team list in other map"] = "2. 战场/竞技场还原列表，其它地图则保存团队列表",
 	["Team save/res"] = "团队保存/还原",
 	["Quick mark(2*remark)"] = "快速标记(按2次重标)",
-	 -- HM_ToolBox.lua --
+	-- HM_ToolBox.lua --
 	["HuiZhenYan"] = "素冠荷鼎|汇珍宴",
 	["[Party BC] "] = "【团队群密】",
 	["[Guild BC] "] = "【帮会群密】",
@@ -703,9 +705,9 @@ data = {
 	["Current map"] = "本地图帮众",
 	["Submit"] = "确定发送",
 	["Misc toolbox"] = "实用小工具",
-	 -- src/HM_Marker.lua --
+	-- src/HM_Marker.lua --
 	[" feet"] = " 尺",
-	 -- src/HM_TargetFace.lua --
+	-- src/HM_TargetFace.lua --
 	["Display the sector of target facing, change color"] = "显示目标的扇形面向，设置颜色",
 	["The sector angle"] = "扇形的角度",
 	[" degree"] = "度",

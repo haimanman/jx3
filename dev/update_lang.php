@@ -27,7 +27,7 @@ foreach ($lines as $no => $line)
 		$v = $match[2];
 		$data[$key][$k] = $v;
 		if (isset($data2[$k]))
-			echo "-- conflict english '$k' in line $no\n";	
+			echo "-- conflict english '$k' in line $no\n";
 		$data2[$k] = false;
 		if ($lang == 'zhcn')
 			$data3[$v] = $k;
@@ -39,12 +39,13 @@ $files = glob("src/*.lua");
 foreach ($files as $file)
 {
 	$body = file_get_contents($file);
+	$fname = basename($file);
 	// exists langs
 	preg_match_all('/_L[\[\(]"(.+?)(?<!\\\\)"/', $body, $matches);
 	foreach ($matches[1] as $tmp)
 	{
 		if (!isset($data2[$tmp]))
-			$data[$file][$tmp] = "";
+			$data[$fname][$tmp] = "";
 		$data2[$tmp] = true;	// marked to keep
 	}
 	// scan new chinese string
@@ -58,7 +59,7 @@ foreach ($files as $file)
 			{
 				$key = 'TODO#' . (count($data2) + 1);
 				$data2[$key] = true;
-				$data[$file][$key] = $tmp;
+				$data[$fname][$key] = $tmp;
 			}
 			else
 			{
@@ -74,7 +75,7 @@ echo "data = {\r\n";
 foreach ($data as $file => $lang)
 {
 	if (count($lang) == 0) continue;
-	echo "\t -- $file --\r\n";
+	echo "\t-- $file --\r\n";
 	foreach ($lang as $k => $v)
 	{
 		$v = $v === "" ? "nil" : '"' . $v . '"';

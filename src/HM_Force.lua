@@ -12,6 +12,8 @@ HM_Force = {
 	bAutoXyzSelf = true,	-- 自动对自己放
 	bShowJW = true,			-- 显示剑舞层数
 	tSelfQC = { [358] = true },	-- 默认只开生太极
+	bWarningDebuff = true,	-- 警告  debuff 类型
+	nDebuffNum = 3,			-- debuff 类型达到几个时警告
 }
 
 for k, _ in pairs(HM_Force) do
@@ -23,6 +25,7 @@ end
 ---------------------------------------------------------------------
 local _HM_Force = {
 	nFrameXJ = 0,
+	tDebuff = {},	-- 我的 DEBUFF 类型数量
 }
 
 -- qichang
@@ -194,6 +197,61 @@ _HM_Force.ShowJWBuff = function()
 	end
 end
 
+-- warning buff type
+_HM_Force.WarningDebuff = function(nType)
+	local nNum = _HM_Force.tDebuff[nType]
+	local szText = _L("Your debuff of type [%s] reached [%d]", g_tStrings.tBuffDetachType[nType], nNum)
+	OutputWarningMessage("MSG_WARNING_GREEN", szText)
+	PlaySound(SOUND.UI_SOUND, g_sound.CloseAuction)
+end
+
+-- buff update：
+-- arg0：dwPlayerID，arg1：bDelete，arg2：nIndex，arg3：bCanCancel
+-- arg4：dwBuffID，arg5：nStackNum，arg6：nEndFrame，arg7：？update all?
+-- arg8：nLevel，arg9：dwSkillSrcID
+_HM_Force.OnBuffUpdate = function()
+	if arg0 ~= GetClientPlayer().dwID or not HM_Force.bWarningDebuff then
+		return
+	end
+	if arg7 then
+		local t = _HM_Force.tDebuff
+		t = {}
+		for _, v in ipairs(GetClientPlayer().GetBuffList()) do
+			if not v.bCanCancel then
+				local info = GetBuffInfo(v.dwID, v.nLevel, {})
+				if info.nDetachType > 0 then
+					if not t[info.nDetachType] then
+						t[info.nDetachType] = 1
+					else
+						t[info.nDetachType] = t[info.nDetachType] + 1
+					end
+				end
+			end
+		end
+		for k, v in pairs(t) do
+			if v >= HM_Force.nDebuffNum then
+				_HM_Force.WarningDebuff(k)
+			end
+		end
+	elseif not arg3 then
+		local info = GetBuffInfo(arg4, arg8, {})
+		if info.nDetachType > 0 then
+			local t = _HM_Force.tDebuff
+			if not t[info.nDetachType] then
+				t[info.nDetachType] = 0
+			end
+			if not arg1 then
+				t[info.nDetachType] = t[info.nDetachType] + 1
+			elseif t[info.nDetachType] > 0 then
+				t[info.nDetachType] = t[info.nDetachType] - 1
+			end
+			if t[info.nDetachType] >= HM_Force.nDebuffNum then
+				_HM_Force.WarningDebuff(info.nDetachType)
+			end
+		end
+	end
+end
+
 -------------------------------------
 -- 设置界面
 -------------------------------------
@@ -246,6 +304,26 @@ _HM_Force.PS.OnPanelActive = function(frame)
 		HM_Force.bShowJW = bChecked
 		_HM_Force.ShowJWBuff()
 	end)
+	-- debuff type num
+	nX = ui:Append("WndCheckBox", { txt = _L["Alert when my same type of debuff reached a certain number "], checked = HM_Force.bWarningDebuff })
+	:Pos(10, 288):Click(function(bChecked)
+		HM_Force.bWarningDebuff = bChecked
+		if not bChecked then
+			_HM_Force.tDebuff = {}
+		end
+		ui:Fetch("Combo_DebuffNum"):Enable(bChecked)
+	end):Pos_()
+	ui:Append("WndComboBox", "Combo_DebuffNum", { x = nX + 10, y = 288, w = 50, h = 25 })
+	:Enable(HM_Force.bWarningDebuff):Text(tostring(HM_Force.nDebuffNum)):Menu(function()
+		local m0 = {}
+		for i = 1, 10 do
+			table.insert(m0, { szOption = tostring(i), fnAction = function()
+				HM_Force.nDebuffNum = i
+				ui:Fetch("Combo_DebuffNum"):Text(tostring(i))
+			end })
+		end
+		return m0
+	end)
 end
 
 -- conflict check
@@ -291,6 +369,7 @@ HM.RegisterEvent("OT_ACTION_PROGRESS_BREAK", function()
 		_HM_Force.RestoreTarget()
 	end
 end)
+HM.RegisterEvent("BUFF_UPDATE", _HM_Force.OnBuffUpdate)
 
 -- breathe
 HM.BreatheCall("HM_Force", _HM_Force.OnBreathe, 200)

@@ -1,6 +1,6 @@
--- language data (zhtw) updated at 2012/12/12 00:22:06
+-- language data (zhtw) updated at 2012/12/13 21:06:10
 data = {
-	 -- HM.lua --
+	-- HM.lua --
 	["HM, JX3 Plug-in Collection"] = "海鰻、實用插件集",
 	["HM Plug"] = "海鰻插件",
 	["General"] = "常用",
@@ -18,7 +18,7 @@ data = {
 	["The 1st arg for adding component must be a [WndXxx]"] = "添加窗體組件時第一參數必須是窗體 [WndXxx]",
 	["The 1st arg for adding item must be a [Handle]"] = "添加容器組件時第一參數必須是容器 [Handle]",
 	["Open HM setting panel"] = "開啟海鰻設置面板",
-	 -- HM_About.lua --
+	-- HM_About.lua --
 	["Simple, Utility, Focus on PVP"] = "簡單、實用、專注 PVP",
 	["This is an auxiliary PVP plug-in of JX3 game written by player named HMM, Follow the white list API, does not destroy the game balance."] = "這是玩家海鰻鰻開發的劍網三 PVP 輔助插件，遵循白名單，綠色和諧，不破壞游戲平衡。",
 	["The plug-in is developed based on my own needs and interests, no any WARRANTIES, please understand that!"] = "本插件基于個人需求和興趣開發，無法提供任何責任擔保，請諒解！",
@@ -39,7 +39,7 @@ data = {
 	["<Set hotkeys>"] = "<設置快捷鍵>",
 	["haiman"] = "海鰻",
 	["Good %s, thank you for choosing and using HM plug-in!"] = "%s乖，感謝您選擇&使用海鰻插件！",
-	 -- HM_Area.lua --
+	-- HM_Area.lua --
 	["Own"] = "自己",
 	["Team"] = "團隊",
 	["Enemy"] = "敵對",
@@ -56,7 +56,7 @@ data = {
 	["Tips"] = "小提示",
 	["Vesting is based on skill cast time, may incorrect when lots of players"] = "歸屬是根據時間差大致判斷的，人多時有可能不正確",
 	["Gas/Organ range"] = "氣場/機關范圍",
-	 -- HM_Battle.lua --
+	-- HM_Battle.lua --
 	["Northwest"] = "西北",
 	["Northeast"] = "東北",
 	["Southwest"] = "西南",
@@ -85,7 +85,7 @@ data = {
 	["Auto enter battlefield (need not click, prevent desertion)"] = "自動進入戰場（不用點確定，防止開小差錯過）",
 	["Auto enter arean (same as above)"] = "自動進入競技場（同上）",
 	["Battle/Arean"] = "戰場/競技助手",
-	 -- HM_Camp.lua --
+	-- HM_Camp.lua --
 	["Shield NPC"] = "屏蔽NPC",
 	["Shield player"] = "屏蔽人物",
 	["Shield gas field"] = "屏蔽氣場",
@@ -146,7 +146,7 @@ data = {
 	["Camp helper"] = "陣營活動助手",
 	["Auto camp target"] = "一鍵攻防目標",
 	["Super shield"] = "一鍵攻防屏蔽",
-	 -- HM_Ent.lua --
+	-- HM_Ent.lua --
 	["Meteor shower"] = "流星雨",
 	[".:'* . . ;#:~ ,:'.:. *:. .:'* . . ;#:~ ,:'.:. *:. .:'* . . ;#:~ ,:'.:. *:. .:'* . . ;#:~ ,:'.:. *:."] = "∴°★．☆° ．★°∴°∴°★．☆° ．★°∴°★．☆∴°★．☆° ．★°∴°∴°★．☆° ．★°∴°★．☆∴°★．☆° ．★°∴°∴",
 	["Lara hand"] = "拉拉手",
@@ -189,7 +189,7 @@ data = {
 	["Select item"] = "選擇項目",
 	["Publish to talk channel"] = "發布到當前頻道",
 	["Entertainment"] = "休閑娛樂助手",
-	 -- HM_Force.lua --
+	-- HM_Force.lua --
 	["Your pet [%s] disappeared!"] = "您的寵物 [%s] 消失了！",
 	["Enable auto sword dance"] = "自動劍舞已開啟",
 	["Disable auto sword dance"] = "自動劍舞已關閉",
@@ -207,7 +207,9 @@ data = {
 	["Except own"] = "自己除外",
 	["Show dance buff and its stack num of 7X"] = "顯示七秀劍舞 BUFF 及層數",
 	["School feature"] = "職業特色輔助",
-	 -- HM_Guding.lua --
+	["Your debuff of type [%s] reached [%d]"] = "您身上的 [%s] debuff 達到 [%d] 個",
+	["Alert when my same type of debuff reached a certain number "] = "提醒自身同類型 debuff 達到一定數量",
+	-- HM_Guding.lua --
 	["I have put the GUDING, hurry to eat if you lack of mana. *la la la*"] = "法寶 [仙王蠱鼎] 已祭出，沒藍的抓緊了，用海鰻插件看得見還能自動吃~#玫瑰#玫瑰~~",
 	["HM_Guding"] = "海鰻蠱鼎",
 	["Auto use GUDING"] = "自動吃一下蠱鼎",
@@ -218,7 +220,7 @@ data = {
 	["Auto talk in team channel after puting GUDING"] = "擺鼎后自動喊話提醒隊友來吃",
 	["Talk message"] = "喊話內容",
 	["5D GUDING"] = "五毒蠱鼎助手",
-	 -- HM_Jabber.lua --
+	-- HM_Jabber.lua --
 	["Kill"] = "擊殺",
 	["$killer successfully kill $dead"] = "$killer 成功斬殺了 $dead",
 	["Killed"] = "被殺",
@@ -289,7 +291,7 @@ data = {
 	["Import successfully, but modify content will lead to link broken"] = "導入成功，直接修改內容會導致鏈接失效",
 	["Start yelling"] = "開始喊話",
 	["Skill/Kill jabber"] = "技能/擊殺喊話",
-	 -- HM_Locker.lua --
+	-- HM_Locker.lua --
 	["HM_Locker"] = "海鰻鎖定",
 	["Restore previous target [%s]"] = "還原前目標 [%s]",
 	["Keep attack target in fighting"] = "戰斗中保持攻擊目標",
@@ -315,7 +317,7 @@ data = {
 	["Enable TAB select player only"] = "開啟 Tab 只選玩家",
 	["Lock/Select"] = "目標鎖定/選擇",
 	["TAB player only"] = "TAB 只選玩家",
-	 -- HM_Marker.lua --
+	-- HM_Marker.lua --
 	["Cloud"] = "云",
 	["Sword"] = "劍",
 	["Ax"] = "斧",
@@ -374,7 +376,7 @@ data = {
 	["HM marker bar"] = "海鰻標記/集火",
 	["Mark"] = "標",
 	["Clear"] = "清",
-	 -- HM_PVPSound2.lua --
+	-- HM_PVPSound2.lua --
 	--["Killing"] = "殺",
 	["Not dead?"] = "還不死",
 	["Kill one"] = "殺一下",
@@ -386,7 +388,7 @@ data = {
 	["PVP kill effect"] = "PVP斬殺特效",
 	["Play sound after killing"] = "播放成功斬殺后的聲音效果",
 	["Show red text after killing"] = "顯示成功斬殺的大紅字效果",
-	 -- HM_RedName.lua --
+	-- HM_RedName.lua --
 	[" [%s: %d players"] = "【%s：%d人",
 	[" %d dead"] = " %d死",
 	[" [enemy: %d"] = "【紅名：%d人",
@@ -428,7 +430,7 @@ data = {
 	["2. Press M to view shared information in middle map"] = "2. 建立共享連接后按 M 進地圖可看對方身邊的統計信息",
 	["3. Team leader can build connection with member witouth confirmation"] = "3. 組隊時團長不需同意即可主動建立連接，密 22 可發起請求",
 	[": "] = "：",
-	 -- HM_Roll.lua --
+	-- HM_Roll.lua --
 	["%s: "] = "%s：",
 	["(%d times)"] = "（%d局）",
 	["(Dealer)"] = "(庄)",
@@ -450,7 +452,7 @@ data = {
 	["3. Team leader become dealer automatically."] = "3. 團長坐庄，變更時會自動清除所有數據，每局完成自動發布一次數據。",
 	["4. Twice score when lost with 1 point or win with 100 point."] = "4. 輸的一方點數為 1 或贏的一方點數為 100 時記雙倍分。",
 	["Roll lottery"] = "ROLL點娛樂",
-	 -- HM_Suit2.lua --
+	-- HM_Suit2.lua --
 	["HM_Suit"] = "海鰻換裝",
 	["Shared equip for No.1/2 suit"] = "1/2套共用裝備：",
 	["Equipments to unmount: "] = "要脫的裝備：",
@@ -473,7 +475,7 @@ data = {
 	["Suit helper"] = "套換更換/脫光",
 	["Tak on/off equip"] = "一鍵脫/穿裝備",
 	["Chg"] = "換",
-	 -- HM_Target.lua --
+	-- HM_Target.lua --
 	["Set connected line color"] = "設置連接線顏色",
 	["Set connected line width"] = "設置連接線寬度",
 	["Connected line opacity"] = "連接線不透明度",
@@ -512,7 +514,7 @@ data = {
 	["Status"] = "顯示狀態",
 	["Distance"] = "距離",
 	["Larger icon"] = "圖標放大",
-	 -- HM_TargetList.lua --
+	-- HM_TargetList.lua --
 	["DH1"] = "DH八國聯軍",
 	["DH2"] = "龍嘯神州",
 	["DH3"] = "榮耀",
@@ -593,7 +595,7 @@ data = {
 	["HM, focus targetlist"] = "海鰻焦點列表",
 	["HM Focus, TargetList"] = "海鰻焦點、目標列表",
 	["Arean ongoing: "] = "競技場進行中：",
-	 -- HM_TargetMon.lua --
+	-- HM_TargetMon.lua --
 	["Call pet"] = "召喚寵物",
 	["Invincible"] = "無敵",
 	["Silence"] = "沉默",
@@ -645,7 +647,7 @@ data = {
 	["1. Press SHIFT-U to adjust the monitor position"] = "1. BUFF/技能顯示位置請按住 SHIFT-U 進入調整模式",
 	["2. As buff name often conflict, please tell me if you find wrong"] = "2. 由于 BUFF 名字沖突現象嚴重，發現錯誤歸類的請告訴我",
 	["Target BUFF/CD"] = "目標BUFF/CD",
-	 -- HM_Team.lua --
+	-- HM_Team.lua --
 	["Ally"] = "盟友",
 	["Neutral"] = "中立",
 	["HM_Team"] = "海鰻團隊",
@@ -683,7 +685,7 @@ data = {
 	["2. Restore team list in battle map, save team list in other map"] = "2. 戰場/競技場還原列表，其它地圖則保存團隊列表",
 	["Team save/res"] = "團隊保存/還原",
 	["Quick mark(2*remark)"] = "快速標記(按2次重標)",
-	 -- HM_ToolBox.lua --
+	-- HM_ToolBox.lua --
 	["HuiZhenYan"] = "素冠荷鼎|匯珍宴",
 	["[Party BC] "] = "【團隊群密】",
 	["[Guild BC] "] = "【幫會群密】",
@@ -703,9 +705,9 @@ data = {
 	["Current map"] = "本地圖幫眾",
 	["Submit"] = "確定發送",
 	["Misc toolbox"] = "實用小工具",
-	 -- src/HM_Marker.lua --
+	-- src/HM_Marker.lua --
 	[" feet"] = " 尺",
-	 -- src/HM_TargetFace.lua --
+	-- src/HM_TargetFace.lua --
 	["Display the sector of target facing, change color"] = "顯示目標的扇形面向，設置顏色",
 	["The sector angle"] = "扇形的角度",
 	[" degree"] = "度",
