@@ -219,7 +219,7 @@ _HM_Force.OnBuffUpdate = function()
 		for _, v in ipairs(GetClientPlayer().GetBuffList()) do
 			if not v.bCanCancel then
 				local info = GetBuffInfo(v.dwID, v.nLevel, {})
-				if info.nDetachType > 0 then
+				if info and info.nDetachType > 2 then
 					if not t[info.nDetachType] then
 						t[info.nDetachType] = 1
 					else
@@ -235,7 +235,7 @@ _HM_Force.OnBuffUpdate = function()
 		end
 	elseif not arg3 then
 		local info = GetBuffInfo(arg4, arg8, {})
-		if info.nDetachType > 0 then
+		if info and info.nDetachType > 2 then
 			local t = _HM_Force.tDebuff
 			if not t[info.nDetachType] then
 				t[info.nDetachType] = 0
