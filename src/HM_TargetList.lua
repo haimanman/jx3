@@ -174,6 +174,7 @@ _HM_TargetList.DelFocus = function(dwID)
 	for k, v in ipairs(_HM_TargetList.tFocus) do
 		if v == dwID then
 			table.remove(_HM_TargetList.tFocus, k)
+			FireUIEvent("HM_DEL_FOCUS_TARGET", dwID)
 			break
 		end
 	end

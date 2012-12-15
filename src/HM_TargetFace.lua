@@ -93,7 +93,7 @@ _HM_TargetFace.OnRender = function()
 		end
 	end
 	-- focus
-	if not _t.bFoucsActive then
+	if not _t.bFocusActive then
 		_t.hFocusFace:Hide()
 		_t.hFocusShape:Hide()
 	else
@@ -133,6 +133,7 @@ function HM_TargetFace.OnFrameCreate()
 	this:RegisterEvent("NPC_ENTER_SCENE")
 	this:RegisterEvent("PLAYER_ENTER_SCENE")
 	this:RegisterEvent("HM_ADD_FOCUS_TARGET")
+	this:RegisterEvent("HM_DEL_FOCUS_TARGET")
 end
 
 -- event
@@ -143,10 +144,13 @@ function HM_TargetFace.OnEvent(event)
 		_HM_TargetFace.OnUpdateTarget()
 	elseif event == "HM_ADD_FOCUS_TARGET" then
 		_HM_TargetFace.dwFocusID = arg0
-		_HM_TargetFace.bFoucsActive = true
+		_HM_TargetFace.bFocusActive = true
+	elseif event == "HM_DEL_FOCUS_TARGET" and arg0 == _HM_TargetFace.dwFocusID then
+		_HM_TargetFace.dwFocusID = 0
+		_HM_TargetFace.bFocusActive = false
 	elseif event == "NPC_ENTER_SCENE" or event == "PLAYER_ENTER_SCENE" then
 		if arg0 == _HM_TargetFace.dwFocusID then
-			_HM_TargetFace.bFoucsActive = true
+			_HM_TargetFace.bFocusActive = true
 		end
 	end
 end
