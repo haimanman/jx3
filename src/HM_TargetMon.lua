@@ -139,7 +139,7 @@ HM_TargetMon.tBuffList = {
 		tName = { _b(200)--[[疾如风]], _b(2719)--[[青荷]], _b(2757)--[[紫气东来]], _b(538)--[[繁音急节]], _b(1378)--[[弱水]], _b(3468)--[[心无旁骛]], _b(3859)--[[香疏影]], _b(2726)--[[乱洒]] },
 	}, {
 		szType = _L["Reduce-injury"],	-- 8
-		tName = { _b(367)--[[守如山]], _b(384)--[[转乾坤]], _b(399)--[[无相诀]], _b(122)--[[春泥护花]], _b(3068)--[[雾体]], _b(1802)--[[御天]], _b(2542)--[[玉蟾献祭]], _b(684)--[[天地低昂]], _b(4444)--[[贪魔体]] },
+		tName = { _b(367)--[[守如山]], _b(384)--[[转乾坤]], _b(399)--[[无相诀]], _b(122)--[[春泥护花]], _b(3068)--[[雾体]], _b(1802)--[[御天]], _b(2542)--[[玉蟾献祭]], _b(684)--[[天地低昂]], _b(4439)--[[贪魔体]] },
 	}, {
 		szType = _L["Dodge"],	-- 9
 		tName = { _b(677)--[[鹊踏枝]], _b(3214)--[[惊鸿游龙]], _b(2065)--[[云栖松]] },
@@ -166,6 +166,7 @@ for k, _ in pairs(HM_TargetMon) do
 end
 
 -- update custom
+--[==[
 local tSkillMJ = HM_TargetMon.tSkillList[10]
 HM.RegisterCustomUpdater(function()
 	HM_TargetMon.tSkillList[10] = tSkillMJ
@@ -175,11 +176,12 @@ HM.RegisterCustomUpdater(function()
 	table.insert(HM_TargetMon.tBuffList[4].tName, _b(4029)--[[日劫]])
 	table.insert(HM_TargetMon.tBuffList[4].tName, _b(4871)--[[无明魂锁]])
 	table.insert(HM_TargetMon.tBuffList[4].tName, _b(4875)--[[镇魔]])
-	table.insert(HM_TargetMon.tBuffList[8].tName, _b(4444)--[[贪魔体]])
+	table.insert(HM_TargetMon.tBuffList[8].tName, _b(4439)--[[贪魔体]])
 	table.insert(HM_TargetMon.tBuffList[11].tName, _b(4030)--[[月劫]])
 	table.insert(HM_TargetMon.tBuffList[12].tName, _b(4054)--[[业海罪缚]])
 	table.insert(HM_TargetMon.tBuffList[13].tName, _b(4028)--[[圣月佑]])
 end, 20121123)
+]==]
 
 ---------------------------------------------------------------------
 -- 本地函数和变量
@@ -220,6 +222,7 @@ _HM_TargetMon.tFixedBuffEx = {
 	[_L("Slower_%s", _b(2839)--[[玳弦]])] = 2839,
 	[_L("Halt_%s", _b(548)--[[突]])] = 548,
 	[_L("Reduce-dealing_%s", _b(3195)--[[穿心弩]])] = 3195,
+	[_L("Reduce-injury_%s", _b(4439)--[[贪魔体]])] = 4439,
 }
 
 -- special skill alias

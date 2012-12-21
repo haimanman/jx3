@@ -57,6 +57,7 @@ for k, _ in pairs(HM_TargetList) do
 end
 
 -- update custom
+--[==[
 local tDH8G = HM_TargetList.tCustomSave[_L["DH1"]].tCustomTong
 HM.RegisterCustomUpdater(function()
 	HM_TargetList.tCustomName = {}
@@ -68,6 +69,7 @@ HM.RegisterCustomUpdater(function()
 		tCustomTong = tDH8G,
 	}
 end, 20121123)
+]==]
 
 ---------------------------------------------------------------------
 -- 本地函数和变量
