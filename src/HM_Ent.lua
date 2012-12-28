@@ -67,8 +67,7 @@ _HM_Ent.tInfo = {
 		return _HM_Ent.ReNum(GetClientPlayer().nTitlePoint) .. _L("(%d Title)", GetClientPlayer().nTitle)
 	end },
 	{ szName = _L["Money"], bChecked = true, fnValue = function()
-		local nGold, _, _ = MoneyToGoldSilverAndCopper(GetClientPlayer().GetMoney())
-		return _HM_Ent.ReNum(nGold) .. "G"
+		return _HM_Ent.ReNum(GetClientPlayer().GetMoney().nGold) .. "G"
 	end },
 	{ szName = _L["Coin"], nFrame = 15, bChecked = false, fnValue = function()
 		return _HM_Ent.ReNum(GetClientPlayer().nCoin) end
