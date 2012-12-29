@@ -11,6 +11,7 @@ HM_ToolBox = {
 	bIgnoreHorse = false,	-- 自动双骑确认  OnInviteFollow
 	bQuestItem = true,		-- 自动采集任务物品
 	bCustomDoodad = false,	-- 自动采集指定物品
+	bShiftAuction = true,	-- 按 shift 一键寄卖
 	szCustomDoodad = _L["HuiZhenYan"],
 	nBroadType = 0,
 	szBroadText = "Hi",
@@ -92,6 +93,82 @@ _HM_ToolBox.SendBroadCast = function()
 		if nType == 0 or (nType == 1 and dwMapID ~= info.dwMapID) or (nType == 2 and dwMapID == info.dwMapID) then
 			HM.Talk(info.szName, _L["[Guild BC] "] .. szText)
 		end
+	end
+end
+
+-- 一键上架交易行
+_HM_ToolBox.GetAuctionPrice = function(h, g, s, c)
+    local nGold = tonumber(h:Lookup(g):GetText()) or 0
+    local nSliver = tonumber(h:Lookup(s):GetText()) or 0
+    local nCopper = tonumber(h:Lookup(c):GetText()) or 0
+	nCopper = nCopper + 100 * nSliver + 10000 * nGold
+	return nCopper
+end
+
+_HM_ToolBox.IsSameItem = function(item, item2)
+    if not item2 or not item2.bCanTrade then
+        return false
+    end
+	if item.szName == item2.szName and item.nGenre == item2.nGenre then
+		return true
+	end
+    if item.nGenre == ITEM_GENRE.BOOK and item2.nGenre == ITEM_GENRE.BOOK and item.nQuality == item2.nQuality then
+        return true
+    end
+    return false
+end
+
+_HM_ToolBox.AuctionSell = function(frame)
+	local wnd = frame:Lookup("PageSet_Totle/Page_Auction/Wnd_Sale")
+    local box = wnd:Lookup("", "Box_Item")
+    local szTime = wnd:Lookup("", "Text_Time"):GetText()
+    local nTime = tonumber(string.sub(szTime, 1, 2))
+	-- check item
+    local me = GetClientPlayer()
+    local item = GetPlayerItem(me, box.dwBox, box.dwX)
+    if not item or item.szName ~= box.szName then
+        AuctionPanel.ClearBox(box)
+        AuctionPanel.UpdateSaleInfo(frame, true)
+        return RemoveUILockItem("Auction")
+    end
+	-- count price
+    local nBidPrice = _HM_ToolBox.GetAuctionPrice(wnd, "Edit_OPGold", "Edit_OPSilver", "Edit_OPCopper")
+    local nBuyPrice = _HM_ToolBox.GetAuctionPrice(wnd, "Edit_PGold", "Edit_PSilver", "Edit_PCopper")
+    box.szTime = szTime
+    box.nBidPrice = nBidPrice
+    box.nBuyPrice = nBuyPrice
+	local nStackNum = item.nStackNum
+    if not item.bCanStack then
+        nStackNum = 1
+    end
+    local nSBidPrice = nBidPrice / nStackNum
+    local nSBuyPrice = nBuyPrice / nStackNum
+    local AtClient = GetAuctionClient()
+    FireEvent("SELL_AUCTION_ITEM")
+    for i = 1, 5 do
+        if me.GetBoxSize(i) > 0 then
+            for j = 0, me.GetBoxSize(i) - 1 do
+                local item2 = me.GetItem(i, j)
+                if _HM_ToolBox.IsSameItem(item, item2) then
+                    local nNum = item2.nStackNum
+                    if not item2.bCanStack then
+                        nNum = 1
+                    end
+                    AtClient.Sell(AuctionPanel.dwTargetID, i, j, math.floor(nSBidPrice * nNum), math.floor(nSBuyPrice * nNum), nTime)
+                end
+            end
+        end
+    end
+    PlaySound(SOUND.UI_SOUND, g_sound.Trade)
+end
+
+-- 替换上架函数
+_HM_ToolBox.AuctionPanel_AuctionSell = AuctionPanel.AuctionSell
+AuctionPanel.AuctionSell = function(...)
+	if IsShiftKeyDown() and HM_ToolBox.bShiftAuction then
+		_HM_ToolBox.AuctionSell(...)
+	else
+		_HM_ToolBox.AuctionPanel_AuctionSell(...)
 	end
 end
 
@@ -195,6 +272,12 @@ _HM_ToolBox.PS.OnPanelActive = function(frame)
 	:Click(function(bChecked)
 		HM_ToolBox.bQuestItem = bChecked
 	end)
+	-- shift-auction
+	ui:Append("WndCheckBox", { txt = _L["Press SHIFT fast auction sell"], x = nX + 10, y = 176, checked = HM_ToolBox.bShiftAuction })
+	:Click(function(bChecked)
+		HM_ToolBox.bShiftAuction = bChecked
+	end)
+	-- specified doodad
 	nX = ui:Append("WndCheckBox", { txt = _L["Auto interact specified doodad"], x = 10, y = 204, checked = HM_ToolBox.bCustomDoodad })
 	:Click(function(bChecked)
 		HM_ToolBox.bCustomDoodad = bChecked

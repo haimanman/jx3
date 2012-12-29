@@ -698,6 +698,7 @@ data = {
 	["Auto confirm for trade request"] = "自動確認交易請求",
 	["Auto confirm for ridding horse"] = "自動確認雙騎上馬請求",
 	["Auto interact quest doodad"] = "自動采集任務物品",
+	["Press SHIFT fast auction sell"] = "按 Shift 一鍵寄賣",
 	["Auto interact specified doodad"] = "自動采集指定物品",
 	["Group whisper oline (Guild perm required)"] = "在線群密（幫會需要官員權限）",
 	["Online"] = "在線",
