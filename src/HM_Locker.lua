@@ -26,7 +26,6 @@ local _HM_Locker = {
 	nLastFrame = 0,	-- 最近目标改变帧次
 	nLastSys = 0,
 	tLocker = {},
-	nIgnore = 0,
 	nScoffFrame = 0,	-- 被技能命中的帧次（技能）
 	dwScoffer = 0,
 	nScoffFrame2 = 0,	-- 嘲讽 BUFF 帧次
@@ -43,20 +42,14 @@ _HM_Locker.Debug = function(szMsg)
 	HM.Debug(szMsg, _L["HM_Locker"])
 end
 
--- add ignore for locker
-_HM_Locker.AddIgnore = function(n)
-	_HM_Locker.nIgnore = _HM_Locker.nIgnore + n
-end
-
 -- set prev target
 _HM_Locker.SetPrevTarget = function()
 	local nFrame = GetLogicFrameCount() - _HM_Locker.nLastFrame
 	if _HM_Locker.dwPrevID ~= 0 and nFrame >= 0 and nFrame < 16 then
 		local tar = HM.GetTarget(_HM_Locker.dwPrevID)
 		if tar and tar.nMoveState ~= MOVE_STATE.ON_DEATH then
-			_HM_Locker.AddIgnore(1)
-			_HM_Locker.dwLastID = tar.dwID
 			HM.SetTarget(tar.dwID)
+			_HM_Locker.dwPrevID = tar.dwID
 			return _HM_Locker.Sysmsg(_L("Restore previous target [%s]", tar.szName))
 		end
 	end
@@ -156,8 +149,7 @@ end
 -------------------------------------
 -- update target
 _HM_Locker.OnUpdateTarget = function()
-	if _HM_Locker.nIgnore >= 1 then
-		_HM_Locker.nIgnore =  _HM_Locker.nIgnore - 1
+	if TargetPanel_GetOpenState() then
 		return
 	end
 	local me = GetClientPlayer()
@@ -363,7 +355,7 @@ HM.RegisterEvent("NPC_ENTER_SCENE", _HM_Locker.OnEnter)
 HM.RegisterEvent("PLAYER_ENTER_SCENE", _HM_Locker.OnEnter)
 HM.RegisterEvent("DO_SKILL_CAST", _HM_Locker.OnSkillCast)
 HM.RegisterEvent("PLAYER_TALK", _HM_Locker.OnPlayerTalk)
-HM.RegisterEvent("BUFF_UPDATE", _HM_Locker.OnBuffUpdate)
+--HM.RegisterEvent("BUFF_UPDATE", _HM_Locker.OnBuffUpdate)
 HM.RegisterEvent("SYS_MSG", function()
 	if arg0 == "UI_OME_SKILL_HIT_LOG" and arg3 == SKILL_EFFECT_TYPE.SKILL then
 		_HM_Locker.OnSkillHit(arg1, arg2, arg4, arg5)
@@ -377,6 +369,3 @@ HM.RegisterPanel(_L["Lock/Select"], 3353, _L["Target"], _HM_Locker.PS)
 
 -- hotkey
 HM.AddHotKey("OnlyPlayer", _L["TAB player only"],  _HM_Locker.SearchOnlyPlayer)
-
--- global
-HM_Locker.AddIgnore = _HM_Locker.AddIgnore

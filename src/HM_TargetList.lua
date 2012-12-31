@@ -293,18 +293,9 @@ _HM_TargetList.GetSkillPrepareState = function(tar)
 	local _, dwSkillID, dwLevel, fP = tar.GetSkillPrepareState()
 	if not dwSkillID and (not IsPlayer(tar.dwID) or tar.GetOTActionState() == 1) then
 		local dwType, dwID = GetClientPlayer().GetTarget()
-		if HM_Locker then
-			HM_Locker.AddIgnore(2)
-		end
-		if TargetPanel_SetOpenState then
-			TargetPanel_SetOpenState(true)
-		end
-		HM.SetTarget(tar.dwID)
+		HM.SetInsTarget(tar.dwID)
 		_, dwSkillID, dwLevel, fP = tar.GetSkillPrepareState()
 		HM.SetTarget(dwType, dwID)
-		if TargetPanel_SetOpenState then
-			TargetPanel_SetOpenState(false)
-		end
 	end
 	if dwSkillID and dwSkillID ~= 0 then
 		local szSkill = HM.GetSkillName(dwSkillID, dwLevel)

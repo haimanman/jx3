@@ -722,9 +722,6 @@ end
 -- dwID		-- 目标 ID
 HM.SetTarget = function(dwType, dwID)
 	if not dwType or dwType <= 0 then
-		if dwType < 0 and HM_Locker then
-			HM_Locker.AddIgnore(1)
-		end
 		dwType, dwID = TARGET.NO_TARGET, 0
 	elseif not dwID then
 		dwID, dwType = dwType, TARGET.NPC
@@ -733,6 +730,13 @@ HM.SetTarget = function(dwType, dwID)
 		end
 	end
 	SetTarget(dwType, dwID)
+end
+
+-- 切换临时目标，不改变目标面板
+HM.SetInsTarget = function(...)
+	TargetPanel_SetOpenState(true)
+	HM.SetTarget(...)
+	TargetPanel_SetOpenState(false)
 end
 
 -- 根据目标对像显示其名字

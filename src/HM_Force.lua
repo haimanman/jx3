@@ -65,16 +65,10 @@ _HM_Force.OnUseEmptySkill = function(dwID)
 	if me and HM.CanUseSkill(dwID) then
 		local tarType, tarID = me.GetTarget()
 		if tarID ~= 0 and tarType == TARGET.PLAYER then
-			if TargetPanel_SetOpenState then
-				TargetPanel_SetOpenState(true)
-			end
-			HM.SetTarget(-1)
+			HM.SetInsTarget(TARGET.NO_TARGET, 0)
 		end
 		OnAddOnUseSkill(dwID, 1)
 		HM.SetTarget(tarType, tarID)
-		if TargetPanel_SetOpenState then
-			TargetPanel_SetOpenState(false)
-		end
 		return true
 	end
 end
@@ -117,7 +111,7 @@ _HM_Force.OnPrepareQC = function(dwID)
 	if HM_Force.bSelfTaiji2 or not _HM_Force.HasBuff(qc.dwBuffID, true) then
 		local tarType, tarID = me.GetTarget()
 		if tarID ~= 0 and tarID ~= me.dwID then -- and GetCharacterDistance(me.dwID, tarID) <= 1280 then
-			HM.SetTarget(-1)
+			HM.SetInsTarget(TARGET.NO_TARGET, 0)
 			_HM_Force.ReTarget = { tarType, tarID, GetLogicFrameCount() }
 		end
 	end
