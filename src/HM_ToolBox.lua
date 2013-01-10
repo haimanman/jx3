@@ -98,11 +98,21 @@ end
 
 -- 一键上架交易行
 _HM_ToolBox.GetAuctionPrice = function(h, g, s, c)
-    local nGold = tonumber(h:Lookup(g):GetText()) or 0
-    local nSliver = tonumber(h:Lookup(s):GetText()) or 0
-    local nCopper = tonumber(h:Lookup(c):GetText()) or 0
-	nCopper = nCopper + 100 * nSliver + 10000 * nGold
-	return nCopper
+	local t = {}
+    t.nGold = tonumber(h:Lookup(g):GetText()) or 0
+    t.nSliver = tonumber(h:Lookup(s):GetText()) or 0
+    t.nCopper = tonumber(h:Lookup(c):GetText()) or 0
+	return t
+end
+
+-- 转换为单价
+_HM_ToolBox.GetSinglePrice = function(t, nNum)
+	local t2 = {}
+	local nCopper = math.floor((t.nGold * 10000 + t.nSliver * 100 + t.nCopper)/nNum)
+	t2.nGold = math.floor(nCopper / 10000)
+	t2.nSliver = math.floor((nCopper % 10000) / 100)
+	t2.nCopper = nCopper % 100
+	return t2
 end
 
 _HM_ToolBox.IsSameItem = function(item, item2)
@@ -132,17 +142,15 @@ _HM_ToolBox.AuctionSell = function(frame)
         return RemoveUILockItem("Auction")
     end
 	-- count price
-    local nBidPrice = _HM_ToolBox.GetAuctionPrice(wnd, "Edit_OPGold", "Edit_OPSilver", "Edit_OPCopper")
-    local nBuyPrice = _HM_ToolBox.GetAuctionPrice(wnd, "Edit_PGold", "Edit_PSilver", "Edit_PCopper")
+    box.tBidPrice = _HM_ToolBox.GetAuctionPrice(wnd, "Edit_OPGold", "Edit_OPSilver", "Edit_OPCopper")
+    box.tBuyPrice = _HM_ToolBox.GetAuctionPrice(wnd, "Edit_PGold", "Edit_PSilver", "Edit_PCopper")
     box.szTime = szTime
-    box.nBidPrice = nBidPrice
-    box.nBuyPrice = nBuyPrice
 	local nStackNum = item.nStackNum
     if not item.bCanStack then
         nStackNum = 1
     end
-    local nSBidPrice = nBidPrice / nStackNum
-    local nSBuyPrice = nBuyPrice / nStackNum
+    local tSBidPrice = _HM_ToolBox.GetSinglePrice(box.tBidPrice, nStackNum)
+    local tSBuyPrice = _HM_ToolBox.GetSinglePrice(box.tBuyPrice, nStackNum)
     local AtClient = GetAuctionClient()
     FireEvent("SELL_AUCTION_ITEM")
     for i = 1, 5 do
@@ -154,7 +162,7 @@ _HM_ToolBox.AuctionSell = function(frame)
                     if not item2.bCanStack then
                         nNum = 1
                     end
-                    AtClient.Sell(AuctionPanel.dwTargetID, i, j, math.floor(nSBidPrice * nNum), math.floor(nSBuyPrice * nNum), nTime)
+                    AtClient.Sell(AuctionPanel.dwTargetID, i, j, math.floor(tSBidPrice.nGold * nNum), math.floor(tSBidPrice.nSliver * nNum), math.floor(tSBidPrice.nCopper * nNum), math.floor(tSBuyPrice.nGold * nNum), math.floor(tSBuyPrice.nSliver * nNum), math.floor(tSBuyPrice.nCopper * nNum), nTime)
                 end
             end
         end
