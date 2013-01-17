@@ -613,6 +613,7 @@ data = {
 	["Uncontrollable_%s"] = "면역_%s",
 	["Slower_%s"] = "슬로우_%s",
 	["Reduce-dealing_%s"] = "공격감소_%s",
+	["Reduce-injury_%s"] = "방어_%s",
 	["Skill CD (unit: sec)"] = "스킬CD (단위: 초)",
 	["Skill name can not be empty"] = "스킬 이름은 비워 둘 수 없습니다",
 	["Invalid value of skill CD"] = "잘못된 스킬 CD 값",

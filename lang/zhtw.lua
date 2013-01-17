@@ -613,6 +613,7 @@ data = {
 	["Uncontrollable_%s"] = "免控_%s",
 	["Slower_%s"] = "減速_%s",
 	["Reduce-dealing_%s"] = "減療_%s",
+	["Reduce-injury_%s"] = "減傷_%s",
 	["Skill CD (unit: sec)"] = "技能CD (單位: 秒)",
 	["Skill name can not be empty"] = "技能名稱不能為空",
 	["Invalid value of skill CD"] = "無效的技能 CD 值",
