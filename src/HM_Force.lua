@@ -350,6 +350,9 @@ HM.RegisterPanel(_L["School feature"], 327, nil, _HM_Force.PS)
 -- macro command
 AppendCommand(_L["JumpBack"], function() _HM_Force.OnUseEmptySkill(9007) end)
 AppendCommand(_L["SmallDodge"], function()
+	if _HM_Force.HasBuff(535) then	-- °ë²½µß
+		return
+	end
 	for _, v in ipairs({ 9004, 9005, 9006 }) do
 		if _HM_Force.OnUseEmptySkill(v) then
 			break
