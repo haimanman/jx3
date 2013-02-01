@@ -77,7 +77,7 @@ file_put_contents('VERSION', $version_str);
 // --- UPDATE info.ini ---
 echo "updating info.ini ...\n";
 $info = "[HM]\r\nname=$name($version_str)\r\ndesc=$desc\r\nversion=$pver\r\ndefault=1\r\n";
-$files = glob("src/*.lua");
+$files = array_merge(glob("src/*.lua"), glob("lab/*.lua"));
 sort($files); 
 reset($files);
 for ($i = 0; $i < count($required); $i++)
