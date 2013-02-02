@@ -213,7 +213,7 @@ _HM_Taoguan.PS.OnPanelActive = function(frame)
 	--]]
 	-- begin
 	nX = ui:Append("WndButton", { x = 10, y = 176, txt = "开始/停止砸罐" }):AutoSize():Click(_HM_Taoguan.Switch):Pos_()
-	ui:Append("Text", { x = nX + 10, y = 176, txt = "（宏命令开关：/年盖陶罐）" })
+	ui:Append("Text", { x = nX + 10, y = 176, txt = "（宏命令开关：/年兽陶罐）" })
 end
 
 ---------------------------------------------------------------------
