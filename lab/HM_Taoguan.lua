@@ -7,7 +7,27 @@ HM_Taoguan = {
 	nUseZJ = 1280,		-- 开始吃醉生、寄优谷的分数
 	bPauseNoZJ = true,	-- 缺少醉生、寄优时停砸
 	nPausePoint = 327680,	-- 停砸分数线
-	bUseJX = true,	-- 自动用掉锦囊、香囊
+	nUseJX = 80,				-- 自动用掉锦囊、香囊
+	--[[
+	tFilterItem = {
+		["鞭炮"] = true,
+		["火树银花"] = true,
+		["龙凤呈祥"] = true,
+		["彩云逐月"] = true,
+		["熠熠生辉"] = true,
+		["焰火棒"] = true,
+		["窜天猴"] = true,
+		["剪纸：龙腾"] = true,
+		["剪纸：凤舞"] = true,
+		["元宝灯"] = true,
+		["桃花灯"] = true,
+		["桃木牌·年"] = false,
+		["桃木牌·吉"] = false,
+		["桃木牌·祥"] = true,
+		["图样：彩云逐月"] = true,
+		["图样：熠熠生辉"] = true,
+	},
+	--]]
 }
 
 for k, _ in pairs(HM_Taoguan) do
@@ -87,6 +107,29 @@ _HM_Taoguan.OnLootItem = function()
 	end
 end
 
+--[[
+_HM_Taoguan.OnOpenDoodad = function()
+	if _HM_Taoguan.bEnable then
+		local d = GetDoodad(arg0)
+		if d then
+			local nQ, nM, me = 1, d.GetLootMoney(), GetClientPlayer()
+			if nM > 0 then
+				LootMoney(d.dwID)
+			end
+			for i = 0, d.GetItemListCount() - 1 do
+				local it, bRoll, bDist = d.GetLootItem(i, me)
+				if it and it.nQuality >= nQ and not bRoll and not bDist
+					and not HM_Taoguan.tFilterItem[it.szName]
+				then
+					LootItem(d.dwID, it.dwID)
+				end
+			end
+			CloseLootList(true)
+		end
+	end
+end
+--]]
+
 -------------------------------------
 -- 设置界面
 -------------------------------------
@@ -140,11 +183,37 @@ _HM_Taoguan.PS.OnPanelActive = function(frame)
 	end):Pos_()
 	ui:Append("WndCheckBox", { txt = "若缺则停砸", x = nX + 10, y = 84, checked = HM_Taoguan.bPauseNoZJ })
 	:Click(function(bChecked) HM_Taoguan.bPauseNoZJ = bChecked end)
-	ui:Append("WndCheckBox", { txt = "自动用掉所有锦囊/香囊", x = 10, y = 112, checked = HM_Taoguan.bUseJX })
-	:Click(function(bChecked) HM_Taoguan.bUseJX = bChecked end)
+	-- JX
+	nX = ui:Append("Text", { txt = "使用锦囊和香囊，当分数达到", x = 10, y = 112 }):Pos_()
+	ui:Append("WndComboBox", "Combo_Size4", { x = nX, y = 112, w = 100, h = 25 })
+	:Text(tostring(HM_Taoguan.nUseJX)):Menu(function()
+		local m0 = {}
+		for i = 2, 10 do
+			local v = 10 * 2 ^ i
+			table.insert(m0, { szOption = tostring(v), fnAction = function()
+				HM_Taoguan.nUseJX = v
+				ui:Fetch("Combo_Size4"):Text(tostring(v))
+			end })
+		end
+		return m0
+	end)
+	-- filter
+	--[[
+	nX = ui:Append("WndComboBox", { x = 10, y = 140, txt = "拾取过滤设置" })
+	:Menu(function()
+		local m0 = {}
+		for k, v in pairs(HM_Taoguan.tFilterItem) do
+			table.insert(m0, { szOption = k, bCheck = true, bChecked = v == true, fnAction = function(d, b)
+				HM_Taoguan.tFilterItem[k] = b
+			end })
+		end
+		return m0
+	end):Pos_()
+	ui:Append("Text", { x = nX + 10, y = 140, txt = "（打勾不捡，要先关掉系统的自动拾取！）" })
+	--]]
 	-- begin
-	nX = ui:Append("WndButton", { x = 10, y = 148, txt = "开始/停止砸罐" }):AutoSize():Click(_HM_Taoguan.Switch):Pos_()
-	ui:Append("Text", { x = nX + 10, y = 148, txt = "（宏命令开关：/年盖陶罐）" })
+	nX = ui:Append("WndButton", { x = 10, y = 176, txt = "开始/停止砸罐" }):AutoSize():Click(_HM_Taoguan.Switch):Pos_()
+	ui:Append("Text", { x = nX + 10, y = 176, txt = "（宏命令开关：/年盖陶罐）" })
 end
 
 ---------------------------------------------------------------------
@@ -172,7 +241,7 @@ HM.BreatheCall("taoguan2", function()
 		elseif bZ and not _HM_Taoguan.UseBagItem("醉生", HM_Taoguan.bPauseNoZJ) and HM_Taoguan.bPauseNoZJ then
 			_HM_Taoguan.bEnable = false
 		end
-	elseif _HM_Taoguan.bEnable and HM_Taoguan.bUseJX and _HM_Taoguan.nPoint > 20 then
+	elseif _HM_Taoguan.bEnable and _HM_Taoguan.nPoint >= HM_Taoguan.nUseJX then
 		if not HM_Force.HasBuff(1660) and not _HM_Taoguan.UseBagItem("如意香囊") then
 			_HM_Taoguan.UseBagItem("幸运香囊")
 		end
@@ -183,6 +252,7 @@ HM.BreatheCall("taoguan2", function()
 end, 1000)
 HM.RegisterEvent("NPC_ENTER_SCENE", _HM_Taoguan.OnNpcEnter)
 HM.RegisterEvent("LOOT_ITEM", _HM_Taoguan.OnLootItem)
+--HM.RegisterEvent("OPEN_DOODAD", _HM_Taoguan.OnOpenDoodad)
 AppendCommand("年兽陶罐", _HM_Taoguan.Switch)
 
 -- add to HM collector
