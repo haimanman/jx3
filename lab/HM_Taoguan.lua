@@ -58,11 +58,14 @@ _HM_Taoguan.MonitorZP = function(szMsg)
     local _, _, nP = string.find(szMsg, "目前的总积分为：(%d+)")
     if nP then
 		_HM_Taoguan.nPoint = tonumber(nP)
+		_HM_Taoguan.bHaveZJ = false
     end
 end
 
 _HM_Taoguan.OnNpcEnter = function()
-	if not _HM_Taoguan.bEnable then
+	if not _HM_Taoguan.bEnable
+		or (HM_Taoguan.bPauseNoZJ and _HM_Taoguan.nPoint >= HM_Taoguan.nUseZJ and not _HM_Taoguan.bHaveZJ)
+	then
 		return
 	end
 	local npc = GetNpc(arg0)
@@ -79,6 +82,7 @@ end
 _HM_Taoguan.OnLootItem = function()
 	if arg0 == GetClientPlayer().dwID and arg2 > 2 and GetItem(arg1).szName == "梅良玉签" then
 		_HM_Taoguan.nPoint = 0
+		_HM_Taoguan.bHaveZJ = false
 		HM.Sysmsg("自动砸陶罐：积分换光清零！")
 	end
 end
@@ -168,7 +172,7 @@ HM.BreatheCall("taoguan2", function()
 		elseif bZ and not _HM_Taoguan.UseBagItem("醉生", HM_Taoguan.bPauseNoZJ) and HM_Taoguan.bPauseNoZJ then
 			_HM_Taoguan.bEnable = false
 		end
-	elseif _HM_Taoguan.bEnable and HM_Taoguan.bUseJX then
+	elseif _HM_Taoguan.bEnable and HM_Taoguan.bUseJX and _HM_Taoguan.nPoint > 20 then
 		if not HM_Force.HasBuff(1660) and not _HM_Taoguan.UseBagItem("如意香囊") then
 			_HM_Taoguan.UseBagItem("幸运香囊")
 		end
