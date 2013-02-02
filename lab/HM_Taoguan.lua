@@ -79,6 +79,10 @@ _HM_Taoguan.MonitorZP = function(szMsg)
     if nP then
 		_HM_Taoguan.nPoint = tonumber(nP)
 		_HM_Taoguan.bHaveZJ = false
+		if _HM_Taoguan.nPoint >= HM_Taoguan.nPausePoint then
+			_HM_Taoguan.bEnable = false
+			HM.Sysmsg("自动砸陶罐：已达设置上限！")
+		end
     end
 end
 
