@@ -1,14 +1,12 @@
 --
 -- 海鳗插件：自动砸年兽陶罐
 --
-
 HM_Taoguan = {
 	nUseGold = 320,		-- 优先使用金锤子的分数
 	nUseZJ = 1280,		-- 开始吃醉生、寄优谷的分数
 	bPauseNoZJ = true,	-- 缺少醉生、寄优时停砸
 	nPausePoint = 327680,	-- 停砸分数线
 	nUseJX = 80,				-- 自动用掉锦囊、香囊
-	--[[
 	tFilterItem = {
 		["鞭炮"] = true,
 		["火树银花"] = true,
@@ -21,13 +19,17 @@ HM_Taoguan = {
 		["剪纸：凤舞"] = true,
 		["元宝灯"] = true,
 		["桃花灯"] = true,
+		["桃木牌·蛇"] = false,
 		["桃木牌·年"] = false,
 		["桃木牌·吉"] = false,
 		["桃木牌·祥"] = true,
 		["图样：彩云逐月"] = true,
 		["图样：熠熠生辉"] = true,
+		["监本印文兑换券"] = false,
+		["战魂佩"] = false,
+		["豪侠贡"] = false,
+		["年年有鱼灯"] = true,
 	},
-	--]]
 }
 
 for k, _ in pairs(HM_Taoguan) do
@@ -41,6 +43,9 @@ local _HM_Taoguan = {
 	bEnable = false,
 	bHaveZJ = false,
 	nPoint = 0,
+	tListed = {},
+	szName = "年兽陶罐",
+	dwDoodadID = 0,
 }
 
 -- use bag item
@@ -66,8 +71,21 @@ _HM_Taoguan.Switch = function()
 	_HM_Taoguan.bHaveZJ = false
 	if _HM_Taoguan.bEnable then
 		HM.Sysmsg("自动砸陶罐：开")
+		_HM_Taoguan.FindNear()
 	else
 		HM.Sysmsg("自动砸陶罐：关")
+	end
+end
+
+-- search next
+_HM_Taoguan.FindNear = function()
+	for k, _ in pairs(_HM_Taoguan.tListed) do
+		local npc = GetNpc(k)
+		if not npc then
+			_HM_Taoguan.tListed[k] = nil
+		elseif HM.GetDistance(npc) < 4 then
+			FireUIEvent("NPC_ENTER_SCENE", k)
+		end
 	end
 end
 
@@ -82,21 +100,28 @@ _HM_Taoguan.MonitorZP = function(szMsg)
 		if _HM_Taoguan.nPoint >= HM_Taoguan.nPausePoint then
 			_HM_Taoguan.bEnable = false
 			HM.Sysmsg("自动砸陶罐：已达设置上限！")
+		else
+			-- foreced to find next
+			HM.DelayCall(5500, _HM_Taoguan.FindNear)
 		end
     end
 end
 
 _HM_Taoguan.OnNpcEnter = function()
+	local npc = GetNpc(arg0)
+	if not npc or npc.szName ~= _HM_Taoguan.szName then
+		return
+	end
+	_HM_Taoguan.tListed[arg0] = true
 	if not _HM_Taoguan.bEnable
 		or (HM_Taoguan.bPauseNoZJ and _HM_Taoguan.nPoint >= HM_Taoguan.nUseZJ and not _HM_Taoguan.bHaveZJ)
 	then
 		return
 	end
-	local npc = GetNpc(arg0)
-	if npc and npc.szName == "年兽陶罐" and HM.GetDistance(npc) < 4 then
+	if HM.GetDistance(npc) < 4 then
 		HM.SetTarget(arg0)
 		if _HM_Taoguan.nPoint < HM_Taoguan.nUseGold or not _HM_Taoguan.UseBagItem("小金锤") then
-			if not _HM_Taoguan.UseBagItem("小银锤", true) then
+			if not _HM_Taoguan.UseBagItem("小银锤", true) and not _HM_Taoguan.UseBagItem("小金锤", true) then
 				_HM_Taoguan.bEnable = false
 			end
 		end
@@ -111,28 +136,49 @@ _HM_Taoguan.OnLootItem = function()
 	end
 end
 
---[[
-_HM_Taoguan.OnOpenDoodad = function()
+_HM_Taoguan.OnDoodadEnter = function()
 	if _HM_Taoguan.bEnable then
 		local d = GetDoodad(arg0)
-		if d then
+		if d and d.szName == _HM_Taoguan.szName and d.CanDialog(GetClientPlayer())
+			and HM.GetDistance(d) < 4.1
+		then
+			_HM_Taoguan.dwDoodadID = arg0
+			HM.DelayCall(520, function()
+				InteractDoodad(_HM_Taoguan.dwDoodadID)
+			end)
+		end
+	end
+end
+
+_HM_Taoguan.OnOpenDoodad = function()
+	if _HM_Taoguan.bEnable then
+		local d = GetDoodad(_HM_Taoguan.dwDoodadID)
+		if d and d.szName == _HM_Taoguan.szName then
 			local nQ, nM, me = 1, d.GetLootMoney(), GetClientPlayer()
 			if nM > 0 then
 				LootMoney(d.dwID)
 			end
-			for i = 0, d.GetItemListCount() - 1 do
+			for i = 0, 31 do
 				local it, bRoll, bDist = d.GetLootItem(i, me)
-				if it and it.nQuality >= nQ and not bRoll and not bDist
-					and not HM_Taoguan.tFilterItem[it.szName]
+				if not it then
+					break
+				end
+				local szName = GetItemNameByItem(it)
+				if it.nQuality >= nQ and not bRoll and not bDist
+					and not HM_Taoguan.tFilterItem[szName]
 				then
 					LootItem(d.dwID, it.dwID)
+				else
+					HM.Sysmsg("自动砸陶罐：过滤 [" .. szName .. "]")
 				end
 			end
-			CloseLootList(true)
+			local hL = Station.Lookup("Normal/LootList", "Handle_LootList")
+			if hL then
+				hL:Clear()
+			end
 		end
 	end
 end
---]]
 
 -------------------------------------
 -- 设置界面
@@ -202,7 +248,6 @@ _HM_Taoguan.PS.OnPanelActive = function(frame)
 		return m0
 	end)
 	-- filter
-	--[[
 	nX = ui:Append("WndComboBox", { x = 10, y = 140, txt = "拾取过滤设置" })
 	:Menu(function()
 		local m0 = {}
@@ -213,11 +258,10 @@ _HM_Taoguan.PS.OnPanelActive = function(frame)
 		end
 		return m0
 	end):Pos_()
-	ui:Append("Text", { x = nX + 10, y = 140, txt = "（打勾不捡，要先关掉系统的自动拾取！）" })
-	--]]
+	ui:Append("Text", { x = nX + 10, y = 140, txt = "（打勾的代表不捡）" })
 	-- begin
 	nX = ui:Append("WndButton", { x = 10, y = 176, txt = "开始/停止砸罐" }):AutoSize():Click(_HM_Taoguan.Switch):Pos_()
-	ui:Append("Text", { x = nX + 10, y = 176, txt = "（宏命令开关：/年兽陶罐）" })
+	ui:Append("Text", { x = nX + 10, y = 176, txt = "（宏命令开关：/" .. _HM_Taoguan.szName .. "）" })
 end
 
 ---------------------------------------------------------------------
@@ -256,9 +300,17 @@ HM.BreatheCall("taoguan2", function()
 end, 1000)
 HM.RegisterEvent("NPC_ENTER_SCENE", _HM_Taoguan.OnNpcEnter)
 HM.RegisterEvent("LOOT_ITEM", _HM_Taoguan.OnLootItem)
---HM.RegisterEvent("OPEN_DOODAD", _HM_Taoguan.OnOpenDoodad)
-AppendCommand("年兽陶罐", _HM_Taoguan.Switch)
+HM.RegisterEvent("DOODAD_ENTER_SCENE", _HM_Taoguan.OnDoodadEnter)
+HM.RegisterEvent("HELP_EVENT", function()
+	if arg0 == "OnOpenpanel" and arg1 == "LOOT"
+		and _HM_Taoguan.bEnable and _HM_Taoguan.dwDoodadID ~= 0
+	then
+		_HM_Taoguan.OnOpenDoodad()
+		_HM_Taoguan.dwDoodadID = 0
+	end
+end)
+AppendCommand(_HM_Taoguan.szName, _HM_Taoguan.Switch)
 
 -- add to HM collector
-HM.RegisterPanel("年兽陶罐助手", 119, _L["Others"], _HM_Taoguan.PS)
+HM.RegisterPanel(_HM_Taoguan.szName .. "助手", 119, _L["Others"], _HM_Taoguan.PS)
 

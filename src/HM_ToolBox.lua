@@ -119,7 +119,7 @@ _HM_ToolBox.IsSameItem = function(item, item2)
     if not item2 or not item2.bCanTrade then
         return false
     end
-	if item.szName == item2.szName and item.nGenre == item2.nGenre then
+	if GetItemNameByItem(item) == GetItemNameByItem(item2) and item.nGenre == item2.nGenre then
 		return true
 	end
     if item.nGenre == ITEM_GENRE.BOOK and item2.nGenre == ITEM_GENRE.BOOK and item.nQuality == item2.nQuality then
