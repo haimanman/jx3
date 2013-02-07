@@ -7,6 +7,8 @@ HM_Taoguan = {
 	bPauseNoZJ = true,	-- 缺少醉生、寄优时停砸
 	nPausePoint = 327680,	-- 停砸分数线
 	nUseJX = 80,				-- 自动用掉锦囊、香囊
+	bNonZS = false,	-- 不使用醉生
+	bUseGold = false,	-- 没银锤时使用金锤
 	tFilterItem = {
 		["鞭炮"] = true,
 		["火树银花"] = true,
@@ -121,7 +123,9 @@ _HM_Taoguan.OnNpcEnter = function()
 	if HM.GetDistance(npc) < 4 then
 		HM.SetTarget(arg0)
 		if _HM_Taoguan.nPoint < HM_Taoguan.nUseGold or not _HM_Taoguan.UseBagItem("小金锤") then
-			if not _HM_Taoguan.UseBagItem("小银锤", true) and not _HM_Taoguan.UseBagItem("小金锤", true) then
+			if not _HM_Taoguan.UseBagItem("小银锤", true)
+				and (not HM_Taoguan.bUseGold or not _HM_Taoguan.UseBagItem("小金锤", true))
+			then
 				_HM_Taoguan.bEnable = false
 			end
 		end
@@ -191,7 +195,7 @@ _HM_Taoguan.PS.OnPanelActive = function(frame)
 	ui:Append("Text", { txt = "功能设置", x = 0, y = 0, font = 27 })
 	-- gold
 	nX = ui:Append("Text", { txt = "优先使用小金锤，当分数达到", x = 10, y = 28 }):Pos_()
-	ui:Append("WndComboBox", "Combo_Size1", { x = nX, y = 28, w = 100, h = 25 })
+	nX = ui:Append("WndComboBox", "Combo_Size1", { x = nX, y = 28, w = 100, h = 25 })
 	:Text(tostring(HM_Taoguan.nUseGold)):Menu(function()
 		local m0 = {}
 		for i = 3, 9 do
@@ -202,7 +206,9 @@ _HM_Taoguan.PS.OnPanelActive = function(frame)
 			end })
 		end
 		return m0
-	end)
+	end):Pos_()
+	ui:Append("WndCheckBox", { txt = "缺银锤时总是用金锤？", x = nX + 10, y = 28, checked = HM_Taoguan.bUseGold })
+	:Click(function(bChecked) HM_Taoguan.bUseGold = bChecked end)
 	-- max
 	nX = ui:Append("Text", { txt = "停止无脑砸罐子，当分数达到", x = 10, y = 56 }):Pos_()
 	ui:Append("WndComboBox", "Combo_Size3", { x = nX, y = 56, w = 100, h = 25 })
@@ -231,8 +237,10 @@ _HM_Taoguan.PS.OnPanelActive = function(frame)
 		end
 		return m0
 	end):Pos_()
-	ui:Append("WndCheckBox", { txt = "若缺则停砸", x = nX + 10, y = 84, checked = HM_Taoguan.bPauseNoZJ })
-	:Click(function(bChecked) HM_Taoguan.bPauseNoZJ = bChecked end)
+	nX = ui:Append("WndCheckBox", { txt = "若缺停砸", x = nX + 10, y = 84, checked = HM_Taoguan.bPauseNoZJ })
+	:Click(function(bChecked) HM_Taoguan.bPauseNoZJ = bChecked end):Pos_()
+	ui:Append("WndCheckBox", { txt = "不吃醉生", x = nX + 10, y = 84, checked = HM_Taoguan.bNonZS })
+	:Click(function(bChecked) HM_Taoguan.bNonZS = bChecked end)
 	-- JX
 	nX = ui:Append("Text", { txt = "使用锦囊和香囊，当分数达到", x = 10, y = 112 }):Pos_()
 	ui:Append("WndComboBox", "Combo_Size4", { x = nX, y = 112, w = 100, h = 25 })
@@ -275,7 +283,7 @@ HM.BreatheCall("taoguan1", function()
 end)
 HM.BreatheCall("taoguan2", function()
 	if _HM_Taoguan.bEnable and _HM_Taoguan.nPoint >= HM_Taoguan.nUseZJ then
-		local bJ, bZ = true, true
+		local bJ, bZ = true, HM_Taoguan.bNonZS == false
 		for _, v in ipairs(GetClientPlayer().GetBuffList()) do
 			if v.dwID == 1660 and v.nLevel == 3 then
 				bJ = false
