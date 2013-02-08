@@ -266,7 +266,7 @@ _HM_Taoguan.PS.OnPanelActive = function(frame)
 		end
 		return m0
 	end):Pos_()
-	ui:Append("Text", { x = nX + 10, y = 140, txt = "（打勾的代表不捡）" })
+	ui:Append("Text", { x = nX + 10, y = 140, txt = "（打勾的不捡，若还捡请关盒子的自动拾取）" })
 	-- begin
 	nX = ui:Append("WndButton", { x = 10, y = 176, txt = "开始/停止砸罐" }):AutoSize():Click(_HM_Taoguan.Switch):Pos_()
 	ui:Append("Text", { x = nX + 10, y = 176, txt = "（宏命令开关：/" .. _HM_Taoguan.szName .. "）" })
