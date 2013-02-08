@@ -95,8 +95,8 @@ end
 -- 事件处理
 -------------------------------------
 _HM_Taoguan.MonitorZP = function(szMsg)
-    local _, _, nP = string.find(szMsg, "目前的总积分为：(%d+)")
-    if nP then
+	local _, _, nP = string.find(szMsg, "目前的总积分为：(%d+)")
+	if nP then
 		_HM_Taoguan.nPoint = tonumber(nP)
 		_HM_Taoguan.bHaveZJ = false
 		if _HM_Taoguan.nPoint >= HM_Taoguan.nPausePoint then
@@ -106,7 +106,10 @@ _HM_Taoguan.MonitorZP = function(szMsg)
 			-- foreced to find next
 			HM.DelayCall(5500, _HM_Taoguan.FindNear)
 		end
-    end
+	elseif _HM_Taoguan.bEnable and StringFindW(szMsg, _HM_Taoguan.szName) then
+		-- foreced to find next [年兽陶罐已破碎|请选中年兽陶罐后使用]
+		HM.DelayCall(5500, _HM_Taoguan.FindNear)
+	end
 end
 
 _HM_Taoguan.OnNpcEnter = function()
