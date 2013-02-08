@@ -7,9 +7,10 @@ if ($auth_user === false)
 	exit(-1);
 }
 $auth_user = trim($auth_user);
+$version = trim(file_get_contents('VERSION'));
 
 // file to upload
-$file = 'dist/HM-' . trim(file_get_contents('VERSION')) . '.zip';
+$file = 'dist/HM-' . $version . '.zip';
 if (!file_exists($file))
 {
 	echo "release pack file not found!\n";
@@ -20,8 +21,10 @@ if (!file_exists($file))
 $desc = date('Y/m/d');
 $lines = array();
 exec('git log -5 --pretty="format:%s"', $lines);
-for ($i = 1; $i < count($lines); $i++)
+for ($i = 0; $i < count($lines); $i++)
 {
+	$line = trim($lines[$i]);
+	if ($line == 'Release ' . $version) continue;
 	if (!strncmp($lines[$i], 'Release ', 8)) break;
 	$desc .= ', ' . trim($lines[$i]);
 }
