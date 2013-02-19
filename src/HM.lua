@@ -698,7 +698,11 @@ end
 -- (KObject) HM.GetTarget([number dwType, ]number dwID)	-- 根据 dwType 类型和 dwID 取得操作对象
 HM.GetTarget = function(dwType, dwID)
 	if not dwType then
-		dwType, dwID = GetClientPlayer().GetTarget()
+		local me=GetClientPlayer()
+		if not me then
+			return nil, TARGET.NO_TARGET
+		end
+		dwType, dwID = me.GetTarget()
 	elseif not dwID then
 		dwID, dwType = dwType, TARGET.NPC
 		if IsPlayer(dwID) then
