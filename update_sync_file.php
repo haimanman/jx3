@@ -120,7 +120,7 @@ $content = <<<EOF
   <desc><![CDATA[{$desc}]]></desc>
   <version dword="$dword_ver">$version</version>
   <clientVersion dword="0x10000">1.0beta</clientVersion>
-  <urlPrefix>https://raw.github.com/haimanman/jx3/master/</urlPrevix>
+  <urlPrefix>https://raw.github.com/haimanman/jx3/master/</urlPrefix>
   <info>
     $info
   </info>

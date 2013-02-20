@@ -4,7 +4,7 @@
   <desc><![CDATA[大量非常方便的 PVP 插件！ --== 海缦缦@步莲台 ==--]]></desc>
   <version dword="0x2000703">2.0.7b3</version>
   <clientVersion dword="0x10000">1.0beta</clientVersion>
-  <urlPrefix>https://raw.github.com/haimanman/jx3/master/</urlPrevix>
+  <urlPrefix>https://raw.github.com/haimanman/jx3/master/</urlPrefix>
   <info>
     <file size="10445" title="新年活动智能砸年兽陶罐">lab/HM_Taoguan.lua</file>
     <file size="19697" title="纯阳气场/唐门机关范围显示、归属显示、消失倒计时">src/HM_Area.lua</file>
@@ -23,7 +23,7 @@
     <file size="40282" title="目标增强、BUFF放大、方向指示及连接线">src/HM_Target.lua</file>
     <file size="9069" title="目标和焦点的脚底面向及圈圈指示">src/HM_TargetFace.lua</file>
     <file size="48766" title="多焦点目标、目标列表、定制筛选排序">src/HM_TargetList.lua</file>
-    <file size="35239" title="目标技能CD监控、超大显示特殊BUFF">src/HM_TargetMon.lua</file>
+    <file size="35366" title="目标技能CD监控、超大显示特殊BUFF">src/HM_TargetMon.lua</file>
     <file size="17136" title="团队列表保存与还原、团队快速标记">src/HM_Team.lua</file>
     <file size="12419" title="自动修装备、卖灰色、自动采集和确认、一键交易行">src/HM_ToolBox.lua</file>
   </info>
