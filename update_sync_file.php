@@ -19,7 +19,7 @@ foreach ($lines as $line)
 	if (!$release)
 	{
 		$time = substr($match[1], 5, 2) . '/' . substr($match[1], 8, 2) . ' ' . substr($match[2], 0, 5);
-		$content .= "* $time " . $match[4] . " (" . $match[3] . ")\r\n";
+		$content .= "* $time " . $match[4] . "\r\n";
 	}
 }
 $data = <<<EOF
