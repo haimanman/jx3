@@ -74,6 +74,11 @@ _HM_Camp.Sysmsg = function(szMsg)
 	HM.Sysmsg(szMsg, _L["HM_Camp"])
 end
 
+--debug
+_HM_Camp.Debug = function(szMsg)
+	HM.Debug(szMsg, _L["HM_Camp"])
+end
+
 -- get hide menu
 _HM_Camp.GetHideMenu = function()
 	local m0 = {}
@@ -319,9 +324,9 @@ end
 -- boss death
 _HM_Camp.OnSysMsg = function()
 	if HM_Camp.bBossTime and arg0 == "UI_OME_DEATH_NOTIFY" then
-		local npc, time = GetNpc(arg1), math.floor(HM_Camp.tBossList[npc.szName] * 960)
+		local npc = GetNpc(arg1)
 		if npc and HM_Camp.tBossList[npc.szName] then
-			local me = GetClientPlayer()
+			local me, time = GetClientPlayer(), math.floor(HM_Camp.tBossList[npc.szName] * 960)
 			_HM_Camp.tDeadBoss[npc.szName] = {
 				tFrame = _HM_Camp.GetBossTime(time),
 				dwMapID = me.GetScene().dwMapID,
@@ -329,7 +334,7 @@ _HM_Camp.OnSysMsg = function()
 				nY = npc.nY,
 				nZ = npc.nZ,
 			}
-			_HM_CAMP.Timer(npc.szName, time)
+			_HM_Camp.Timer(npc.szName, time)
 		end
 	end
 end
@@ -351,7 +356,7 @@ _HM_Camp.OnNpcEnter = function()
 			if HM_Camp.bBossTimeAlert then
 				HM.Talk(nChannel, _L("* Notice * [%s] appeared, hurried to attack it !!!", npc.szName))
 			end
-			_HM_CAMP.KillTimer(npc.szName)
+			_HM_Camp.KillTimer(npc.szName)
 		end
 	end
 end
@@ -399,12 +404,14 @@ _HM_Camp.Timer = function(szName, nTime)
 		nEnd = nTime + GetLogicFrameCount(),
 		nTotal = nTime
 	})
+	_HM_Camp.Debug("start timer ["..npc.szName.."]")
 end
 
 _HM_Camp.KillTimer = function(szName)
 	for i,v in ipairs(_HM_Camp.tTimer) do
 		if v.dwID == szName then
 			table.remove(_HM_Camp.tTimer,i)
+			_HM_Camp.Debug("kill timer [" .. npc.szName .. "]")
 			return
 		end
 	end
@@ -436,11 +443,13 @@ end
 _HM_Camp.GetLeftTime = function(nEndFrame, bFrame)
 	local nFrame = nEndFrame - GetLogicFrameCount()
 	local nSec = nFrame / 16
-	if nSec < 100 then
+	if nSec < 10 then
 		if bFrame and nSec < 5 then
 			return string.format("(%d)%ds", nFrame, nSec), 204
 		end
 		return string.format("%.1fs", nSec), 204
+	elseif nSec < 100 then
+		return string.format("%ds", nSec), 204
 	elseif nSec < 3600 then
 		return string.format("%dm %ds", nSec / 60, nSec % 60), 203
 	elseif nSec < 86400 then
