@@ -12,7 +12,8 @@ HM_Camp = {
 	tHideSave = {},
 	bPartyAlert = true,			-- 不同阵营的成员进队发出提示
 	bQuestAccept = true,	-- 自动接日常
-	bBossTime = false,			-- boss 刷新提醒
+	bBossTime = true,			-- boss 刷新提醒(倒计时条)
+	bBossTimeAlert = false,		-- boss 刷新团队播报
 	bBossTimeGF = true,		-- 攻防 BOSS 计时
 	tBossList = {
 		[_n(6219)--[[方超]]] = 5,
@@ -25,6 +26,7 @@ HM_Camp = {
 		--[_n(1217)--[[催命判官]]] = 3,
 		--[_n(1215)--[[恶人谷练兵将]]] = 3,
 	},
+	tAnchor = {},
 }
 
 for k, _ in pairs(HM_Camp) do
@@ -46,6 +48,7 @@ local _HM_Camp = {
 	tDeadBoss = {}, 	-- dead boss (for time)
 	tAddParty = {},	-- add party member
 	tActiveBoss = {},	-- actived boss in camp fight
+	tTimer = {},	--data of timer
 }
 
 -- gf boss list
@@ -69,6 +72,11 @@ end
 -- sysmsg
 _HM_Camp.Sysmsg = function(szMsg)
 	HM.Sysmsg(szMsg, _L["HM_Camp"])
+end
+
+--debug
+_HM_Camp.Debug = function(szMsg)
+	HM.Debug(szMsg, _L["HM_Camp"])
 end
 
 -- get hide menu
@@ -318,14 +326,15 @@ _HM_Camp.OnSysMsg = function()
 	if HM_Camp.bBossTime and arg0 == "UI_OME_DEATH_NOTIFY" then
 		local npc = GetNpc(arg1)
 		if npc and HM_Camp.tBossList[npc.szName] then
-			local me = GetClientPlayer()
+			local me, time = GetClientPlayer(), math.floor(HM_Camp.tBossList[npc.szName] * 960)
 			_HM_Camp.tDeadBoss[npc.szName] = {
-				tFrame = _HM_Camp.GetBossTime(math.floor(HM_Camp.tBossList[npc.szName] * 960)),
+				tFrame = _HM_Camp.GetBossTime(time),
 				dwMapID = me.GetScene().dwMapID,
 				nX = npc.nX,
 				nY = npc.nY,
 				nZ = npc.nZ,
 			}
+			_HM_Camp.Timer(npc.szName, time)
 		end
 	end
 end
@@ -344,7 +353,10 @@ _HM_Camp.OnNpcEnter = function()
 			if not GetClientPlayer().IsInParty() then
 				nChannel = PLAYER_TALK_CHANNEL.NEARBY
 			end
-			HM.Talk(nChannel, _L("* Notice * [%s] appeared, hurried to attack it !!!", npc.szName))
+			if HM_Camp.bBossTimeAlert then
+				HM.Talk(nChannel, _L("* Notice * [%s] appeared, hurried to attack it !!!", npc.szName))
+			end
+			_HM_Camp.KillTimer(npc.szName)
 		end
 	end
 end
@@ -369,7 +381,9 @@ _HM_Camp.OnBreathe = function()
 						if not me.IsInParty() then
 							nChannel = PLAYER_TALK_CHANNEL.NEARBY
 						end
-						HM.Talk(nChannel, _L("* Notice * [%s] will appears after %s !!!", k, at[2]))
+						if HM_Camp.bBossTimeAlert then
+							HM.Talk(nChannel, _L("* Notice * [%s] will appears after %s !!!", k, at[2]))
+						end
 					end
 					table.remove(v.tFrame, 1)
 					if table.getn(v.tFrame) == 0 then
@@ -379,6 +393,201 @@ _HM_Camp.OnBreathe = function()
 			end
 		end
 	end
+end
+
+--only for timer
+_HM_Camp.Timer = function(szName, nTime)
+	local nFrame=GetLogicFrameCount()
+	table.insert(_HM_Camp.tTimer,{
+		dwID = szName,
+		szName = szName,
+		nEnd = nTime + GetLogicFrameCount(),
+		nTotal = nTime
+	})
+	_HM_Camp.Debug("start timer ["..npc.szName.."]")
+end
+
+_HM_Camp.KillTimer = function(szName)
+	for i,v in ipairs(_HM_Camp.tTimer) do
+		if v.dwID == szName then
+			table.remove(_HM_Camp.tTimer,i)
+			_HM_Camp.Debug("kill timer [" .. npc.szName .. "]")
+			return
+		end
+	end
+end
+
+_HM_Camp.ClearTimer = function()
+	_HM_Camp.tTimer = {}
+end
+
+--for test
+HM_Camp.KillTimer = _HM_Camp.KillTimer
+HM_Camp.Timer = _HM_Camp.Timer
+HM_Camp.ClearTimer = _HM_Camp.ClearTimer
+
+_HM_Camp.GetBoxText = function(hImage, hBG, hTextName, hTextTime)
+	local nCount = hImage:GetItemCount()
+	if hImage.nIndex < nCount then
+		nCount = hImage.nIndex
+	else
+		hImage:AppendItemFromString("<image> w=200 h=32 postype=10 path=" .. EncodeComponentsString("ui\\Image\\UICommon\\CommonPanel2.UITex") .. " frame=15 imagetype=1 </image>")
+		hBG:AppendItemFromString("<image> w=200 h=32 postype=10 path=" .. EncodeComponentsString("ui\\Image\\UICommon\\CommonPanel2.UITex") .. " frame=75 alpha=100 imagetype=1 </image>")
+		hTextName:AppendItemFromString("<text> w=200 h=32 postype=10 halign=1 valign=1 </text>")
+		hTextTime:AppendItemFromString("<text> w=200 h=32 postype=10 halign=2 valign=1 </text>")
+	end
+	hImage.nIndex = nCount + 1
+	return hImage:Lookup(nCount), hBG:Lookup(nCount), hTextName:Lookup(nCount), hTextTime:Lookup(nCount)
+end
+
+_HM_Camp.GetLeftTime = function(nEndFrame, bFrame)
+	local nFrame = nEndFrame - GetLogicFrameCount()
+	local nSec = nFrame / 16
+	if nSec < 10 then
+		if bFrame and nSec < 5 then
+			return string.format("(%d)%ds", nFrame, nSec), 204
+		end
+		return string.format("%.1fs", nSec), 204
+	elseif nSec < 100 then
+		return string.format("%ds", nSec), 204
+	elseif nSec < 3600 then
+		return string.format("%dm %ds", nSec / 60, nSec % 60), 203
+	elseif nSec < 86400 then
+		return string.format("%dh %dm %ds", nSec / 3600, nSec / 60 % 60, nSec % 60), 203
+	elseif nSec < 604800 then
+		return string.format("%dd %dh %dm %ds", nSec / 86400, nSec / 3600 % 24, nSec / 60 % 60, nSec % 60),203
+	else
+		return "", 203
+	end
+end
+
+_HM_Camp.UpdateTimer = function(data, image, bg, name, time)
+	if not box.dwID then
+		name:SetFontScheme(15)
+		time:SetFontScheme(15)
+	end
+	if image.dwID ~= data.dwID then
+		image.dwID = data.dwID
+		if string.len(data.szName) > 10 then
+			name:SetText(string.sub(data.szName, 1, 8) .. "..")
+		else
+			name:SetText(data.szName)
+		end
+	end
+	local szTime, nFont = _HM_Camp.GetLeftTime(data.nEnd, true)
+	local nFrame = data.nEnd - GetLogicFrameCount()
+	time:SetText(szTime)
+	time:SetFontScheme(nFont)
+	if nFrame < 160 then
+		image:SetFrame(13)
+		image:SetPercentage(nFrame / 160)
+	else
+		image:SetFrame(15)
+		image:SetPercentage(nFrame / data.nTotal)
+	end
+	image:Show()
+	bg:Show()
+	name:Show()
+	time:Show()
+end
+
+_HM_Camp.UpdateAnchor = function(frame)
+	local an = HM_Camp.tAnchor[frame.nIndex]
+	if an then
+		-- custom pos
+		frame:SetPoint(an.s, 0, 0, an.r, an.x, an.y)
+	else
+		-- default pos
+		frame:SetAbsPos(460, 150)
+	end
+	frame:CorrectPos()
+end
+
+_HM_Camp.OnFrameDragEnd = function()
+	this:CorrectPos()
+	HM_Camp.tAnchor[this.nIndex] = GetFrameAnchor(this)
+end
+
+-- event
+_HM_Camp.OnEvent = function(event)
+	if event == "ON_ENTER_CUSTOM_UI_MODE" or event == "ON_LEAVE_CUSTOM_UI_MODE" then
+		UpdateCustomModeWindow(this)
+	elseif event == "UI_SCALED" then
+		_HM_Camp.UpdateAnchor(this)
+	end
+end
+
+_HM_Camp.OnFrameCreate = function()
+	this:RegisterEvent("ON_ENTER_CUSTOM_UI_MODE")
+	this:RegisterEvent("ON_LEAVE_CUSTOM_UI_MODE")
+	this:RegisterEvent("UI_SCALED")
+	_HM_Camp.UpdateAnchor(this)
+	if this.nIndex == 1 then
+		UpdateCustomModeWindow(this, _L["HM Boss timer"])
+	end
+end
+
+_HM_Camp.OnFrameBreathe = function()
+	local nFrame, me = GetLogicFrameCount(), GetClientPlayer()
+	if not me then return end
+	local hImage, hBG, hTextName, hTextTime, bHide = this:Lookup("", "Handle_ImageTimer"), this:Lookup("", "Handle_ImageBG"), this:Lookup("", "Handle_TextName"), this:Lookup("", "Handle_TextTime"), true
+	hImage.nIndex=0
+	for _,v in ipairs(_HM_Camp.tTimer) do
+		if v.nEnd > nFrame then
+			_HM_Camp.UpdateTimer(v, _HM_Camp.GetBoxText(hImage, hBG, hTextName, hTextTime))
+			bHide = false
+		end
+	end
+	if bHide then
+		hImage:Hide()
+		hBG:Hide()
+		hTextName:Hide()
+		hTextTime:Hide()
+	else
+		for i = hImage:GetItemCount() - 1, hImage.nIndex, -1 do
+			hImage:Lookup(i):Hide()
+			hBG:Lookup(i):Hide()
+			hTextName:Lookup(i):Hide()
+			hTextTime:Lookup(i):Hide()
+		end
+		hImage:FormatAllItemPos()
+		hBG:FormatAllItemPos()
+		hTextName:FormatAllItemPos()
+		hTextTime:FormatAllItemPos()
+		hImage:Show()
+		hBG:Show()
+		hTextName:Show()
+		hTextTime:Show()
+		local handle = this:Lookup("", "")
+		hImage:SetRelPos(0, 0)--FIXME: the following 4(or 5) statement is unnecessary?
+		hBG:SetRelPos(0, 0)
+		hTextName:SetRelPos(0, 0)
+		hTextTime:SetRelPos(0, 0)
+		handle:FormatAllItemPos()
+	end
+end
+
+_HM_Camp.UpdateFrame = function(bEnable, nIndex)
+	local frame = Station.Lookup("Normal/HM_Camp_" .. nIndex)
+	if bEnable then
+		if not frame then
+			frame = Wnd.OpenWindow("interface\\HM\\ui\\HM_Camp.ini", "HM_Camp_" .. nIndex)
+			frame.nIndex = nIndex
+			frame.OnFrameBreathe = _HM_Camp.OnFrameBreathe
+			frame.OnFrameDragEnd = _HM_Camp.OnFrameDragEnd
+			frame.OnEvent = _HM_Camp.OnEvent
+			local _this = this
+			this = frame
+			_HM_Camp.OnFrameCreate()
+			this = _this
+		end
+	elseif frame then
+		Wnd.CloseWindow(frame)
+	end
+end
+
+_HM_Camp.UpdateFrames = function()
+	_HM_Camp.UpdateFrame(HM_Camp.bBossTime, 1)
 end
 
 -- party add member
@@ -535,6 +744,7 @@ _HM_Camp.OnLoadingEnd = function()
 	else
 		UnRegisterMsgMonitor(_HM_Camp.OnNpcYell, { "MSG_NPC_YELL" })
 	end
+	_HM_Camp.ClearTimer()
 end
 
 -------------------------------------
@@ -568,7 +778,12 @@ _HM_Camp.PS.OnPanelActive = function(frame)
 	-- boss time/quest
 	ui:Append("Text", { txt = _L["Camp daily quest"], x = 0, y = 184, font = 27 })
 	nX = ui:Append("WndCheckBox", { x = 10, y = 212, checked = HM_Camp.bBossTime })
-	:Text(_L["Auto broadcast the refresh time of BOSS"]):Click(function(bChecked) HM_Camp.bBossTime = bChecked end):Pos_()
+	:Text(_L["Enable the refresh time of BOSS"]):Click(function(bChecked)
+		HM_Camp.bBossTime = bChecked
+		_HM_Camp.UpdateFrame(bChecked, 1)
+	end):Pos_()
+	nX = ui:Append("WndCheckBox", { x = nX + 10, y = 212, checked = HM_Camp.bBossTimeAlert })
+	:Text(_L["Broadcast in team"]):Click(function(bChecked) HM_Camp.bBossTimeAlert = bChecked end):Pos_()
 	ui:Append("WndComboBox", { txt = _L["Set BOSS time"], x = nX + 10, y = 212 }):Menu(_HM_Camp.GetBossMenu)
 	ui:Append("WndCheckBox", { x = 10, y = 240, checked = HM_Camp.bPartyAlert })
 	:Text(_L["Alert when different camp of players join the team"]):Click(function(bChecked) HM_Camp.bPartyAlert = bChecked end)
@@ -589,6 +804,7 @@ end
 ---------------------------------------------------------------------
 -- 注册事件、初始化
 ---------------------------------------------------------------------
+HM.RegisterEvent("PLAYER_ENTER_GAME", _HM_Camp.UpdateFrames)
 HM.RegisterEvent("SYS_MSG", _HM_Camp.OnSysMsg)
 HM.RegisterEvent("LOADING_END", _HM_Camp.OnLoadingEnd)
 HM.RegisterEvent("NPC_ENTER_SCENE", _HM_Camp.OnNpcEnter)
