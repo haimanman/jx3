@@ -24,6 +24,7 @@ sync-page:
 	git co gh-pages
 	git co master -- LICENSE.txt
 	$(PHP) update_version.php
+	$(PHP) update_sync_file.php
 	git ci -a -m "Update gh-pages to "`cat VERSION`
 	git push
 	git co master

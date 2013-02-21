@@ -81,6 +81,7 @@ end
 
 -- search next
 _HM_Taoguan.FindNear = function()
+	_HM_Taoguan.bReachLimit = nil
 	for k, _ in pairs(_HM_Taoguan.tListed) do
 		local npc = GetNpc(k)
 		if not npc then
@@ -95,18 +96,22 @@ end
 -- 事件处理
 -------------------------------------
 _HM_Taoguan.MonitorZP = function(szMsg)
-    local _, _, nP = string.find(szMsg, "目前的总积分为：(%d+)")
-    if nP then
+	local _, _, nP = string.find(szMsg, "目前的总积分为：(%d+)")
+	if nP then
 		_HM_Taoguan.nPoint = tonumber(nP)
 		_HM_Taoguan.bHaveZJ = false
 		if _HM_Taoguan.nPoint >= HM_Taoguan.nPausePoint then
 			_HM_Taoguan.bEnable = false
+			_HM_Taoguan.bReachLimit = true
 			HM.Sysmsg("自动砸陶罐：已达设置上限！")
 		else
 			-- foreced to find next
 			HM.DelayCall(5500, _HM_Taoguan.FindNear)
 		end
-    end
+	elseif _HM_Taoguan.bEnable and StringFindW(szMsg, _HM_Taoguan.szName) then
+		-- foreced to find next [年兽陶罐已破碎|请选中年兽陶罐后使用]
+		HM.DelayCall(5500, _HM_Taoguan.FindNear)
+	end
 end
 
 _HM_Taoguan.OnNpcEnter = function()
@@ -141,7 +146,7 @@ _HM_Taoguan.OnLootItem = function()
 end
 
 _HM_Taoguan.OnDoodadEnter = function()
-	if _HM_Taoguan.bEnable then
+	if _HM_Taoguan.bEnable or _HM_Taoguan.bReachLimit then
 		local d = GetDoodad(arg0)
 		if d and d.szName == _HM_Taoguan.szName and d.CanDialog(GetClientPlayer())
 			and HM.GetDistance(d) < 4.1
@@ -155,7 +160,7 @@ _HM_Taoguan.OnDoodadEnter = function()
 end
 
 _HM_Taoguan.OnOpenDoodad = function()
-	if _HM_Taoguan.bEnable then
+	if _HM_Taoguan.bEnable or _HM_Taoguan.bReachLimit then
 		local d = GetDoodad(_HM_Taoguan.dwDoodadID)
 		if d and d.szName == _HM_Taoguan.szName then
 			local nQ, nM, me = 1, d.GetLootMoney(), GetClientPlayer()
@@ -181,6 +186,7 @@ _HM_Taoguan.OnOpenDoodad = function()
 				hL:Clear()
 			end
 		end
+		_HM_Taoguan.bReachLimit = nil
 	end
 end
 

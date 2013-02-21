@@ -698,11 +698,12 @@ end
 -- (KObject) HM.GetTarget([number dwType, ]number dwID)	-- 根据 dwType 类型和 dwID 取得操作对象
 HM.GetTarget = function(dwType, dwID)
 	if not dwType then
-		local me=GetClientPlayer()
-		if not me then
-			return nil, TARGET.NO_TARGET
+		local me = GetClientPlayer()
+		if me then
+			dwType, dwID = me.GetTarget()
+		else
+			dwType, dwID = TARGET.NO_TARGET, 0
 		end
-		dwType, dwID = me.GetTarget()
 	elseif not dwID then
 		dwID, dwType = dwType, TARGET.NPC
 		if IsPlayer(dwID) then
@@ -1040,7 +1041,11 @@ HM.GetSkillName = function(dwSkillID, dwLevel)
 		if tLine and tLine.dwSkillID > 0 and tLine.bShow and StringFindW(tLine.szDesc, "_") == nil then
 			_HM.tSkillCache[dwSkillID] = { tLine.szName, tLine.dwIconID }
 		else
-			_HM.tSkillCache[dwSkillID] = { "技能#"..dwSkillID, 13 }
+			local szName = "SKILL#" .. dwSkillID
+			if dwLevel then
+				szName = szName .. ":" .. dwLevel
+			end
+			_HM.tSkillCache[dwSkillID] = { szName, 13 }
 		end
 	end
 	return unpack(_HM.tSkillCache[dwSkillID])
@@ -1054,7 +1059,11 @@ HM.GetBuffName = function(dwBuffID, dwLevel)
 		if tLine then
 			_HM.tBuffCache[dwBuffID] = { tLine.szName, tLine.dwIconID }
 		else
-			_HM.tBuffCache[dwBuffID] = { "气劲#"..dwBuffID, -1 }--FIXME: 增益buff还是减益buff的判断
+			local szName = "BUFF#" .. dwBuffID
+			if dwLevel then
+				szName = szName .. ":" .. dwLevel
+			end
+			_HM.tBuffCache[dwBuffID] = { szName, -1 }
 		end
 	end
 	return unpack(_HM.tBuffCache[dwBuffID])

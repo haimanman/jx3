@@ -167,9 +167,12 @@ for k, _ in pairs(HM_TargetMon) do
 end
 
 -- update custom
---[==[
 local tSkillMJ = HM_TargetMon.tSkillList[10]
 HM.RegisterCustomUpdater(function()
+	-- forced to update mingjiao BUFF/SKILL
+	if HM_TargetMon.tSkillList[10] and not IsEmpty(HM_TargetMon.tSkillList[10]) then
+		return
+	end
 	HM_TargetMon.tSkillList[10] = tSkillMJ
 	table.insert(HM_TargetMon.tBuffList[2].tName, _b(4053)--[[怖畏暗刑]])
 	table.insert(HM_TargetMon.tBuffList[3].tName, _b(4421)--[[灵辉]])
@@ -181,8 +184,7 @@ HM.RegisterCustomUpdater(function()
 	table.insert(HM_TargetMon.tBuffList[11].tName, _b(4030)--[[月劫]])
 	table.insert(HM_TargetMon.tBuffList[12].tName, _b(4054)--[[业海罪缚]])
 	table.insert(HM_TargetMon.tBuffList[13].tName, _b(4028)--[[圣月佑]])
-end, 20121123)
-]==]
+end, 20130220)
 
 ---------------------------------------------------------------------
 -- 本地函数和变量
