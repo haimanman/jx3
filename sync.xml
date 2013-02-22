@@ -4,7 +4,7 @@
   <desc><![CDATA[大量非常方便的 PVP 插件！ --== 海缦缦@步莲台 ==--]]></desc>
   <version dword="0x2000703">2.0.7b3</version>
   <clientVersion dword="0x10000">1.0beta</clientVersion>
-  <urlPrefix>https://raw.github.com/haimanman/jx3/master/</urlPrefix>
+  <urlPrefix>http://jx3.hightman.cn/sync/HM/</urlPrefix>
   <info>
     <file size="10445" title="新年活动智能砸年兽陶罐">lab/HM_Taoguan.lua</file>
     <file size="19697" title="纯阳气场/唐门机关范围显示、归属显示、消失倒计时">src/HM_Area.lua</file>
@@ -31,7 +31,7 @@
     <file size="22464">API.md</file>
     <file size="19630">CHANGELOG.txt</file>
     <file size="2874">LICENSE.txt</file>
-    <file size="2115">README.md</file>
+    <file size="2086">README.md</file>
     <file size="16741">hero/female_cont_1.wav</file>
     <file size="19746">hero/female_cont_2.wav</file>
     <file size="15476">hero/female_normal_1.wav</file>

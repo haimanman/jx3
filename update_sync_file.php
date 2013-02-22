@@ -4,6 +4,7 @@
 // 1. changelog
 $date = $content = '';
 $lines = array();
+$files = $file = array();
 exec('git changelog master', $lines);
 foreach ($lines as $line)
 {
@@ -15,13 +16,25 @@ foreach ($lines as $line)
 
 		$content .= "\r\n" . $match[1] . ": " . ($release ? $release : ' unreleased');
 		$content .= "\r\n----------\r\n";
+		if ($release)
+		{
+			if (count($file) != 0)
+				$files[] = $file;
+			$file['version'] = $release;
+			$file['date'] = $match[1];
+			$file['log'] = '';
+		}
 	}
 	if (!$release)
 	{
 		$time = substr($match[1], 5, 2) . '/' . substr($match[1], 8, 2) . ' ' . substr($match[2], 0, 5);
 		$content .= "* $time " . $match[4] . "\r\n";
+		if (isset($file['log']))
+			$file['log'] .= "* $time " . $match[4] . "\n";
 	}
 }
+$files[] = $file;
+
 $data = <<<EOF
 <!DOCTYPE html>
 <html>
@@ -51,6 +64,9 @@ $content
 </html>
 EOF;
 file_put_contents("changelog.html", $data);
+
+// 1.5: release.dat
+file_put_contents("release.dat", serialize($files));
 
 // 2. sync.xml
 $modules = array(
@@ -120,7 +136,7 @@ $content = <<<EOF
   <desc><![CDATA[{$desc}]]></desc>
   <version dword="$dword_ver">$version</version>
   <clientVersion dword="0x10000">1.0beta</clientVersion>
-  <urlPrefix>https://raw.github.com/haimanman/jx3/master/</urlPrefix>
+  <urlPrefix>http://jx3.hightman.cn/sync/HM/</urlPrefix>
   <info>
     $info
   </info>
