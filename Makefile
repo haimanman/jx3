@@ -4,6 +4,7 @@
 PHP=php
 DISTDIR=./dist
 VERSION=
+JX3_HM_DIR=./public_html/jx3
 
 all:
 	@echo "------------------------------------------"
@@ -20,6 +21,11 @@ master-check:
 clean-check:
 	git status | grep "working directory clean" > /dev/null 2>&1
 
+sync-jx3-hm:
+	scp sync.xml release.dat changelog.html jx3.hm:$(JX3_HM_DIR)
+	scp dist/HM-`cat VERSION`.zip jx3.hm:$(JX3_HM_DIR)/down
+	ssh jx3.hm unzip -qq -o -d $(JX3_HM_DIR)/sync $(JX3_HM_DIR)/down/HM-`cat VERSION`.zip
+
 sync-page:
 	git co gh-pages
 	git co master -- LICENSE.txt
@@ -27,11 +33,12 @@ sync-page:
 	$(PHP) update_sync_file.php
 	git ci -a -m "Update gh-pages to "`cat VERSION`
 	git push
+	$(MAKE) sync-jx3-hm
 	git co master
 
 sync:
 	git push --tags
-	$(PHP) dev/upload_github.php
+#	$(PHP) dev/upload_github.php
 	$(MAKE) sync-page
 
 lang/zhtw.lua: lang/zhcn.lua
