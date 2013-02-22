@@ -22,9 +22,11 @@ $title = '《剑网三》、海鳗插件 - 简易下载页';
 <style type="text/css">
 body { font-size: 14px; font-family: Tahoma; }
 a { color: #07c; }
+li { padding: 0; margin: 0 0 0 10px; }
 li h2 { font-size: 18px; margin-bottom: 10px; }
 li h2 small { font-size: 14px; color: #666; font-weight: normal; }
 li p { margin: 0 0 20px 0; }
+p.offical { font-size: 16px; margin-left: 24px; }
 </style>
 <script type="text/javascript" language="javascript">
 var XmlHttp = false;
@@ -52,6 +54,9 @@ function SaveClick(v)
 </head>
 <body>
 <h1><?php echo $title; ?></h1>
+<p class="offical">
+官方网站：<a href="http://haimanchajian.com">http://haimanchajian.com</a>（<a href="https://github.com/haimanman/jx3/">源码@github</a>）
+</p>
 <ol>
   <?php foreach($list as $file): ?>
   <li>
