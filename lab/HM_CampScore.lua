@@ -46,10 +46,16 @@ local _HM_CampScore = {
 	}
 }
 
+_HM_CampScore.Debug = function(szMsg)
+	HM.Debug(szMsg, "战阶计算")
+end
+
 _HM_CampScore.Flash = function()
+	local player = GetClientPlayer()
+	if not player then return end
 	local frame = Station.Lookup("Normal/CharacterPanel")
 	local page_all = frame:Lookup("Page_Main")
-	page_all:ActivePage(1)
+	page_all:ActivePage("Page_Camp")
 	local page_camp = page_all:Lookup("Page_Camp")
 	local handle = page_camp:Lookup("", "Handle_CampAll/Handle_RankInfo/Handle_RankContent")
 	local image = handle:Lookup("Image_Rank2")
@@ -57,12 +63,15 @@ _HM_CampScore.Flash = function()
 	HM_CampScore.nTitle = player.nTitle
 	local nowpoint,nextpoint = _HM_CampScore.tRequirePoint[HM_CampScore.nTitle], _HM_CampScore.tRequirePoint[HM_CampScore.nTitle + 1]
 	HM_CampScore.nPoint = math.floor(nowpoint + (nextpoint - nowpoint) * fPointPercentage + 0.5)
-	HM_CampScore.nNeed = 1
-	for i = #tRankPoint, 1, -1 do
-		if _HM_CampScore.tRankPoint[i][1] > nowpoint - HM_CampScore.nPoint then
+	HM_CampScore.nNeed = 0
+	for i = #_HM_CampScore.tRankPoint, 1, -1 do
+		--_HM_CampScore.Debug(_HM_CampScore.tRankPoint[i][1] .. ">" .. (nextpoint - HM_CampScore.nPoint) .. "?")
+		if _HM_CampScore.tRankPoint[i][1] >= nextpoint - HM_CampScore.nPoint then
 			HM_CampScore.nNeed = i
+			break
 		end
 	end
+	_HM_CampScore.Debug(HM_CampScore.nTitle .. "阶(" .. HM_CampScore.nPoint .. ") -> " .. HM_CampScore.nNeed)
 end
 
 _HM_CampScore.GetLevel = function(nPoint)
@@ -82,10 +91,15 @@ end
 
 _HM_CampScore.GetText = function(nIndex)
 	if nIndex == 0 then
-		return string.format("前 %3d 可升级", _HM_CampScore.tRankPoint[HM_CampScore.nNeed][2])
+		if HM_CampScore.nNeed == 0 then
+			--HM_CampScore.nTitle == 14 
+			return string.format("***你已经 %2d 阶了***", HM_CampScore.nTitle)
+		else
+			return string.format("前 %3d 可升 %2d 阶", _HM_CampScore.tRankPoint[HM_CampScore.nNeed][2], HM_CampScore.nTitle + 1)
+		end
 	else
 		return string.format("前 %3d : %2d阶%3d%%",
-			_HM_CampScore.tRankPoint[i][2], _HM_CampScore.GetLevel(HM_CampScore.nPoint + _HM_CampScore.tRankPoint[i][1]))
+			_HM_CampScore.tRankPoint[nIndex][2], _HM_CampScore.GetLevel(HM_CampScore.nPoint + _HM_CampScore.tRankPoint[nIndex][1]))
 	end
 end
 
@@ -101,10 +115,10 @@ _HM_CampScore.PS.OnPanelActive = function(frame)
 	ui:Append("Text", { txt = "查询下一战阶", x = 0, y = 0, font = 27 })
 	-- gold
 	nX = ui:Append("Text", { txt = string.format("当前战阶: %2d阶%3d%%",_HM_CampScore.GetLevel(HM_CampScore.nPoint)), x = 10, y = 28 }):Pos_()
-	nX = ui:Append("WndComboBox", "Combo_Size1", { x = nX, y = 28, w = 100, h = 25 })
+	nX = ui:Append("WndComboBox", "Combo_Size1", { x = 10, y = 56, w = 170, h = 25 })
 	:Text(_HM_CampScore.GetText(HM_CampScore.nDefault)):Menu(function()
 		local m0 = {}
-		for i = 1, #_HM_CampScore.tRankPoint do
+		for i = 0, #_HM_CampScore.tRankPoint do
 			local text = _HM_CampScore.GetText(i)
 			table.insert(m0, {
 				szOption = text,
