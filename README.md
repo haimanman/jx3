@@ -7,7 +7,7 @@
 下载
 -----
 
-  * 最新版本：[HM-2.0.8.zip](http://jx3.hightman.cn/down/HM-2.0.8.zip)
+  * 最新版本：[HM-2.0.10.zip](http://jx3.hightman.cn/down/HM-2.0.10.zip)
   * 官方网站：<http://haimanchajian.com>
   * 历史版本：<http://jx3.hightman.cn/down/>
   * 更新日志：<https://github.com/haimanman/jx3/commits/master>
