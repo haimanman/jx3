@@ -205,9 +205,9 @@ _HM_Force.OnBuffUpdate = function()
 	if arg0 ~= GetClientPlayer().dwID or not HM_Force.bWarningDebuff or (not arg7 and arg3) then
 		return
 	end
-	local t = {}
+	local t, t2 = {}, {}
 	for _, v in ipairs(GetClientPlayer().GetBuffList()) do
-		if not v.bCanCancel then
+		if not v.bCanCancel and not t2[v.dwID] then
 			local info = GetBuffInfo(v.dwID, v.nLevel, {})
 			if info and info.nDetachType > 2 then
 				if not t[info.nDetachType] then
@@ -215,6 +215,7 @@ _HM_Force.OnBuffUpdate = function()
 				else
 					t[info.nDetachType] = t[info.nDetachType] + 1
 				end
+				t2[v.dwID] = true
 			end
 		end
 	end
