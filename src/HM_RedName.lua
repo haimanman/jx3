@@ -5,6 +5,7 @@
 HM_RedName = {
 	bEnableMini = true,
 	bAlertOnce = true,
+	bSettar = true,
 	bDeathMini = false,
 	bUseGreen = false,
 	bAcctUser = false,
@@ -12,6 +13,7 @@ HM_RedName = {
 
 RegisterCustomData("HM_RedName.bEnableMini")
 RegisterCustomData("HM_RedName.bAlertOnce")
+RegisterCustomData("HM_RedName.bSettar")
 RegisterCustomData("HM_RedName.bDeathMini")
 RegisterCustomData("HM_RedName.bUseGreen")
 RegisterCustomData("HM_RedName.bAcctUser")
@@ -308,7 +310,7 @@ _HM_RedName.AddMiniMapBreathe = function()
 				then
 					local nDis, tar = HM.GetDistance(v), GetTargetHandle(me.GetTarget())
 					if not tar or tar.nMoveState == MOVE_STATE.ON_DEATH or (not me.bFightState and HM.IsDps()) then
-						if me.nMoveState ~= MOVE_STATE.ON_JUMP then
+						if me.nMoveState ~= MOVE_STATE.ON_JUMP and HM_RedName.bSettar then
 							HM.SetTarget(TARGET.PLAYER, v.dwID)
 						end
 						OutputWarningMessage("MSG_WARNING_RED", _L("Enemy found: %s (distance of %.1f feet)", v.szName, nDis))
@@ -642,6 +644,7 @@ _HM_RedName.PS.OnPanelActive = function(frame)
 	:Text(_L["Display red points as enemy in minimap"]):Click(function(bChecked)
 		HM_RedName.bEnableMini = bChecked
 		ui:Fetch("Check_Alert"):Enable(bChecked)
+		ui:Fetch("Check_Settar"):Enable(bChecked)
 		ui:Fetch("Check_Death"):Enable(bChecked)
 		ui:Fetch("Check_Green"):Enable(bChecked)
 		if bChecked then
@@ -656,9 +659,14 @@ _HM_RedName.PS.OnPanelActive = function(frame)
 	:Text(_L["Use bigger green point to mark"]):Enable(HM_RedName.bEnableMini):Click(function(bChecked)
 		HM_RedName.bUseGreen = bChecked
 	end)
-	ui:Append("WndCheckBox", "Check_Alert", { x = 10, y = 84, checked = HM_RedName.bAlertOnce })
-	:Text(_L["Alert when the first enemy enter scene (round+red text)"]):Enable(HM_RedName.bEnableMini):Click(function(bChecked)
+	nX = ui:Append("WndCheckBox", "Check_Alert", { x = 10, y = 84, checked = HM_RedName.bAlertOnce })
+	:Text(_L["Alert when the first enemy enter scene (sound+red text)"]):Enable(HM_RedName.bEnableMini):Click(function(bChecked)
 		HM_RedName.bAlertOnce = bChecked
+		ui:Fetch("Check_Settar"):Enable(bChecked)
+	end):Pos_()
+	ui:Append("WndCheckBox", "Check_Settar", { x = nX + 10, y = 84, checked = HM_RedName.bSettar })
+	:Text(_L["And set target"]):Enable(HM_RedName.bEnableMini):Click(function(bChecked)
+		HM_RedName.bSettar = bChecked
 	end)
 	-- middle
 	ui:Append("Text", { txt = _L["Nearby players (middle map)"], x = 0, y = 120, font = 27 })
