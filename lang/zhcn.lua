@@ -352,6 +352,7 @@ data = {
 	["Ignore %s target [%s] %s -_-"] = "忽略%s目标[%s] %s #尴尬",
 	["Hold on Ctrl-Shift then drag with mouse to move"] = "按住 Ctrl-Shift 可鼠标拖动（头像菜单处可关闭）",
 	["Left click to quick mark, Right click to set mark options"] = "左击快速标记，右击设置标记职业",
+	["Left click to enable super shield, Right click to set shield options"] = "左击快速屏蔽人物等，右击设置屏蔽项目",
 	["Clear marked list"] = "清除标记列表",
 	["Focus fire(heal) target"] = "集火(奶)目标",
 	["Switch panel"] = "开关面板",
@@ -376,6 +377,8 @@ data = {
 	["HM marker bar"] = "海鳗标记/集火",
 	["Mark"] = "标",
 	["Clear"] = "清",
+	["Shield"] = "屏",
+	["Select"] = "选",
 	-- HM_PVPSound2.lua --
 	--["Killing"] = "杀",
 	["Not dead?"] = "还不死",

@@ -624,3 +624,8 @@ AppendCommand(_L["CampShield"], function() _HM_Camp.HideGF() end)
 
 -- breathe
 HM.BreatheCall("HM_Camp", _HM_Camp.OnBreathe)
+
+-- shared with HM_Marker
+HM_Camp.TargetGF = _HM_Camp.TargetGF
+HM_Camp.GetHideMenu = _HM_Camp.GetHideMenu
+HM_Camp.HideGF = _HM_Camp.HideGF

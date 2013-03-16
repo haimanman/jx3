@@ -348,6 +348,16 @@ function HM_Marker.OnFrameCreate()
 	-- update btn
 	this:Lookup("Btn_Markit"):Lookup("", "Text_Markit"):SetText(_L["Mark"])
 	this:Lookup("Btn_Clear"):Lookup("", "Text_Clear"):SetText(_L["Clear"])
+	this:Lookup("Btn_Shield"):Lookup("", "Text_Shield"):SetText(_L["Shield"])
+	this:Lookup("Btn_Select"):Lookup("", "Text_Select"):SetText(_L["Select"])
+	if not HM_Team then
+		this:Lookup("Btn_Markit"):Enable(0)
+		this:Lookup("Btn_Clear"):Enable(0)
+	end
+	if not HM_Camp then
+		this:Lookup("Btn_Shield"):Enable(0)
+		this:Lookup("Btn_Select"):Enable(0)
+	end
 	-- others
 	_HM_Marker.handle:SetIndex(hTotal:GetItemCount() - 1)
 	hTotal:FormatAllItemPos()
@@ -469,11 +479,15 @@ function HM_Marker.OnMouseEnter()
 	if this:GetType() == "WndButton" then
 		local nX, nY = this:GetAbsPos()
 		local nW, nH = this:GetSize()
-		local szTip = ""
-		if this:GetName() == "Btn_Markit" then
+		local szTip, szName = "", this:GetName()
+		if szName == "Btn_Markit" then
 			szTip = GetFormatText(_L["Left click to quick mark, Right click to set mark options"], 101)
-		elseif this:GetName() == "Btn_Clear" then
+		elseif szName == "Btn_Clear" then
 			szTip = GetFormatText(_L["Clear marked list"], 101)
+		elseif szName == "Btn_Shield" then
+			szTip = GetFormatText(_L["Left click to enable super shield, Right click to set shield options"], 101)
+		elseif szName == "Btn_Select" then
+			szTip = GetFormatText(_L["Select camp target"], 101)
 		end
 		OutputTip(szTip, 400, {nX, nY, nW, nH})
 	end
@@ -486,17 +500,25 @@ end
 
 -- left click
 function HM_Marker.OnLButtonClick()
-	if this:GetName() == "Btn_Markit" then
+	local szName = this:GetName()
+	if szName == "Btn_Markit" then
 		HM_Team.Mark()
-	elseif this:GetName() == "Btn_Clear" then
+	elseif szName == "Btn_Clear" then
 		HM_Team.ClearMark()
+	elseif szName == "Btn_Shield" then
+		HM_Camp.HideGF()
+	elseif szName == "Btn_Select" then
+		HM_Camp.TargetGF()
 	end
 end
 
 -- right click
 function HM_Marker.OnRButtonClick()
-	if this:GetName() == "Btn_Markit" then
+	local szName = this:GetName()
+	if szName == "Btn_Markit" then
 		PopupMenu(HM_Team.GetForceMenu())
+	elseif szName == "Btn_Shield" then
+		PopupMenu(HM_Camp.GetHideMenu())
 	end
 end
 
