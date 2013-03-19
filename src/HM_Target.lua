@@ -301,7 +301,7 @@ _HM_Target.InitBuffPos = function(frame, nSize)
 				end
             end
             if v == "Buff" or v == "Debuff" then
-                nY = nY + nSize + 10
+                nY = nY + nSize + 5
                 if v == "Debuff" then
                     local h2 = frame:Lookup("", "Handle_Bar")
                     local nX, _ = h2:GetRelPos()
