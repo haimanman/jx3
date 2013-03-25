@@ -53,7 +53,9 @@ HM_TargetList = {
 }
 
 for k, _ in pairs(HM_TargetList) do
-	RegisterCustomData("HM_TargetList." .. k)
+	if k ~= "bShowFocus" and k ~= "bShowList" then
+		RegisterCustomData("HM_TargetList." .. k)
+	end
 end
 
 -- update custom
