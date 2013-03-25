@@ -3,10 +3,10 @@
 --
 
 HM_Jabber = {
-	nChannelKill2 = PLAYER_TALK_CHANNEL.NEARBY,
-	nChannelKilled2 = PLAYER_TALK_CHANNEL.TONG,
-	nChannelAssist2 = PLAYER_TALK_CHANNEL.NEARBY,
-	nChannelSkill2 = 0,
+	nChannelKill1 = PLAYER_TALK_CHANNEL.TONG,
+	nChannelKilled1 = PLAYER_TALK_CHANNEL.TONG_ALLIANCE,
+	nChannelAssist1 = PLAYER_TALK_CHANNEL.TONG,
+	nChannelSkill1 = 0,
 	tMessage = {
 		kill = {
 			["default"] = {		-- $zj：自己，$killer：杀手, $dead：死者，$map：地图
@@ -15,15 +15,15 @@ HM_Jabber = {
 				[_L["Assist kill"]] = _L["$zj assist $killer to kill $dead"],			-- 默认协助击杀
 			},
 		},
-		skill = {},					-- $zj：自己，$mb：目标/技能释放或接收者：命中，闪躲，被命中，被闪躲
+		skill = {},					-- $zj：自己，$mb：目标/技能释放或接收者：命中，闪躲，被命中，被闪躲，读条，中断读条
 		auto =  _L["Hello, world!"],
 	},
 }
 
-RegisterCustomData("HM_Jabber.nChannelKill2")
-RegisterCustomData("HM_Jabber.nChannelKilled2")
-RegisterCustomData("HM_Jabber.nChannelAssist2")
-RegisterCustomData("HM_Jabber.nChannelSkill2")
+RegisterCustomData("HM_Jabber.nChannelKill1")
+RegisterCustomData("HM_Jabber.nChannelKilled1")
+RegisterCustomData("HM_Jabber.nChannelAssist1")
+RegisterCustomData("HM_Jabber.nChannelSkill1")
 RegisterCustomData("HM_Jabber.tMessage")
 
 ---------------------------------------------------------------------
@@ -298,9 +298,13 @@ _HM_Jabber.EditMsgSkill = function(szName, szType)
 		box = frm:Append("WndRadioBox", "Radio_2", { txt = _L["Miss"], x = nX + 5, y = 28, group = "Radio" })
 		box:Click(function(bChecked) if bChecked then frm.szType = _L["Miss"] end end)
 		nX, _ = box:Pos_()
+		box = frm:Append("WndRadioBox", "Radio_5", { txt = _L["Prepare"], x = nX + 5, y = 0, group = "Radio" })
+		box:Click(function(bChecked) if bChecked then frm.szType = _L["Prepare"] end end)
 		box = frm:Append("WndRadioBox", "Radio_3", { txt = _L["Be hit"], x = nX + 5, y = 28, group = "Radio" })
 		box:Click(function(bChecked) if bChecked then frm.szType = _L["Be hit"] end end)
 		nX, _ = box:Pos_()
+		box = frm:Append("WndRadioBox", "Radio_6", { txt = _L["Prepare broken"], x = nX + 5, y = 0, group = "Radio" })
+		box:Click(function(bChecked) if bChecked then frm.szType = _L["Prepare broken"] end end)
 		box = frm:Append("WndRadioBox", "Radio_4", { txt = _L["Be missed"], x = nX + 5, y = 28, group = "Radio" })
 		box:Click(function(bChecked) if bChecked then frm.szType = _L["Be missed"] end end)
 		-- tong
@@ -343,11 +347,17 @@ _HM_Jabber.EditMsgSkill = function(szName, szType)
 		frm:Fetch("Radio_2"):Enable(true)
 		frm:Fetch("Radio_3"):Enable(true)
 		frm:Fetch("Radio_4"):Enable(true)
+		frm:Fetch("Radio_5"):Enable(true)
+		frm:Fetch("Radio_6"):Enable(true)
 	else
 		frm:Title(_L["Edit skill saying"])
 		frm:Fetch("Edit_Name"):Text(szName):Enable(false)
 		frm:Fetch("Edit_Msg"):Text(tMessage[szName][szType]):Enable(true)
-		if szType == _L["Be missed"] then
+		if szType == _L["Prepare broken"] then
+			frm:Fetch("Radio_6"):Check(true)
+		elseif szType == _L["Prepare"] then
+			frm:Fetch("Radio_5"):Check(true)
+		elseif szType == _L["Be missed"] then
 			frm:Fetch("Radio_4"):Check(true)
 		elseif szType == _L["Be hit"] then
 			frm:Fetch("Radio_3"):Check(true)
@@ -356,10 +366,13 @@ _HM_Jabber.EditMsgSkill = function(szName, szType)
 		else
 			frm:Fetch("Radio_1"):Check(true)
 		end
+		frm.szType = szType
 		frm:Fetch("Radio_1"):Enable(false)
 		frm:Fetch("Radio_2"):Enable(false)
 		frm:Fetch("Radio_3"):Enable(false)
 		frm:Fetch("Radio_4"):Enable(false)
+		frm:Fetch("Radio_5"):Enable(false)
+		frm:Fetch("Radio_6"):Enable(false)
 	end
 	frm:Fetch("Btn_Delete"):Enable(szName ~= nil)
 	frm:Toggle(true)
@@ -468,9 +481,10 @@ end
 ---------------------------------------------------------------------
 -- 事件处理函数
 ---------------------------------------------------------------------
-_HM_Jabber.OnSkillHit = function(dwCaster, dwTarget, dwID, dwLevel, bMiss)
+_HM_Jabber.OnSkillHit = function(dwCaster, dwTarget, dwID, dwLevel, nType)
 	local me = GetClientPlayer()
-	if HM_Jabber.nChannelSkill2 == 0 or not me then
+	_HM_Jabber.dwPrepareID, _HM_Jabber.dwPrepareLevel = nil, nil		-- clear prepare data
+	if HM_Jabber.nChannelSkill1 == 0 or not me then
 		return
 	end
 	if dwCaster ~= me.dwID and dwTarget ~= me.dwID then
@@ -479,18 +493,24 @@ _HM_Jabber.OnSkillHit = function(dwCaster, dwTarget, dwID, dwLevel, bMiss)
 	local tMessage = HM_Jabber.tMessage.skill
 	local szName, dwIcon = HM.GetSkillName(dwID, dwLevel)
 	HM.Debug2("#" .. dwCaster .. "#" .. arg0 .. " (" .. szName .. ", Lv" .. dwLevel .. ")")
-	if szName ~= "" and (dwIcon ~= 13 or dwID == 9007 or dwID == 53 or dwID == 54) and tMessage[szName] then
+	if szName ~= "" and (dwIcon ~= 13 or dwID == 9007 or dwID == 53 or dwID == 54 or dwID == 4097)
+		and tMessage[szName]
+	then
 		local tar, szMsg = nil, nil
 		if dwCaster == me.dwID then
 			tar = HM.GetTarget(dwTarget)
-			if bMiss then
+			if nType == 3 then
+				szMsg = tMessage[szName][_L["Prepare broken"]]
+			elseif nType == 2 then
+				szMsg = tMessage[szName][_L["Prepare"]]
+			elseif nType == 1 then
 				szMsg = tMessage[szName][_L["Be missed"]]
 			else
 				szMsg = tMessage[szName][_L["Hit"]]
 			end
 		elseif dwTarget == me.dwID then
 			tar = HM.GetTarget(dwCaster)
-			if bMiss then
+			if nType == 1 then
 				szMsg = tMessage[szName][_L["Miss"]]
 			else
 				szMsg = tMessage[szName][_L["Be hit"]]
@@ -500,17 +520,30 @@ _HM_Jabber.OnSkillHit = function(dwCaster, dwTarget, dwID, dwLevel, bMiss)
 			szMsg = string.gsub(szMsg, "%$mb", tar.szName)
 			szMsg = string.gsub(szMsg, "%$zj", me.szName)
 			szMsg = string.gsub(szMsg, "%$jn", szName)
-			if HM_Jabber.nChannelSkill2 == PLAYER_TALK_CHANNEL.WHISPER then
+			if HM_Jabber.nChannelSkill1 == PLAYER_TALK_CHANNEL.WHISPER then
 				HM.Talk(tar.szName, szMsg)
 			else
-				HM.Talk(HM_Jabber.nChannelSkill2, szMsg)
+				HM.Talk(HM_Jabber.nChannelSkill1, szMsg)
 			end
 		end
 	end
 end
 
 _HM_Jabber.OnSkillMiss = function(dwCaster, dwTarget, dwID, dwLevel)
-	_HM_Jabber.OnSkillHit(dwCaster, dwTarget, dwID, dwLevel, true)
+	_HM_Jabber.OnSkillHit(dwCaster, dwTarget, dwID, dwLevel, 1)
+end
+
+_HM_Jabber.OnSkillPrepare = function(dwID, dwLevel, nType)
+	local me = GetClientPlayer()
+	local _, dwTarget = me.GetTarget()
+	if dwTarget == 0 then
+		dwTarget = me.dwID
+	end
+	_HM_Jabber.OnSkillHit(me.dwID, dwTarget, dwID, dwLevel, nType or 2)
+end
+
+_HM_Jabber.OnSkillPrepareBroken = function(dwID, dwLevel)
+	_HM_Jabber.OnSkillPrepare(dwID, dwLevel, 3)
 end
 
 _HM_Jabber.OnPlayerDeath = function(dwID, szKiller, nFrame)
@@ -525,8 +558,8 @@ _HM_Jabber.OnPlayerDeath = function(dwID, szKiller, nFrame)
 		else
 			_HM_Jabber.nKilled2 = _HM_Jabber.nKilled2 + 1
 		end
-		if HM_Jabber.nChannelKilled2 ~= 0 then
-			nChannel = HM_Jabber.nChannelKilled2
+		if HM_Jabber.nChannelKilled1 ~= 0 then
+			nChannel = HM_Jabber.nChannelKilled1
 			if tMessage[szKiller] and tMessage[szKiller][_L["Killed"]] then
 				szMsg = tMessage[szKiller][_L["Killed"]]
 			else
@@ -544,7 +577,7 @@ _HM_Jabber.OnPlayerDeath = function(dwID, szKiller, nFrame)
 		tar = GetPlayer(dwID)
 		local szKey = _L["Kill"]
 		if szKiller == me.szName then
-			nChannel = HM_Jabber.nChannelKill2
+			nChannel = HM_Jabber.nChannelKill1
 			_HM_Jabber.nKill = _HM_Jabber.nKill + 1
 			if tar then
 				-- camp
@@ -564,7 +597,7 @@ _HM_Jabber.OnPlayerDeath = function(dwID, szKiller, nFrame)
 			end
 		else
 			_HM_Jabber.nAssist = _HM_Jabber.nAssist + 1
-			nChannel = HM_Jabber.nChannelAssist2
+			nChannel = HM_Jabber.nChannelAssist1
 			szKey = _L["Assist kill"]
 		end
 		if nChannel ~= 0 and tar then
@@ -609,6 +642,9 @@ _HM_Jabber.OnCheckJabber = function()
 		_HM_Jabber.dwDuelID = nil
 	elseif arg0 == "UI_OME_START_DUEL" then
 		_HM_Jabber.dwDuelID = arg1
+	elseif arg0 == "UI_OME_SKILL_CAST_LOG" and arg1 == GetClientPlayer().dwID then
+		_HM_Jabber.OnSkillPrepare(arg2, arg3)
+		_HM_Jabber.dwPrepareID, _HM_Jabber.dwPrepareLevel = arg2, arg3
 	elseif arg0 == "UI_OME_SKILL_HIT_LOG" and arg3 == SKILL_EFFECT_TYPE.SKILL then
 		_HM_Jabber.OnSkillHit(arg1, arg2, arg4, arg5)
 	elseif arg0 == "UI_OME_SKILL_EFFECT_LOG" and arg4 == SKILL_EFFECT_TYPE.SKILL then
@@ -620,6 +656,12 @@ _HM_Jabber.OnCheckJabber = function()
 		_HM_Jabber.OnSkillMiss(arg1, arg2, arg4, arg5)
 	elseif arg0 == "UI_OME_DEATH_NOTIFY" then
 		_HM_Jabber.OnPlayerDeath(arg1, arg3, arg2)
+	end
+end
+
+_HM_Jabber.OnActionBreak = function()
+	if _HM_Jabber.dwPrepareID and arg0 == GetClientPlayer().dwID then
+		_HM_Jabber.OnSkillPrepareBroken(_HM_Jabber.dwPrepareID, _HM_Jabber.dwPrepareLevel)
 	end
 end
 
@@ -645,30 +687,30 @@ _HM_Jabber.PS.OnPanelActive = function(frame)
 	-- kill player
 	nX = ui:Append("Text", { txt = _L["Select kill channel"], x = 10, y = 28 }):Pos_()
 	nX = ui:Append("WndComboBox", "Combo_Kill", { x = nX + 5, y = 30, w = 120, h = 25 })
-	:Text(_GetName(HM_Jabber.nChannelKill2)):Color(unpack(_GetColor(HM_Jabber.nChannelKill2)))
+	:Text(_GetName(HM_Jabber.nChannelKill1)):Color(unpack(_GetColor(HM_Jabber.nChannelKill1)))
 	:Menu(function()
-		return _GetMenu(HM_Jabber.nChannelKill2, function(nChannel)
-			HM_Jabber.nChannelKill2 = nChannel
+		return _GetMenu(HM_Jabber.nChannelKill1, function(nChannel)
+			HM_Jabber.nChannelKill1 = nChannel
 			ui:Fetch("Combo_Kill"):Text(_GetName(nChannel)):Color(unpack(_GetColor(nChannel)))
 		end, true)
 	end):Pos_()
 	-- be killed
 	nX = ui:Append("Text", { txt = _L["Killed"], x = nX + 20, y = 28 }):Pos_()
 	nX = ui:Append("WndComboBox", "Combo_Killed", { x = nX + 5, y = 30, w = 120, h = 25 })
-	:Text(_GetName(HM_Jabber.nChannelKilled2)):Color(unpack(_GetColor(HM_Jabber.nChannelKilled2)))
+	:Text(_GetName(HM_Jabber.nChannelKilled1)):Color(unpack(_GetColor(HM_Jabber.nChannelKilled1)))
 	:Menu(function()
-		return _GetMenu(HM_Jabber.nChannelKilled2, function(nChannel)
-			HM_Jabber.nChannelKilled2 = nChannel
+		return _GetMenu(HM_Jabber.nChannelKilled1, function(nChannel)
+			HM_Jabber.nChannelKilled1 = nChannel
 			ui:Fetch("Combo_Killed"):Text(_GetName(nChannel)):Color(unpack(_GetColor(nChannel)))
 		end, true)
 	end)
 	-- assist kill
 	nX = ui:Append("Text", { txt = _L["Assit kill channel"], x = 10, y = 58 }):Pos_()
 	nX = ui:Append("WndComboBox", "Combo_Assist", { x = nX + 5, y = 60, w = 120, h = 25 })
-	:Text(_GetName(HM_Jabber.nChannelAssist2)):Color(unpack(_GetColor(HM_Jabber.nChannelAssist2)))
+	:Text(_GetName(HM_Jabber.nChannelAssist1)):Color(unpack(_GetColor(HM_Jabber.nChannelAssist1)))
 	:Enable(not HM.IsDps()):Menu(function()
-		return _GetMenu(HM_Jabber.nChannelAssist2, function(nChannel)
-			HM_Jabber.nChannelAssist2 = nChannel
+		return _GetMenu(HM_Jabber.nChannelAssist1, function(nChannel)
+			HM_Jabber.nChannelAssist1 = nChannel
 			ui:Fetch("Combo_Assist"):Text(_GetName(nChannel)):Color(unpack(_GetColor(nChannel)))
 		end, true)
 	end):Pos_()
@@ -687,10 +729,10 @@ _HM_Jabber.PS.OnPanelActive = function(frame)
 	ui:Append("Text", { txt = _L["Skill saying"], font = 27, x = 0, y = 126 })
 	nX = ui:Append("Text", { txt = _L["Select skill saying channel"], x = 10, y = 154 }):Pos_()
 	ui:Append("WndComboBox", "Combo_Skill", { x = nX + 5, y = 154, w = 120, h = 25 })
-	:Text(_GetName(HM_Jabber.nChannelSkill2)):Color(unpack(_GetColor(HM_Jabber.nChannelSkill2)))
+	:Text(_GetName(HM_Jabber.nChannelSkill1)):Color(unpack(_GetColor(HM_Jabber.nChannelSkill1)))
 	:Menu(function()
-		return _GetMenu(HM_Jabber.nChannelSkill2, function(nChannel)
-			HM_Jabber.nChannelSkill2 = nChannel
+		return _GetMenu(HM_Jabber.nChannelSkill1, function(nChannel)
+			HM_Jabber.nChannelSkill1 = nChannel
 			ui:Fetch("Combo_Skill"):Text(_GetName(nChannel)):Color(unpack(_GetColor(nChannel)))
 		end, true)
 	end)
@@ -772,6 +814,7 @@ end
 -- 注册事件、初始化
 ---------------------------------------------------------------------
 HM.RegisterEvent("SYS_MSG", _HM_Jabber.OnCheckJabber)
+HM.RegisterEvent("OT_ACTION_PROGRESS_BREAK", _HM_Jabber.OnActionBreak)
 HM.RegisterEvent("LOADING_END", _HM_Jabber.OnLoadingEnd)
 
 -- add to HM panel
