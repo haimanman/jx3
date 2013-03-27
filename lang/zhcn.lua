@@ -1,4 +1,4 @@
--- language data (zhcn) updated at 2012/12/13 21:06:10
+-- language data (zhcn) updated at 2013/03/28 00:30:30
 data = {
 	-- HM.lua --
 	["HM, JX3 Plug-in Collection"] = "海鳗、实用插件集",
@@ -574,7 +574,7 @@ data = {
 	["Keep foucs in list"] = "列表中保留焦点目标",
 	["Use white text in list"] = "列表采用白色字体",
 	["[Custom]"] = "[自]",
-	["Total: "] = "总：",
+	--["Total: "] = "总：",
 	["Arean begin!!!"] = "竞技场开始!!!",
 	["Show focus target"] = "显示焦点目标",
 	["Show target list"] = "显示目标列表",
@@ -601,6 +601,10 @@ data = {
 	["HM, focus targetlist"] = "海鳗焦点列表",
 	["HM Focus, TargetList"] = "海鳗焦点、目标列表",
 	["Arean ongoing: "] = "竞技场进行中：",
+	["Display the latest focus alone"] = "独立显示最新焦点",
+	["List: live/total num"] = "列表：活人/总数",
+	["Click to show nearby player statistics"] = "点击可发布列表人数统计",
+	["HM, focus alone"] = "海鳗独立焦点",
 	-- HM_TargetMon.lua --
 	["Call pet"] = "召唤宠物",
 	["Invincible"] = "无敌",

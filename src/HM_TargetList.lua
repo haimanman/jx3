@@ -94,7 +94,10 @@ local _HM_TargetList = {
 _HM_TargetList.GetFocusMenu = function()
 	local n = HM_TargetList.nMaxFocus
 	return {
-		{ szOption = _L["Show move state/buff"],
+		{ szOption = _L["Display the latest focus alone"], rgb = { 255, 126, 126 },
+			bCheck = true, bChecked = HM_SingleFocus.bEnable,
+			fnAction = function(d, b) HM_SingleFocus.Switch(b) end
+		}, { szOption = _L["Show move state/buff"],
 			bCheck = true, bChecked = HM_TargetList.bFocusState,
 			fnDisable = function() return not HM_TargetList.bShowFocus end,
 			fnAction = function() HM_TargetList.bFocusState = not HM_TargetList.bFocusState end
@@ -475,13 +478,41 @@ _HM_TargetList.UpdateFocusItem = function(h, tar)
 	end
 	-- update slect image
 	local _, tarID = me.GetTarget()
-	if tarID == tar.dwID then
+	if tarID == tar.dwID and not h.alone then
 		local hTotal = _HM_TargetList.frame:Lookup("Wnd_Focus"):Lookup("", "")
 		local hOver = hTotal:Lookup("Image_FSelect")
 		hOver:SetRelPos(0, h:GetIndex() * 63 - 3)
 		hOver:Show()
 		hTotal:FormatAllItemPos()
 	end
+end
+
+-- create focus item
+_HM_TargetList.NewFocusItem = function(handle, dwID)
+	local h
+	if HM_TargetList.bFocusOld then
+		h = handle:AppendItemFromIni(_HM_TargetList.szIniFile2, "Handle_Focuser", "Focus_" .. dwID)
+	else
+		h = handle:AppendItemFromIni(_HM_TargetList.szIniFile, "Handle_Focuser", "Focus_" .. dwID)
+	end
+	local box = h:Lookup("Box_State")
+	box:SetOverTextFontScheme(0, 15)
+	box:SetOverTextFontScheme(1, 16)
+	box:SetOverTextPosition(1, 3)
+	box:SetObject(UI_OBJECT_NOT_NEED_KNOWN, 0)
+	box.OnItemMouseEnter = function()
+		this:SetObjectMouseOver(1)
+		if this.dwID then
+			local x, y = this:GetAbsPos()
+			local w, h = this:GetSize()
+			OutputBuffTip(this.dwOwner, this.dwID, this.nLevel, 1, false, 0, { x, y, w, h })
+		end
+	end
+	box.OnItemMouseLeave = function()
+		this:SetObjectMouseOver(0)
+		HideTip()
+	end
+	return h
 end
 
 -- update focus items
@@ -512,29 +543,7 @@ _HM_TargetList.UpdateFocusItems = function(handle)
 	end
 	-- new list
 	for _, v in pairs(tFocus) do
-		local h
-		if HM_TargetList.bFocusOld then
-			h = handle:AppendItemFromIni(_HM_TargetList.szIniFile2, "Handle_Focuser", "Focus_" .. v.dwID)
-		else
-			h = handle:AppendItemFromIni(_HM_TargetList.szIniFile, "Handle_Focuser", "Focus_" .. v.dwID)
-		end
-		local box = h:Lookup("Box_State")
-		box:SetOverTextFontScheme(0, 15)
-		box:SetOverTextFontScheme(1, 16)
-		box:SetOverTextPosition(1, 3)
-		box:SetObject(UI_OBJECT_NOT_NEED_KNOWN, 0)
-		box.OnItemMouseEnter = function()
-			this:SetObjectMouseOver(1)
-			if this.dwID then
-				local x, y = this:GetAbsPos()
-				local w, h = this:GetSize()
-				OutputBuffTip(this.dwOwner, this.dwID, this.nLevel, 1, false, 0, { x, y, w, h })
-			end
-		end
-		box.OnItemMouseLeave = function()
-			this:SetObjectMouseOver(0)
-			HideTip()
-		end
+		local h = _HM_TargetList.NewFocusItem(handle, v.dwID)
 		h.dwID, h.szName = v.dwID, v.szName
 		h:Show()
 		_HM_TargetList.UpdateFocusItem(h, v)
@@ -948,7 +957,7 @@ _HM_TargetList.UpdateListItems = function(handle)
 		table.sort(aItem, _HM_TargetList.ListItemCompare)
 	end
 	-- sync list
-	local nCount, nSelect, tarID = handle:GetItemCount(), 0, 0
+	local nCount, nSelect, tarID, nLive = handle:GetItemCount(), 0, 0, 0
 	if #aItem > 0 then
 		_, tarID = me.GetTarget()
 	end
@@ -978,12 +987,15 @@ _HM_TargetList.UpdateListItems = function(handle)
 		if v.dwID == tarID then
 			nSelect = k
 		end
+		if v.nMoveState ~= MOVE_STATE.ON_DEATH then
+			nLive = nLive + 1
+		end
 	end
 	for i = nCount - 1, #aItem, -1 do
 		handle:RemoveItem(i)
 	end
 	-- update count
-	handle:GetParent():Lookup("Text_LCount"):SetText(_L["Total: "] .. #aItem)
+	handle:GetParent():Lookup("Text_LCount"):SetText(nLive .. "/" .. #aItem)
 	-- update active
 	local hSel = handle:GetParent():Lookup("Image_LSelect")
 	hSel:Hide()
@@ -1285,7 +1297,7 @@ HM_TargetList.OnItemMouseEnter = function()
 			this = hMana:GetParent()
 		end
 	end
-	if this.dwID then
+	if this.dwID and not this.alone then
 		if this.bList then
 			local hTotal = _HM_TargetList.frame:Lookup("Wnd_List"):Lookup("", "")
 			local hOver = hTotal:Lookup("Image_LOver")
@@ -1300,6 +1312,11 @@ HM_TargetList.OnItemMouseEnter = function()
 			hOver:Show()
 			hTotal:FormatAllItemPos()
 		end
+	elseif szName == "Text_LCount" then
+		local nX, nY = this:GetAbsPos()
+		local nW, nH = this:GetSize()
+		local szTip = GetFormatText("<" .. _L["List: live/total num"] .. ">\n", 101) .. GetFormatText(_L["Click to show nearby player statistics"], 106)
+		OutputTip(szTip, 400, {nX, nY, nW, nH})
 	end
 end
 
@@ -1313,12 +1330,14 @@ HM_TargetList.OnItemMouseLeave = function()
 			this = hMana:GetParent()
 		end
 	end
-	if this.dwID then
+	if this.dwID and not this.alone then
 		if this.bList then
 			this:GetParent():GetParent():Lookup("Image_LOver"):Hide()
 		else
 			this:GetParent():GetParent():Lookup("Image_FOver"):Hide()
 		end
+	elseif szName == "Text_LCount" then
+		HideTip()
 	end
 end
 
@@ -1411,6 +1430,122 @@ HM_TargetList.OnItemMouseWheel = function()
 end
 
 ---------------------------------------------------------------------
+-- 独立焦点窗口 （asked by 海尕尕）
+---------------------------------------------------------------------
+HM_SingleFocus = {
+	bEnable = true,	-- 是否开启
+	tAnchor = {},		-- 窗体位置
+}
+RegisterCustomData("HM_SingleFocus.bEnable")
+RegisterCustomData("HM_SingleFocus.tAnchor")
+
+-- update size/pos
+HM_SingleFocus.UpdateAnchor = function(frame)
+	local a = HM_SingleFocus.tAnchor
+	if not IsEmpty(a) then
+		frame:SetPoint(a.s, 0, 0, a.r, a.x, a.y)
+	else
+		frame:SetPoint("CENTER", 0, 0, "CENTER", -200, -70)
+	end
+	frame:CorrectPos()
+end
+
+-- attach callback
+for _, v in ipairs({"MouseEnter", "MouseLeave", "LButtonDown", "RButtonDown", "LButtonDBClick" }) do
+	local k = "OnItem" .. v
+	HM_SingleFocus[k] = HM_TargetList[k]
+end
+
+-- init frame
+HM_SingleFocus.OnFrameCreate = function()
+	-- clear old
+	local handle = this:Lookup("", "")
+	handle:Clear()
+	-- create element
+	this.focus = _HM_TargetList.NewFocusItem(handle, 0)
+	this.focus.alone = true
+	this.focus:SetRelPos(0, 0)
+	handle:SetSize(this.focus:GetSize())
+	this:SetSize(this.focus:GetSize())
+	handle:FormatAllItemPos()
+	-- fetch first focus
+	for _, v in ipairs(_HM_TargetList.tFocus) do
+		if HM.GetTarget(v) then
+			this.focus.dwID = v
+			break
+		end
+	end
+	-- adjust custom
+	UpdateCustomModeWindow(this, _L["HM, focus alone"])
+	HM_SingleFocus.UpdateAnchor(this)
+	-- events
+	this:RegisterEvent("ON_ENTER_CUSTOM_UI_MODE")
+	this:RegisterEvent("ON_LEAVE_CUSTOM_UI_MODE")
+	this:RegisterEvent("UI_SCALED")
+	this:RegisterEvent("HM_ADD_FOCUS_TARGET")
+	this:RegisterEvent("HM_DEL_FOCUS_TARGET")
+end
+
+-- breathe frame
+HM_SingleFocus.OnFrameBreathe = function()
+	if not GetClientPlayer() or not this.focus then
+		return
+	end
+	if not this.focus.dwID then
+		return this.focus:Hide()
+	end
+	local nFrame = GetLogicFrameCount()
+	if not this.nFrame or (nFrame - this.nFrame) > 1 then
+		local tar = HM.GetTarget(this.focus.dwID)
+		if not tar then
+			this.nFrame = nFrame + 8
+			this.focus:Hide()
+		else
+			this.nFrame = nFrame
+			_HM_TargetList.UpdateFocusItem(this.focus, tar)
+			this.focus.szName = tar.szName
+			this.focus:Show()
+		end
+	end
+end
+
+-- drag end
+HM_SingleFocus.OnFrameDragEnd = function()
+	this:CorrectPos()
+	HM_SingleFocus.tAnchor = GetFrameAnchor(this)
+end
+
+-- events
+HM_SingleFocus.OnEvent = function(event)
+	if event == "ON_ENTER_CUSTOM_UI_MODE" or event == "ON_LEAVE_CUSTOM_UI_MODE" then
+		UpdateCustomModeWindow(this)
+	elseif event == "UI_SCALED" then
+		HM_SingleFocus.UpdateAnchor(this)
+	elseif event == "HM_ADD_FOCUS_TARGET" and this.focus then
+		this.focus.dwID = arg0
+	elseif event == "HM_DEL_FOCUS_TARGET" and this.focus and arg0 == this.focus.dwID then
+		this.focus.dwID = nil
+	end
+end
+
+-- switch
+HM_SingleFocus.Switch = function(bEnable)
+	if bEnable ~= nil then
+		HM_SingleFocus.bEnable = bEnable
+	else
+		HM_SingleFocus.bEnable = not HM_SingleFocus.bEnable
+	end
+	local frame = Station.Lookup("Normal/HM_SingleFocus")
+	if not HM_SingleFocus.bEnable then
+		if frame then
+			Wnd.CloseWindow(frame)
+		end
+	elseif not frame then
+		Wnd.OpenWindow("interface\\HM\\ui\\HM_TargetMon.ini", "HM_SingleFocus")
+	end
+end
+
+---------------------------------------------------------------------
 -- 设置界面
 ---------------------------------------------------------------------
 _HM_TargetList.PS = {}
@@ -1467,6 +1602,7 @@ end
 HM.RegisterEvent("PLAYER_ENTER_GAME", function()
 	_HM_TargetList.Switch(HM_TargetList.bShow)
 	_HM_TargetList.HookTargetMenu()
+	HM_SingleFocus.Switch(HM_SingleFocus.bEnable)
 end)
 HM.RegisterEvent("LOADING_END", function()
 	_HM_TargetList.bInArena = IsInArena()
