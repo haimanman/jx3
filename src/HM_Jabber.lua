@@ -493,7 +493,7 @@ _HM_Jabber.OnSkillHit = function(dwCaster, dwTarget, dwID, dwLevel, nType)
 	local tMessage = HM_Jabber.tMessage.skill
 	local szName, dwIcon = HM.GetSkillName(dwID, dwLevel)
 	HM.Debug2("#" .. dwCaster .. "#" .. arg0 .. " (" .. szName .. ", Lv" .. dwLevel .. ")")
-	if szName ~= "" and (dwIcon ~= 13 or dwID == 9007 or dwID == 53 or dwID == 54 or dwID == 4097)
+	if szName ~= "" and (dwIcon ~= 13 or dwID == 9007 or dwID == 53 or dwID == 54 or dwID == 4097 or dwID == 3691)
 		and tMessage[szName]
 	then
 		local tar, szMsg = nil, nil
