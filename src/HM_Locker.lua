@@ -64,7 +64,7 @@ end
 -- check lock fight
 _HM_Locker.CheckLockFight = function(dwCurID, dwLastID)
 	local me = GetClientPlayer()
-	if HM_Locker.bLockFight and dwCurID == 0 and me.bFightState then
+	if HM_Locker.bLockFight and dwCurID == 0 and me.bFightState and me.nMoveState ~= MOVE_STATE.ON_JUMP then
 		local nFrame = GetLogicFrameCount()
 		if HM.IsDps(me) then
 			if IsEnemy(me.dwID, dwLastID) then
