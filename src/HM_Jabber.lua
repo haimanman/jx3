@@ -483,7 +483,9 @@ end
 ---------------------------------------------------------------------
 _HM_Jabber.OnSkillHit = function(dwCaster, dwTarget, dwID, dwLevel, nType)
 	local me = GetClientPlayer()
-	_HM_Jabber.dwPrepareID, _HM_Jabber.dwPrepareLevel = nil, nil		-- clear prepare data
+	if dwID == _HM_Jabber.dwPrepareID then
+		_HM_Jabber.dwPrepareID, _HM_Jabber.dwPrepareLevel = nil, nil		-- clear prepare data
+	end
 	if HM_Jabber.nChannelSkill1 == 0 or not me then
 		return
 	end
