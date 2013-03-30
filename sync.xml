@@ -2,7 +2,7 @@
 <jx3:hm xmlns:jx3="http://haimanchajian.com">
   <name><![CDATA[海鳗、插件集]]></name>
   <desc><![CDATA[大量非常方便的 PVP 插件！ --== 海缦缦@步莲台 ==--]]></desc>
-  <version dword="0x2000c00">2.0.12</version>
+  <version dword="0x2000d01">2.0.13b1</version>
   <clientVersion dword="0x10000">1.0beta</clientVersion>
   <urlPrefix>http://jx3.hightman.cn/sync/HM/</urlPrefix>
   <info>
@@ -13,8 +13,8 @@
     <file size="6270" title="娱乐聊天、个人数据发布">src/HM_Ent.lua</file>
     <file size="11727" title="天策技能栏、纯阳气场/剑舞、一键小轻功">src/HM_Force.lua</file>
     <file size="10171" title="醒目显示团队蛊鼎位置、条件触发自动吃鼎">src/HM_Guding.lua</file>
-    <file size="29793" title="玩家斩杀喊话及统计、技能喊话、自动喊话">src/HM_Jabber.lua</file>
-    <file size="13439" title="目标锁定和选择、虎跑时锁定目标、只TAB玩家">src/HM_Locker.lua</file>
+    <file size="29857" title="玩家斩杀喊话及统计、技能喊话、自动喊话">src/HM_Jabber.lua</file>
+    <file size="13479" title="目标锁定和选择、虎跑时锁定目标、只TAB玩家">src/HM_Locker.lua</file>
     <file size="20545" title="团队标记快速选择、集火">src/HM_Marker.lua</file>
     <file size="4812" title="PVP斩杀音效、文字特效">src/HM_PVPSound2.lua</file>
     <file size="25096" title="小地图红名标记、身边玩家统计及共享">src/HM_RedName.lua</file>
@@ -31,7 +31,7 @@
     <file size="22464">API.md</file>
     <file size="19630">CHANGELOG.txt</file>
     <file size="2874">LICENSE.txt</file>
-    <file size="2071">README.md</file>
+    <file size="2073">README.md</file>
     <file size="16741">hero/female_cont_1.wav</file>
     <file size="19746">hero/female_cont_2.wav</file>
     <file size="15476">hero/female_normal_1.wav</file>
@@ -40,13 +40,13 @@
     <file size="15318">hero/male_cont_2.wav</file>
     <file size="8834">hero/male_normal_1.wav</file>
     <file size="18797">hero/male_normal_2.wav</file>
-    <file size="973">info.ini</file>
+    <file size="975">info.ini</file>
     <file size="351">lang/default.lua</file>
     <file size="37797">lang/zhcn.lua</file>
     <file size="43725">lang/zhkr.lua</file>
     <file size="42216">lang/zhtw.lua</file>
     <file size="73741">src/HM.lua</file>
-    <file size="7884">src/HM_About.lua</file>
+    <file size="7674">src/HM_About.lua</file>
     <file size="16322">src/HM_Compatible.lua</file>
     <file size="5261">ui/HM.ini</file>
     <file size="811">ui/HM_Area.ini</file>
