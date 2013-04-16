@@ -26,7 +26,7 @@ em { color: red; font-style: normal; }
 <h2>使用说明、操作步骤（请务必认真阅读）</h2>
 <ol>
  <li>
-   <h3>下载：<a href="jx3_repack.zip" target="_blank">jx3_repack.zip</a>（ZIP 压缩约 40KB，<a href="javascript:void(alert('抱歉，尚在犹豫要不要提供！'))">查看源码</a>）</h3>
+   <h3>下载：<a href="jx3_repack.zip" target="_blank">jx3_repack.zip</a>（ZIP 压缩约 39KB，<a href="javascript:void(alert('抱歉，尚在犹豫要不要提供！'))">查看源码</a>）</h3>
    <p>
      然后解压到游戏主目录，得到如下图所示的两个工具程序：<br />
 	 <img src="repack_1.jpg" />
@@ -49,15 +49,16 @@ em { color: red; font-style: normal; }
    <h3>万一出错或中断了怎么恢复？（请按步骤往下看即可）</h3>
    <ol type="I">
      <li>检查 <code>bin/zhcn/package_bak.ini</code> 如果存在，则将其改名为 <code>package.ini</code> 并取代原文件。</li>
-	 <li>删除 <code>pak</code> 目录下所有的：<code>repack_*.pak</code> 和 <code>__tmp_*.pak</code> 文件</li>
+	 <li>删除 <code>pak</code> 目录下所有的：<code>update_re_*.pak</code> 和 <code>__tmp_*.pak</code> 文件</li>
 	 <li>这样差不多就可以了，原有游戏可以正常继续玩。如果还想清理请从第 2 步重新操作。</li>
+	 <li>如果依然无法玩游戏，那么您只好先备份 <code>bin/zhcn/userdata</code>，<code>bin/zhcn/interface</code>，<code>bin/zhcn/ScreenShot</code> 然后重新拷贝或安装游戏，再还原这三个备份目录。</p>
    </ol>
  </li>
  <li>
    <h3>操作成功后，还要做些什么？（手动删除原 PAK 文件）</h3>
    <ol type="I">
      <li>先尝试进入游戏，如果不能进入请按上面的步骤恢复。</li>
-	 <li>手动删除原有 <code>pak</code> 目录下所有非 repack_ 开头的 PAK 文件。
+	 <li>手动删除原有 <code>pak</code> 目录下所有非 <code>update_re_</code> 开头的 PAK 文件。
 	 （<em>慎重！请确认可以正常玩游戏后再删除。</em>）</li>
    </ol>
  </li>
