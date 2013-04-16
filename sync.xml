@@ -2,7 +2,7 @@
 <jx3:hm xmlns:jx3="http://haimanchajian.com">
   <name><![CDATA[海鳗、插件集]]></name>
   <desc><![CDATA[大量非常方便的 PVP 插件！ --== 海缦缦@步莲台 ==--]]></desc>
-  <version dword="0x2000d01">2.0.13b1</version>
+  <version dword="0x2000e00">2.0.14</version>
   <clientVersion dword="0x10000">1.0beta</clientVersion>
   <urlPrefix>http://jx3.hightman.cn/sync/HM/</urlPrefix>
   <info>
@@ -31,7 +31,7 @@
     <file size="22464">API.md</file>
     <file size="19630">CHANGELOG.txt</file>
     <file size="2874">LICENSE.txt</file>
-    <file size="2073">README.md</file>
+    <file size="2071">README.md</file>
     <file size="16741">hero/female_cont_1.wav</file>
     <file size="19746">hero/female_cont_2.wav</file>
     <file size="15476">hero/female_normal_1.wav</file>
@@ -40,13 +40,13 @@
     <file size="15318">hero/male_cont_2.wav</file>
     <file size="8834">hero/male_normal_1.wav</file>
     <file size="18797">hero/male_normal_2.wav</file>
-    <file size="975">info.ini</file>
+    <file size="973">info.ini</file>
     <file size="351">lang/default.lua</file>
-    <file size="37797">lang/zhcn.lua</file>
+    <file size="37795">lang/zhcn.lua</file>
     <file size="43725">lang/zhkr.lua</file>
     <file size="42216">lang/zhtw.lua</file>
     <file size="73741">src/HM.lua</file>
-    <file size="7674">src/HM_About.lua</file>
+    <file size="7686">src/HM_About.lua</file>
     <file size="16322">src/HM_Compatible.lua</file>
     <file size="5261">ui/HM.ini</file>
     <file size="811">ui/HM_Area.ini</file>
