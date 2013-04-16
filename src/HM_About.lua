@@ -157,12 +157,14 @@ end
 ---------------------------------------------------------------------
 -- 注册事件、初始化
 ---------------------------------------------------------------------
+--[[
 HM.RegisterEvent("LOADING_END", function()
 	if not _HM_About.bChecked then
 		_HM_About.CheckLocalDeny()
 		_HM_About.bChecked = true
 	end
 end)
+--]]
 HM.RegisterEvent("CALL_LUA_ERROR", function()
 	if HM_About.bDebug then
 		OutputMessage("MSG_SYS", arg0)
