@@ -398,14 +398,19 @@ static void repack_file(int fd)
 	info = old_info = (struct XPackIndexInfo *) (buf + hdr->uIndexTableOffset);
 #else
 	hdr = (struct XPackFileHeader *) malloc(sizeof(struct XPackFileHeader));
-	info = old_info = malloc(sizeof(struct XPackIndexInfo) * hdr->uCount);
-	if (hdr == NULL || old_info == NULL)
+	if (hdr == NULL)
 	{
 		ECHO("Ê§°Ü£¬ÄÚ´æ²»×ã1£¡\n");
 		goto re_end;
 	}
 	lseek(fd, 0, SEEK_SET);
 	read(fd, hdr, sizeof(struct XPackFileHeader));
+	info = old_info = malloc(sizeof(struct XPackIndexInfo) * hdr->uCount);
+	if (old_info == NULL)
+	{
+		ECHO("Ê§°Ü£¬ÄÚ´æ²»×ã11£¡\n");
+		goto re_end;
+	}
 	lseek(fd, hdr->uIndexTableOffset, SEEK_SET);
 	read(fd, old_info, sizeof(struct XPackIndexInfo) * hdr->uCount);
 #endif
