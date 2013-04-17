@@ -89,7 +89,7 @@ $modules = array(
 	'src/HM_Roll.lua' => '团队 ROLL 点娱乐、自动记录胜负',
 	'src/HM_Suit2.lua' => '可共享部位的快速脱换装助手、橙武必备',
 	'src/HM_ToolBox.lua' => '自动修装备、卖灰色、自动采集和确认、一键交易行',
-	'lab/HM_Taoguan.lua' => '新年活动智能砸年兽陶罐',
+	//'lab/HM_Taoguan.lua' => '新年活动智能砸年兽陶罐',
 );
 
 $version = trim(file_get_contents('VERSION'));
