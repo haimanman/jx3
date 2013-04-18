@@ -127,7 +127,7 @@ $info = trim($info);
 $resource = trim($resource);
 
 $name = '海鳗、插件集';
-$desc = '大量非常方便的 PVP 插件！ --== 海缦缦@步莲台 ==--';
+$desc = '大量非常方便的 PVP 插件！ --== 海鳗鳗@步莲台 ==--';
 
 $content = <<<EOF
 <?xml version="1.0" encoding="utf-8" ?>

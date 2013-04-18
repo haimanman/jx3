@@ -537,6 +537,8 @@ int main(int argc, char *argv[])
 	// process files
 	strcpy(fpath, pak_root);
 	ptr = fpath + strlen(fpath);
+	if (ptr[-1] != '\\' && ptr[-1] != '/')
+		*ptr++ = '\\';
 	ECHO("¼ì²âµ½ PAK Ä¿Â¼: %s\n¼ì²âµ½ PAK ÅäÖÃ: %s\n", pak_root, pak_ini);
 	for (old_tail = old_head; old_tail != NULL; old_tail = old_tail->next)
 	{
