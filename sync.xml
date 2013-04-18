@@ -2,7 +2,7 @@
 <jx3:hm xmlns:jx3="http://haimanchajian.com">
   <name><![CDATA[海鳗、插件集]]></name>
   <desc><![CDATA[大量非常方便的 PVP 插件！ --== 海鳗鳗@步莲台 ==--]]></desc>
-  <version dword="0x2000e00">2.0.14</version>
+  <version dword="0x2000f01">2.0.15b1</version>
   <clientVersion dword="0x10000">1.0beta</clientVersion>
   <urlPrefix>http://jx3.hightman.cn/sync/HM/</urlPrefix>
   <info>
@@ -21,7 +21,7 @@
     <file size="8578" title="可共享部位的快速脱换装助手、橙武必备">src/HM_Suit2.lua</file>
     <file size="40282" title="目标增强、BUFF放大、方向指示及连接线">src/HM_Target.lua</file>
     <file size="9069" title="目标和焦点的脚底面向及圈圈指示">src/HM_TargetFace.lua</file>
-    <file size="52928" title="多焦点目标、目标列表、定制筛选排序">src/HM_TargetList.lua</file>
+    <file size="53022" title="多焦点目标、目标列表、定制筛选排序">src/HM_TargetList.lua</file>
     <file size="35366" title="目标技能CD监控、超大显示特殊BUFF">src/HM_TargetMon.lua</file>
     <file size="17136" title="团队列表保存与还原、团队快速标记">src/HM_Team.lua</file>
     <file size="12419" title="自动修装备、卖灰色、自动采集和确认、一键交易行">src/HM_ToolBox.lua</file>
@@ -30,7 +30,7 @@
     <file size="22464">API.md</file>
     <file size="19630">CHANGELOG.txt</file>
     <file size="2874">LICENSE.txt</file>
-    <file size="2071">README.md</file>
+    <file size="2073">README.md</file>
     <file size="16741">hero/female_cont_1.wav</file>
     <file size="19746">hero/female_cont_2.wav</file>
     <file size="15476">hero/female_normal_1.wav</file>
@@ -39,7 +39,7 @@
     <file size="15318">hero/male_cont_2.wav</file>
     <file size="8834">hero/male_normal_1.wav</file>
     <file size="18797">hero/male_normal_2.wav</file>
-    <file size="973">info.ini</file>
+    <file size="975">info.ini</file>
     <file size="10445">lab/HM_Taoguan.lua</file>
     <file size="351">lang/default.lua</file>
     <file size="37795">lang/zhcn.lua</file>
