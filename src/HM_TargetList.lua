@@ -1484,6 +1484,7 @@ HM_SingleFocus.OnFrameCreate = function()
 	this:RegisterEvent("UI_SCALED")
 	this:RegisterEvent("HM_ADD_FOCUS_TARGET")
 	this:RegisterEvent("HM_DEL_FOCUS_TARGET")
+	this:RegisterEvent("LOADING_END")
 end
 
 -- breathe frame
@@ -1525,6 +1526,8 @@ HM_SingleFocus.OnEvent = function(event)
 		this.focus.dwID = arg0
 	elseif event == "HM_DEL_FOCUS_TARGET" and this.focus and arg0 == this.focus.dwID then
 		this.focus.dwID = nil
+	elseif event == "LOADING_END" then
+		this.nFrame = nil
 	end
 end
 
