@@ -95,7 +95,7 @@ _HM_TargetList.GetFocusMenu = function()
 	local n = HM_TargetList.nMaxFocus
 	return {
 		{ szOption = _L["Display the latest focus alone"], rgb = { 255, 126, 126 },
-			bCheck = true, bChecked = HM_SingleFocus.bEnable,
+			bCheck = true, bChecked = HM_SingleFocus.bEnable2,
 			fnAction = function(d, b) HM_SingleFocus.Switch(b) end
 		}, { szOption = _L["Show move state/buff"],
 			bCheck = true, bChecked = HM_TargetList.bFocusState,
@@ -1433,10 +1433,10 @@ end
 -- 独立焦点窗口 （asked by 海尕尕）
 ---------------------------------------------------------------------
 HM_SingleFocus = {
-	bEnable = true,	-- 是否开启
+	bEnable2 = false,	-- 是否开启
 	tAnchor = {},		-- 窗体位置
 }
-RegisterCustomData("HM_SingleFocus.bEnable")
+RegisterCustomData("HM_SingleFocus.bEnable2")
 RegisterCustomData("HM_SingleFocus.tAnchor")
 
 -- update size/pos
@@ -1534,12 +1534,12 @@ end
 -- switch
 HM_SingleFocus.Switch = function(bEnable)
 	if bEnable ~= nil then
-		HM_SingleFocus.bEnable = bEnable
+		HM_SingleFocus.bEnable2 = bEnable
 	else
-		HM_SingleFocus.bEnable = not HM_SingleFocus.bEnable
+		HM_SingleFocus.bEnable2 = not HM_SingleFocus.bEnable2
 	end
 	local frame = Station.Lookup("Normal/HM_SingleFocus")
-	if not HM_SingleFocus.bEnable then
+	if not HM_SingleFocus.bEnable2 then
 		if frame then
 			Wnd.CloseWindow(frame)
 		end
@@ -1605,7 +1605,7 @@ end
 HM.RegisterEvent("PLAYER_ENTER_GAME", function()
 	_HM_TargetList.Switch(HM_TargetList.bShow)
 	_HM_TargetList.HookTargetMenu()
-	HM_SingleFocus.Switch(HM_SingleFocus.bEnable)
+	HM_SingleFocus.Switch(HM_SingleFocus.bEnable2)
 end)
 HM.RegisterEvent("LOADING_END", function()
 	_HM_TargetList.bInArena = IsInArena()

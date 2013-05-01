@@ -81,6 +81,7 @@ _HM_About.CheckTarEx = function(tar, bTong)
 	if _HM_About.tNameEx[szName] and not _HM_About.tNameEx[me.szName] then
 		return true
 	end
+	--[[
 	if bTong and tar.dwTongID and tar.dwTongID ~= 0 and IsEnemy(me.dwID, tar.dwID) then
 		if _HM_About.dwTongEx then
 			return tar.dwTongID == _HM_About.dwTongEx
@@ -92,6 +93,7 @@ _HM_About.CheckTarEx = function(tar, bTong)
 			end
 		end
 	end
+	--]]
 	return false
 end
 
@@ -118,7 +120,7 @@ _HM_About.PS.OnPanelActive = function(frame)
 	ui:Append("WndButton", { txt = _L["Set hotkeys"], x = nX + 10, y = 152 }):AutoSize(8):Click(HM.SetHotKey)
 	-- author
 	ui:Append("Text", { txt = _L["About HMM"], x = 0, y = 188, font = 27 })
-	ui:Append("Text", { x = 0, y = 216, w = 500, h = 40, multi = true }):Align(0, 0):Text(_L["An evil camp player in \"China Telecom 212 DIHUA Server\", only knows to play PVP&TC. Welcome to join [TIANJIAO] guild and play with me!"])
+	ui:Append("Text", { x = 0, y = 216, w = 500, h = 40, multi = true }):Align(0, 0):Text(_L["A pure PVP TianCe player of evil camp. Third-class operation, but first-class crazy and lazy!"])
 	-- other
 	ui:Append("Text", { txt = _L["Others"], x = 0, y = 264, font = 27 })
 	nX = ui:Append("WndCheckBox", { x = 0, y = 292, checked = HM_About.bPlayOpen })
