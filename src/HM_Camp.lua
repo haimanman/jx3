@@ -336,15 +336,31 @@ _HM_Camp.OnNpcEnter = function()
 	if HM_Camp.bBossTime and not IsEmpty(_HM_Camp.tDeadBoss) then
 		local npc = GetNpc(arg0)
 		if npc and _HM_Camp.tDeadBoss[npc.szName] then
+			-- tips
+			local dwID, szName = npc.dwID, npc.szName
+			HM.DelayCall(2500, function()
+				local npc, me = GetNpc(dwID), GetClientPlayer()
+				if not me.IsInParty() then return end
+				if npc and npc.dwDropTargetPlayerID and npc.dwDropTargetPlayerID ~= 0 then
+					if IsParty(me.dwID, npc.dwDropTargetPlayerID) or me.dwID == npc.dwDropTargetPlayerID then
+						local team = GetClientTeam()
+						local szMember = team.GetClientTeamMemberName(npc.dwDropTargetPlayerID)
+						local nGroup = team.GetMemberGroupIndex(npc.dwDropTargetPlayerID) + 1
+						HM.Talk(PLAYER_TALK_CHANNEL.RAID, _L("Well done! %s in %d group first to attack %s!!", nGroup, szMember, szName))
+					else
+						HM.Talk(PLAYER_TALK_CHANNEL.RAID, _L("So sad, we did not attack %s first!!", szName))
+					end
+				end
+			end)
 			-- set target
-			_HM_Camp.tDeadBoss[npc.szName] = nil
-			HM.SetTarget(TARGET.NPC, npc.dwID)
+			_HM_Camp.tDeadBoss[szName] = nil
+			HM.SetTarget(TARGET.NPC, dwID)
 			-- talk tip
 			local nChannel = PLAYER_TALK_CHANNEL.RAID
 			if not GetClientPlayer().IsInParty() then
 				nChannel = PLAYER_TALK_CHANNEL.NEARBY
 			end
-			HM.Talk(nChannel, _L("* Notice * [%s] appeared, hurried to attack it !!!", npc.szName))
+			HM.Talk(nChannel, _L("* Notice * [%s] appeared, hurried to attack it !!!", szName))
 		end
 	end
 end

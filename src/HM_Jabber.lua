@@ -414,7 +414,7 @@ _HM_Jabber.GetAutoText = function()
 end
 
 -- event talk
-_HM_Jabber.tEventTalk = { _L["On entering game"], _L["On changing map"] }
+_HM_Jabber.tEventTalk = { _L["On entering game"], _L["On changing map"], _L["On joining guild"], _L["On joining team"] }
 
 -- default talk
 _HM_Jabber.tEventDefault = {
@@ -424,7 +424,9 @@ _HM_Jabber.tEventDefault = {
 	}, {
 		_L["The handsome $zj came the map $map, quick to welcome me."],
 		_L["The beautiful $zj came the map $map, quick to welcome me."],
-	}
+	},
+	_L["Welcome to $mb joined $gh!"],
+	_L["Welcome to $mb joined the team lead by $dz!"],
 }
 
 -- set talk message
@@ -444,6 +446,17 @@ _HM_Jabber.DoEventTalk = function(nEvent)
 		return
 	end
 	local szMsg = string.gsub(m.szMsg, "%$zj", me.szName)
+	if nEvent == 3 then
+		-- $mb, $gh
+		szMsg = string.gsub(szMsg, "%$mb", arg0)
+		szMsg = string.gsub(szMsg, "%$gh", GetTongClient().ApplyGetTongName(me.dwTongID))
+	elseif nEvent == 4 then
+		-- $mb, $dz
+		local team = GetClientTeam()
+		local dwLeader = team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.LEADER)
+		szMsg = string.gsub(szMsg, "%$mb", team.GetClientTeamMemberName(arg1))
+		szMsg = string.gsub(szMsg, "%$dz", team.GetClientTeamMemberName(dwLeader))
+	end
 	szMsg = string.gsub(szMsg, "%$map", Table_GetMapName(me.GetScene().dwMapID))
 	HM.Talk(m.nChannel, szMsg)
 end
@@ -457,7 +470,15 @@ _HM_Jabber.GetEventMenu = function()
 	for k, v in ipairs(_HM_Jabber.tEventTalk) do
 		if not tMessage[k] then
 			tMessage[k] = { nChannel = 0 }
-			tMessage[k].szMsg = _HM_Jabber.tEventDefault[k][GetClientPlayer().nGender] or ""
+			if k == 3 then
+				tMessage[k].nChannel = PLAYER_TALK_CHANNEL.TONG
+				tMessage[k].szMsg = _HM_Jabber.tEventDefault[k]
+			elseif k == 4 then
+				--tMessage[k].nChannel = PLAYER_TALK_CHANNEL.RAID
+				tMessage[k].szMsg = _HM_Jabber.tEventDefault[k]
+			else
+				tMessage[k].szMsg = _HM_Jabber.tEventDefault[k][GetClientPlayer().nGender] or ""
+			end
 		end
 		local ms, m1 = tMessage[k], { szOption = v }
 		local m2 =  _HM_Jabber.GetChannelMenu(ms.nChannel, function(nChannel) ms.nChannel = nChannel end)
@@ -669,6 +690,10 @@ end
 
 _HM_Jabber.OnLoadingEnd = function()
 	if not _HM_Jabber.bLogined then
+		local nMax = #_HM_Jabber.tEventTalk
+		if not HM_Jabber.tMessage.event or not HM_Jabber.tMessage.event[nMax] then
+			_HM_Jabber.GetEventMenu()
+		end
 		_HM_Jabber.bLogined = true
 		_HM_Jabber.DoEventTalk(1)
 	else
@@ -818,6 +843,8 @@ end
 HM.RegisterEvent("SYS_MSG", _HM_Jabber.OnCheckJabber)
 HM.RegisterEvent("OT_ACTION_PROGRESS_BREAK", _HM_Jabber.OnActionBreak)
 HM.RegisterEvent("LOADING_END", _HM_Jabber.OnLoadingEnd)
+HM.RegisterEvent("TONG_MEMBER_JOIN", function() _HM_Jabber.DoEventTalk(3) end)
+HM.RegisterEvent("PARTY_ADD_MEMBER", function() _HM_Jabber.DoEventTalk(4) end)
 
 -- add to HM panel
 HM.RegisterPanel(_L["Skill/Kill jabber"], 2150, nil, _HM_Jabber.PS)
