@@ -50,6 +50,8 @@ HM_TargetList = {
 				},
 		},
 	},		-- 自定义保存
+	----
+	bShowAcct = true,	-- 人数统计（敌、友、中）
 }
 
 for k, _ in pairs(HM_TargetList) do
@@ -82,6 +84,7 @@ local _HM_TargetList = {
 	tFocus = {},
 	nFrameFocus = 0,
 	nFrameList = 0,
+	nFrameAcct = 0,
 	tFilterNpc = {},			-- 临时屏蔽的NPC名称
 	bInArena = false,
 	bCustom = false,		-- 启用自定义
@@ -1038,6 +1041,75 @@ _HM_TargetList.MonitorArena = function(szMsg)
 	end
 end
 
+-- account info
+_HM_TargetList.GetAcctInfo = function()
+	local aList, me = HM.GetAllPlayer(), GetClientPlayer()
+	local tAcct  = {
+		Enemy  = { live = 0, dead = 0, total = 0 },
+		Ally  = { live = 0, dead = 0, total = 0 },
+		Neutral = { live = 0, dead = 0, total = 0 },
+	}
+	for _, v in ipairs(aList) do
+		local t = tAcct.Neutral
+		if IsEnemy(me.dwID, v.dwID) then
+			t = tAcct.Enemy
+		elseif IsAlly(me.dwID, v.dwID) or me.dwID == v.dwID then
+			t = tAcct.Ally
+		end
+		t.total = t.total + 1
+		if v.nMoveState == MOVE_STATE.ON_DEATH then
+			t.dead = t.dead + 1
+		else
+			t.live = t.live + 1
+		end
+	end
+	return tAcct
+end
+
+_HM_TargetList.ShowAcctInfo = function()
+	local nChannel, szName = EditBox_GetChannel()
+	if nChannel == PLAYER_TALK_CHANNEL.WHISPER then
+		nChannel = szName
+	end
+	local t = _HM_TargetList.GetAcctInfo()
+	if t.Enemy.total > 0 then
+		local szText = _L["Enemy"] .. _L(" Live(%d) Dead(%d) Total(%d)", t.Enemy.live, t.Enemy.dead, t.Enemy.total)
+		HM.Talk2(nChannel, szText)
+	end
+	if t.Ally.total > 0 then
+		local szText = _L["Ally"] .. _L(" Live(%d) Dead(%d) Total(%d)", t.Ally.live, t.Ally.dead, t.Ally.total)
+		HM.Talk2(nChannel, szText)
+	end
+	if t.Neutral.total > 0 then
+		local szText = _L["Neutral"] .. _L(" Live(%d) Dead(%d) Total(%d)", t.Neutral.live, t.Neutral.dead, t.Neutral.total)
+		HM.Talk2(nChannel, szText)
+	end
+end
+
+_HM_TargetList.UpdateAcctInfo = function()
+	local h = _HM_TargetList.frame:Lookup("Wnd_Account", "")
+	local nChannel, szName = EditBox_GetChannel()
+	if nChannel == PLAYER_TALK_CHANNEL.WHISPER then
+		nChannel = szName
+	end
+	local t = _HM_TargetList.GetAcctInfo()
+	if t.Enemy.total > 0 then
+		h:Lookup("Text_Enemy"):SetText(_L["Enemy"] .. _L(" Live(%d) Dead(%d) Total(%d)", t.Enemy.live, t.Enemy.dead, t.Enemy.total))
+	else
+		h:Lookup("Text_Enemy"):SetText("")
+	end
+	if t.Ally.total > 0 then
+		h:Lookup("Text_Ally"):SetText(_L["Ally"] .. _L(" Live(%d) Dead(%d) Total(%d)", t.Ally.live, t.Ally.dead, t.Ally.total))
+	else
+		h:Lookup("Text_Ally"):SetText("")
+	end
+	if t.Neutral.total > 0 then
+		h:Lookup("Text_Other"):SetText(_L["Neutral"] .. _L(" Live(%d) Dead(%d) Total(%d)", t.Neutral.live, t.Neutral.dead, t.Neutral.total))
+	else
+		h:Lookup("Text_Other"):SetText("")
+	end
+end
+
 ---------------------------------------------------------------------
 -- 窗口界面
 ---------------------------------------------------------------------
@@ -1053,7 +1125,7 @@ _HM_TargetList.UpdateSize = function(bFocusOnly)
 	if not HM_TargetList.bShow then return end
 	local frame, nY, nH = _HM_TargetList.frame, 30, 30
 	local nW, _ = frame:Lookup("", "Image_Bg"):GetSize()
-	local wFocus, wList = frame:Lookup("Wnd_Focus"), frame:Lookup("Wnd_List")
+	local wFocus, wList, wAcct = frame:Lookup("Wnd_Focus"), frame:Lookup("Wnd_List"), frame:Lookup("Wnd_Account")
 	if _HM_TargetList.bCollapse or not HM_TargetList.bShowFocus then
 		wFocus:Hide()
 	else
@@ -1068,10 +1140,19 @@ _HM_TargetList.UpdateSize = function(bFocusOnly)
 		wList:Hide()
 	else
 		local _, xH = wList:GetSize()
-		nY = nY + 5
+		nY = nH + 5
 		nH = nY + xH
 		wList:SetRelPos(5, nY)
 		wList:Show()
+	end
+	if _HM_TargetList.bCollapse or not HM_TargetList.bShowAcct then
+		wAcct:Hide()
+	else
+		local _, xH = wAcct:GetSize()
+		nY = nH + 5
+		nH = nY + xH
+		wAcct:SetRelPos(5, nY)
+		wAcct:Show()
 	end
 	frame:Lookup("", "Image_Bg"):SetSize(nW, nH)
 	if not bFocusOnly then
@@ -1089,6 +1170,10 @@ HM_TargetList.OnFrameCreate = function()
 	this:RegisterEvent("NPC_LEAVE_SCENE")
 	this:RegisterEvent("UPDATE_SELECT_TARGET")
 	this:RegisterEvent("UI_SCALED")
+	-- adjust color of acct
+	this:Lookup("Wnd_Account", "Text_Enemy"):SetFontColor(255, 0, 0)
+	this:Lookup("Wnd_Account", "Text_Ally"):SetFontColor(0, 200, 72)
+	this:Lookup("Wnd_Account", "Text_Other"):SetFontColor(255, 255, 0)
 	-- update pos/size
 	_HM_TargetList.UpdateAnchor()
 	if _HM_TargetList.bCollapse then
@@ -1133,6 +1218,13 @@ HM_TargetList.OnFrameBreathe = function()
 			_HM_TargetList.UpdateListScroll()
 		end
 		_HM_TargetList.nFrameList = nFrame
+	end
+	-- acct
+	if not _HM_TargetList.bCollapse and HM_TargetList.bShowAcct
+		and (nFrame - _HM_TargetList.nFrameAcct) >= GLOBAL.GAME_FPS
+	then
+		_HM_TargetList.UpdateAcctInfo()
+		_HM_TargetList.nFrameAcct = nFrame
 	end
 	-- check title
 	if nFrame % 2 == 0 then
@@ -1230,6 +1322,12 @@ HM_TargetList.OnLButtonClick = function()
 					HM_TargetList.bShowList = b
 					_HM_TargetList.UpdateSize()
 				end
+			end
+		})
+		table.insert(m0, { szOption = _L["Show player statistics"], bCheck = true, bChecked = HM_TargetList.bShowAcct,
+			fnAction = function(d, b)
+				HM_TargetList.bShowAcct = b
+				_HM_TargetList.UpdateSize()
 			end
 		})
 		table.insert(m0, { bDevide = true, })
@@ -1342,7 +1440,9 @@ HM_TargetList.OnItemMouseLeave = function()
 end
 
 HM_TargetList.OnItemLButtonDown = function()
-	if this:GetName() == "Text_LCount" then
+	if this:GetName() == "Handle_ATotal" then
+		_HM_TargetList.ShowAcctInfo()
+	elseif this:GetName() == "Text_LCount" then
 		if HM_RedName and HM_TargetList.nListMode >= 4 then
 			HM_RedName.ShowAroundInfo()
 		end
