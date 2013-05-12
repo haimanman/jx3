@@ -1073,15 +1073,15 @@ _HM_TargetList.ShowAcctInfo = function()
 	end
 	local t = _HM_TargetList.GetAcctInfo()
 	if t.Enemy.total > 0 then
-		local szText = _L["Enemy"] .. _L(" Live(%d) Dead(%d) Total(%d)", t.Enemy.live, t.Enemy.dead, t.Enemy.total)
+		local szText = _L["Enemy"] .. _L(": Live(%d) Dead(%d) Total(%d)", t.Enemy.live, t.Enemy.dead, t.Enemy.total)
 		HM.Talk2(nChannel, szText)
 	end
 	if t.Ally.total > 0 then
-		local szText = _L["Ally"] .. _L(" Live(%d) Dead(%d) Total(%d)", t.Ally.live, t.Ally.dead, t.Ally.total)
+		local szText = _L["Ally"] .. _L(": Live(%d) Dead(%d) Total(%d)", t.Ally.live, t.Ally.dead, t.Ally.total)
 		HM.Talk2(nChannel, szText)
 	end
 	if t.Neutral.total > 0 then
-		local szText = _L["Neutral"] .. _L(" Live(%d) Dead(%d) Total(%d)", t.Neutral.live, t.Neutral.dead, t.Neutral.total)
+		local szText = _L["Neutral"] .. _L(": Live(%d) Dead(%d) Total(%d)", t.Neutral.live, t.Neutral.dead, t.Neutral.total)
 		HM.Talk2(nChannel, szText)
 	end
 end
@@ -1094,17 +1094,17 @@ _HM_TargetList.UpdateAcctInfo = function()
 	end
 	local t = _HM_TargetList.GetAcctInfo()
 	if t.Enemy.total > 0 then
-		h:Lookup("Text_Enemy"):SetText(_L["Enemy"] .. _L(" Live(%d) Dead(%d) Total(%d)", t.Enemy.live, t.Enemy.dead, t.Enemy.total))
+		h:Lookup("Text_Enemy"):SetText(_L["Enemy"] .. _L(": Live(%d) Dead(%d) Total(%d)", t.Enemy.live, t.Enemy.dead, t.Enemy.total))
 	else
 		h:Lookup("Text_Enemy"):SetText("")
 	end
 	if t.Ally.total > 0 then
-		h:Lookup("Text_Ally"):SetText(_L["Ally"] .. _L(" Live(%d) Dead(%d) Total(%d)", t.Ally.live, t.Ally.dead, t.Ally.total))
+		h:Lookup("Text_Ally"):SetText(_L["Ally"] .. _L(": Live(%d) Dead(%d) Total(%d)", t.Ally.live, t.Ally.dead, t.Ally.total))
 	else
 		h:Lookup("Text_Ally"):SetText("")
 	end
 	if t.Neutral.total > 0 then
-		h:Lookup("Text_Other"):SetText(_L["Neutral"] .. _L(" Live(%d) Dead(%d) Total(%d)", t.Neutral.live, t.Neutral.dead, t.Neutral.total))
+		h:Lookup("Text_Other"):SetText(_L["Neutral"] .. _L(": Live(%d) Dead(%d) Total(%d)", t.Neutral.live, t.Neutral.dead, t.Neutral.total))
 	else
 		h:Lookup("Text_Other"):SetText("")
 	end
