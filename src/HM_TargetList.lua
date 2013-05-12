@@ -1088,10 +1088,6 @@ end
 
 _HM_TargetList.UpdateAcctInfo = function()
 	local h = _HM_TargetList.frame:Lookup("Wnd_Account", "")
-	local nChannel, szName = EditBox_GetChannel()
-	if nChannel == PLAYER_TALK_CHANNEL.WHISPER then
-		nChannel = szName
-	end
 	local t = _HM_TargetList.GetAcctInfo()
 	if t.Enemy.total > 0 then
 		h:Lookup("Text_Enemy"):SetText(_L["Enemy"] .. _L(": Live(%d) Dead(%d) Total(%d)", t.Enemy.live, t.Enemy.dead, t.Enemy.total))
@@ -1710,6 +1706,7 @@ end)
 HM.RegisterEvent("LOADING_END", function()
 	_HM_TargetList.bInArena = IsInArena()
 	_HM_TargetList.nBeginArena = nil
+	_HM_TargetList.nFrameAcct = 0
 	if _HM_TargetList.bInArena then
 		_HM_TargetList.bShowList = HM_TargetList.bShowList
 		HM_TargetList.bShowList = false
