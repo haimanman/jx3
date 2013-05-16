@@ -2,7 +2,7 @@
 <jx3:hm xmlns:jx3="http://haimanchajian.com">
   <name><![CDATA[海鳗、插件集]]></name>
   <desc><![CDATA[大量非常方便的 PVP 插件！ --== 海鳗鳗@步莲台 ==--]]></desc>
-  <version dword="0x2001103">2.0.17b3</version>
+  <version dword="0x2001104">2.0.17b4</version>
   <clientVersion dword="0x10000">1.0beta</clientVersion>
   <urlPrefix>http://jx3.hightman.cn/sync/HM/</urlPrefix>
   <info>
@@ -24,7 +24,7 @@
     <file size="56294" title="多焦点目标、目标列表、定制筛选排序">src/HM_TargetList.lua</file>
     <file size="35366" title="目标技能CD监控、超大显示特殊BUFF">src/HM_TargetMon.lua</file>
     <file size="17136" title="团队列表保存与还原、团队快速标记">src/HM_Team.lua</file>
-    <file size="12419" title="自动修装备、卖灰色、自动采集和确认、一键交易行">src/HM_ToolBox.lua</file>
+    <file size="12835" title="自动修装备、卖灰色、自动采集和确认、一键交易行">src/HM_ToolBox.lua</file>
   </info>
   <resource>
     <file size="22464">API.md</file>
@@ -45,7 +45,7 @@
     <file size="38235">lang/zhcn.lua</file>
     <file size="43682">lang/zhkr.lua</file>
     <file size="42695">lang/zhtw.lua</file>
-    <file size="73741">src/HM.lua</file>
+    <file size="74419">src/HM.lua</file>
     <file size="7657">src/HM_About.lua</file>
     <file size="16322">src/HM_Compatible.lua</file>
     <file size="5261">ui/HM.ini</file>
