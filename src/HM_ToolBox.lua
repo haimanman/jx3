@@ -210,6 +210,14 @@ _HM_ToolBox.OnAutoConfirm = function()
 	end
 end
 
+_HM_ToolBox.ReloadDoodad = function()
+	local t = {}
+	for k, _ in pairs(HM.GetAllDoodadID()) do
+		t[k] = 0
+	end
+	_HM_ToolBox.tDoodad = t
+end
+
 _HM_ToolBox.OnAutoDoodad = function()
 	local me = GetClientPlayer()
 	if not me or me.bFightState or me.GetOTActionState() ~= 0 or me.bOnHorse
@@ -279,6 +287,9 @@ _HM_ToolBox.PS.OnPanelActive = function(frame)
 	ui:Append("WndCheckBox", { txt = _L["Auto interact quest doodad"], x = 10, y = 176, checked = HM_ToolBox.bQuestItem })
 	:Click(function(bChecked)
 		HM_ToolBox.bQuestItem = bChecked
+		if bChecked then
+			_HM_ToolBox.ReloadDoodad()
+		end
 	end)
 	-- shift-auction
 	ui:Append("WndCheckBox", { txt = _L["Press SHIFT fast auction sell"], x = nX + 10, y = 176, checked = HM_ToolBox.bShiftAuction })
@@ -290,11 +301,15 @@ _HM_ToolBox.PS.OnPanelActive = function(frame)
 	:Click(function(bChecked)
 		HM_ToolBox.bCustomDoodad = bChecked
 		ui:Fetch("Edit_Doodad"):Enable(bChecked)
+		if bChecked then
+			_HM_ToolBox.ReloadDoodad()
+		end
 	end):Pos_()
 	ui:Append("WndEdit", "Edit_Doodad", { x = nX + 10, y = 204, limit = 1024, h = 27, w = 260 })
 	:Text(HM_ToolBox.szCustomDoodad):Enable(HM_ToolBox.bCustomDoodad)
 	:Change(function(szText)
 		HM_ToolBox.szCustomDoodad = szText
+		_HM_ToolBox.ReloadDoodad()
 	end)
 	-- tong broadcast
 	ui:Append("Text", { txt = _L["Group whisper oline (Guild perm required)"], x = 0, y = 240, font = 27 })
@@ -321,6 +336,11 @@ end)
 HM.RegisterEvent("SHOP_OPENSHOP", _HM_ToolBox.OnOpenShop)
 HM.RegisterEvent("DOODAD_ENTER_SCENE", function() _HM_ToolBox.tDoodad[arg0] = 0 end)
 HM.RegisterEvent("DOODAD_LEAVE_SCENE", function() _HM_ToolBox.tDoodad[arg0] = nil end)
+HM.RegisterEvent("QUEST_ACCEPTED", function()
+	if HM_ToolBox.bQuestItem then
+		_HM_ToolBox.ReloadDoodad()
+	end
+end)
 HM.BreatheCall("AutoConfirm", _HM_ToolBox.OnAutoConfirm, 130)
 HM.BreatheCall("AutoDoodad", _HM_ToolBox.OnAutoDoodad)
 
