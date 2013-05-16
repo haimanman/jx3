@@ -47,6 +47,7 @@ local _HM = {
 	tSkillCache = {},
 	aNpc = {},
 	aPlayer = {},
+	aDoodad = {},
 	nDebug = 1,
 }
 
@@ -930,6 +931,29 @@ end
 -- (table) HM.GetAllNpcID()			-- 获取场景内的 NPC ID 列表
 HM.GetAllNpcID = function()
 	return _HM.aNpc
+end
+
+-- (table) HM.GetAllDoodad([number nLimit])		-- 获取场景内的所有 DOODAD
+-- nLimit -- 个数上限，默认不限
+HM.GetAllDoodad = function(nLimit)
+	local aDoodad = {}
+	for k, _ in pairs(_HM.aDoodad) do
+		local p = GetDoodad(k)
+		if not p then
+			_HM.aDoodad[k] = nil
+		else
+			table.insert(aDoodad, p)
+			if nLimit and #aDoodad == nLimit then
+				break
+			end
+		end
+	end
+	return aDoodad
+end
+
+-- (table) HM.GetAllDoodadID()			-- 获取场景内的 Doodad ID 列表
+HM.GetAllDoodadID = function()
+	return _HM.aDoodad
 end
 
 -- 计算目标与自身的距离
@@ -2598,6 +2622,8 @@ HM.RegisterEvent("PLAYER_ENTER_SCENE", function() _HM.aPlayer[arg0] = true end)
 HM.RegisterEvent("PLAYER_LEAVE_SCENE", function() _HM.aPlayer[arg0] = nil end)
 HM.RegisterEvent("NPC_ENTER_SCENE", function() _HM.aNpc[arg0] = true end)
 HM.RegisterEvent("NPC_LEAVE_SCENE", function() _HM.aNpc[arg0] = nil end)
+HM.RegisterEvent("DOODAD_ENTER_SCENE", function() _HM.aDoodad[arg0] = true end)
+HM.RegisterEvent("DOODAD_LEAVE_SCENE", function() _HM.aDoodad[arg0] = nil end)
 HM.RegisterEvent("CUSTOM_DATA_LOADED", function()
 	if arg0 == "Role" then
 		for _, v in ipairs(_HM.tCustomUpdateCall) do
