@@ -77,7 +77,7 @@ end
 -- 取得1个背包空位
 _HM_Suit2.GetFreeBagPos = function()
 	local me = GetClientPlayer()
-	for i = 1, 5 do
+	for i = 1, 6 do
 		local dwSize = me.GetBoxSize(i) or 0
 		for j = 0, dwSize - 1 do
 			if not me.GetItem(i, j) then
@@ -96,7 +96,7 @@ _HM_Suit2.TakeToBag = function(tPos)
 		end
 	end
 	local tBox = {}
-	for i = 1, 5 do
+	for i = 1, 6 do
 		local nSize = me.GetBoxSize(i) or 0
 		for j = 0, nSize - 1 do
 			if not me.GetItem(i, j) then
