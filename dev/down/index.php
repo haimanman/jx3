@@ -55,7 +55,7 @@ function SaveClick(v)
 <body>
 <h1><?php echo $title; ?></h1>
 <p class="offical">
-官方网站：<a href="http://haimanchajian.com">http://haimanchajian.com</a>（<a href="https://github.com/haimanman/jx3/">源码@github</a>）
+官方网站：<a href="http://haimanchajian.com">http://haimanchajian.com</a>，<a href="https://github.com/haimanman/jx3/">源码@github</a>、<a href="http://haimanchajian.com/repack/">PAK 文件清理工具</a>、<a href="JX3HM-2.0.exe">JX3HM-2.0.exe</a>（支持自动更新、功能筛选）
 </p>
 <ol>
   <?php foreach($list as $file): ?>
