@@ -17,7 +17,7 @@ local _HM_Ent = {
 		{ _L["Lara hand"], _L["./o\  /[]v[] lara hand TT TT o"] },
 		{ _L["Bubbling"], _L["O`o. `. o popo `o. o `. O`oo. O `o. O`o. `. o gulu `o. o `. O`oo. `. o popo `o. o `. O`oo. O `o.oo"] },
 		{ _L["Smile face"], _L["/ * #o(^o^)/~o/``:.(.)! / * #o(^o^)/~o/``:.(.)! / * #o(^o^)/~o/``:.(.)! / * #o(^o^)/~o/``:.(.)!"] },
-		{ _L["Gymnastics"], _L["Broadcast gymnastics begin |-(..)-| /-(..)-\\ |-(..)-\\ /-(..)-\\  |-(..)-| |-(..)-\\ /-(..)-| /-(..)-\\"] },
+		{ _L["Gymnastics"], _L["Broadcast gymnastics begin |-(..)-| /-(..)-\\ |-(..)-\\ /-(..)-\\  |-(..)-| |-(..)-\\ /-(..)-| /-(..)-\\."] },
 		{ _L["GaGa"], _L["~o1 /|\/|\ \|/ \|/  / nn \ \> . </ /\|/\ /o ga~"] },
 		{ _L["Kiss kiss"], _L["~|||||||||||~ (| |||||||||| ) | ^ ^ | ^/\$/\^ kiss you ~"] },
 		{ _L["Meteor shower2"], _L["~C2~o3~`/ * '/ % '/ * '/ % '/ * '/ % '/ * '/ % '~C2~o3~`/ * '/ % '/ * '/ % '/ * '/ % '/ * '/ % '/"] },

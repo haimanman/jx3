@@ -571,9 +571,10 @@ end
 -- (void) HM.Sysmsg(string szMsg[, string szHead])
 -- szMsg		-- 要输出的文字内容
 --	szHead		-- 输出前缀，自动加上中括号，默认为：海鳗插件
-HM.Sysmsg = function(szMsg, szHead)
+HM.Sysmsg = function(szMsg, szHead, szType)
 	szHead = szHead or _HM.szShort
-	OutputMessage("MSG_SYS", "[" .. szHead .. "] " .. szMsg .. "\n")
+	szType = szType or "MSG_SYS"
+	OutputMessage(szType, "[" .. szHead .. "] " .. szMsg .. "\n")
 end
 
 -- 在聊天栏输出调试信息，和 HM.Sysmsg 类似，多了2个用于区分的符号标记
@@ -1192,6 +1193,31 @@ HM.DoMessageBox = function(szName, i)
 				frame.fnAction(i)
 			end
 			CloseMessageBox(szName)
+		end
+	end
+end
+
+-- 获取背包空位总数
+-- (number) HM.GetFreeBagBoxNum()
+HM.GetFreeBagBoxNum = function()
+	local me, nFree = GetClientPlayer(), 0
+	for i = 1, BigBagPanel_nCount do
+		nFree = nFree + me.GetBoxFreeRoomSize(i)
+	end
+	return nFree
+end
+
+-- 获取第一个背包空位
+-- (number, number) HM.GetFreeBagBox()
+HM.GetFreeBagBox = function()
+	local me = GetClientPlayer()
+	for i = 1, BigBagPanel_nCount do
+		if me.GetBoxFreeRoomSize(i) > 0 then
+			for j = 0, me.GetBoxSize(i) - 1 do
+				if not me.GetItem(i, j) then
+					return i, j
+				end
+			end
 		end
 	end
 end

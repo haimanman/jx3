@@ -74,19 +74,6 @@ _HM_Suit2.GetUnmountMenu = function()
 	return m0
 end
 
--- 取得1个背包空位
-_HM_Suit2.GetFreeBagPos = function()
-	local me = GetClientPlayer()
-	for i = 1, 6 do
-		local dwSize = me.GetBoxSize(i) or 0
-		for j = 0, dwSize - 1 do
-			if not me.GetItem(i, j) then
-				return i, j
-			end
-		end
-	end
-end
-
 -- 取下身上的装备，返回背包列表
 _HM_Suit2.TakeToBag = function(tPos)
 	local me, tEquip = GetClientPlayer(), {}
@@ -96,7 +83,7 @@ _HM_Suit2.TakeToBag = function(tPos)
 		end
 	end
 	local tBox = {}
-	for i = 1, 6 do
+	for i = 1, BigBagPanel_nCount do
 		local nSize = me.GetBoxSize(i) or 0
 		for j = 0, nSize - 1 do
 			if not me.GetItem(i, j) then

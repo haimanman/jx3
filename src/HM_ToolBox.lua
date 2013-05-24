@@ -2,9 +2,27 @@
 -- 海鳗插件：实用小工具
 --
 
+local _i = Table_GetItemName
 HM_ToolBox = {
-	bAutoRepair = false,	-- 打开 NPC 后自动修理
-	bSellGray = false,		-- 打开 NPC 后自动卖掉灰色物品
+	bAutoRepair = true,	-- 打开 NPC 后自动修理
+	bSellGray = true,		-- 打开 NPC 后自动卖掉灰色物品
+	bSellWhiteBook = true,	-- 自动出售已读白书
+	bSellGreenBook = false,	-- 自动出售已读绿书
+	bSellBlueBook = false,	-- 自动出售已读蓝书
+	tSellItem = {
+		[_i(3098)--[[银叶子]]] = true,
+		[_i(7954)--[[真银叶子]]] = true,
+		[_i(7955)--[[大片真银叶子]]] = true,
+		[_i(7956)--[[金粉末]]] = true,
+		[_i(7957)--[[金叶子]]] = true,
+		[_i(7958)--[[大片金叶子]]] = true,
+		[_i(69697)--[[金条]]] = true,
+		[_i(69698)--[[金块]]] = true,
+		[_i(69699)--[[金砖]]] = true,
+		[_i(70471)--[[银叶子·试练之地]]] = true,
+	},
+	bBuyMore = true,		-- 买得更多
+	-- 自动确认
 	bIgnoreSell = true,		-- 卖蓝色装备免确认
 	--bIgnoreRaid = false,	-- 自动团队确认
 	bIgnoreTrade = false,	-- 自动交易确认 TradingInvite
@@ -30,22 +48,75 @@ local _HM_ToolBox = {
 	tDoodad = {},	-- 待处理的 doodad 列表
 }
 
--- 自动卖灰色
+-- 获取自动售卖设置菜单
+_HM_ToolBox.GetSellMenu = function()
+	local m0 = {
+		{ szOption = _L["Sell grey items"], bCheck = true, bChecked = HM_ToolBox.bSellGray,
+			fnAction = function(d, b) HM_ToolBox.bSellGray = b end,
+		}, { szOption = _L["Sell white books"], bCheck = true, bChecked = HM_ToolBox.bSellWhiteBook,
+			fnAction = function(d, b) HM_ToolBox.bSellWhiteBook = b end,
+			fnDisable = function() return not HM_ToolBox.bSellGray end
+		}, { szOption = _L["Sell green books"], bCheck = true, bChecked = HM_ToolBox.bSellGreenBook,
+			fnAction = function(d, b) HM_ToolBox.bSellWhiteBook = b end,
+			fnDisable = function() return not HM_ToolBox.bSellGray end
+		}, { szOption = _L["Sell blue books"], bCheck = true, bChecked = HM_ToolBox.bSellBlueBook,
+			fnAction = function(d, b) HM_ToolBox.bSellBlueBook = b end,
+			fnDisable = function() return not HM_ToolBox.bSellGray end
+		}, {
+			bDevide = true,
+		},
+	}
+	local m1 = { szOption = _L["Sell specified items"], fnDisable = function() return not HM_ToolBox.bSellGray end,
+		{ szOption = _L["* New *"],
+			fnAction = function()
+				GetUserInput(_L["Name of item"], function(szText)
+					local szText =  string.gsub(szText, "^%s*%[?(.-)%]?%s*$", "%1")
+					if szText ~= "" then
+						HM_ToolBox.tSellItem[szText] = true
+					end
+				end)
+			end
+		}, {
+			bDevide = true,
+		},
+	}
+	for k, v in pairs(HM_ToolBox.tSellItem) do
+		table.insert(m1, {
+			szOption = k, bCheck = true, bChecked = v, fnAction = function(d, b) HM_ToolBox.tSellItem[k] = b end,
+			{ szOption = _L["Remove"], fnAction = function() HM_ToolBox.tSellItem[k] = nil end }
+		})
+	end
+	table.insert(m0, m1)
+	return m0
+end
+
+-- 自动卖灰色等物品
 _HM_ToolBox.SellGrayItem = function(nNpcID, nShopID)
 	local me = GetClientPlayer()
-	for i = 1, 5 do
-		local dwBox = INVENTORY_INDEX.PACKAGE + i - 1
+	for dwBox = 1, BigBagPanel_nCount do
 		local dwSize = me.GetBoxSize(dwBox) - 1
-		for dwX = 0, dwSize, 1 do
+		for dwX = 0, dwSize do
 			local item = GetPlayerItem(me, dwBox, dwX)
-			if item and item.nQuality == 0 then
-				local nCount = 1
-				if item.nGenre == ITEM_GENRE.EQUIPMENT and item.nSub == EQUIPMENT_SUB.ARROW then --远程武器
-					nCount = item.nCurrentDurability
-				elseif item.bCanStack then
-					nCount = item.nStackNum
+			if item and item.bCanTrade then
+				local bSell = item.nQuality == 0
+				local szName = GetItemNameByItem(item)
+				if not bSell and item.nGenre == ITEM_GENRE.BOOK then
+					if (HM_ToolBox.bSellWhiteBook and item.nQuality == 1)
+						or (HM_ToolBox.bSellGreenBook and item.nQuality == 2)
+						or (HM_ToolBox.bSellBlueBook and item.nQuality == 3)
+					then
+						bSell = true
+					end
 				end
-				SellItem(nNpcID, nShopID, dwBox, dwX, nCount)
+				if bSell or HM_ToolBox.tSellItem[szName] then
+					local nCount = 1
+					if item.nGenre == ITEM_GENRE.EQUIPMENT and item.nSub == EQUIPMENT_SUB.ARROW then --远程武器
+						nCount = item.nCurrentDurability
+					elseif item.bCanStack then
+						nCount = item.nStackNum
+					end
+					SellItem(nNpcID, nShopID, dwBox, dwX, nCount)
+				end
 			end
 		end
 	end
@@ -153,7 +224,7 @@ _HM_ToolBox.AuctionSell = function(frame)
     local tSBuyPrice = _HM_ToolBox.GetSinglePrice(box.tBuyPrice, nStackNum)
     local AtClient = GetAuctionClient()
     FireEvent("SELL_AUCTION_ITEM")
-    for i = 1, 5 do
+    for i = 1, BigBagPanel_nCount do
         if me.GetBoxSize(i) > 0 then
             for j = 0, me.GetBoxSize(i) - 1 do
                 local item2 = me.GetItem(i, j)
@@ -162,7 +233,10 @@ _HM_ToolBox.AuctionSell = function(frame)
                     if not item2.bCanStack then
                         nNum = 1
                     end
-                    AtClient.Sell(AuctionPanel.dwTargetID, i, j, math.floor(tSBidPrice.nGold * nNum), math.floor(tSBidPrice.nSliver * nNum), math.floor(tSBidPrice.nCopper * nNum), math.floor(tSBuyPrice.nGold * nNum), math.floor(tSBuyPrice.nSliver * nNum), math.floor(tSBuyPrice.nCopper * nNum), nTime)
+                    AtClient.Sell(AuctionPanel.dwTargetID, i, j,
+						math.floor(tSBidPrice.nGold * nNum), math.floor(tSBidPrice.nSliver * nNum),
+						math.floor(tSBidPrice.nCopper * nNum), math.floor(tSBuyPrice.nGold * nNum),
+						math.floor(tSBuyPrice.nSliver * nNum), math.floor(tSBuyPrice.nCopper * nNum), nTime)
                 end
             end
         end
@@ -193,6 +267,47 @@ _HM_ToolBox.OnOpenShop = function()
 	if HM_ToolBox.bSellGray then
 		_HM_ToolBox.SellGrayItem(nNpcID, nShopID)
 	end
+	_HM_ToolBox.nShopNpcID = arg4
+end
+
+_HM_ToolBox.OnShopUpdateItem = function()
+	if not HM_ToolBox.bBuyMore then
+		return
+	end
+	-- 由于 ShopPanel 的事件后注册，因此需要延迟一帧调用
+	local nShopID, dwPage, dwPos = arg0, arg1, arg2
+	HM.DelayCall(50, function()
+		local box = Station.Lookup("Normal/ShopPanel/PageSet_Main/Page_Sale", "Handle_Sale"):Lookup(dwPos):Lookup("Box_Item")
+		box.OnItemRButtonClick = function()
+			if not this:IsObjectEnable() then
+				return
+			end
+			local item = GetItem(GetShopItemID(nShopID, dwPage, dwPos))
+			if IsShiftKeyDown() and item.nMaxDurability > 1
+				and (item.nGenre ~= ITEM_GENRE.EQUIPMENT or item.nSub == EQUIPMENT_SUB.ARROW)
+			then
+				local nMax = item.nMaxDurability
+				local x, y = this:GetAbsPos()
+				local w, h = this:GetSize()
+				local fnSure = function(nNum)
+					while nNum > 0 do
+						if nNum < nMax then
+							nMax = nNum
+						end
+						BuyItem(_HM_ToolBox.nShopNpcID, nShopID, dwPage, dwPos, nMax)
+						nNum = nNum - nMax
+					end
+				end
+				GetUserInputNumber(nMax, 10000, { x, y, x + w, y + h }, fnSure)
+			else
+				local nCount = 1
+				if this.bGroup then
+					nCount = item.nCurrentDurability
+				end
+				BuyItem(_HM_ToolBox.nShopNpcID, nShopID, dwPage, dwPos, nCount)
+			end
+		end
+	end)
 end
 
 _HM_ToolBox.OnAutoConfirm = function()
@@ -257,13 +372,14 @@ _HM_ToolBox.PS = {}
 _HM_ToolBox.PS.OnPanelActive = function(frame)
 	local ui, nX = HM.UI(frame), 0
 	ui:Append("Text", { txt = _L["Shop NPC"], x = 0, y = 0, font = 27 })
-	ui:Append("WndCheckBox", { txt = _L["Auto repair all equipments when open shop"], x = 10, y = 28, checked = HM_ToolBox.bAutoRepair })
+	nX = ui:Append("WndCheckBox", { txt = _L["When shop open repair equipments"], x = 10, y = 28, checked = HM_ToolBox.bAutoRepair })
 	:Click(function(bChecked)
 		HM_ToolBox.bAutoRepair = bChecked
-	end)
-	ui:Append("WndCheckBox", { txt = _L["Auto sell all grey items when open shop"], x = 10, y = 56, checked = HM_ToolBox.bSellGray })
+	end):Pos_()
+	ui:Append("WndComboBox", { txt = _L["Sell some items"], x = nX + 10, y = 28 }):Menu(_HM_ToolBox.GetSellMenu)
+	ui:Append("WndCheckBox", { txt = _L["Enable to buy more numbers of item at a time"], x = 10, y = 56, checked = HM_ToolBox.bBuyMore })
 	:Click(function(bChecked)
-		HM_ToolBox.bSellGray = bChecked
+		HM_ToolBox.bBuyMore = bChecked
 	end)
 	-- auto confirm
 	ui:Append("Text", { txt = _L["Auto feature"], x = 0, y = 92, font = 27 })
@@ -334,6 +450,7 @@ HM.RegisterEvent("RIAD_READY_CONFIRM_RECEIVE_QUESTION", function()
 	_HM_ToolBox.nRaidID = arg0
 end)
 HM.RegisterEvent("SHOP_OPENSHOP", _HM_ToolBox.OnOpenShop)
+HM.RegisterEvent("SHOP_UPDATEITEM", _HM_ToolBox.OnShopUpdateItem)
 HM.RegisterEvent("DOODAD_ENTER_SCENE", function() _HM_ToolBox.tDoodad[arg0] = 0 end)
 HM.RegisterEvent("DOODAD_LEAVE_SCENE", function() _HM_ToolBox.tDoodad[arg0] = nil end)
 HM.RegisterEvent("QUEST_ACCEPTED", function()

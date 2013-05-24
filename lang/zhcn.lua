@@ -1,4 +1,4 @@
--- language data (zhcn) updated at 2013/03/28 00:30:30
+-- language data (zhcn) updated at 2013/05/25 01:44:16
 data = {
 	-- HM.lua --
 	["HM, JX3 Plug-in Collection"] = "海鳗、实用插件集",
@@ -158,7 +158,7 @@ data = {
 	["Smile face"] = "笑脸？",
 	["/ * #o(^o^)/~o/``:.(.)! / * #o(^o^)/~o/``:.(.)! / * #o(^o^)/~o/``:.(.)! / * #o(^o^)/~o/``:.(.)!"] = "♂☆★○(^o^)/~●♂°°∴⊙♀！♂☆★○(^o^)/~●♂°°∴⊙♀！♂☆★○(^o^)/~●♂°°∴⊙♀！♂☆★○(^o^)/~●♂°°∴⊙♀！♂☆",
 	["Gymnastics"] = "广播体操",
-	--["Broadcast gymnastics begin |-(..)-| /-(..)-\\ |-(..)-\\ /-(..)-\\  |-(..)-| |-(..)-\\ /-(..)-| /-(..)-\\"] = "广播体草现在开始┗#媚眼┛ ┏#害羞┓ ┗#欣喜┓┏#狂汗┓ ┗#恐慌┛┗#讨厌┓┏#鬼脸┛┏#舌头┓地球人已经阻止不鸟我大唐体草队勒#口水",
+	["Broadcast gymnastics begin |-(..)-| /-(..)-\\ |-(..)-\\ /-(..)-\\  |-(..)-| |-(..)-\\ /-(..)-| /-(..)-\\."] = "广播体草现在开始┗#媚眼┛ ┏#害羞┓ ┗#欣喜┓┏#狂汗┓ ┗#恐慌┛┗#讨厌┓┏#鬼脸┛┏#舌头┓地球人已经阻止不鸟我大唐体草队勒#口水",
 	["GaGa"] = "嘎嘎",
 	["~o1 /|\/|\ \|/ \|/  / nn \ \> . </ /\|/\ /o ga~"] = "~o1 ◢◣◢◣ ◥◤ ◥◤ ◢ ∩∩ ◣ ◥≥ . ≤◤ ◤◥◤◥╭○嘎",
 	["Kiss kiss"] = "亲亲么",
@@ -388,7 +388,6 @@ data = {
 	["Shield"] = "屏",
 	["Select"] = "选",
 	-- HM_PVPSound2.lua --
-	--["Killing"] = "杀",
 	["Not dead?"] = "还不死",
 	["Kill one"] = "杀一下",
 	["Dead!"] = "死了吧",
@@ -709,15 +708,13 @@ data = {
 	["[Party BC] "] = "【团队群密】",
 	["[Guild BC] "] = "【帮会群密】",
 	["Shop NPC"] = "商人 NPC",
-	["Auto repair all equipments when open shop"] = "打开商店界面时自动修理全部装备",
-	["Auto sell all grey items when open shop"] = "打开商店界面时自动出售灰色物品（注意先解锁）",
 	["Auto feature"] = "自动功能",
 	["Auto confirm for selling blue level item"] = "卖蓝品以上装备时自动确认",
 	["Auto confirm for team ready"] = "自动确认团长的团队确认",
 	["Auto confirm for trade request"] = "自动确认交易请求",
 	["Auto confirm for ridding horse"] = "自动确认双骑上马请求",
 	["Auto interact quest doodad"] = "自动采集任务物品",
-	["Press SHIFT fast auction sell"] = "按 Shift 一键寄卖",
+	["Press SHIFT fast auction sell"] = "按 Shift 一键寄卖交易行",
 	["Auto interact specified doodad"] = "自动采集指定物品",
 	["Group whisper oline (Guild perm required)"] = "在线群密（帮会需要官员权限）",
 	["Online"] = "在线",
@@ -725,6 +722,15 @@ data = {
 	["Current map"] = "本地图帮众",
 	["Submit"] = "确定发送",
 	["Misc toolbox"] = "实用小工具",
+	["Sell grey items"] = "出售灰色物品",
+	["Sell white books"] = "出售白色书籍",
+	["Sell green books"] = "出售绿色书籍",
+	["Sell blue books"] = "出售蓝色书籍",
+	["Sell specified items"] = "出售指定物品",
+	["Name of item"] = "物品名称",
+	["When shop open repair equipments"] = "打开商店时自动修理装备",
+	["Sell some items"] = "自动出售物品",
+	["Enable to buy more numbers of item at a time"] = "允许从商店一次性购买更多数量物品（须先解锁）",
 	-- src/HM_Marker.lua --
 	[" feet"] = " 尺",
 	-- src/HM_TargetFace.lua --
