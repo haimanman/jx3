@@ -100,7 +100,9 @@ _HM_ToolBox.SellGrayItem = function(nNpcID, nShopID)
 			if item and item.bCanTrade then
 				local bSell = item.nQuality == 0
 				local szName = GetItemNameByItem(item)
-				if not bSell and item.nGenre == ITEM_GENRE.BOOK then
+				if not bSell and item.nGenre == ITEM_GENRE.BOOK
+					and me.IsBookMemorized(GlobelRecipeID2BookID(item.nBookID))
+				then
 					if (HM_ToolBox.bSellWhiteBook and item.nQuality == 1)
 						or (HM_ToolBox.bSellGreenBook and item.nQuality == 2)
 						or (HM_ToolBox.bSellBlueBook and item.nQuality == 3)
