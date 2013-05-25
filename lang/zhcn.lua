@@ -731,6 +731,11 @@ data = {
 	["When shop open repair equipments"] = "打开商店时自动修理装备",
 	["Sell some items"] = "自动出售物品",
 	["Enable to buy more numbers of item at a time"] = "允许从商店一次性购买更多数量物品（须先解锁）",
+	["Produce diamond as last formula"] = "自动按上次配方合石头",
+	["Only consider diamond level"] = "仅考虑五行石等级（不管属性）",
+	["DiamondRegex"] = "五行石·(.-)（(.-)级）",
+	["Enable stack items by button"] = "启用一键堆叠按纽（背包/仓库）",
+	["Stack"] = "堆叠",
 	-- src/HM_Marker.lua --
 	[" feet"] = " 尺",
 	-- src/HM_TargetFace.lua --

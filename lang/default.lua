@@ -6,4 +6,5 @@ data = {
 	["\"(.-) rolled (%d+) point."] = "\"(.-)掷出(%d+)点。",
 	["Arean begin!!!"] = "竞技场开始!!!",
 	["HuiZhenYan"] = "汇珍宴",
+	["DiamondRegex"] = "五行石·(.-)（(.-)级）",
 }

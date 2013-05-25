@@ -30,6 +30,9 @@ HM_ToolBox = {
 	bQuestItem = true,		-- 自动采集任务物品
 	bCustomDoodad = false,	-- 自动采集指定物品
 	bShiftAuction = true,	-- 按 shift 一键寄卖
+	bAutoStack = true,	-- 一键堆叠（背包+仓库）
+	bAutoDiamond = false,	-- 五行石精炼完成后自动再摆上次材料
+	bAnyDiamond = false,	-- 忽略五行石颜色，只考虑等级
 	szCustomDoodad = _L["HuiZhenYan"],
 	nBroadType = 0,
 	szBroadText = "Hi",
@@ -96,7 +99,7 @@ _HM_ToolBox.SellGrayItem = function(nNpcID, nShopID)
 	for dwBox = 1, BigBagPanel_nCount do
 		local dwSize = me.GetBoxSize(dwBox) - 1
 		for dwX = 0, dwSize do
-			local item = GetPlayerItem(me, dwBox, dwX)
+			local item = me.GetItem(dwBox, dwX)
 			if item and item.bCanTrade then
 				local bSell = item.nQuality == 0
 				local szName = GetItemNameByItem(item)
@@ -208,7 +211,7 @@ _HM_ToolBox.AuctionSell = function(frame)
     local nTime = tonumber(string.sub(szTime, 1, 2))
 	-- check item
     local me = GetClientPlayer()
-    local item = GetPlayerItem(me, box.dwBox, box.dwX)
+    local item = me.GetItem(box.dwBox, box.dwX)
     if not item or item.szName ~= box.szName then
         AuctionPanel.ClearBox(box)
         AuctionPanel.UpdateSaleInfo(frame, true)
@@ -253,6 +256,209 @@ AuctionPanel.AuctionSell = function(...)
 		_HM_ToolBox.AuctionSell(...)
 	else
 		_HM_ToolBox.AuctionPanel_AuctionSell(...)
+	end
+end
+
+-- 获取五行石数据
+_HM_ToolBox.GetDiamondData = function(box)
+	local d, item = {}, GetClientPlayer().GetItem(box.dwBox, box.dwX)
+	d.dwBox, d.dwX = box.dwBox, box.dwX
+	if item then
+		d.type, d.level = string.match(item.szName, _L["DiamondRegex"])
+		d.id, d.bind, d.num, d.detail = item.nUiId, item.bBind, item.nStackNum, item.nDetail
+	end
+	return d
+end
+
+-- 保存五行石精炼方案
+_HM_ToolBox.SaveDiamondFormula = function()
+	local t = {}
+	local handle = Station.Lookup("Normal/FEProducePanel", "")
+	local box, hL = handle:Lookup("Box_FE"), handle:Lookup("Handle_Item")
+	table.insert(t, _HM_ToolBox.GetDiamondData(box))
+	for i = 1, 16 do
+		local box = hL:Lookup("Box_Item" .. i)
+		if box.state == "main" then
+			table.insert(t, _HM_ToolBox.GetDiamondData(box))
+		end
+	end
+	_HM_ToolBox.dFormula = t
+end
+
+-- 扫描背包石头及空位信息（存在 buggy cache）
+_HM_ToolBox.LoadBagDiamond = function()
+	local me, t = GetClientPlayer(), {}
+	for dwBox = 1, BigBagPanel_nCount do
+		for dwX = 0, me.GetBoxSize(dwBox) - 1 do
+			local d = _HM_ToolBox.GetDiamondData({ dwBox = dwBox, dwX = dwX })
+			if not d.id or d.type then
+				for _, v in ipairs(_HM_ToolBox.dFormula) do
+					if v.dwBox == dwBox and v.dwX == dwX then
+						d = nil
+					end
+				end
+				if d then
+					table.insert(t, d)
+				end
+			end
+		end
+	end
+	_HM_ToolBox.tBagCache = t
+end
+
+-- 还原背包格子里的石头，失败返回 false，成功返回 true
+_HM_ToolBox.RestoreBagDiamond = function(d)
+	local me = GetClientPlayer()
+	local tBag = _HM_ToolBox.tBagCache
+	-- move box item
+	local item = me.GetItem(d.dwBox, d.dwX)
+	-- to stack
+	if item then
+		for k, v in ipairs(tBag) do
+			if v.id == item.nUiId and v.bind == item.bBind and (v.num + item.nStackNum) <= item.nMaxStackNum then
+				v.num = v.num + item.nStackNum
+				me.ExchangeItem(d.dwBox, d.dwX, v.dwBox, v.dwX)
+				item = nil
+				break
+			end
+		end
+	end
+	-- to empty
+	if item then
+		for k, v in ipairs(tBag) do
+			if not v.id then
+				local v2 = _HM_ToolBox.GetDiamondData(d)
+				v2.dwBox, v2.dwX = v.dwBox, v.dwX
+				tBag[k] = v2
+				me.ExchangeItem(d.dwBox, d.dwX, v.dwBox, v.dwX)
+				item = nil
+				break
+			end
+		end
+	end
+	-- no freebox
+	if item then
+		return false
+	end
+	-- get diamond from others
+	local szType, nLeft = nil, d.num
+	if not HM_ToolBox.bAnyDiamond then
+		szType = d.type
+	end
+	for _, v in ipairs(tBag) do
+		if v.level == d.level then
+			if v.bind then
+				if (d.bind == true or HM_ToolBox.bAnyDiamond) and nLeft == d.num and v.num >= d.num then
+					me.ExchangeItem(v.dwBox, v.dwX, d.dwBox, d.dwX, d.num)
+					v.num = v.num - d.num
+					return true
+				end
+			elseif not szType or szType == v.type then
+				if v.num >= nLeft then
+					me.ExchangeItem(v.dwBox, v.dwX, d.dwBox, d.dwX, nLeft)
+					v.num = v.num - nLeft
+					return true
+				elseif v.num > 0 then
+					me.ExchangeItem(v.dwBox, v.dwX, d.dwBox, d.dwX, v.num)
+					nLeft = nLeft - v.num
+					szType = v.type
+					v.num = 0
+				end
+			end
+		end
+	end
+	return false
+end
+
+-- 堆叠一个 box
+_HM_ToolBox.DoBoxStack = function(i, tList)
+	local me = GetClientPlayer()
+	for j = 0, me.GetBoxSize(i) - 1 do
+		local item = me.GetItem(i, j)
+		if item and item.bCanStack and item.nStackNum < item.nMaxStackNum then
+			local szKey = tostring(item.nUiId) .. tostring(item.bBind)
+			local t = tList[szKey]
+			if not t then
+				tList[szKey] = { nLeft = item.nMaxStackNum - item.nStackNum, dwBox = i, dwX = j }
+			elseif item.nStackNum <= t.nLeft then
+				me.ExchangeItem(i, j, t.dwBox, t.dwX, item.nStackNum)
+				if t.nLeft == item.nStackNum then
+					tList[szKey] = nil
+				else
+					t.nLeft = t.nLeft - item.nStackNum
+				end
+			else
+				local nLeft = item.nStackNum - t.nLeft
+				me.ExchangeItem(i, j, t.dwBox, t.dwX, t.nLeft)
+				t.nLeft, t.dwBox, t.dwX = nLeft, i, j
+			end
+		end
+	end
+end
+
+-- 背包堆叠
+_HM_ToolBox.DoBagStack = function()
+	if IsBagInSort() then
+		return
+	end
+	local tList = {}
+	for i = 1, BigBagPanel_nCount do
+		_HM_ToolBox.DoBoxStack(INVENTORY_INDEX.PACKAGE + i - 1, tList)
+	end
+end
+
+-- 仓库堆叠
+_HM_ToolBox.DoBankStack = function()
+	if IsBankInSort() then
+		return
+	end
+	local tList = {}
+	for i = 1, 6 do
+		_HM_ToolBox.DoBoxStack(INVENTORY_INDEX.BANK + i - 1, tList)
+	end
+end
+
+-- 检测增加堆叠按纽
+_HM_ToolBox.BindStackButton = function()
+	-- bag
+	local btn1 = Station.Lookup("Normal/BigBagPanel/Btn_Split")
+	local btn2 = Station.Lookup("Normal/BigBagPanel/Btn_Stack")
+	if not HM_ToolBox.bAutoStack then
+		if btn2 then
+			btn2:Destroy()
+			btn1.nX, btn1.nY = nil, nil
+		end
+	else
+		local nX, nY = btn1:GetRelPos()
+		if nX ~= btn1.nX or nY ~= btn1.nY then
+			btn1.nX, btn1.nY = nX, nY
+			if not btn2 then
+				local w, h = btn1:GetSize()
+				btn2 = HM.UI("Normal/BigBagPanel"):Append("WndButton", "Btn_Stack", { txt = _L["Stack"], w = w, h = h }):Raw()
+				btn2.OnLButtonClick = _HM_ToolBox.DoBagStack
+			end
+			btn2:SetRelPos(nX + btn1:GetSize(), nY)
+		end
+	end
+	-- bank
+	local btn1 = Station.Lookup("Normal/BigBankPanel/Btn_CU")
+	local btn2 = Station.Lookup("Normal/BigBankPanel/Btn_Stack")
+	if not HM_ToolBox.bAutoStack then
+		if btn2 then
+			btn2:Destroy()
+			btn1.nX, btn1.nY = nil, nil
+		end
+	else
+		local nX, nY = btn1:GetRelPos()
+		if nX ~= btn1.nX or nY ~= btn1.nY then
+			btn1.nX, btn1.nY = nX, nY
+			if not btn2 then
+				local w, h = btn1:GetSize()
+				btn2 = HM.UI("Normal/BigBankPanel"):Append("WndButton", "Btn_Stack", { txt = _L["Stack"], w = w, h = h }):Raw()
+				btn2.OnLButtonClick = _HM_ToolBox.DoBankStack
+			end
+			btn2:SetRelPos(nX + btn1:GetSize(), nY)
+		end
 	end
 end
 
@@ -325,6 +531,16 @@ _HM_ToolBox.OnAutoConfirm = function()
 	if HM_ToolBox.bIgnoreHorse then
 		HM.DoMessageBox("OnInviteFollow")
 	end
+	if HM_ToolBox.bAutoDiamond then
+		local szName = "ProduceDiamondSure"
+		local frame = Station.Lookup("Topmost2/MB_" .. szName) or Station.Lookup("Topmost/MB_" .. szName)
+		if frame then
+			_HM_ToolBox.ProduceDiamond = frame:Lookup("Wnd_All/Btn_Option1").fnAction
+			_HM_ToolBox.SaveDiamondFormula()
+		end
+		HM.DoMessageBox(szName)
+	end
+	_HM_ToolBox.BindStackButton()
 end
 
 _HM_ToolBox.ReloadDoodad = function()
@@ -365,6 +581,39 @@ _HM_ToolBox.OnAutoDoodad = function()
 	end
 end
 
+-- 自动摆五行石材料
+_HM_ToolBox.OnDiamondUpdate = function()
+	if not HM_ToolBox.bAutoDiamond or not _HM_ToolBox.dFormula or arg0 ~= 1 then
+		return
+	end
+	local box = Station.Lookup("Normal/FEProducePanel", "Box_FE")
+	if not box then
+		_HM_ToolBox.dFormula = nil
+		return
+	end
+	-- 移除加锁（延迟一帧）
+	HM.DelayCall(50, function()
+		RemoveUILockItem("FEProduce")
+		if not box:IsEmpty() then
+			box:ClearObject()
+			box:SetOverText(0, "")
+		end
+	end)
+	-- 重新放入配方（延迟8帧执行，确保 unlock）
+	HM.DelayCall(500, function()
+		_HM_ToolBox.LoadBagDiamond()
+		for _, v in ipairs(_HM_ToolBox.dFormula) do
+			if not _HM_ToolBox.RestoreBagDiamond(v) then
+				_HM_ToolBox.dFormula = nil
+				_HM_ToolBox.tBagCache = nil
+				return
+			end
+		end
+		box.nDetail = _HM_ToolBox.dFormula[1].detail
+		_HM_ToolBox.ProduceDiamond()
+	end)
+end
+
 -------------------------------------
 -- 设置界面
 -------------------------------------
@@ -389,9 +638,13 @@ _HM_ToolBox.PS.OnPanelActive = function(frame)
 	:Click(function(bChecked)
 		HM_ToolBox.bIgnoreSell = bChecked
 	end):Pos_()
-	ui:Append("WndCheckBox", { txt = _L["Auto confirm for team ready"], x = nX + 10, y = 120, checked = HM_ToolBox.bIgnoreRaid })
-	:Enable(false):Click(function(bChecked)
-		HM_ToolBox.bIgnoreRaid = bChecked
+	--ui:Append("WndCheckBox", { txt = _L["Auto confirm for team ready"], x = nX + 10, y = 120, checked = HM_ToolBox.bIgnoreRaid })
+	--:Enable(false):Click(function(bChecked)
+	--	HM_ToolBox.bIgnoreRaid = bChecked
+	--end)
+	ui:Append("WndCheckBox", { txt = _L["Enable stack items by button"], x = nX + 10, y = 120, checked = HM_ToolBox.bAutoStack })
+	:Click(function(bChecked)
+		HM_ToolBox.bAutoStack = bChecked
 	end)
 	ui:Append("WndCheckBox", { txt = _L["Auto confirm for trade request"], x = 10, y = 148, checked = HM_ToolBox.bIgnoreTrade })
 	:Click(function(bChecked)
@@ -414,8 +667,19 @@ _HM_ToolBox.PS.OnPanelActive = function(frame)
 	:Click(function(bChecked)
 		HM_ToolBox.bShiftAuction = bChecked
 	end)
+	-- put diamond
+	ui:Append("WndCheckBox", { txt = _L["Produce diamond as last formula"], x = 10, y = 204, checked = HM_ToolBox.bAutoDiamond, font = 57 })
+	:Click(function(bChecked)
+		HM_ToolBox.bAutoDiamond = bChecked
+		_HM_ToolBox.dFormula = nil
+		ui:Fetch("Check_Any"):Enable(bChecked)
+	end)
+	ui:Append("WndCheckBox", "Check_Any", { txt = _L["Only consider diamond level"], x = nX + 10, y = 204, checked = HM_ToolBox.bAnyDiamond, enable = HM_ToolBox.bAutoDiamond })
+	:Click(function(bChecked)
+		HM_ToolBox.bAnyDiamond = bChecked
+	end)
 	-- specified doodad
-	nX = ui:Append("WndCheckBox", { txt = _L["Auto interact specified doodad"], x = 10, y = 204, checked = HM_ToolBox.bCustomDoodad })
+	nX = ui:Append("WndCheckBox", { txt = _L["Auto interact specified doodad"], x = 10, y = 232, checked = HM_ToolBox.bCustomDoodad })
 	:Click(function(bChecked)
 		HM_ToolBox.bCustomDoodad = bChecked
 		ui:Fetch("Edit_Doodad"):Enable(bChecked)
@@ -423,25 +687,25 @@ _HM_ToolBox.PS.OnPanelActive = function(frame)
 			_HM_ToolBox.ReloadDoodad()
 		end
 	end):Pos_()
-	ui:Append("WndEdit", "Edit_Doodad", { x = nX + 10, y = 204, limit = 1024, h = 27, w = 260 })
+	ui:Append("WndEdit", "Edit_Doodad", { x = nX + 10, y = 232, limit = 1024, h = 27, w = 260 })
 	:Text(HM_ToolBox.szCustomDoodad):Enable(HM_ToolBox.bCustomDoodad)
 	:Change(function(szText)
 		HM_ToolBox.szCustomDoodad = szText
 		_HM_ToolBox.ReloadDoodad()
 	end)
 	-- tong broadcast
-	ui:Append("Text", { txt = _L["Group whisper oline (Guild perm required)"], x = 0, y = 240, font = 27 })
-	ui:Append("WndEdit", "Edit_Msg", { x = 10, y = 268, limit = 1024, multi = true, h = 50, w = 480, txt = HM_ToolBox.szBroadText })
+	ui:Append("Text", { txt = _L["Group whisper oline (Guild perm required)"], x = 0, y = 268, font = 27 })
+	ui:Append("WndEdit", "Edit_Msg", { x = 10, y = 296, limit = 1024, multi = true, h = 50, w = 480, txt = HM_ToolBox.szBroadText })
 	:Change(function(szText) HM_ToolBox.szBroadText = szText end)
 	local nX = ui:Append("WndRadioBox", { txt = _L["Online"], checked = HM_ToolBox.nBroadType == 0, group = "Broad" })
-	:Pos(10, 324):Click(function(b) if b then HM_ToolBox.nBroadType = 0  end end):Pos_()
+	:Pos(10, 352):Click(function(b) if b then HM_ToolBox.nBroadType = 0  end end):Pos_()
 	nX = ui:Append("WndRadioBox", { txt = _L["Other map"], checked = HM_ToolBox.nBroadType == 1, group = "Broad" })
-	:Pos(10 + nX, 324):Click(function(b) if b then HM_ToolBox.nBroadType = 1  end end):Pos_()
+	:Pos(10 + nX, 352):Click(function(b) if b then HM_ToolBox.nBroadType = 1  end end):Pos_()
 	nX = ui:Append("WndRadioBox", { txt = _L["Current map"], checked = HM_ToolBox.nBroadType == 2, group = "Broad" })
-	:Pos(10 + nX, 324):Click(function(b) if b then HM_ToolBox.nBroadType = 2 end end):Pos_()
+	:Pos(10 + nX, 352):Click(function(b) if b then HM_ToolBox.nBroadType = 2 end end):Pos_()
 	nX = ui:Append("WndRadioBox", { txt = _L["Team"], checked = HM_ToolBox.nBroadType == 3, group = "Broad" })
-	:Pos(10 + nX, 324):Click(function(b) if b then HM_ToolBox.nBroadType = 3 end end):Pos_()
-	ui:Append("WndButton", { txt = _L["Submit"], x = nX + 10, y = 325 })
+	:Pos(10 + nX, 352):Click(function(b) if b then HM_ToolBox.nBroadType = 3 end end):Pos_()
+	ui:Append("WndButton", { txt = _L["Submit"], x = nX + 10, y = 353 })
 	:Enable(_HM_ToolBox.HasBroadPerm()):Click(_HM_ToolBox.SendBroadCast)
 end
 
@@ -451,6 +715,7 @@ end
 HM.RegisterEvent("RIAD_READY_CONFIRM_RECEIVE_QUESTION", function()
 	_HM_ToolBox.nRaidID = arg0
 end)
+HM.RegisterEvent("DIAMON_UPDATE", _HM_ToolBox.OnDiamondUpdate)
 HM.RegisterEvent("SHOP_OPENSHOP", _HM_ToolBox.OnOpenShop)
 HM.RegisterEvent("SHOP_UPDATEITEM", _HM_ToolBox.OnShopUpdateItem)
 HM.RegisterEvent("DOODAD_ENTER_SCENE", function() _HM_ToolBox.tDoodad[arg0] = 0 end)

@@ -1,4 +1,4 @@
--- language data (zhtw) updated at 2013/03/28 00:30:30
+-- language data (zhtw) updated at 2013/05/25 01:44:16
 data = {
 	-- HM.lua --
 	["HM, JX3 Plug-in Collection"] = "海鰻、實用插件集",
@@ -158,7 +158,7 @@ data = {
 	["Smile face"] = "笑臉？",
 	["/ * #o(^o^)/~o/``:.(.)! / * #o(^o^)/~o/``:.(.)! / * #o(^o^)/~o/``:.(.)! / * #o(^o^)/~o/``:.(.)!"] = "♂☆★○(^o^)/~●♂°°∴⊙♀！♂☆★○(^o^)/~●♂°°∴⊙♀！♂☆★○(^o^)/~●♂°°∴⊙♀！♂☆★○(^o^)/~●♂°°∴⊙♀！♂☆",
 	["Gymnastics"] = "廣播體操",
-	--["Broadcast gymnastics begin |-(..)-| /-(..)-\\ |-(..)-\\ /-(..)-\\  |-(..)-| |-(..)-\\ /-(..)-| /-(..)-\\"] = "廣播體草現在開始└#媚眼┘ ┌#害羞┐ └#欣喜┐┌#狂汗┐ └#恐慌┘└#討厭┐┌#鬼臉┘┌#舌頭┐地球人已經阻止不鳥我大唐體草隊勒#口水",
+	["Broadcast gymnastics begin |-(..)-| /-(..)-\\ |-(..)-\\ /-(..)-\\  |-(..)-| |-(..)-\\ /-(..)-| /-(..)-\\."] = "廣播體草現在開始└#媚眼┘ ┌#害羞┐ └#欣喜┐┌#狂汗┐ └#恐慌┘└#討厭┐┌#鬼臉┘┌#舌頭┐地球人已經阻止不鳥我大唐體草隊勒#口水",
 	["GaGa"] = "嘎嘎",
 	["~o1 /|\/|\ \|/ \|/  / nn \ \> . </ /\|/\ /o ga~"] = "~o1 ???? ?? ?? ? ∩∩ ? ?≧ . ≦? ????秀○嘎",
 	["Kiss kiss"] = "親親么",
@@ -388,7 +388,6 @@ data = {
 	["Shield"] = "屏",
 	["Select"] = "選",
 	-- HM_PVPSound2.lua --
-	--["Killing"] = "殺",
 	["Not dead?"] = "還不死",
 	["Kill one"] = "殺一下",
 	["Dead!"] = "死了吧",
@@ -709,15 +708,13 @@ data = {
 	["[Party BC] "] = "【團隊群密】",
 	["[Guild BC] "] = "【幫會群密】",
 	["Shop NPC"] = "商人 NPC",
-	["Auto repair all equipments when open shop"] = "打開商店界面時自動修理全部裝備",
-	["Auto sell all grey items when open shop"] = "打開商店界面時自動出售灰色物品（注意先解鎖）",
 	["Auto feature"] = "自動功能",
 	["Auto confirm for selling blue level item"] = "賣藍品以上裝備時自動確認",
 	["Auto confirm for team ready"] = "自動確認團長的團隊確認",
 	["Auto confirm for trade request"] = "自動確認交易請求",
 	["Auto confirm for ridding horse"] = "自動確認雙騎上馬請求",
 	["Auto interact quest doodad"] = "自動采集任務物品",
-	["Press SHIFT fast auction sell"] = "按 Shift 一鍵寄賣",
+	["Press SHIFT fast auction sell"] = "按 Shift 一鍵寄賣交易行",
 	["Auto interact specified doodad"] = "自動采集指定物品",
 	["Group whisper oline (Guild perm required)"] = "在線群密（幫會需要官員權限）",
 	["Online"] = "在線",
@@ -725,6 +722,20 @@ data = {
 	["Current map"] = "本地圖幫眾",
 	["Submit"] = "確定發送",
 	["Misc toolbox"] = "實用小工具",
+	["Sell grey items"] = "出售灰色物品",
+	["Sell white books"] = "出售已讀白書",
+	["Sell green books"] = "出售已讀綠書",
+	["Sell blue books"] = "出售已讀藍書",
+	["Sell specified items"] = "出售指定物品",
+	["Name of item"] = "物品名稱",
+	["When shop open repair equipments"] = "打開商店時自動修理裝備",
+	["Sell some items"] = "自動出售物品",
+	["Enable to buy more numbers of item at a time"] = "允許從商店一次性購買更多數量物品（須先解鎖）",
+	["Produce diamond as last formula"] = "自動按上次配方合石頭",
+	["Only consider diamond level"] = "僅考慮五行石等級（不管屬性）",
+	["DiamondRegex"] = "五行石﹒(.-)（(.-)級）",
+	["Enable stack items by button"] = "啟用一鍵堆疊按紐（背包/倉庫）",
+	["Stack"] = "堆疊",
 	-- src/HM_Marker.lua --
 	[" feet"] = " 尺",
 	-- src/HM_TargetFace.lua --

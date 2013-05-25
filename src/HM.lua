@@ -2576,7 +2576,8 @@ HM.OnFrameBreathe = function()
 	end
 	-- run delay calls
 	local nTime = GetTime()
-	for k, v in ipairs(_HM.tDelayCall) do
+	for k = #_HM.tDelayCall, 1, -1 do
+		local v = _HM.tDelayCall[k]
 		if v.nTime <= nTime then
 			local res, err = pcall(v.fnAction)
 			if not res then
