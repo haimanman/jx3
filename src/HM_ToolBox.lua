@@ -340,31 +340,50 @@ _HM_ToolBox.RestoreBagDiamond = function(d)
 	if item then
 		return false
 	end
-	-- get diamond from others
-	local szType, nLeft = nil, d.num
-	if not HM_ToolBox.bAnyDiamond then
-		szType = d.type
-	end
+	-- group bag by type/bind: same type, same bind, ... others
+	local tBag2, nLeft = {}, d.num
 	for _, v in ipairs(tBag) do
-		if v.level == d.level then
-			if v.bind then
-				if (d.bind == true or HM_ToolBox.bAnyDiamond) and nLeft == d.num and v.num >= d.num then
-					me.ExchangeItem(v.dwBox, v.dwX, d.dwBox, d.dwX, d.num)
-					v.num = v.num - d.num
-					return true
-				end
-			elseif not szType or szType == v.type then
-				if v.num >= nLeft then
-					me.ExchangeItem(v.dwBox, v.dwX, d.dwBox, d.dwX, nLeft)
-					v.num = v.num - nLeft
-					return true
-				elseif v.num > 0 then
-					me.ExchangeItem(v.dwBox, v.dwX, d.dwBox, d.dwX, v.num)
-					nLeft = nLeft - v.num
-					szType = v.type
-					v.num = 0
+		if v.level == d.level
+			and (HM_ToolBox.bAnyDiamond or (v.type == d.type and (v.bind == d.bind or v.bind == false)))
+		then
+			local vt = nil
+			for _, vv in ipairs(tBag2) do
+				if vv.type == v.type and vv.bind == v.bind then
+					vt = vv
+					break
 				end
 			end
+			if not vt then
+				vt = { num = 0, type = v.type, bind = v.bind }
+				local vk = #tBag2 + 1
+				if vk > 1 and v.type == d.type then
+					if v.bind ~= d.bind and tBag2[1].type == d.type then
+						vk = 2
+					else
+						vk = 1
+					end
+				end
+				table.insert(tBag2, vk, vt)
+			end
+			vt.num = vt.num + v.num
+			table.insert(vt, v)
+		end
+	end
+	-- select diamond1 (same type)
+	for _, v in ipairs(tBag2) do
+		if v.num >= nLeft then
+			for _, vv in ipairs(v) do
+				if vv.num >= nLeft then
+					me.ExchangeItem(vv.dwBox, vv.dwX, d.dwBox, d.dwX, nLeft)
+					vv.num = vv.num - nLeft
+					break
+				elseif vv.num > 0 then
+					me.ExchangeItem(vv.dwBox, vv.dwX, d.dwBox, d.dwX, vv.num)
+					nLeft = nLeft - vv.num
+					vv.num = 0
+				end
+			end
+			return true
 		end
 	end
 	return false
