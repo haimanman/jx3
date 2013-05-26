@@ -5,18 +5,15 @@
 HM_RedName = {
 	bEnableMini = true,
 	bAlertOnce = true,
-	bSettar = true,
+	bSettar = false,
 	bDeathMini = false,
 	bUseGreen = false,
 	bAcctUser = false,
 }
 
-RegisterCustomData("HM_RedName.bEnableMini")
-RegisterCustomData("HM_RedName.bAlertOnce")
-RegisterCustomData("HM_RedName.bSettar")
-RegisterCustomData("HM_RedName.bDeathMini")
-RegisterCustomData("HM_RedName.bUseGreen")
-RegisterCustomData("HM_RedName.bAcctUser")
+for k, _ in pairs(HM_RedName) do
+	RegisterCustomData("HM_RedName." .. k)
+end
 
 ---------------------------------------------------------------------
 -- 本地函数和变量
@@ -664,7 +661,7 @@ _HM_RedName.PS.OnPanelActive = function(frame)
 		HM_RedName.bAlertOnce = bChecked
 		ui:Fetch("Check_Settar"):Enable(bChecked)
 	end):Pos_()
-	ui:Append("WndCheckBox", "Check_Settar", { x = nX + 10, y = 84, checked = HM_RedName.bSettar })
+	ui:Append("WndCheckBox", "Check_Settar", { x = nX + 10, y = 84, checked = HM_RedName.bSettar, enable = HM_RedName.bAlertOnce })
 	:Text(_L["And set target"]):Enable(HM_RedName.bEnableMini):Click(function(bChecked)
 		HM_RedName.bSettar = bChecked
 	end)
