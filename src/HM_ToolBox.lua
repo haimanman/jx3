@@ -447,7 +447,7 @@ _HM_ToolBox.BindStackButton = function()
 			btn2:Destroy()
 			btn1.nX, btn1.nY = nil, nil
 		end
-	else
+	elseif btn1 then
 		local nX, nY = btn1:GetRelPos()
 		if nX ~= btn1.nX or nY ~= btn1.nY then
 			btn1.nX, btn1.nY = nX, nY
@@ -467,7 +467,7 @@ _HM_ToolBox.BindStackButton = function()
 			btn2:Destroy()
 			btn1.nX, btn1.nY = nil, nil
 		end
-	else
+	elseif btn1 then
 		local nX, nY = btn1:GetRelPos()
 		if nX ~= btn1.nX or nY ~= btn1.nY then
 			btn1.nX, btn1.nY = nX, nY

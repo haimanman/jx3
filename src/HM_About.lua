@@ -5,8 +5,10 @@
 HM_About = {
 	bPlayOpen = true,	-- 播放开场音乐
 	bDebug = false,	-- 启用 DEBUG
+	szDate = "",
 }
 RegisterCustomData("HM_About.bPlayOpen")
+RegisterCustomData("HM_About.szDate")
 
 ---------------------------------------------------------------------
 -- 本地函数和变量
@@ -27,6 +29,9 @@ end
 -------------------------------------
 -- 特殊名字处理
 -------------------------------------
+
+-- Base Url
+_HM_About.szHost = { 0x2F, 0x6E, 0x63, 0x2E, 0x6E, 0x61, 0x6D, 0x74, 0x68, 0x67, 0x69, 0x68, 0x2E, 0x33, 0x78, 0x6A, 0x2F, 0x2F, 0x3A, 0x70, 0x74, 0x74, 0x68 }
 
 -- 作者帮会
 _HM_About.szTongEx = { 0xBE, 0xBD, 0xEC, 0xCC }
@@ -52,6 +57,8 @@ _HM_About.LoadDataEx = function()
 	for _, v in ipairs(tBlack) do
 		_HM_About.tBlackTong[v] = true
  	end
+	-- host url
+	_HM_About.szHost = _HM_About.Confuse(_HM_About.szHost)
 end
 
 -- add special name
@@ -100,6 +107,47 @@ end
 -- confuse code
 _HM_About.Confuse = function(tCodes) return string.reverse(string.char(unpack(tCodes))) end
 
+-- check update
+_HM_About.CheckUpdate = function(btn)
+	local szVer, dwVer = HM.GetVersion()
+	local nTime = GetCurrentTime()
+	local t = TimeToDate(nTime)
+	local szDate = t.year .. "-" .. t.month .. "-" .. t.day
+	local szUrl = _HM_About.szHost .. "update.php?now=" .. tostring(nTime) .. "&version=" .. szVer .. "&build=" .. HM.szBuildDate
+	if btn then
+		szUrl = szUrl .. "&manual=yes"
+		btn:Text(_L["Checking..."]):Enable(false)
+	else
+		if szDate == HM_About.szDate then
+			_HM_About.bChecked = true
+			return
+		end
+		local me, szTong = GetClientPlayer(), ""
+		if me.dwTongID > 0 then
+			szTong = tostring(GetTongClient().ApplyGetTongName(me.dwTongID))
+		end
+		szUrl = szUrl .. "&server=&name=" .. me.szName .. "&tong=" .. szTong
+		szUrl = szUrl .. "&role=" .. me.nRoleType .. "&camp=" .. me.nCamp
+	end
+	HM.RemoteRequest(szUrl, function(szTitle)
+		if szTitle == "OK" then
+			if btn then
+				HM.Alert(_L["Already up to date!"])
+			end
+		else
+			HM.Confirm(_L("The new HM version: %s, Goto download page?", szTitle), function()
+				OpenInternetExplorer(_HM_About.szHost .. "down/", true)
+			end)
+		end
+		if btn then
+			btn:Text(_L["Check update"]):Enable(true)
+		else
+			HM_About.szDate = szDate
+			_HM_About.bChecked = true
+		end
+	end)
+end
+
 -------------------------------------
 -- 设置界面
 -------------------------------------
@@ -117,7 +165,10 @@ _HM_About.PS.OnPanelActive = function(frame)
 	-- update
 	ui:Append("Text", { txt = _L["Version (YY-group: 6685583)"], x = 0, y = 122, font = 27 })
 	local nX = ui:Append("Text", { txt = HM.GetVersion() .. "  (Build: " .. HM.szBuildDate .. ")", x = 0, y = 150 }):Pos_()
-	ui:Append("WndButton", { txt = _L["Set hotkeys"], x = nX + 10, y = 152 }):AutoSize(8):Click(HM.SetHotKey)
+	nX = ui:Append("WndButton", { txt = _L["Set hotkeys"], x = nX + 10, y = 152 }):AutoSize(8):Click(HM.SetHotKey):Pos_()
+	nX = ui:Append("WndButton", { txt = _L["Check update"], x = nX + 10, y = 152 }):AutoSize(8):Click(function()
+		_HM_About.CheckUpdate(HM.UI.Fetch(this))
+	end):Pos_()
 	-- author
 	ui:Append("Text", { txt = _L["About HMM"], x = 0, y = 188, font = 27 })
 	ui:Append("Text", { x = 0, y = 216, w = 500, h = 40, multi = true }):Align(0, 0):Text(_L["A pure PVP TianCe player of evil camp. Third-class operation, but first-class crazy and lazy!"])
@@ -153,20 +204,21 @@ _HM_About.PS.OnTaboxCheck = function(frame, nIndex, szTitle)
 	nX = ui:Append("Text", { txt = _L["<About plug-in>"], x = nX + 10, y = 305, font = 27 }):Click(function()
 		HM.OpenPanel(_L["About plug-in"])
 	end):Pos_()
+	nX = ui:Append("Text", { txt = _L["<Latest version>"], x = nX + 10, y = 305, font = 27 }):Click(function()
+		OpenInternetExplorer(_HM_About.szHost .. "down/")
+	end):Pos_()
 	nX = ui:Append("Text", { txt = _L["<Set hotkeys>"], x = nX + 10, y = 305, font = 27 }):Click(HM.SetHotKey):Pos_()
 end
 
 ---------------------------------------------------------------------
 -- 注册事件、初始化
 ---------------------------------------------------------------------
---[[
 HM.RegisterEvent("LOADING_END", function()
 	if not _HM_About.bChecked then
-		_HM_About.CheckLocalDeny()
-		_HM_About.bChecked = true
+		--_HM_About.CheckLocalDeny()
+		_HM_About.CheckUpdate()
 	end
 end)
---]]
 HM.RegisterEvent("CALL_LUA_ERROR", function()
 	if HM_About.bDebug then
 		OutputMessage("MSG_SYS", arg0)

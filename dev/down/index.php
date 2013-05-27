@@ -55,13 +55,13 @@ function SaveClick(v)
 <body>
 <h1><?php echo $title; ?></h1>
 <p class="offical">
-官方网站：<a href="http://haimanchajian.com">http://haimanchajian.com</a>，<a href="https://github.com/haimanman/jx3/">源码@github</a>、<a href="http://haimanchajian.com/repack/">PAK 文件清理工具</a>、<a href="JX3HM-2.0.exe">JX3HM-2.0.exe</a>（支持自动更新、功能筛选）
+官方网站：<a href="http://haimanchajian.com">http://haimanchajian.com</a>，<a href="https://github.com/haimanman/jx3/">源码@github</a>、<a href="http://haimanchajian.com/repack/">PAK 文件清理工具</a>、<a href="JX3HM-2.0.exe">JX3HM-2.0.exe</a>（自动更新、功能筛选）
 </p>
 <ol>
   <?php foreach($list as $file): ?>
   <li>
     <h2>
-	  <a href="<?php echo $file['file']; ?>" target="_blank" onclick="return SaveClick('<?php echo $file['version']; ?>');"><?php echo $file['file']; ?></a>
+	  <a href="<?php echo $file['file']; ?>" onclick="return SaveClick('<?php echo $file['version']; ?>');"><?php echo $file['file']; ?></a>
 	  <small>(<?php echo $file['date']; ?>，<?php echo $file['size']; ?>，<?php echo $file['click']; ?> Dowloads)</small>
 	</h2>
 	<p>
