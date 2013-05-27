@@ -41,6 +41,10 @@ data = {
 	["<Set hotkeys>"] = "<設置快捷鍵>",
 	["haiman"] = "海鰻",
 	["Good %s, thank you for choosing and using HM plug-in!"] = "%s乖，感謝您選擇&使用海鰻插件！",
+	["Checking..."] = "檢查中...",
+	["Already up to date!"] = "已經是最新版本！",
+	["The new HM version: %s, Goto download page?"] = "發現 HM 新版本：%s，去下載頁面？",
+	["Check update"] = "更新檢查",
 	-- HM_Area.lua --
 	["Own"] = "自己",
 	["Team"] = "團隊",
