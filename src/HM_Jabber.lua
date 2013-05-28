@@ -594,7 +594,8 @@ _HM_Jabber.OnPlayerDeath = function(dwID, szKiller, nFrame)
 			end
 		end
 	elseif szKiller == me.szName
-		or (not HM.IsDps(me) and tar and IsAlly(me.dwID, tar.dwID) and tar.szName == szKiller)
+		or (not HM.IsDps(me) and me.bFightState
+			and tar and IsAlly(me.dwID, tar.dwID) and tar.szName == szKiller)
 	then
 		-- kill/assist
 		tar = GetPlayer(dwID)
