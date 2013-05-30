@@ -494,7 +494,7 @@ _HM_ToolBox.OnOpenShop = function()
 	if HM_ToolBox.bSellGray then
 		_HM_ToolBox.SellGrayItem(nNpcID, nShopID)
 	end
-	_HM_ToolBox.nShopNpcID = arg4
+	_HM_ToolBox.nShopNpcID = nNpcID
 end
 
 _HM_ToolBox.OnShopUpdateItem = function()
@@ -613,16 +613,15 @@ _HM_ToolBox.OnDiamondUpdate = function()
 	-- 移除加锁（延迟一帧）
 	HM.DelayCall(50, function()
 		RemoveUILockItem("FEProduce")
-		if not box:IsEmpty() then
-			box:ClearObject()
-			box:SetOverText(0, "")
-		end
+		box:SetObject(UI_OBJECT_NOT_NEED_KNOWN, 0)
+		box:SetObjectIcon(3386)
 	end)
 	-- 重新放入配方（延迟8帧执行，确保 unlock）
 	HM.DelayCall(500, function()
 		_HM_ToolBox.LoadBagDiamond()
 		for _, v in ipairs(_HM_ToolBox.dFormula) do
 			if not _HM_ToolBox.RestoreBagDiamond(v) then
+				box:ClearObject()
 				_HM_ToolBox.dFormula = nil
 				_HM_ToolBox.tBagCache = nil
 				return
