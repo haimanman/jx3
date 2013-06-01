@@ -195,6 +195,19 @@ _HM.SetTempTarget = function()
 	_HM.nTempFrame = GetLogicFrameCount() + 8
 end
 
+-- get channel header
+_HM.tTalkChannelHeader = {
+	[PLAYER_TALK_CHANNEL.NEARBY] = "/s ",
+	[PLAYER_TALK_CHANNEL.FRIENDS] = "/o ",
+	[PLAYER_TALK_CHANNEL.TONG_ALLIANCE] = "/a ",
+	[PLAYER_TALK_CHANNEL.RAID] = "/t ",
+	[PLAYER_TALK_CHANNEL.TONG] = "/g ",
+	[PLAYER_TALK_CHANNEL.SENCE] = "/y ",
+	[PLAYER_TALK_CHANNEL.FORCE] = "/f ",
+	[PLAYER_TALK_CHANNEL.CAMP] = "/c ",
+	[PLAYER_TALK_CHANNEL.WORLD] = "/h ",
+}
+
 -- parse faceicon in talking message
 _HM.ParseFaceIcon = function(t)
 	if not _HM.tFaceIcon then
@@ -824,6 +837,11 @@ HM.Talk = function(nChannel, szText, bNoEmotion, bSaveDeny)
 			else
 				edit:InsertObj(v.text, v)
 			end
+		end
+		-- change to this channel
+		local szHeader = _HM.tTalkChannelHeader[nChannel]
+		if szHeader then
+			SwitchChatChannel(szHeader)
 		end
 	end
 end

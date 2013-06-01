@@ -5,7 +5,6 @@
 HM_Jabber = {
 	nChannelKill1 = PLAYER_TALK_CHANNEL.TONG,
 	nChannelKilled1 = PLAYER_TALK_CHANNEL.TONG_ALLIANCE,
-	nChannelAssist1 = PLAYER_TALK_CHANNEL.TONG,
 	nChannelSkill1 = 0,
 	tMessage = {
 		kill = {
@@ -616,7 +615,7 @@ _HM_Jabber.OnPlayerDeath = function(dwID, szKiller, nFrame)
 			end
 		else
 			_HM_Jabber.nAssist = _HM_Jabber.nAssist + 1
-			nChannel = HM_Jabber.nChannelAssist1
+			nChannel = HM_Jabber.nChannelKill1
 			szKey = _L["Assist kill"]
 		end
 		if nChannel ~= 0 and tar then
@@ -718,8 +717,9 @@ _HM_Jabber.PS.OnPanelActive = function(frame)
 		end, true)
 	end):Pos_()
 	-- be killed
+	local nX1 = nX
 	nX = ui:Append("Text", { txt = _L["Killed"], x = nX + 20, y = 28 }):Pos_()
-	nX = ui:Append("WndComboBox", "Combo_Killed", { x = nX + 5, y = 30, w = 120, h = 25 })
+	ui:Append("WndComboBox", "Combo_Killed", { x = nX + 5, y = 30, w = 120, h = 25 })
 	:Text(_GetName(HM_Jabber.nChannelKilled1)):Color(unpack(_GetColor(HM_Jabber.nChannelKilled1)))
 	:Menu(function()
 		return _GetMenu(HM_Jabber.nChannelKilled1, function(nChannel)
@@ -727,27 +727,16 @@ _HM_Jabber.PS.OnPanelActive = function(frame)
 			ui:Fetch("Combo_Killed"):Text(_GetName(nChannel)):Color(unpack(_GetColor(nChannel)))
 		end, true)
 	end)
-	-- assist kill
-	nX = ui:Append("Text", { txt = _L["Assit kill channel"], x = 10, y = 58 }):Pos_()
-	nX = ui:Append("WndComboBox", "Combo_Assist", { x = nX + 5, y = 60, w = 120, h = 25 })
-	:Text(_GetName(HM_Jabber.nChannelAssist1)):Color(unpack(_GetColor(HM_Jabber.nChannelAssist1)))
-	:Enable(not HM.IsDps()):Menu(function()
-		return _GetMenu(HM_Jabber.nChannelAssist1, function(nChannel)
-			HM_Jabber.nChannelAssist1 = nChannel
-			ui:Fetch("Combo_Assist"):Text(_GetName(nChannel)):Color(unpack(_GetColor(nChannel)))
-		end, true)
-	end):Pos_()
 	-- count
-	local nX1 = nX
-	nX = ui:Append("Text", { txt = _L["Statistics"], x = nX + 20, y = 58 }):Color(255, 0, 0):Pos_()
-	ui:Append("WndComboBox", "Combo_Account", { x = nX + 5, y = 58, w = 120, h = 25 })
+	nX = ui:Append("Text", { txt = _L["Post kill statistics"], x = 10, y = 58 }):Pos_()
+	ui:Append("WndComboBox", "Combo_Account", { x = nX + 5, y = 58, w = 120, h = 25 }):Color(255, 0, 0)
 	:Text(_L["Sel channel"]):Menu(function()
 		return _GetMenu(nil, _HM_Jabber.PostAccount)
 	end)
-	-- event talk
-	ui:Append("WndComboBox", { x = nX1 + 20, y = 90 }):Text(_L["Saying on other event"]):Menu(_HM_Jabber.GetEventMenu)
 	-- content set
 	ui:Append("WndComboBox", { x = 10, y = 90 }):Text(_L["Set kill saying"]):Menu(_HM_Jabber.GetMsgKillMenu)
+	-- event talk
+	ui:Append("WndComboBox", { x = nX1 + 20, y = 90 }):Text(_L["Saying on other event"]):Menu(_HM_Jabber.GetEventMenu)
 	-- skill
 	ui:Append("Text", { txt = _L["Skill saying"], font = 27, x = 0, y = 126 })
 	nX = ui:Append("Text", { txt = _L["Select skill saying channel"], x = 10, y = 154 }):Pos_()
