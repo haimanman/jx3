@@ -230,7 +230,7 @@ HM.RegisterPanel(_L["About plug-in"], 368, _L["Others"], _HM_About.PS)
 
 -- add macro command
 AppendCommand(_L["haiman"], function()
-	_HM_Locker.bDisableEx = true
+	_HM_About.bDisableEx = true
 	HM.Sysmsg(_L("Good %s, thank you for choosing and using HM plug-in!", GetClientPlayer().szName))
 end)
 
