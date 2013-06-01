@@ -2590,6 +2590,15 @@ HM.OnFrameBreathe = function()
 	_HM.SetTempTarget()
 end
 
+-- key down
+HM.OnFrameKeyDown = function()
+	if GetKeyName(Station.GetMessageKey()) == "Esc" then
+		_HM.ClosePanel()
+		return 1
+	end
+	return 0
+end
+
 -- button click
 HM.OnLButtonClick = function()
 	local szName = this:GetName()
