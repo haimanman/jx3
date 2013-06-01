@@ -19,12 +19,7 @@ HM_Jabber = {
 		auto =  _L["Hello, world!"],
 	},
 }
-
-RegisterCustomData("HM_Jabber.nChannelKill1")
-RegisterCustomData("HM_Jabber.nChannelKilled1")
-RegisterCustomData("HM_Jabber.nChannelAssist1")
-RegisterCustomData("HM_Jabber.nChannelSkill1")
-RegisterCustomData("HM_Jabber.tMessage")
+HM.RegisterCustomData("HM_Jabber")
 
 ---------------------------------------------------------------------
 -- 本地函数和变量

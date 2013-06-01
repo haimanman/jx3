@@ -7,13 +7,13 @@ HM_TargetList = {
 	bJihuo = true,				-- 开启双击集火（要求 HM_Marker）
 	bAutoArean = true,		-- 开启竞技场模式（自动全部焦点对方）
 	----
-	bShowFocus = true,	-- 显示焦点目标
+	--bShowFocus = true,	-- 显示焦点目标
 	bFocusState = true,		-- 显示焦点状态/BUFF
 	bFocusTarget2 = false,	-- 显示焦点的目标
 	bFocusOld = false,		-- 使用旧版焦点界面
 	bAltFocus = true,		-- 启用 Shift-点击设焦点
 	----
-	bShowList = true,		-- 显示目标列表
+	--bShowList = true,		-- 显示目标列表
 	nListMode = 6,			-- 列表模式
 	bListWhite = true,		-- 白色模式
 	tShowMode = {			-- 查看模式
@@ -53,12 +53,11 @@ HM_TargetList = {
 	----
 	bShowAcct = true,	-- 人数统计（敌、友、中）
 }
+HM.RegisterCustomData("HM_TargetList")
 
-for k, _ in pairs(HM_TargetList) do
-	if k ~= "bShowFocus" and k ~= "bShowList" then
-		RegisterCustomData("HM_TargetList." .. k)
-	end
-end
+-- 暂不记录的选项
+HM_TargetList.bShowFocus = true
+HM_TargetList.bShowList = true
 
 -- update custom
 --[==[

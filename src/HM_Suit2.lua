@@ -12,10 +12,7 @@ HM_Suit2 = {
 	bShowChange = true,
 	bShowUmount = true,
 }
-
-for k, _ in pairs(HM_Suit2) do
-	RegisterCustomData("HM_Suit2." .. k)
-end
+HM.RegisterCustomData("HM_Suit2")
 
 ---------------------------------------------------------------------
 -- 本地函数和变量

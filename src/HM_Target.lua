@@ -27,10 +27,7 @@ HM_Target = {
 	bNoSpark = true,				-- 取消 BUFF 闪烁
 	bSubDebuff = false,			-- 屏蔽相同的 DEBUFF
 }
-
-for k, _ in pairs(HM_Target) do
-	RegisterCustomData("HM_Target." .. k)
-end
+HM.RegisterCustomData("HM_Target")
 
 ---------------------------------------------------------------------
 -- 本地函数和变量

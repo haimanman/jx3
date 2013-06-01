@@ -5,8 +5,7 @@
 HM_Ent = {
 	bAutoChat = false,	-- 直接发布聊天
 }
-
-RegisterCustomData("HM_Ent.bAutoChat")
+HM.RegisterCustomData("HM_Ent")
 
 ---------------------------------------------------------------------
 -- 本地函数和变量

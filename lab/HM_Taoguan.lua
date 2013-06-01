@@ -33,10 +33,7 @@ HM_Taoguan = {
 		["年年有鱼灯"] = true,
 	},
 }
-
-for k, _ in pairs(HM_Taoguan) do
-	RegisterCustomData("HM_Taoguan." .. k)
-end
+HM.RegisterCustomData("HM_Taoguan")
 
 ---------------------------------------------------------------------
 -- 本地函数和变量

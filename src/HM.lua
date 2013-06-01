@@ -1132,6 +1132,18 @@ HM.UnRegisterEvent = function(szEvent)
 	HM.RegisterEvent(szEvent, nil)
 end
 
+-- 注册用户定义数据，支持全局变量数组遍历
+-- (void) HM.RegisterCustomData(string szVarPath)
+HM.RegisterCustomData = function(szVarPath)
+	if _G and type(_G[szVarPath]) == "table" then
+		for k, _ in pairs(_G[szVarPath]) do
+			RegisterCustomData(szVarPath .. "." .. k)
+		end
+	else
+		RegisterCustomData(szVarPath)
+	end
+end
+
 -- Role Custom Data 加载后判断比较 nUpdateDate 然后调用 fnAction
 -- (void) HM.RegisterCustomUpdater(func fnAction, number nUpdateDate)
 HM.RegisterCustomUpdater = function(fnAction, nUpdateDate)

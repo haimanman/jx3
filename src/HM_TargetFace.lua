@@ -17,10 +17,7 @@ HM_TargetFace = {
 	tTargetShapeColor = { 255, 0, 0 },
 	tFocusShapeColor = { 0, 0, 255 },
 }
-
-for k, _ in pairs(HM_TargetFace) do
-	RegisterCustomData("HM_TargetFace." .. k)
-end
+HM.RegisterCustomData("HM_TargetFace")
 
 ---------------------------------------------------------------------
 -- 本地函数和变量

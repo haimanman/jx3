@@ -7,10 +7,7 @@ HM_Team = {
 	bKeepForm = true,	-- 保留小队阵眼
 	bKeepAlly = true,		-- 清空标记时保留友方标记
 }
-
-RegisterCustomData("HM_Team.bKeepMark")
-RegisterCustomData("HM_Team.bKeepForm")
-RegisterCustomData("HM_Team.bKeepAlly")
+HM.RegisterCustomData("HM_Team")
 
 ---------------------------------------------------------------------
 -- 本地函数和变量

@@ -10,10 +10,7 @@ HM_RedName = {
 	bUseGreen = false,
 	bAcctUser = false,
 }
-
-for k, _ in pairs(HM_RedName) do
-	RegisterCustomData("HM_RedName." .. k)
-end
+HM.RegisterCustomData("HM_RedName")
 
 ---------------------------------------------------------------------
 -- 本地函数和变量

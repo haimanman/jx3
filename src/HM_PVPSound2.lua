@@ -7,9 +7,7 @@ HM_PVPSound2 = {
 	bSound = true,	-- ²¥·ÅÉùÒô
 	bText = true,		-- ¸¡¶¯ÎÄ×Ö
 }
-
-RegisterCustomData("HM_PVPSound2.bSound")
-RegisterCustomData("HM_PVPSound2.bText")
+HM.RegisterCustomData("HM_PVPSound2")
 
 --[[
 local _, dwID = GetClientPlayer().GetTarget()

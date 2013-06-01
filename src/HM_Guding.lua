@@ -11,14 +11,7 @@ HM_Guding = {
 	szSay = _L["I have put the GUDING, hurry to eat if you lack of mana. *la la la*"],
 	color = { 255, 0, 128 },	-- 名称颜色，默认绿色
 }
-
-RegisterCustomData("HM_Guding.bEnable")
-RegisterCustomData("HM_Guding.bAutoUse")
-RegisterCustomData("HM_Guding.nAutoMp")
-RegisterCustomData("HM_Guding.nAutoHp")
-RegisterCustomData("HM_Guding.bAutoSay")
-RegisterCustomData("HM_Guding.szSay")
-RegisterCustomData("HM_Guding.color")
+HM.RegisterCustomData("HM_Guding")
 
 ---------------------------------------------------------------------
 -- 本地函数和变量

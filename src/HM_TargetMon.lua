@@ -162,9 +162,7 @@ HM_TargetMon.tBuffList = {
 }
 
 -- customdata
-for k, _ in pairs(HM_TargetMon) do
-	RegisterCustomData("HM_TargetMon." .. k)
-end
+HM.RegisterCustomData("HM_TargetMon")
 
 -- update custom
 local tSkillMJ = HM_TargetMon.tSkillList[10]

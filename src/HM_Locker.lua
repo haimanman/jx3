@@ -10,10 +10,7 @@ HM_Locker = {
 	tSearchTarget = { OnlyPlayer = false, OnlyNearDis = true, MidAxisFirst = false, Weakness = false },
 	bLockScoff = true,	-- 自动还原目标
 }
-
-for k, _ in pairs(HM_Locker) do
-	RegisterCustomData("HM_Locker." .. k)
-end
+HM.RegisterCustomData("HM_Locker")
 
 ---------------------------------------------------------------------
 -- 本地函数和变量

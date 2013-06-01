@@ -15,10 +15,7 @@ HM_Force = {
 	bWarningDebuff = true,	-- 警告  debuff 类型
 	nDebuffNum = 3,			-- debuff 类型达到几个时警告
 }
-
-for k, _ in pairs(HM_Force) do
-	RegisterCustomData("HM_Force." .. k)
-end
+HM.RegisterCustomData("HM_Force")
 
 ---------------------------------------------------------------------
 -- 本地函数和变量

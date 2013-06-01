@@ -14,17 +14,7 @@ HM_Marker = {
 	bIgnoreSay = false,		-- 忽略集火时在自动发言
 	tAnchor = {},
 }
-
-RegisterCustomData("HM_Marker.bShow")
-RegisterCustomData("HM_Marker.bJihuo")
-RegisterCustomData("HM_Marker.nIgnoreHP")
-RegisterCustomData("HM_Marker.nIgnoreDis")
-RegisterCustomData("HM_Marker.bIgnoreIAction")
-RegisterCustomData("HM_Marker.bIgnoreTAction")
-RegisterCustomData("HM_Marker.bJihuoSound")
-RegisterCustomData("HM_Marker.bJihuoSay")
-RegisterCustomData("HM_Marker.bIgnoreSay")
-RegisterCustomData("HM_Marker.tAnchor")
+HM.RegisterCustomData("HM_Marker")
 
 ---------------------------------------------------------------------
 -- 本地函数和变量

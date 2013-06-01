@@ -26,10 +26,7 @@ HM_Camp = {
 		--[_n(1215)--[[恶人谷练兵将]]] = 3,
 	},
 }
-
-for k, _ in pairs(HM_Camp) do
-	RegisterCustomData("HM_Camp." .. k)
-end
+HM.RegisterCustomData("HM_Camp")
 
 ---------------------------------------------------------------------
 -- 本地函数和变量

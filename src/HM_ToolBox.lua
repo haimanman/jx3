@@ -37,10 +37,9 @@ HM_ToolBox = {
 	nBroadType = 0,
 	szBroadText = "Hi",
 }
+HM.RegisterCustomData("HM_ToolBox")
 
-for k, _ in pairs(HM_ToolBox) do
-	RegisterCustomData("HM_ToolBox." .. k)
-end
+-- 暂不记录的选项
 HM_ToolBox.bIgnoreRaid = false
 
 ---------------------------------------------------------------------

@@ -22,10 +22,7 @@ HM_Area = {
 		},
 	},
 }
-
-for k, _ in pairs(HM_Area) do
-	RegisterCustomData("HM_Area." .. k)
-end
+HM.RegisterCustomData("HM_Area")
 
 ---------------------------------------------------------------------
 -- 本地函数和变量

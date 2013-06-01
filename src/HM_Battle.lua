@@ -10,10 +10,7 @@ HM_Battle = {
 	bAutoBattle= true,		-- 自动进入战场
 	bAutoArena = true,		-- 自动进入竞技场
 }
-
-for k, _ in pairs(HM_Battle) do
-	RegisterCustomData("HM_Battle." .. k)
-end
+HM.RegisterCustomData("HM_Battle")
 
 ---------------------------------------------------------------------
 -- 本地函数和变量

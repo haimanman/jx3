@@ -4,11 +4,12 @@
 
 HM_About = {
 	bPlayOpen = true,	-- 播放开场音乐
-	bDebug = false,	-- 启用 DEBUG
 	szDate = "",
 }
-RegisterCustomData("HM_About.bPlayOpen")
-RegisterCustomData("HM_About.szDate")
+HM.RegisterCustomData("HM_About")
+
+-- 暂不记录的选项
+HM_About.bDebug = false	-- 启用 DEBUG
 
 ---------------------------------------------------------------------
 -- 本地函数和变量
