@@ -2,7 +2,7 @@
 <jx3:hm xmlns:jx3="http://haimanchajian.com">
   <name><![CDATA[海鳗、插件集]]></name>
   <desc><![CDATA[大量非常方便的 PVP 插件！ --== 海鳗鳗@步莲台 ==--]]></desc>
-  <version dword="0x2001305">2.0.19b5</version>
+  <version dword="0x2001306">2.0.19b6</version>
   <clientVersion dword="0x10000">1.0beta</clientVersion>
   <urlPrefix>http://jx3.hightman.cn/sync/HM/</urlPrefix>
   <info>
@@ -19,7 +19,7 @@
     <file size="24898" title="小地图红名标记、身边玩家统计及共享">src/HM_RedName.lua</file>
     <file size="7369" title="团队 ROLL 点娱乐、自动记录胜负">src/HM_Roll.lua</file>
     <file size="8299" title="可共享部位的快速脱换装助手、橙武必备">src/HM_Suit2.lua</file>
-    <file size="40238" title="目标增强、BUFF放大、方向指示及连接线">src/HM_Target.lua</file>
+    <file size="41922" title="目标增强、BUFF放大、方向指示及连接线">src/HM_Target.lua</file>
     <file size="9021" title="目标和焦点的脚底面向及圈圈指示">src/HM_TargetFace.lua</file>
     <file size="56280" title="多焦点目标、目标列表、定制筛选排序">src/HM_TargetList.lua</file>
     <file size="35321" title="目标技能CD监控、超大显示特殊BUFF">src/HM_TargetMon.lua</file>
