@@ -2,29 +2,29 @@
 <jx3:hm xmlns:jx3="http://haimanchajian.com">
   <name><![CDATA[海鳗、插件集]]></name>
   <desc><![CDATA[大量非常方便的 PVP 插件！ --== 海鳗鳗@步莲台 ==--]]></desc>
-  <version dword="0x2001304">2.0.19b4</version>
+  <version dword="0x2001305">2.0.19b5</version>
   <clientVersion dword="0x10000">1.0beta</clientVersion>
   <urlPrefix>http://jx3.hightman.cn/sync/HM/</urlPrefix>
   <info>
-    <file size="19697" title="纯阳气场/唐门机关范围显示、归属显示、消失倒计时">src/HM_Area.lua</file>
-    <file size="14068" title="战场竞技场助手、死后交阵眼、九宫计时、名剑币估算">src/HM_Battle.lua</file>
-    <file size="21724" title="攻防屏蔽及智能选BOSS、任务BOSS计时等">src/HM_Camp.lua</file>
-    <file size="6271" title="娱乐聊天、个人数据发布">src/HM_Ent.lua</file>
-    <file size="11727" title="天策技能栏、纯阳气场/剑舞、一键小轻功">src/HM_Force.lua</file>
-    <file size="10171" title="醒目显示团队蛊鼎位置、条件触发自动吃鼎">src/HM_Guding.lua</file>
-    <file size="31049" title="玩家斩杀喊话及统计、技能喊话、自动喊话">src/HM_Jabber.lua</file>
-    <file size="13479" title="目标锁定和选择、虎跑时锁定目标、只TAB玩家">src/HM_Locker.lua</file>
-    <file size="20545" title="团队标记快速选择、集火">src/HM_Marker.lua</file>
-    <file size="4812" title="PVP斩杀音效、文字特效">src/HM_PVPSound2.lua</file>
-    <file size="24943" title="小地图红名标记、身边玩家统计及共享">src/HM_RedName.lua</file>
+    <file size="19655" title="纯阳气场/唐门机关范围显示、归属显示、消失倒计时">src/HM_Area.lua</file>
+    <file size="14024" title="战场竞技场助手、死后交阵眼、九宫计时、名剑币估算">src/HM_Battle.lua</file>
+    <file size="21682" title="攻防屏蔽及智能选BOSS、任务BOSS计时等">src/HM_Camp.lua</file>
+    <file size="6262" title="娱乐聊天、个人数据发布">src/HM_Ent.lua</file>
+    <file size="11684" title="天策技能栏、纯阳气场/剑舞、一键小轻功">src/HM_Force.lua</file>
+    <file size="9920" title="醒目显示团队蛊鼎位置、条件触发自动吃鼎">src/HM_Guding.lua</file>
+    <file size="30271" title="玩家斩杀喊话及统计、技能喊话、自动喊话">src/HM_Jabber.lua</file>
+    <file size="13435" title="目标锁定和选择、虎跑时锁定目标、只TAB玩家">src/HM_Locker.lua</file>
+    <file size="20144" title="团队标记快速选择、集火">src/HM_Marker.lua</file>
+    <file size="4764" title="PVP斩杀音效、文字特效">src/HM_PVPSound2.lua</file>
+    <file size="24898" title="小地图红名标记、身边玩家统计及共享">src/HM_RedName.lua</file>
     <file size="7369" title="团队 ROLL 点娱乐、自动记录胜负">src/HM_Roll.lua</file>
-    <file size="8342" title="可共享部位的快速脱换装助手、橙武必备">src/HM_Suit2.lua</file>
-    <file size="40282" title="目标增强、BUFF放大、方向指示及连接线">src/HM_Target.lua</file>
-    <file size="9069" title="目标和焦点的脚底面向及圈圈指示">src/HM_TargetFace.lua</file>
-    <file size="56294" title="多焦点目标、目标列表、定制筛选排序">src/HM_TargetList.lua</file>
-    <file size="35366" title="目标技能CD监控、超大显示特殊BUFF">src/HM_TargetMon.lua</file>
-    <file size="17136" title="团队列表保存与还原、团队快速标记">src/HM_Team.lua</file>
-    <file size="25408" title="自动修装备、卖灰色、自动采集和确认、一键交易行">src/HM_ToolBox.lua</file>
+    <file size="8299" title="可共享部位的快速脱换装助手、橙武必备">src/HM_Suit2.lua</file>
+    <file size="40238" title="目标增强、BUFF放大、方向指示及连接线">src/HM_Target.lua</file>
+    <file size="9021" title="目标和焦点的脚底面向及圈圈指示">src/HM_TargetFace.lua</file>
+    <file size="56280" title="多焦点目标、目标列表、定制筛选排序">src/HM_TargetList.lua</file>
+    <file size="35321" title="目标技能CD监控、超大显示特殊BUFF">src/HM_TargetMon.lua</file>
+    <file size="17045" title="团队列表保存与还原、团队快速标记">src/HM_Team.lua</file>
+    <file size="25982" title="自动修装备、卖灰色、自动采集和确认、一键交易行">src/HM_ToolBox.lua</file>
   </info>
   <resource>
     <file size="22464">API.md</file>
@@ -39,15 +39,16 @@
     <file size="15318">hero/male_cont_2.wav</file>
     <file size="8834">hero/male_normal_1.wav</file>
     <file size="18797">hero/male_normal_2.wav</file>
-    <file size="975">info.ini</file>
-    <file size="10445">lab/HM_Taoguan.lua</file>
+    <file size="1014">info.ini</file>
+    <file size="10400">lab/HM_Taoguan.lua</file>
     <file size="397">lang/default.lua</file>
-    <file size="39031">lang/zhcn.lua</file>
+    <file size="39490">lang/zhcn.lua</file>
     <file size="43682">lang/zhkr.lua</file>
-    <file size="43595">lang/zhtw.lua</file>
-    <file size="75021">src/HM.lua</file>
-    <file size="9582">src/HM_About.lua</file>
+    <file size="44107">lang/zhtw.lua</file>
+    <file size="76636">src/HM.lua</file>
+    <file size="9563">src/HM_About.lua</file>
     <file size="16346">src/HM_Compatible.lua</file>
+    <file size="14426">src/HM_Doodad.lua</file>
     <file size="5261">ui/HM.ini</file>
     <file size="811">ui/HM_Area.ini</file>
     <file size="554">ui/HM_Guding.ini</file>
