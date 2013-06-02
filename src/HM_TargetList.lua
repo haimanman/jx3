@@ -340,6 +340,21 @@ _HM_TargetList.UpdateFocusMana = function(h, tar)
 		nCur, nMax, nFrame = tar.nCurrentEnergy, tar.nMaxEnergy, 87
 	elseif mnt and mnt.dwMountType == 6 and tar.nMaxRage > 0 then
 		nCur, nMax, nFrame = tar.nCurrentRage, tar.nMaxRage, 87
+	elseif mnt and mnt.dwMountType == 8 then
+		-- 日月能量哪个较多优先哪个，日：86，月：84
+		if tar.nSunPowerValue == 1 then
+			nCur, nMax, nFrame = tar.nMaxSunEnergy, tar.nMaxSunEnergy, 86
+		elseif tar.nMoonPowerValue == 1 then
+			nCur, nMax, nFrame = tar.nMaxMoonEnergy, tar.nMaxMoonEnergy, 84
+		else
+			local fS = tar.nCurrentSunEnergy / tar.nMaxSunEnergy
+			local fM = tar.nCurrentMoonEnergy / tar.nMaxMoonEnergy
+			if fM < fS then
+				nCur, nMax, nFrame = tar.nCurrentSunEnergy, tar.nMaxSunEnergy, 86
+			else
+				nCur, nMax, nFrame = tar.nCurrentMoonEnergy, tar.nMaxMoonEnergy, 84
+			end
+		end
 	end
 	if nMax > 0 then
 		local fP = math.min(1, nCur / nMax)

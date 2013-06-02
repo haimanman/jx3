@@ -502,13 +502,7 @@ _HM_Target.UpdateLM = function(frame, bTTarget)
 	hTextHealth:Show()
 	-- check mana/rage/energy
 	local hMana, hTextMana = frame:Lookup("", "Image_Mana"), frame:Lookup("", "Text_Mana")
-	local fM, sM = nil, ""
-	-- sun / moon
-	if frame.bSunMoon and frame.dwMountType ~= 8 then
-		frame:Lookup("", "Image_Moon"):Hide()
-		frame:Lookup("", "Text_Moon"):Hide()
-		hTextMana:SetSize(hTextMana.w, hTextMana.h)
-	end
+	local fM, sM, nM = nil, "", 87
 	if frame.dwType == TARGET.PLAYER and frame.dwMountType then
 		if frame.dwMountType == 10 and tar.nMaxEnergy > 0 then	-- TM
 			fM = tar.nCurrentEnergy / tar.nMaxEnergy
@@ -516,49 +510,29 @@ _HM_Target.UpdateLM = function(frame, bTTarget)
 		elseif frame.dwMountType == 6 and tar.nMaxRage > 0 then	-- CJ
 			fM = tar.nCurrentRage / tar.nMaxRage
 			sM = _HM_Target.GetStateString(tar.nCurrentRage, tar.nMaxRage, bTTarget)
-		elseif frame.dwMountType == 8 and tar.nMaxSunEnergy > 0 then	-- MJ
-			local handle = frame:Lookup("", "")
-			if not frame.bSunMoon then
-				handle:AppendItemFromString("<image>path=\"ui/Image/TargetPanel/Target.UITex\" name=\"Image_Moon\" frame=84 imagetype=1 </image>")
-				handle:AppendItemFromString("<text>name=\"Text_Moon\" valign=1 halign=1 font=176 </text>")
-				local nW, nH = hMana:GetSize()
-				local nX, nY = hMana:GetRelPos()
-				handle:Lookup("Image_Moon"):SetRelPos(nX + math.ceil(nW / 2), nY)
-				handle:Lookup("Image_Moon"):SetSize(math.floor(nW / 2), nH)
-				local nW, nH = hTextMana:GetSize()
-				local nX, nY = hTextMana:GetRelPos()
-				handle:Lookup("Text_Moon"):SetRelPos(nX + math.ceil(nW / 2), nY)
-				handle:Lookup("Text_Moon"):SetSize(math.floor(nW / 2), nH)
-				handle:FormatAllItemPos()
-				hTextMana.w, hTextMana.h = nW, nH
-				frame.bSunMoon = true
-			end
-			-- moon
-			if tar.nMoonPowerValue == 1 then
-				fM = 1
-			else
-				fM = tar.nCurrentMoonEnergy / tar.nMaxMoonEnergy
-			end
-			handle:Lookup("Image_Moon"):SetPercentage(fM)
-			handle:Lookup("Text_Moon"):SetText(string.format("%d%%", fM * 100))
-			handle:Lookup("Image_Moon"):Show()
-			handle:Lookup("Text_Moon"):Show()
-			-- sun
-			hTextMana:SetSize(math.floor(hTextMana.w/2), hTextMana.h)
+		elseif frame.dwMountType == 8 then	-- MJ
+			-- 日月能量哪个较多优先哪个，日：86，月：84
 			if tar.nSunPowerValue == 1 then
-				fM = 1
+				fM, nM = 1, 86
+			elseif tar.nMoonPowerValue == 1 then
+				fM, nM = 1, 84
 			else
-				fM = tar.nCurrentSunEnergy / tar.nMaxSunEnergy
+				local fS = tar.nCurrentSunEnergy / tar.nMaxSunEnergy
+				fM = tar.nCurrentMoonEnergy / tar.nMaxMoonEnergy
+				if fM > fS then
+					nM = 84
+				else
+					fM, nM = fS, 86
+				end
 			end
 			sM = string.format("%d%%", fM * 100)
-			fM = fM / 2
 		end
 	end
 	-- update mana image
 	if fM ~= nil then
-		hMana:Show()
-		hMana:SetFrame(87)
+		hMana:SetFrame(nM)
 		hMana:SetPercentage(fM)
+		hMana:Show()
 		for _, v in ipairs({ "FBgC", "FBgCR", "FBgCRR", "FBgR", "FBgL", "TarBgF" }) do
 			local h = frame:Lookup("", "Image_" .. v)
 			if h then h:Hide() end
