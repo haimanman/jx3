@@ -690,6 +690,27 @@ HM.BreatheCall = function(szKey, fnAction, nTime)
 	end
 end
 
+-- 改变呼吸调用频率
+-- (void) HM.BreatheCallDelay(string szKey, nTime)
+-- nTime		-- 延迟时间，每 62.5 延迟一帧
+HM.BreatheCallDelay = function(szKey, nTime)
+	local t = _HM.tBreatheCall[StringLowerW(szKey)]
+	if t then
+		t.nFrame = math.ceil(nTime / 62.5)
+		t.nNext = GetLogicFrameCount() + t.nFrame
+	end
+end
+
+-- 延迟一次呼吸函数的调用频率
+-- (void) HM.BreatheCallDelayOnce(string szKey, nTime)
+-- nTime		-- 延迟时间，每 62.5 延迟一帧
+HM.BreatheCallDelayOnce = function(szKey, nTime)
+	local t = _HM.tBreatheCall[StringLowerW(szKey)]
+	if t then
+		t.nNext = GetLogicFrameCount() + math.ceil(nTime / 62.5)
+	end
+end
+
 -- (void) HM.DelayCall(number nDelay, func fnAction)		-- 延迟调用
 -- nTime		-- 延迟调用时间，单位：毫秒，实际调用延迟延迟是 62.5 的整倍数
 -- fnAction	-- 调用函数

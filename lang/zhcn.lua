@@ -1,4 +1,4 @@
--- language data (zhcn) updated at 2013/05/25 01:44:16
+-- language data (zhcn) updated at 2013/06/02 18:26:07
 data = {
 	-- HM.lua --
 	["HM, JX3 Plug-in Collection"] = "海鳗、实用插件集",
@@ -37,7 +37,6 @@ data = {
 	["<About plug-in>"] = "<关于插件>",
 	["About plug-in"] = "关于这个插件",
 	["<Latest version>"] = "<最新版本>",
-	["Latest version"] = "最新版本",
 	["<Set hotkeys>"] = "<设置快捷键>",
 	["haiman"] = "海鳗",
 	["Good %s, thank you for choosing and using HM plug-in!"] = "%s乖，感谢您选择&使用海鳗插件！",
@@ -289,7 +288,6 @@ data = {
 	["<OUTER GUEST>"] = "<天外来客>",
 	["Kill saying"] = "斩杀喊话",
 	["Select kill channel"] = "选择击杀喊话频道",
-	["Assit kill channel"] = "治疗协助击杀频道",
 	["Post kill statistics"] = "发布击杀统计结果",
 	["Saying on other event"] = "设置其它事件喊话",
 	["Set kill saying"] = "设置斩杀喊话内容",
@@ -585,7 +583,6 @@ data = {
 	["Keep foucs in list"] = "列表中保留焦点目标",
 	["Use white text in list"] = "列表采用白色字体",
 	["[Custom]"] = "[自]",
-	--["Total: "] = "总：",
 	[": Live(%d) Dead(%d) Total(%d)"] = "：活(%d) 死(%d) 总(%d)",
 	["Arean begin!!!"] = "竞技场开始!!!",
 	["Show focus target"] = "显示焦点目标",
@@ -710,7 +707,6 @@ data = {
 	["Team save/res"] = "团队保存/还原",
 	["Quick mark(2*remark)"] = "快速标记(按2次重标)",
 	-- HM_ToolBox.lua --
-	["HuiZhenYan"] = "素冠荷鼎|汇珍宴",
 	["[Party BC] "] = "【团队群密】",
 	["[Guild BC] "] = "【帮会群密】",
 	["Shop NPC"] = "商人 NPC",
@@ -719,9 +715,7 @@ data = {
 	["Auto confirm for team ready"] = "自动确认团长的团队确认",
 	["Auto confirm for trade request"] = "自动确认交易请求",
 	["Auto confirm for ridding horse"] = "自动确认双骑上马请求",
-	["Auto interact quest doodad"] = "自动采集任务物品",
 	["Press SHIFT fast auction sell"] = "按 Shift 一键寄卖交易行",
-	["Auto interact specified doodad"] = "自动采集指定物品",
 	["Group whisper oline (Guild perm required)"] = "在线群密（帮会需要官员权限）",
 	["Online"] = "在线",
 	["Other map"] = "其它地图",
@@ -742,6 +736,7 @@ data = {
 	["DiamondRegex"] = "五行石·(.-)（(.-)级）",
 	["Enable stack items by button"] = "启用一键堆叠按纽（背包/仓库）",
 	["Stack"] = "堆叠",
+	["Display equipment durability"] = "显示玩家装备耐久度",
 	-- src/HM_Marker.lua --
 	[" feet"] = " 尺",
 	-- src/HM_TargetFace.lua --
@@ -757,4 +752,20 @@ data = {
 	["The foot shape radius"] = "圈圈半径",
 	["The foot shape transparency"] = "圈圈透明度",
 	["Only show the facing and foot shape of the last added focus target"] = "只会显示最后设置的焦点目标的面向和圈圈",
+	-- HM_Doodad.lua --
+	["Filter gray items"] = "过滤灰色物品",
+	["Filter white items"] = "过滤白色物品",
+	["Filter green items"] = "过滤绿色物品",
+	["Filter specified items"] = "过滤指定物品",
+	["Loot specified items"] = "仅拾取指定物品",
+	["Pickup items"] = "自动拾取",
+	["Enable auto pickup"] = "开启自动拾取",
+	["Pickup in fight"] = "战斗中也拾取",
+	["Set pickup filter"] = "设置拾取过滤",
+	["Craft assit"] = "采集助手",
+	["Display minimap flag"] = "显示小地图标记",
+	["Auto interact"] = "自动采集",
+	["Quest items"] = "任务物品",
+	["Customs (split by | )"] = "自定义（用 | 分隔）：",
+	["Doodad helper"] = "采集拾取助手",
 }

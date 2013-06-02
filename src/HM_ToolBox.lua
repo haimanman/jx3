@@ -25,15 +25,13 @@ HM_ToolBox = {
 	-- 自动确认
 	bIgnoreSell = true,		-- 卖蓝色装备免确认
 	--bIgnoreRaid = false,	-- 自动团队确认
+	bDurability = true,			-- 显示装备耐久度
 	bIgnoreTrade = false,	-- 自动交易确认 TradingInvite
 	bIgnoreHorse = false,	-- 自动双骑确认  OnInviteFollow
-	bQuestItem = true,		-- 自动采集任务物品
-	bCustomDoodad = false,	-- 自动采集指定物品
 	bShiftAuction = true,	-- 按 shift 一键寄卖
 	bAutoStack = true,	-- 一键堆叠（背包+仓库）
 	bAutoDiamond = true,	-- 五行石精炼完成后自动再摆上次材料
 	bAnyDiamond = false,	-- 忽略五行石颜色，只考虑等级
-	szCustomDoodad = _L["HuiZhenYan"],
 	nBroadType = 0,
 	szBroadText = "Hi",
 }
@@ -47,7 +45,6 @@ HM_ToolBox.bIgnoreRaid = false
 ---------------------------------------------------------------------
 local _HM_ToolBox = {
 	nRaidID = 0,
-	tDoodad = {},	-- 待处理的 doodad 列表
 }
 
 -- 获取自动售卖设置菜单
@@ -480,6 +477,84 @@ _HM_ToolBox.BindStackButton = function()
 	end
 end
 
+-- 装备所在的 box 列表
+_HM_ToolBox.tEquipBox = {
+	["Wnd_Equit"] = {
+		[EQUIPMENT_INVENTORY.HELM] = "Box_Helm",	-- 帽子
+		[EQUIPMENT_INVENTORY.CHEST] = "Box_Chest",	-- 上衣
+		[EQUIPMENT_INVENTORY.BANGLE] = "Box_Bangle",	-- 护腕
+		[EQUIPMENT_INVENTORY.WAIST] = "Box_Waist",	-- 腰带
+		[EQUIPMENT_INVENTORY.PANTS] = "Box_Pants",	-- 下装
+		[EQUIPMENT_INVENTORY.BOOTS] = "Box_Boots",	-- 鞋子
+	},
+	["Wnd_Weapon"] = {
+		[EQUIPMENT_INVENTORY.MELEE_WEAPON] = "Box_MeleeWeapon",	-- 近身武器
+		[EQUIPMENT_INVENTORY.RANGE_WEAPON] = "Box_RangeWeapon",	-- 远程武器
+		--[EQUIPMENT_INVENTORY.ARROW] = "Box_AmmoPouch",	-- 暗器
+	},
+	["Wnd_CangJian"] = {
+		[EQUIPMENT_INVENTORY.MELEE_WEAPON] = "Box_LightSword",	-- 轻剑
+		[EQUIPMENT_INVENTORY.BIG_SWORD] = "Box_HeavySword",	-- 重剑
+		[EQUIPMENT_INVENTORY.RANGE_WEAPON] = "Box_RangeWeaponCJ",	-- 远程武器
+		--[EQUIPMENT_INVENTORY.ARROW] = "Box_AmmoPouchCJ",	-- 暗器
+	},
+}
+
+-- 更新显示装备耐久度
+_HM_ToolBox.UpdateDurability = function(dwPlayer)
+	local me, page
+	if dwPlayer then
+		me = GetPlayer(dwPlayer)
+		page = Station.Lookup("Normal/PlayerView/Page_Main/Page_Battle")
+	else
+		me = GetClientPlayer()
+		page = Station.Lookup("Normal/CharacterPanel/Page_Main/Page_Battle")
+	end
+	if not me or not page then
+		return
+	end
+	if HM_ToolBox.bDurability then
+		for k, v in pairs(_HM_ToolBox.tEquipBox) do
+			local wnd = page:Lookup(k)
+			if wnd:IsVisible() then
+				for kk, vv in pairs(v) do
+					local box = wnd:Lookup("", vv)
+					if box then
+						local item = GetPlayerItem(me, INVENTORY_INDEX.EQUIP, kk)
+						if item then
+						    local dwDur = item.nCurrentDurability / item.nMaxDurability
+							local nFont = 16
+							if dwDur < 0.33 then
+								nFont = 159
+							elseif dwDur < 0.66 then
+								nFont = 168
+							end
+							box:SetOverText(1, string.format("%d%%", dwDur * 100))
+							box:SetOverTextFontScheme(1, nFont)
+						else
+							box:SetOverText(1, "")
+						end
+					end
+				end
+			end
+		end
+		page.bDurability = true
+	elseif page.bDurability then
+		page.bDurability = nil
+		for k, v in pairs(_HM_ToolBox.tEquipBox) do
+			local wnd = page:Lookup(k)
+			if wnd:IsVisible() then
+				for kk, vv in pairs(v) do
+					local box = wnd:Lookup("", vv)
+					if box then
+						box:SetOverText(1, "")
+					end
+				end
+			end
+		end
+	end
+end
+
 -------------------------------------
 -- 事件处理
 -------------------------------------
@@ -561,44 +636,6 @@ _HM_ToolBox.OnAutoConfirm = function()
 	_HM_ToolBox.BindStackButton()
 end
 
-_HM_ToolBox.ReloadDoodad = function()
-	local t = {}
-	for k, _ in pairs(HM.GetAllDoodadID()) do
-		t[k] = 0
-	end
-	_HM_ToolBox.tDoodad = t
-end
-
-_HM_ToolBox.OnAutoDoodad = function()
-	local me = GetClientPlayer()
-	if not me or me.bFightState or me.GetOTActionState() ~= 0 or me.bOnHorse
-		or (me.nMoveState ~= MOVE_STATE.ON_STAND and me.nMoveState ~= MOVE_STATE.ON_FLOAT)
-	then
-		return
-	end
-	for k, v in pairs(_HM_ToolBox.tDoodad) do
-		local d, bKeep, bInteract = GetDoodad(k), false, false
-		--if d and d.nKind ~= DOODAD_KIND.CORPSE and d.nKind ~= DOODAD_KIND.NPCDROP then
-		if d and d.nKind ~= DOODAD_KIND.NPCDROP then
-			if (HM_ToolBox.bQuestItem and d.HaveQuest(me.dwID))
-				or (HM_ToolBox.bCustomDoodad and StringFindW("|" .. HM_ToolBox.szCustomDoodad .. "|", "|" .. d.szName .. "|"))
-			then
-				bKeep = v < 4
-				if d.CanDialog(me) then
-					_HM_ToolBox.tDoodad[k] = v + 1
-					bInteract = true
-				end
-			end
-		end
-		if not bKeep then
-			_HM_ToolBox.tDoodad[k] = nil
-		end
-		if bInteract then
-			return InteractDoodad(k)
-		end
-	end
-end
-
 -- 自动摆五行石材料
 _HM_ToolBox.OnDiamondUpdate = function()
 	if not HM_ToolBox.bAutoDiamond or not _HM_ToolBox.dFormula or arg0 ~= 1 then
@@ -671,13 +708,11 @@ _HM_ToolBox.PS.OnPanelActive = function(frame)
 	:Click(function(bChecked)
 		HM_ToolBox.bIgnoreHorse = bChecked
 	end)
-	-- auto doodad
-	ui:Append("WndCheckBox", { txt = _L["Auto interact quest doodad"], x = 10, y = 176, checked = HM_ToolBox.bQuestItem })
+	-- show equip durability
+	ui:Append("WndCheckBox", { txt = "显示玩家装备耐久度", x = 10, y = 176, checked = HM_ToolBox.bDurability })
 	:Click(function(bChecked)
-		HM_ToolBox.bQuestItem = bChecked
-		if bChecked then
-			_HM_ToolBox.ReloadDoodad()
-		end
+		HM_ToolBox.bDurability = bChecked
+		_HM_ToolBox.UpdateDurability()
 	end)
 	-- shift-auction
 	ui:Append("WndCheckBox", { txt = _L["Press SHIFT fast auction sell"], x = nX + 10, y = 176, checked = HM_ToolBox.bShiftAuction })
@@ -695,21 +730,7 @@ _HM_ToolBox.PS.OnPanelActive = function(frame)
 	:Click(function(bChecked)
 		HM_ToolBox.bAnyDiamond = bChecked
 	end)
-	-- specified doodad
-	nX = ui:Append("WndCheckBox", { txt = _L["Auto interact specified doodad"], x = 10, y = 232, checked = HM_ToolBox.bCustomDoodad })
-	:Click(function(bChecked)
-		HM_ToolBox.bCustomDoodad = bChecked
-		ui:Fetch("Edit_Doodad"):Enable(bChecked)
-		if bChecked then
-			_HM_ToolBox.ReloadDoodad()
-		end
-	end):Pos_()
-	ui:Append("WndEdit", "Edit_Doodad", { x = nX + 10, y = 232, limit = 1024, h = 27, w = 260 })
-	:Text(HM_ToolBox.szCustomDoodad):Enable(HM_ToolBox.bCustomDoodad)
-	:Change(function(szText)
-		HM_ToolBox.szCustomDoodad = szText
-		_HM_ToolBox.ReloadDoodad()
-	end)
+	-- chat copy
 	-- tong broadcast
 	ui:Append("Text", { txt = _L["Group whisper oline (Guild perm required)"], x = 0, y = 268, font = 27 })
 	ui:Append("WndEdit", "Edit_Msg", { x = 10, y = 296, limit = 1024, multi = true, h = 50, w = 480, txt = HM_ToolBox.szBroadText })
@@ -735,15 +756,17 @@ end)
 HM.RegisterEvent("DIAMON_UPDATE", _HM_ToolBox.OnDiamondUpdate)
 HM.RegisterEvent("SHOP_OPENSHOP", _HM_ToolBox.OnOpenShop)
 HM.RegisterEvent("SHOP_UPDATEITEM", _HM_ToolBox.OnShopUpdateItem)
-HM.RegisterEvent("DOODAD_ENTER_SCENE", function() _HM_ToolBox.tDoodad[arg0] = 0 end)
-HM.RegisterEvent("DOODAD_LEAVE_SCENE", function() _HM_ToolBox.tDoodad[arg0] = nil end)
-HM.RegisterEvent("QUEST_ACCEPTED", function()
-	if HM_ToolBox.bQuestItem then
-		_HM_ToolBox.ReloadDoodad()
+HM.BreatheCall("AutoConfirm", _HM_ToolBox.OnAutoConfirm, 130)
+
+HM.RegisterEvent("EQUIP_ITEM_UPDATE", _HM_ToolBox.UpdateDurability)
+HM.RegisterEvent("EQUIP_CHANGE", _HM_ToolBox.UpdateDurability)
+HM.RegisterEvent("UNEQUIPALL", _HM_ToolBox.UpdateDurability)
+HM.RegisterEvent("CHARACTER_PANEL_BRING_TOP", _HM_ToolBox.UpdateDurability)
+HM.RegisterEvent("PEEK_OTHER_PLAYER", function()
+	if arg0 == 1 then
+		_HM_ToolBox.UpdateDurability(arg1)
 	end
 end)
-HM.BreatheCall("AutoConfirm", _HM_ToolBox.OnAutoConfirm, 130)
-HM.BreatheCall("AutoDoodad", _HM_ToolBox.OnAutoDoodad)
 
 -- add to HM collector
 HM.RegisterPanel(_L["Misc toolbox"], 352, _L["Others"], _HM_ToolBox.PS)
