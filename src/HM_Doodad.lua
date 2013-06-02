@@ -28,7 +28,7 @@ local function _d(dwID)
 	return GetDoodadTemplate(dwID).szName
 end
 
-_HM_Doodad = {
+local _HM_Doodad = {
 	-- ²ÝÒ©¡¢¿óÊ¯ÁÐ±í
 	tCraft = {
 		1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009,
