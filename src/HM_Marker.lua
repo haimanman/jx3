@@ -35,11 +35,6 @@ _HM_Marker.Sysmsg = function(szMsg)
 	HM.Sysmsg(szMsg, _L["HM_Marker"])
 end
 
--- debug
-_HM_Marker.Debug = function(szMsg)
-	HM.Debug(szMsg, _L["HM_Marker"])
-end
-
 -------------------------------------
 -- 集火、集奶相关
 -------------------------------------

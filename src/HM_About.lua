@@ -234,6 +234,15 @@ AppendCommand(_L["haiman"], function()
 	_HM_About.bDisableEx = true
 	HM.Sysmsg(_L("Good %s, thank you for choosing and using HM plug-in!", GetClientPlayer().szName))
 end)
+AppendCommand("debug", function()
+	HM.bDebug = not HM.bDevelopper
+	HM.bDevelopper = not HM.bDevelopper
+	if HM.bDevelopper then
+		HM.Sysmsg("enable debug mode")
+	else
+		HM.Sysmsg("disable debug mode")
+	end
+end)
 
 -- init global caller
 _HM_About.LoadDataEx()

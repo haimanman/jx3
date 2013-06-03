@@ -152,7 +152,7 @@ _HM_Locker.OnUpdateTarget = function()
 	local me = GetClientPlayer()
 	local dwType, dwID = me.GetTarget()
 	if _HM_Locker.dwLastID ~= dwID then
-		_HM_Locker.Debug("update target [#" .. dwType .. "#" .. dwID .. "]")
+		HM.Debug2("update target [#" .. dwType .. "#" .. dwID .. "]")
 		-- always allowed to selectself
 		if dwID ~= me.dwID and _HM_Locker.dwLastID ~= 0 then
 			local tar0 = HM.GetTarget(_HM_Locker.dwLastID)

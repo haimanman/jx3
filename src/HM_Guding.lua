@@ -34,7 +34,7 @@ end
 
 -- debug
 _HM_Guding.Debug = function(szMsg)
-	HM.Debug(szMsg, _L["HM_Guding"])
+	HM.Debug2(szMsg, _L["HM_Guding"])
 end
 
 -- add to list

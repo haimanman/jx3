@@ -110,7 +110,7 @@ _HM_Area.tSkill = {
 _HM_Area.Sysmsg = function(szMsg) HM.Sysmsg(szMsg, _L["HM_Area"]) end
 
 -- debug
-_HM_Area.Debug = function(szMsg) HM.Debug(szMsg, _L["HM_Area"]) end
+_HM_Area.Debug = function(szMsg) HM.Debug2(szMsg, _L["HM_Area"]) end
 
 -- get relation by caster
 _HM_Area.GetRelation = function(dwCaster)
