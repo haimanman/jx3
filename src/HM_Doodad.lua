@@ -134,6 +134,7 @@ _HM_Doodad.TryAdd = function(dwID, bDelay)
 		local data, me = nil, GetClientPlayer()
 		if d.nKind == DOODAD_KIND.CORPSE or d.nKind == DOODAD_KIND.NPCDROP then
 			if bDelay then
+				--HM.Debug("delay to try add [" .. d.szName .. "#" .. d.dwID .. "]")
 				return HM.DelayCall(250, function() _HM_Doodad.TryAdd(dwID) end)
 			end
 			if HM_Doodad.bLoot and d.CanLoot(me.dwID) then
@@ -141,13 +142,13 @@ _HM_Doodad.TryAdd = function(dwID, bDelay)
 			elseif HM_Doodad.bCustom and HM_Doodad.tCustom[d.szName]
 				and GetDoodadTemplate(d.dwTemplateID).dwCraftID == 3
 			then
-				data = { craft = true, intr = 0 }
+				data = { craft = true }
 			end
 		elseif HM_Doodad.tCraft[d.szName] or (HM_Doodad.bCustom and HM_Doodad.tCustom[d.szName]) then
-			data = { craft = true, intr = 0 }
+			data = { craft = true }
 		elseif d.HaveQuest(me.dwID) then
 			if HM_Doodad.bQuest then
-				data = { quest = true, intr =  0 }
+				data = { quest = true }
 			end
 		end
 		if data then
@@ -233,7 +234,7 @@ end
 -- auto interact
 _HM_Doodad.OnAutoDoodad = function()
 	local me = GetClientPlayer()
-	if not me or me.GetOTActionState() ~= 0 or me.bOnHorse
+	if not me or me.GetOTActionState() ~= 0
 		or (me.nMoveState ~= MOVE_STATE.ON_STAND and me.nMoveState ~= MOVE_STATE.ON_FLOAT)
 	then
 		return
@@ -244,16 +245,13 @@ _HM_Doodad.OnAutoDoodad = function()
 			-- 若存在却不能对话只简单保留
 			bKeep = d ~= nil
 		elseif v.loot then		-- 尸体只摸一次
-			bIntr = not me.bFightState or HM_Robot.bLootFight
-			bKeep = not bIntr
+			bKeep = true	-- 改在 opendoodad 中删除
+			bIntr = not me.bFightState or HM_Doodad.bLootFight
 			if bIntr then
 				_HM_Doodad.dwOpenID = k
 			end
 		elseif v.craft or d.HaveQuest(me.dwID) then		-- 任务和普通道具尝试 5 次
-			if v.intr < 5 and not me.bFightState and HM_Doodad.bInteract then
-				bIntr = true
-				v.intr = v.intr + 1
-			end
+			bIntr = not me.bFightState and not me.bOnHorse and HM_Doodad.bInteract
 			bKeep = true
 		end
 		if not bKeep then
@@ -261,7 +259,7 @@ _HM_Doodad.OnAutoDoodad = function()
 		end
 		if bIntr then
 			HM.Debug("auto interact [" .. d.szName .. "]")
-			HM.BreatheCallDelayOnce("AutoDoodad", 125)
+			HM.BreatheCallDelayOnce("AutoDoodad", 250)
 			return InteractDoodad(k)
 		end
 	end
@@ -279,8 +277,11 @@ _HM_Doodad.OnOpenDoodad = function(dwID)
 		if HM_Doodad.bInteract and HM_Doodad.bCustom
 			and HM_Doodad.tCustom[d.szName] and GetDoodadTemplate(d.dwTemplateID).dwCraftID == 3
 		then
-			_HM_Doodad.tDoodad[dwID] = { craft = true, intr = 0 }
+			_HM_Doodad.tDoodad[dwID] = { craft = true }
 			bP = true
+		else
+			-- 否则就从列表中删除
+			_HM_Doodad.Remove(dwID)
 		end
 		for i = 0, 31 do
 			local it, bRoll, bDist = d.GetLootItem(i, me)
