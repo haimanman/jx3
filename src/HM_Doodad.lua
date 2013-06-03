@@ -45,22 +45,22 @@ local _HM_Doodad = {
 _HM_Doodad.GetFilterMenu = function()
 	local m0 = {
 		{
-			szOption = "过滤灰色物品", bCheck = true, bChecked = not HM_Doodad.bLootGray,
+			szOption = _L["Filter gray items"], bCheck = true, bChecked = not HM_Doodad.bLootGray,
 			fnDisable = function() return HM_Doodad.bLootOnly end,
 			fnAction = function(d, b) HM_Doodad.bLootGray = not b end,
 		}, {
-			szOption = "过滤白色物品", bCheck = true, bChecked = not HM_Doodad.bLootWhite,
+			szOption = _L["Filter white items"], bCheck = true, bChecked = not HM_Doodad.bLootWhite,
 			fnDisable = function() return HM_Doodad.bLootOnly end,
 			fnAction = function(d, b) HM_Doodad.bLootWhite = not b end,
 		}, {
-			szOption = "过滤绿色物品", bCheck = true, bChecked = not HM_Doodad.bLootGreen,
+			szOption = _L["Filter green items"], bCheck = true, bChecked = not HM_Doodad.bLootGreen,
 			fnDisable = function() return HM_Doodad.bLootOnly end,
 			fnAction = function(d, b) HM_Doodad.bLootGreen = not b end,
 		}
 	}
 	-- filter special
 	local m1 = {
-		szOption = "过滤指定物品",
+		szOption = _L["Filter specified items"],
 		fnDisable = function() return HM_Doodad.bLootOnly end,
 		{
 			szOption = _L["* New *"],
@@ -86,7 +86,7 @@ _HM_Doodad.GetFilterMenu = function()
 	table.insert(m0, m1)
 	-- loot special
 	local m1 = {
-		szOption = "仅拾取指定物品", bCheck = true, bChecked = HM_Doodad.bLootOnly,
+		szOption = _L["Loot specified items"], bCheck = true, bChecked = HM_Doodad.bLootOnly,
 		fnAction = function(d, b) HM_Doodad.bLootOnly = b end,
 		{
 			szOption = _L["* New *"],
@@ -367,8 +367,8 @@ _HM_Doodad.PS = {}
 _HM_Doodad.PS.OnPanelActive = function(frame)
 	local ui, nX = HM.UI(frame)
 	-- loot
-	ui:Append("Text", { txt = "自动拾取", x = 0, y = 0, font = 27 })
-	nX = ui:Append("WndCheckBox", { txt = "开启自动拾取", x = 10, y = 28, checked = HM_Doodad.bLoot })
+	ui:Append("Text", { txt = _L["Pickup items"], x = 0, y = 0, font = 27 })
+	nX = ui:Append("WndCheckBox", { txt = _L["Enable auto pickup"], x = 10, y = 28, checked = HM_Doodad.bLoot })
 	:Click(function(bChecked)
 		HM_Doodad.bLoot = bChecked
 		ui:Fetch("Check_Fight"):Enable(bChecked)
@@ -376,14 +376,14 @@ _HM_Doodad.PS.OnPanelActive = function(frame)
 		_HM_Doodad.Reload()
 	end):Pos_()
 	local nX1 = nX
-	nX = ui:Append("WndCheckBox", "Check_Fight", { txt = "战斗中也拾取", x = nX1 + 40, y = 28, checked = HM_Doodad.bLootFight })
+	nX = ui:Append("WndCheckBox", "Check_Fight", { txt = _L["Pickup in fight"], x = nX1 + 40, y = 28, checked = HM_Doodad.bLootFight })
 	:Click(function(bChecked)
 		HM_Doodad.bLootFight = bChecked
 	end):Pos_()
 	local nX2 = nX
-	ui:Append("WndComboBox", "Combo_Filter", { txt = "设置拾取过滤", x = nX2 + 20, y = 28 }):Menu(_HM_Doodad.GetFilterMenu)
+	ui:Append("WndComboBox", "Combo_Filter", { txt = _L["Set pickup filter"], x = nX2 + 20, y = 28 }):Menu(_HM_Doodad.GetFilterMenu)
 	-- doodad
-	ui:Append("Text", { txt = "采集助手", x = 0, y = 64, font = 27 })
+	ui:Append("Text", { txt = _L["Craft assit"], x = 0, y = 64, font = 27 })
 	nX = ui:Append("WndCheckBox", { txt = _L["Show the head name"], x = 10, y = 92, checked = HM_Doodad.bShowName })
 	:Click(_HM_Doodad.SwitchName):Pos_()
 	ui:Append("Shadow", "Shadow_Color", { x = nX + 2, y = 96, w = 18, h = 18 })
@@ -394,15 +394,15 @@ _HM_Doodad.PS.OnPanelActive = function(frame)
 			_HM_Doodad.Reload()
 		end)
 	end):Pos_()
-	ui:Append("WndCheckBox", { txt = "显示小地图标记", x = nX1 + 40, y = 92, checked = HM_Doodad.bMiniFlag })
+	ui:Append("WndCheckBox", { txt = _L["Display minimap flag"], x = nX1 + 40, y = 92, checked = HM_Doodad.bMiniFlag })
 	:Click(function(bChecked)
 		HM_Doodad.bMiniFlag = bChecked
 	end)
-	nX = ui:Append("WndCheckBox", { txt = "自动采集", x = nX2 + 20, y = 92, checked = HM_Doodad.bInteract })
+	nX = ui:Append("WndCheckBox", { txt = _L["Auto interact"], x = nX2 + 20, y = 92, checked = HM_Doodad.bInteract })
 	:Click(function(bChecked)
 		HM_Doodad.bInteract = bChecked
 	end):Pos_()
-	ui:Append("WndCheckBox", { txt = "任务物品", x = nX + 10, y = 92, checked = HM_Doodad.bQuest })
+	ui:Append("WndCheckBox", { txt = _L["Quest items"], x = nX + 10, y = 92, checked = HM_Doodad.bQuest })
 	:Click(function(bChecked)
 		HM_Doodad.bQuest = bChecked
 		_HM_Doodad.Reload()
@@ -440,7 +440,7 @@ _HM_Doodad.PS.OnPanelActive = function(frame)
 	if nX ~= 10 then
 		nY = nY + 28
 	end
-	nX = ui:Append("WndCheckBox", { txt = "自定义（用 | 分隔）：", x = 10, y = nY, checked = HM_Doodad.bCustom })
+	nX = ui:Append("WndCheckBox", { txt = _L["Customs (split by | )"], x = 10, y = nY, checked = HM_Doodad.bCustom })
 	:Click(function(bChecked)
 		HM_Doodad.bCustom = bChecked
 		ui:Fetch("Edit_Custom"):Enable(bChecked)
@@ -451,11 +451,15 @@ _HM_Doodad.PS.OnPanelActive = function(frame)
 	:Change(function(szText)
 		local t = {}
 		for _, v in ipairs(HM.Split(szText, "|")) do
-			t[v] = true
+			v = HM.Trim(v)
+			if v ~= "" then
+				t[v] = true
+			end
 		end
 		HM_Doodad.tCustom = t
 		_HM_Doodad.Reload()
 	end)
+	ui:Append("Text", { txt = _L["Tip: Enter the name of dead animals can be automatically Paoding!"], x = 10, y = nY + 28 })
 end
 
 ---------------------------------------------------------------------
@@ -479,4 +483,4 @@ HM.BreatheCall("AutoDoodad", _HM_Doodad.OnAutoDoodad)
 HM.BreatheCall("UpdateMiniFlag", _HM_Doodad.OnUpdateMiniFlag, 500)
 
 -- add to HM collector
-HM.RegisterPanel("采集拾取助手", 90, _L["Others"], _HM_Doodad.PS)
+HM.RegisterPanel(_L["Doodad helper"], 90, _L["Others"], _HM_Doodad.PS)

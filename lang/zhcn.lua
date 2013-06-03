@@ -768,4 +768,5 @@ data = {
 	["Quest items"] = "任务物品",
 	["Customs (split by | )"] = "自定义（用 | 分隔）：",
 	["Doodad helper"] = "采集拾取助手",
+	["Tip: Enter the name of dead animals can be automatically Paoding!"] = "小提示：填入动物尸体名称可以自动庖丁！",
 }

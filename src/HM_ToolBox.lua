@@ -709,7 +709,7 @@ _HM_ToolBox.PS.OnPanelActive = function(frame)
 		HM_ToolBox.bIgnoreHorse = bChecked
 	end)
 	-- show equip durability
-	ui:Append("WndCheckBox", { txt = "显示玩家装备耐久度", x = 10, y = 176, checked = HM_ToolBox.bDurability })
+	ui:Append("WndCheckBox", { txt = _L["Display equipment durability"], x = 10, y = 176, checked = HM_ToolBox.bDurability })
 	:Click(function(bChecked)
 		HM_ToolBox.bDurability = bChecked
 		_HM_ToolBox.UpdateDurability()
