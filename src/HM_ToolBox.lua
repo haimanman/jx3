@@ -32,6 +32,7 @@ HM_ToolBox = {
 	bAutoStack = true,	-- 一键堆叠（背包+仓库）
 	bAutoDiamond = true,	-- 五行石精炼完成后自动再摆上次材料
 	bAnyDiamond = false,	-- 忽略五行石颜色，只考虑等级
+	bChatTime = true,		-- 聊天复制党
 	nBroadType = 0,
 	szBroadText = "Hi",
 }
@@ -555,6 +556,111 @@ _HM_ToolBox.UpdateDurability = function(dwPlayer)
 	end
 end
 
+-- 聊天复制功能
+_HM_ToolBox.CopyChatLine = function(hTime)
+	local edit = Station.Lookup("Lowest2/EditBox/Edit_Input")
+	if not edit then
+		return
+	end
+	edit:ClearText()
+	local h, i, bBegin = hTime:GetParent(), hTime:GetIndex(), nil
+	-- loop
+	for i = i + 1, h:GetItemCount() - 1 do
+		local p = h:Lookup(i)
+		if p:GetType() == "Text" then
+			local szName = p:GetName()
+			if szName ~= "timelink" and szName ~= "copylink" and szName ~= "msglink" and szName ~= "time" then
+				local szText, bEnd = p:GetText(), false
+				if StringFindW(szText, "\n") then
+					szText = StringReplaceW(szText, "\n", "")
+					bEnd = true
+				end
+				if szName == "itemlink" then
+					edit:InsertObj(szText, { type = "item", text = szText, item = p:GetUserData() })
+				elseif szName == "iteminfolink" then
+					edit:InsertObj(szText, { type = "iteminfo", text = szText, version = p.nVersion, tabtype = p.dwTabType, index = p.dwIndex })
+				elseif string.sub(szName, 1, 8) == "namelink" then
+					if bBegin == nil then
+						bBegin = false
+					end
+					edit:InsertObj(szText, { type = "name", text = szText, name = string.match(szText, "%[(.*)%]") })
+				elseif szName == "questlink" then
+					edit:InsertObj(szText, { type = "quest", text = szText, questid = p:GetUserData() })
+				elseif szName == "recipelink" then
+					edit:InsertObj(szText, { type = "recipe", text = szText, craftid = p.dwCraftID, recipeid = p.dwRecipeID })
+				elseif szName == "enchantlink" then
+					edit:InsertObj(szText, { type = "enchant", text = szText, proid = p.dwProID, craftid = p.dwCraftID, recipeid = p.dwRecipeID })
+				elseif szName == "skilllink" then
+					local o = clone(p.skillKey)
+					o.type, o.text = "skill", szText
+					edit:InsertObj(szText, o)
+				elseif szName =="skillrecipelink" then
+					edit:InsertObj(szText, { type = "skillrecipe", text = szText, id = p.dwID, level = p.dwLevelD })
+				elseif szName =="booklink" then
+					edit:InsertObj(szText, { type = "book", text = szText, tabtype = p.dwTabType, index = p.dwIndex, bookinfo = p.nBookRecipeID, version = p.nVersion })
+				elseif szName =="achievementlink" then
+					edit:InsertObj(szText, { type = "achievement", text = szText, id = p.dwID })
+				elseif szName =="designationlink" then
+					edit:InsertObj(szText, { type = "designation", text = szText, id = p.dwID, prefix = p.bPrefix })
+				elseif szName =="eventlink" then
+					edit:InsertObj(szText, { type = "eventlink", text = szText, name = p.szName, linkinfo = p.szLinkInfo })
+				else
+					if bBegin == false then
+						for _, v in ipairs({g_tStrings.STR_TALK_HEAD_WHISPER, g_tStrings.STR_TALK_HEAD_SAY, g_tStrings.STR_TALK_HEAD_SAY1, g_tStrings.STR_TALK_HEAD_SAY2 }) do
+							local nB, nE = StringFindW(szText, v)
+							if nB then
+								szText, bBegin = string.sub(szText, nB + nE), true
+								edit:ClearText()
+							end
+						end
+					end
+					if szText ~= "" then
+						edit:InsertText(szText)
+					end
+				end
+				if bEnd then
+					break
+				end
+			end
+		elseif p:GetType() == "Image" then
+			local nFrame = p:GetFrame()
+			if not _HM_ToolBox.tFacIcon then
+				local t = {}
+				for i = 1, g_tTable.FaceIcon:GetRowCount() do
+					local tLine = g_tTable.FaceIcon:GetRow(i)
+					t[tLine.nFrame] = tLine.szCommand
+				end
+				_HM_ToolBox.tFacIcon = t
+			end
+			local szCmd = _HM_ToolBox.tFacIcon[nFrame]
+			if szCmd then
+				edit:InsertText(szCmd)
+			end
+		end
+	end
+	Station.SetFocusWindow(edit)
+end
+
+-- 插入聊天内容时加入时间
+_HM_ToolBox.AppendChatWithTime = function(h, szMsg)
+    local i = h:GetItemCount()
+    h:AppendItemFromStringOrg(szMsg)
+	-- insert time
+	while true do
+		local h2 = h:Lookup(i)
+		if not h2 then
+			break
+		elseif h2:GetType() == "Text" then
+			local t =TimeToDate(GetCurrentTime())
+			local r, g, b = h2:GetFontColor()
+			local szTime = GetFormatText(string.format("[%02d:%02d.%02d]", t.hour, t.minute, t.second), 10, r, g, b, 513, "this.OnItemLButtonDown=function() HM_ToolBox.CopyChatLine(this) end", "timelink")
+			h:InsertItemFromString(i, false, szTime)
+			break
+		end
+		i = i + 1
+	end
+end
+
 -------------------------------------
 -- 事件处理
 -------------------------------------
@@ -668,6 +774,23 @@ _HM_ToolBox.OnDiamondUpdate = function()
 	end)
 end
 
+-- chat time/copy
+_HM_ToolBox.OnChatPanelInit = function()
+	for i = 1, 10 do
+		local h = Station.Lookup("Lowest2/ChatPanel" .. i .. "/Wnd_Message", "Handle_Message")
+		if h then
+			if HM_ToolBox.bChatTime then
+				if not h.AppendItemFromStringOrg then
+					h.AppendItemFromStringOrg = h.AppendItemFromString
+				end
+				h.AppendItemFromString = _HM_ToolBox.AppendChatWithTime
+			elseif h.AppendItemFromStringOrg then
+				h.AppendItemFromString = h.AppendItemFromStringOrg
+			end
+		end
+	end
+end
+
 -------------------------------------
 -- 设置界面
 -------------------------------------
@@ -731,6 +854,11 @@ _HM_ToolBox.PS.OnPanelActive = function(frame)
 		HM_ToolBox.bAnyDiamond = bChecked
 	end)
 	-- chat copy
+	ui:Append("WndCheckBox", { txt = _L["Show time and support copy in chat panel"], x = 10, y = 232, checked = HM_ToolBox.bChatTime })
+	:Click(function(bChecked)
+		HM_ToolBox.bChatTime = bChecked
+		_HM_ToolBox.OnChatPanelInit()
+	end)
 	-- tong broadcast
 	ui:Append("Text", { txt = _L["Group whisper oline (Guild perm required)"], x = 0, y = 268, font = 27 })
 	ui:Append("WndEdit", "Edit_Msg", { x = 10, y = 296, limit = 1024, multi = true, h = 50, w = 480, txt = HM_ToolBox.szBroadText })
@@ -745,6 +873,13 @@ _HM_ToolBox.PS.OnPanelActive = function(frame)
 	:Pos(10 + nX, 352):Click(function(b) if b then HM_ToolBox.nBroadType = 3 end end):Pos_()
 	ui:Append("WndButton", { txt = _L["Submit"], x = nX + 10, y = 353 })
 	:Enable(_HM_ToolBox.HasBroadPerm()):Click(_HM_ToolBox.SendBroadCast)
+end
+
+-- conflict
+_HM_ToolBox.PS.OnConflictCheck = function()
+	if Chat and HM_ToolBox.bChatTime then
+		Chat.tChannelEx = {}
+	end
 end
 
 ---------------------------------------------------------------------
@@ -767,6 +902,8 @@ HM.RegisterEvent("PEEK_OTHER_PLAYER", function()
 		_HM_ToolBox.UpdateDurability(arg1)
 	end
 end)
+HM.RegisterEvent("CHAT_PANEL_INIT", _HM_ToolBox.OnChatPanelInit)
 
 -- add to HM collector
 HM.RegisterPanel(_L["Misc toolbox"], 352, _L["Others"], _HM_ToolBox.PS)
+HM_ToolBox.CopyChatLine = _HM_ToolBox.CopyChatLine

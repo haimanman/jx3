@@ -737,6 +737,7 @@ data = {
 	["Enable stack items by button"] = "啟用一鍵堆疊按紐（背包/倉庫）",
 	["Stack"] = "堆疊",
 	["Display equipment durability"] = "顯示玩家裝備耐久度",
+	["Show time and support copy in chat panel"] = "在聊天欄顯示時間并支持復制",
 	-- src/HM_Marker.lua --
 	[" feet"] = " 尺",
 	-- src/HM_TargetFace.lua --
