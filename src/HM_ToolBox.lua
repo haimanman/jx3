@@ -56,7 +56,7 @@ _HM_ToolBox.GetSellMenu = function()
 			fnAction = function(d, b) HM_ToolBox.bSellWhiteBook = b end,
 			fnDisable = function() return not HM_ToolBox.bSellGray end
 		}, { szOption = _L["Sell green books"], bCheck = true, bChecked = HM_ToolBox.bSellGreenBook,
-			fnAction = function(d, b) HM_ToolBox.bSellWhiteBook = b end,
+			fnAction = function(d, b) HM_ToolBox.bSellGreenBook = b end,
 			fnDisable = function() return not HM_ToolBox.bSellGray end
 		}, { szOption = _L["Sell blue books"], bCheck = true, bChecked = HM_ToolBox.bSellBlueBook,
 			fnAction = function(d, b) HM_ToolBox.bSellBlueBook = b end,
