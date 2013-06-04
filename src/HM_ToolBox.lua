@@ -605,6 +605,13 @@ _HM_ToolBox.CopyChatLine = function(hTime)
 				elseif szName =="eventlink" then
 					edit:InsertObj(szText, { type = "eventlink", text = szText, name = p.szName, linkinfo = p.szLinkInfo })
 				else
+					-- NPC 喊话特殊处理
+					if bBegin == nil then
+						local r, g, b = p:GetFontColor()
+						if r == 255 and g == 150 and b == 0 then
+							bBegin = false
+						end
+					end
 					if bBegin == false then
 						for _, v in ipairs({g_tStrings.STR_TALK_HEAD_WHISPER, g_tStrings.STR_TALK_HEAD_SAY, g_tStrings.STR_TALK_HEAD_SAY1, g_tStrings.STR_TALK_HEAD_SAY2 }) do
 							local nB, nE = StringFindW(szText, v)
@@ -614,7 +621,7 @@ _HM_ToolBox.CopyChatLine = function(hTime)
 							end
 						end
 					end
-					if szText ~= "" then
+					if szText ~= "" and (table.getn(edit:GetTextStruct()) > 0 or szText ~= g_tStrings.STR_FACE) then
 						edit:InsertText(szText)
 					end
 				end
@@ -646,18 +653,12 @@ _HM_ToolBox.AppendChatWithTime = function(h, szMsg)
     local i = h:GetItemCount()
     h:AppendItemFromStringOrg(szMsg)
 	-- insert time
-	while true do
-		local h2 = h:Lookup(i)
-		if not h2 then
-			break
-		elseif h2:GetType() == "Text" then
-			local t =TimeToDate(GetCurrentTime())
-			local r, g, b = h2:GetFontColor()
-			local szTime = GetFormatText(string.format("[%02d:%02d.%02d]", t.hour, t.minute, t.second), 10, r, g, b, 513, "this.OnItemLButtonDown=function() HM_ToolBox.CopyChatLine(this) end", "timelink")
-			h:InsertItemFromString(i, false, szTime)
-			break
-		end
-		i = i + 1
+	local h2 = h:Lookup(i)
+	if h2 and h2:GetType() == "Text" then
+		local t =TimeToDate(GetCurrentTime())
+		local r, g, b = h2:GetFontColor()
+		local szTime = GetFormatText(string.format("[%02d:%02d.%02d]", t.hour, t.minute, t.second), 10, r, g, b, 513, "this.OnItemLButtonDown=function() HM_ToolBox.CopyChatLine(this) end", "timelink")
+		h:InsertItemFromString(i, false, szTime)
 	end
 end
 
@@ -778,7 +779,7 @@ end
 _HM_ToolBox.OnChatPanelInit = function()
 	for i = 1, 10 do
 		local h = Station.Lookup("Lowest2/ChatPanel" .. i .. "/Wnd_Message", "Handle_Message")
-		if h then
+		if h and i ~= 5 then
 			if HM_ToolBox.bChatTime then
 				if not h.AppendItemFromStringOrg then
 					h.AppendItemFromStringOrg = h.AppendItemFromString
