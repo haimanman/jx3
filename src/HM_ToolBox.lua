@@ -924,7 +924,10 @@ HM.RegisterEvent("PEEK_OTHER_PLAYER", function()
 		_HM_ToolBox.UpdateDurability(arg1)
 	end
 end)
-HM.RegisterEvent("CHAT_PANEL_INIT", _HM_ToolBox.OnChatPanelInit)
+HM.RegisterEvent("CHAT_PANEL_INIT", function()
+	_HM_ToolBox.PS.OnConflictCheck()
+	_HM_ToolBox.OnChatPanelInit()
+end)
 
 -- add to HM collector
 HM.RegisterPanel(_L["Misc toolbox"], 352, _L["Others"], _HM_ToolBox.PS)
