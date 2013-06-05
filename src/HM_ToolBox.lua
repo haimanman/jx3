@@ -556,6 +556,24 @@ _HM_ToolBox.UpdateDurability = function(dwPlayer)
 	end
 end
 
+-- 聊天复制并发布
+_HM_ToolBox.RepeatChatLine = function(hTime)
+	local edit = Station.Lookup("Lowest2/EditBox/Edit_Input")
+	if not edit then
+		return
+	end
+	_HM_ToolBox.CopyChatLine(hTime)
+	local tMsg = edit:GetTextStruct()
+	if #tMsg == 0 then
+		return
+	end
+	local nChannel, szName = EditBox_GetChannel()
+	if HM.CanTalk(nChannel) then
+		GetClientPlayer().Talk(nChannel, szName or "", tMsg)
+		edit:ClearText()
+	end
+end
+
 -- 聊天复制功能
 _HM_ToolBox.CopyChatLine = function(hTime)
 	local edit = Station.Lookup("Lowest2/EditBox/Edit_Input")
@@ -641,7 +659,7 @@ _HM_ToolBox.CopyChatLine = function(hTime)
 			end
 			local szCmd = _HM_ToolBox.tFacIcon[nFrame]
 			if szCmd then
-				edit:InsertText(szCmd)
+				edit:InsertObj(szCmd, { type = "text", text = szCmd })
 			end
 		end
 	end
@@ -655,9 +673,12 @@ _HM_ToolBox.AppendChatWithTime = function(h, szMsg)
 	-- insert time
 	local h2 = h:Lookup(i)
 	if h2 and h2:GetType() == "Text" then
-		local t =TimeToDate(GetCurrentTime())
 		local r, g, b = h2:GetFontColor()
-		local szTime = GetFormatText(string.format("[%02d:%02d.%02d]", t.hour, t.minute, t.second), 10, r, g, b, 513, "this.OnItemLButtonDown=function() HM_ToolBox.CopyChatLine(this) end", "timelink")
+		if r == 255 and g == 255 and b == 0 then
+			return
+		end
+		local t =TimeToDate(GetCurrentTime())
+		local szTime = GetFormatText(string.format("[%02d:%02d.%02d]", t.hour, t.minute, t.second), 10, r, g, b, 515, "this.OnItemLButtonDown=function() HM_ToolBox.CopyChatLine(this) end\nthis.OnItemRButtonDown=function() HM_ToolBox.RepeatChatLine(this) end", "timelink")
 		h:InsertItemFromString(i, false, szTime)
 	end
 end
@@ -757,7 +778,7 @@ _HM_ToolBox.OnDiamondUpdate = function()
 	HM.DelayCall(50, function()
 		RemoveUILockItem("FEProduce")
 		box:SetObject(UI_OBJECT_NOT_NEED_KNOWN, 0)
-		box:SetObjectIcon(3386)
+		box:SetObjectIcon(3388 - GetClientPlayer().nGender)
 	end)
 	-- 重新放入配方（延迟8帧执行，确保 unlock）
 	HM.DelayCall(500, function()
@@ -908,3 +929,4 @@ HM.RegisterEvent("CHAT_PANEL_INIT", _HM_ToolBox.OnChatPanelInit)
 -- add to HM collector
 HM.RegisterPanel(_L["Misc toolbox"], 352, _L["Others"], _HM_ToolBox.PS)
 HM_ToolBox.CopyChatLine = _HM_ToolBox.CopyChatLine
+HM_ToolBox.RepeatChatLine = _HM_ToolBox.RepeatChatLine
