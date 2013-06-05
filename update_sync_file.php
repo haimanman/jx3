@@ -88,7 +88,8 @@ $modules = array(
 	'src/HM_PVPSound2.lua' => 'PVP斩杀音效、文字特效',
 	'src/HM_Roll.lua' => '团队 ROLL 点娱乐、自动记录胜负',
 	'src/HM_Suit2.lua' => '可共享部位的快速脱换装助手、橙武必备',
-	'src/HM_ToolBox.lua' => '自动修装备、卖灰色、自动采集和确认、一键交易行',
+	'src/HM_ToolBox.lua' => '自动修理卖物、自动确认、自动五行石和一键交易行',
+	'src/HM_Doodad.lua' => '自动拾取和过滤、自动采集助手',
 	//'lab/HM_Taoguan.lua' => '新年活动智能砸年兽陶罐',
 );
 
