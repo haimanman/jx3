@@ -2,7 +2,7 @@
 <jx3:hm xmlns:jx3="http://haimanchajian.com">
   <name><![CDATA[海鳗、插件集]]></name>
   <desc><![CDATA[大量非常方便的 PVP 插件！ --== 海鳗鳗@步莲台 ==--]]></desc>
-  <version dword="0x2001308">2.0.19b8</version>
+  <version dword="0x200130b">2.0.19b11</version>
   <clientVersion dword="0x10000">1.0beta</clientVersion>
   <urlPrefix>http://jx3.hightman.cn/sync/HM/</urlPrefix>
   <info>
@@ -24,13 +24,13 @@
     <file size="56891" title="多焦点目标、目标列表、定制筛选排序">src/HM_TargetList.lua</file>
     <file size="35321" title="目标技能CD监控、超大显示特殊BUFF">src/HM_TargetMon.lua</file>
     <file size="17045" title="团队列表保存与还原、团队快速标记">src/HM_Team.lua</file>
-    <file size="25996" title="自动修装备、卖灰色、自动采集和确认、一键交易行">src/HM_ToolBox.lua</file>
+    <file size="32039" title="自动修装备、卖灰色、自动采集和确认、一键交易行">src/HM_ToolBox.lua</file>
   </info>
   <resource>
     <file size="22464">API.md</file>
     <file size="19630">CHANGELOG.txt</file>
     <file size="2874">LICENSE.txt</file>
-    <file size="2073">README.md</file>
+    <file size="2074">README.md</file>
     <file size="16741">hero/female_cont_1.wav</file>
     <file size="19746">hero/female_cont_2.wav</file>
     <file size="15476">hero/female_normal_1.wav</file>
@@ -39,15 +39,15 @@
     <file size="15318">hero/male_cont_2.wav</file>
     <file size="8834">hero/male_normal_1.wav</file>
     <file size="18797">hero/male_normal_2.wav</file>
-    <file size="1014">info.ini</file>
+    <file size="1015">info.ini</file>
     <file size="10400">lab/HM_Taoguan.lua</file>
     <file size="397">lang/default.lua</file>
-    <file size="39606">lang/zhcn.lua</file>
+    <file size="39685">lang/zhcn.lua</file>
     <file size="43682">lang/zhkr.lua</file>
-    <file size="44241">lang/zhtw.lua</file>
+    <file size="44332">lang/zhtw.lua</file>
     <file size="76636">src/HM.lua</file>
-    <file size="9782">src/HM_About.lua</file>
-    <file size="16346">src/HM_Compatible.lua</file>
+    <file size="9784">src/HM_About.lua</file>
+    <file size="16993">src/HM_Compatible.lua</file>
     <file size="14789">src/HM_Doodad.lua</file>
     <file size="5261">ui/HM.ini</file>
     <file size="811">ui/HM_Area.ini</file>
