@@ -186,6 +186,30 @@ function OpenInternetExplorer(szAddr, bDisableSound)
 end
 end
 
+-- get segment name
+if not Table_GetSegmentName then
+function Table_GetSegmentName(dwBookID, dwSegmentID)
+	local szSegmentName = ""
+	local tBookSegment = g_tTable.BookSegment:Search(dwBookID, dwSegmentID)
+	if tBookSegment then
+		szSegmentName = tBookSegment.szSegmentName
+	end
+	return szSegmentName
+end
+end
+
+-- get item name by item
+if not GetItemNameByItem then
+function GetItemNameByItem(item)
+	if item.nGenre == ITEM_GENRE.BOOK then
+		local nBookID, nSegID = GlobelRecipeID2BookID(item.nBookID)
+		return Table_GetSegmentName(nBookID, nSegID) or g_tStrings.BOOK
+	else
+		return Table_GetItemName(item.nUiId)
+	end
+end
+end
+
 -- hotkey panel
 function HotkeyPanel_Open(szGroup)
 	local frame = Station.Lookup("Topmost/HotkeyPanel")

@@ -236,7 +236,7 @@ AppendCommand(_L["haiman"], function()
 end)
 AppendCommand("debug", function()
 	HM.bDevelopper = not HM.bDevelopper
-	HM.bDebug = HM.bDevelopper
+	HM_About.bDebug = HM.bDevelopper
 	if HM.bDevelopper then
 		HM.Sysmsg("enable debug mode")
 	else
