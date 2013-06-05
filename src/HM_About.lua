@@ -235,8 +235,8 @@ AppendCommand(_L["haiman"], function()
 	HM.Sysmsg(_L("Good %s, thank you for choosing and using HM plug-in!", GetClientPlayer().szName))
 end)
 AppendCommand("debug", function()
-	HM.bDebug = not HM.bDevelopper
 	HM.bDevelopper = not HM.bDevelopper
+	HM.bDebug = HM.bDevelopper
 	if HM.bDevelopper then
 		HM.Sysmsg("enable debug mode")
 	else
