@@ -43,18 +43,26 @@ $data = <<<EOF
 <title>ChangeLog</title>
 <style type="text/css">
 body {
-	margin: 0; padding: 0;
-	background: url(bg2.png) no-repeat fixed #361212;
-	color: #ffffff; width: 495px;
+    margin: 0; padding: 0;
+    background: url(bg.png) no-repeat fixed #361212;
+    color: #ffffff; width: 495px;
 }
-pre { 
-	font-family: "微软雅黑", Tahoma; font-size: 12px;
-	margin: 0; padding: 0;
-	word-wrap:break-word; overflow:hidden;
+pre {
+    font-family: "微软雅黑", Tahoma; font-size: 12px;
+    margin: 0; padding: 0;
+    word-wrap:break-word; overflow:hidden;
 }
 </style>
 </head>
 <body>
+<script language="javascript">
+var pos = window.location.href.lastIndexOf('?v');
+if (pos > 0)
+{
+    var ver = window.location.href.substring(pos + 2);)
+    document.body.style.backgroundImage = 'url(bg' + ver + '.png)';
+}
+</script>
 <pre>
 《剑网3》海鳗插件：修改日志
 ===================
