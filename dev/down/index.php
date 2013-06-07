@@ -11,7 +11,7 @@ foreach ($files as $file)
 	$file['size'] = sprintf('%.1f KB', filesize($file['file']) / 1024);
 	$list[] = $file;
 }
-$title = '《剑网三》、海鳗插件 - 简易下载页';
+$title = '《剑网3》、海鳗插件 - 下载';
 ?>
 <!DOCTYPE html>
 <html>
@@ -27,6 +27,14 @@ li h2 { font-size: 18px; margin-bottom: 10px; }
 li h2 small { font-size: 14px; color: #666; font-weight: normal; }
 li p { margin: 0 0 20px 0; }
 p.offical { font-size: 16px; margin-left: 24px; }
+dl {
+  position: fixed; left: 660px; top: 10px;
+  background: #e1e2e6; color: #717375; padding: 10px;
+  border-radius: 5px; -webkit-border-radius: 5px;
+  text-align: center;
+}
+dt, dd { padding: 0; margin: 0; }
+dt img { width: 147px; height: 147px; }
 </style>
 <script type="text/javascript" language="javascript">
 var XmlHttp = false;
@@ -55,7 +63,8 @@ function SaveClick(v)
 <body>
 <h1><?php echo $title; ?></h1>
 <p class="offical">
-官方网站：<a href="http://haimanchajian.com">http://haimanchajian.com</a>，<a href="https://github.com/haimanman/jx3/">源码@github</a>、<a href="http://haimanchajian.com/repack/">PAK 文件清理工具</a>、<a href="JX3HM-2.1.exe">JX3HM-2.1.exe</a>（安史之乱风格：自动更新、功能筛选）
+官方网站：<a href="http://haimanchajian.com">http://haimanchajian.com</a>，<a href="https://github.com/haimanman/jx3/">源码@github</a><br />
+其它工具：<a href="http://haimanchajian.com/repack/">PAK 文件清理工具</a>，<a href="#JX3HM-2.1.exe" onclick="alert('抱歉，发现 BUG 正在修改，稍后再来下载！'); return false;">JX3HM-2.1.exe</a>（安史之乱风格：自动更新、功能筛选）
 </p>
 <ol>
   <?php foreach($list as $file): ?>
@@ -70,5 +79,9 @@ function SaveClick(v)
   </li>
   <?php endforeach; ?>
 </ol>
+<dl id="qrcode">
+  <dt><img src="../qrcode.jpg" alt="微信二维码" /></dt>
+  <dd>【剑三查询】<br />微信扫描即可添加关注</dd>
+</dl>
 </body>
 </html>
