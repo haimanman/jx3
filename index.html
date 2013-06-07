@@ -62,6 +62,11 @@ a {
 	-ms-transition: color 0.5s ease;
 	-ms-transition: text-shadow 0.5s ease;
 }
+sup {
+	font-style: italic;
+	color: red;
+	font-size: 90%;
+}
 .inner {
 	position: relative;
 	margin: 0 auto;
@@ -137,6 +142,9 @@ a {
 	color: #43adff;
 	text-shadow: #0090ff 0px 0px 2px;
 }
+#down-mm {
+	text-shadow: #ff0000 0px 0px 2px;
+}
 </style>
 </head>
 <body>
@@ -157,14 +165,14 @@ a {
 			<li><a href="repack/"><strong>PAK文件清理工具</strong></a>
 				<small>可以帮助您节省硬盘空间，略微提升游戏启动速度。</small>
 			</li>
-			<li><a href="#JX3HM-2.1.exe" onclick="alert('抱歉，发现 BUG 正在修改，稍后再来下载！');
-		return false;"><strong>更新管理器 JX3HM-2.1.exe</strong></a>
+			<li><a href="#JX3HM-2.1.exe" id="down-mm" onclick="alert('抱歉，发现 BUG 正在修改，稍后再来下载！');
+		return false;"><strong>更新管理器 JX3HM-2.1.exe</strong><sup>new!!</sup></a>
 				<small>支持功能筛选，<a href="http://weibo.com/2831843532/zAeH7hqaR" target="_blank">查看教程</a> 。XP上若运行不了请先<a href="http://www.microsoft.com/zh-cn/download/details.aspx?id=1639" target="_blank">安装 .NET2.0</a></small>
 			</li>
 		</ul>
 		<h2>下载</h2>
 		<ul>
-			<li>最新版本：<a href="http://jx3.hightman.cn/down/">HM-2.0.19b12.zip</a> (<!--date-->2013/06/07) —— <strong style="color:red;">认清下载网址，避免上当和损失！！</strong><a href="http://weibo.com/2831843532/zoVdmuEFK" target="_blank">参见微博</a></li>
+			<li>最新版本：<a href="http://jx3.hightman.cn/down/">HM-2.0.19b12.zip</a> (<!--date-->2013/06/07) —— <strong style="color:orange;">认清下载网址，避免上当和损失！！</strong><a href="http://weibo.com/2831843532/zoVdmuEFK" target="_blank">参见微博</a></li>
 			<li>官方网站：<a href="http://haimanchajian.com">http://haimanchajian.com</a>
 			</li>
 			<li>更新日志：<a href="https://github.com/haimanman/jx3/commits/master">https://github.com/haimanman/jx3/commits/master</a>
