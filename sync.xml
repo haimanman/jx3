@@ -2,8 +2,8 @@
 <jx3:hm xmlns:jx3="http://haimanchajian.com">
   <name><![CDATA[海鳗、插件集]]></name>
   <desc><![CDATA[大量非常方便的 PVP 插件！ --== 海鳗鳗@步莲台 ==--]]></desc>
-  <version dword="0x200130c">2.0.19b12</version>
-  <clientVersion dword="0x20100">2.1.0</clientVersion>
+  <version dword="0x0">HM-2.0.19b12</version>
+  <clientVersion dword="0x20101">2.1.1</clientVersion>
   <urlPrefix>http://jx3.hightman.cn/sync/HM/</urlPrefix>
   <info>
     <file size="19656" title="纯阳气场/唐门机关范围显示、归属显示、消失倒计时">src/HM_Area.lua</file>
