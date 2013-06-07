@@ -29,7 +29,7 @@ local function _b(dwBuffID)
 end
 
 -- skill list (by force, < 0 disable )
-HM_TargetMon.tSkillList = {
+HM_TargetMon.tSkillList2 = {
 	{		-- ÉÙÁÖ
 		[_s(236)--[[Ä¦Ú­ÎÞÁ¿]]] = 25,
 		[_s(242)--[[×½Ó°Ê½]]] = 17,
@@ -81,6 +81,12 @@ HM_TargetMon.tSkillList = {
 		[_s(1589)--[[ÃÎÈª»¢ÅÜ]]] = 30,
 		[_s(1596)--[[º×¹é¹ÂÉ½]]] = 20,
 	},  {	-- Ø¤°ï
+		[_s(5265)--[[¼ûÁúÔÚÌï]]] = 23,
+		[_s(5262)--[[ÁúÔ¾ÓÚÔ¨]]] = 10,
+		[_s(5259)--[[°ô´ò¹·Í·]]] = 20,
+		[_s(5267)--[[ÁúÐ¥¾ÅÌì]]] = 45,
+		[_s(5269)--[[ÑÌÓêÐÐ]]] = 40,
+		[_s(5270)--[[Ð¦×í¿ñ]]] = 120,
 	},  {	-- Ã÷½Ì
 		[_s(3977)--[[Á÷¹âÇôÓ°]]] = 20,
 		[_s(3975)--[[²ÀÎ·°µÐÌ]]] = 28,
@@ -96,93 +102,113 @@ HM_TargetMon.tSkillList = {
 }
 
 --buff list (by type)
-HM_TargetMon.tBuffList = {
+HM_TargetMon.tBuffList2 = {
 	{
 		szType = _L["Invincible"],	-- 1
-		tName = { _b(377)--[[ÕòÉ½ºÓ]], _b(961)--[[Ì«Ðé]], _b(772)--[[»ØÉñ]], _b(3425)--[[¹í¸«Éñ¹¤]], _b(360)--[[Óù]] },
+		tName = {
+			_b(377)--[[ÕòÉ½ºÓ]], _b(961)--[[Ì«Ðé]], _b(772)--[[»ØÉñ]], _b(3425)--[[¹í¸«Éñ¹¤]], _b(360)--[[Óù]],
+			_b(6182)--[[Ú¤Ôó]]
+		},
 	}, {
 		szType = _L["Silence"],	-- 2
 		tName = {
-			_b(534)--[[Ö¹Ï¢]], _b(445)--[[ÇÀÖéÊ½]], _b(726)--[[½£·É¾ªÌì]], _b(692)--[[³ÁÄ¬]], _b(734)--[[ÐüÖÓ]], _b(712)--[[À¼´ÝÓñÕÛ]],	-- À¼´ÝÓñÕÛ2£º712
-			_b(690)--[[½£ÐÄÍ¨Ã÷]], _b(2182)--[[°ËØÔ¶´Ðþ]], _b(2838)--[[½£ÆÆÐé¿Õ]], _b(3227)--[[Ã·»¨Õë]], _b(2807)--[[ÆàÇÐ]], _b(2490)--[[ó¸Ð¥ÃÔÐÄ]],
-			_b(4053)--[[²ÀÎ·°µÐÌ]],
+			_b(534)--[[Ö¹Ï¢]], _b(445)--[[ÇÀÖéÊ½]], _b(726)--[[½£·É¾ªÌì]], _b(692)--[[³ÁÄ¬]], _b(734)--[[ÐüÖÓ]],
+			_b(712)--[[À¼´ÝÓñÕÛ]],	-- À¼´ÝÓñÕÛ2£º712
+			_b(690)--[[½£ÐÄÍ¨Ã÷]], _b(2182)--[[°ËØÔ¶´Ðþ]], _b(2838)--[[½£ÆÆÐé¿Õ]], _b(3227)--[[Ã·»¨Õë]], _b(2807)--[[ÆàÇÐ]],
+			_b(2490)--[[ó¸Ð¥ÃÔÐÄ]], _b(4053)--[[²ÀÎ·°µÐÌ]]
 		},
 	}, {
 		szType = _L["Uncontrollable"],	--3
 		tName = {
+			-- _b(730)--[[·ç¸®]],
 			_b(411)--[[ÐÇÂ¥ÔÂÓ°]], _b(1186)--[[ÕÛ¹Ç]], _b(2847)--[[ËØñÆ]], _b(855)--[[Á¦°Î]],
 			_b(2756)--[[×ÝÇáÆï]], _b(2781)--[[×ªÇ¬À¤]], _b(3279)--[[ÉúËÀÖ®½»]], _b(1856)--[[²»¹¤]], _b(1676)--[[ÓñÈªÓãÔ¾]], -- ×ªÇ¬À¤2£º2781
-			_b(1686)--[[ÃÎÈª»¢ÅÜ]], _b(2840)--[[¹Æ³æ¿ñ±©]], _b(2544)--[[·çòÚÏ×¼À]], _b(730)--[[·ç¸®]], _b(3822)--[[±ÌµûÏ×¼À]],
-			_b(4421)--[[Áé»Ô]], _b(4468)--[[³¬È»]],
+			_b(1686)--[[ÃÎÈª»¢ÅÜ]], _b(2840)--[[¹Æ³æ¿ñ±©]], _b(2544)--[[·çòÚÏ×¼À]], _b(3822)--[[±ÌµûÏ×¼À]],
+			_b(4421)--[[Áé»Ô]], _b(4468)--[[³¬È»]], _b(6163)--[[·É½«]], _b(6314)--[[ÁãÂä]], _b(6292)--[[ÍÌÈÕÔÂ]],
+			_b(6247)--[[ÃÔÐÄ¹Æ]], _b(6192)--[[ÆÐÌáÉí]], _b(6131)--[[ÇàÑô]], _b(5995)--[[Ð¦×í¿ñ]],
+			_b(6015)--[[ÁúÔ¾ÓÚÔ¨]]
 		},
 	}, {
 		szType = _L["Halt"],	-- 4
 		tName = {
 			_b(415)--[[Ñ£ÔÎ]], _b(533)--[[ÖÂÃ¤]], _b(567)--[[ÎåÔÌ½Ô¿Õ]], _b(572)--[[´óÊ¨×Óºð]], _b(682)--[[À×öªÕðÅ­]],
 			_b(548)--[[Í»]], _b(2275)--[[¶Ï»ê´Ì]], _b(740)--[[ÖÐ×¢]], _b(1721)--[[×íÔÂ]], _b(1904)--[[º×¹é¹ÂÉ½]], _b(1927)--[[±ÌÍõ]],
-			_b(2489)--[[Ð«ÐÄÃÔÐÄ]], _b(2780)--[[½£³åÒõÑô]], _b(3223)--[[À×Õð×Ó]], _b(3224)--[[ÃÔÉñ¶¤]], _b(727)--[[±À]], _b(1938)--[[·å²åÔÆ¾°]],
-			_b(4029)--[[ÈÕ½Ù]], _b(4871)--[[ÎÞÃ÷»êËø]], _b(4875)--[[ÕòÄ§]],
+			_b(2489)--[[Ð«ÐÄÃÔÐÄ]], _b(2780)--[[½£³åÒõÑô]], _b(3223)--[[À×Õð×Ó]], _b(3224)--[[ÃÔÉñ¶¤]], _b(727)--[[±À]],
+			_b(1938)--[[·å²åÔÆ¾°]], _b(4029)--[[ÈÕ½Ù]], _b(4871)--[[ÎÞÃ÷»êËø]], _b(4875)--[[ÕòÄ§]], _b(6276)--[[»Ã¹â²½]],
+			_b(6128)--[[»¢êÚ]], _b(6107)--[[åó»÷]], _b(5876)--[[ÉÆ»¤]]
 		},
 	}, {
 		szType = _L["Entrap"],	-- 5
 		tName = {
 			_b(1937)--[[Èý²Å»¯Éú]], _b(679)--[[Ó°ºÛ]], _b(706)--[[Ö¹Ë®]], _b(4038)--[[Ëø×ã]], _b(2289)--[[Îå·½ÐÐ¾¡]],
-			_b(2492)--[[°Ù×ãÃÔÐÄ]], _b(2504)--[[Ó°ÖÍ]], _b(2547)--[[ÌìÖëÏ×¼À]], _b(1931)--[[ÍÂ¹ÊÄÉÐÂ]],
+			_b(2492)--[[°Ù×ãÃÔÐÄ]], _b(2504)--[[Ó°ÖÍ]], _b(2547)--[[ÌìÖëÏ×¼À]], _b(1931)--[[ÍÂ¹ÊÄÉÐÂ]], _b(6364)--[[ÖÍ]],
+			_b(5809)--[[Ì«ÒÒ]], _b(5764)--[[°Ù×ã]], _b(5694)--[[Ì«ÒõÖ¸]],
 		},
 	}, {
 		szType = _L["Freeze"],	-- 6
 		tName = {
-			_b(678)--[[°ø»¨ËæÁø]], _b(686)--[[µÛæîÁúÏè]], _b(554)--[[´óµÀÎÞÊõ]], _b(556)--[[ÆßÐÇ¹°Èð]], _b(675)--[[Ü½ÈØ²¢µÙ]], _b(737)--[[Íê¹Ç]],
-			_b(998)--[[Ì«ÒõÖ¸]], _b(1229)--[[ÆÆÊÆ]], _b(1247)--[[Í¬¹é]], _b(4451)--[[¶¨Éí]], _b(1857)--[[ËÉÌÎ]], _b(1936)--[[ç­´½ÖéÐä]], _b(2555)--[[Ë¿Ç£]],
+			-- ´óµÀÎÞÊõ¿ÉÄÜ¸ÄÎª£º6082
+			-- _b(998)--[[Ì«ÒõÖ¸]],
+			_b(678)--[[°ø»¨ËæÁø]], _b(686)--[[µÛæîÁúÏè]], _b(554)--[[´óµÀÎÞÊõ]], _b(556)--[[ÆßÐÇ¹°Èð]], _b(675)--[[Ü½ÈØ²¢µÙ]],
+			_b(737)--[[Íê¹Ç]], _b(1229)--[[ÆÆÊÆ]], _b(1247)--[[Í¬¹é]], _b(4451)--[[¶¨Éí]], _b(1857)--[[ËÉÌÎ]],
+			_b(1936)--[[ç­´½ÖéÐä]], _b(2555)--[[Ë¿Ç£]], _b(6317)--[[½ðÕë]], _b(6108)--[[Ìì¾øµØÃð]], _b(6091)--[[ÃÔÓ°]],
+			_b(5793)--[[½£Áéå¾Óî]]
 		},
 	}, {
 		szType = _L["Breakout"],	-- 7
-		tName = { _b(200)--[[¼²Èç·ç]], _b(2719)--[[ÇàºÉ]], _b(2757)--[[×ÏÆø¶«À´]], _b(538)--[[·±Òô¼±½Ú]], _b(1378)--[[ÈõË®]], _b(3468)--[[ÐÄÎÞÅÔæð]], _b(3859)--[[ÏãÊèÓ°]], _b(2726)--[[ÂÒÈ÷]] },
+		tName = {
+			_b(200)--[[¼²Èç·ç]], _b(2719)--[[ÇàºÉ]], _b(2757)--[[×ÏÆø¶«À´]], _b(538)--[[·±Òô¼±½Ú]], _b(1378)--[[ÈõË®]],
+			_b(3468)--[[ÐÄÎÞÅÔæð]], _b(3859)--[[ÏãÊèÓ°]], _b(2726)--[[ÂÒÈ÷]], _b(5994)--[[¾ÆÖÐÏÉ]]
+		},
 	}, {
 		szType = _L["Reduce-injury"],	-- 8
-		tName = { _b(367)--[[ÊØÈçÉ½]], _b(384)--[[×ªÇ¬À¤]], _b(399)--[[ÎÞÏà¾÷]], _b(122)--[[´ºÄà»¤»¨]], _b(3068)--[[ÎíÌå]], _b(1802)--[[ÓùÌì]], _b(2542)--[[Óñó¸Ï×¼À]], _b(684)--[[ÌìµØµÍ°º]], _b(4439)--[[Ì°Ä§Ìå]] },
+		tName = {
+			-- ´ºÄà¿ÉÄÜÒÑ¸ÄÎª£º6264 ÁË£¬µ«Ã»ÖØÃû²»Ó°Ïì
+			_b(367)--[[ÊØÈçÉ½]], _b(384)--[[×ªÇ¬À¤]], _b(399)--[[ÎÞÏà¾÷]], _b(122)--[[´ºÄà»¤»¨]], _b(3068)--[[ÎíÌå]],
+			_b(1802)--[[ÓùÌì]], _b(2542)--[[Óñó¸Ï×¼À]], _b(684)--[[ÌìµØµÍ°º]], _b(4439)--[[Ì°Ä§Ìå]], _b(6315)--[[ÁãÂä]],
+			_b(6240)--[[ÐþË®¹Æ]], _b(5996)--[[Ð¦×í¿ñ]], _b(5810)--[[ÄÔ»§]], _b(6200)--[[ÁúÐ¥¾ÅÌì]]
+		},
 	}, {
 		szType = _L["Dodge"],	-- 9
-		tName = { _b(677)--[[ÈµÌ¤Ö¦]], _b(3214)--[[¾ªºèÓÎÁú]], _b(2065)--[[ÔÆÆÜËÉ]] },
+		tName = {
+			_b(677)--[[ÈµÌ¤Ö¦]], _b(3214)--[[¾ªºèÓÎÁú]], _b(2065)--[[ÔÆÆÜËÉ]], _b(5668)--[[·ç´µºÉ]]
+		},
 	}, {
 		szType = _L["Uncontrollable2"],	-- 10
-		tName = { _b(374)--[[ÉúÌ«¼«]], _b(1903)--[[Ð¥ÈÕ]] },	-- ÉúÌ«¼«2£º374
+		tName = {
+			_b(374)--[[ÉúÌ«¼«]], _b(1903)--[[Ð¥ÈÕ]]
+		},	-- ÉúÌ«¼«2£º374
 	}, {
 		szType = _L["Reduce-heal"],	-- 11
-		tName = { _b(2774)--[[Åùö¨]], _b(3195)--[[´©ÐÄåó]], _b(3538)--[[´©ÐÄ]], _b(574)--[[ÎÞÏà]], _b(576)--[[ºãºÓ½ÙÉ³]], _b(2496)--[[°Ù×ã¿Ý²Ð]], _b(2502)--[[Ð«ÕÝ]], _b(4030)--[[ÔÂ½Ù]]  },
+		tName = {
+			_b(2774)--[[Åùö¨]], _b(3195)--[[´©ÐÄåó]], _b(3538)--[[´©ÐÄ]], _b(574)--[[ÎÞÏà]], _b(576)--[[ºãºÓ½ÙÉ³]],
+			_b(2496)--[[°Ù×ã¿Ý²Ð]], _b(2502)--[[Ð«ÕÝ]], _b(4030)--[[ÔÂ½Ù]], _b(6155)--[[ÉñÁú½µÊÀ]]
+		},
 	}, {
 		szType = _L["Slower"],	-- 12
 		tName = {
-			_b(4928)--[[¼õËÙ]], _b(549)--[[´©]], _b(450)--[[ÐþÒ»]], _b(523)--[[²½³Ù]], _b(2274)--[[²ø×ã]], _b(560)--[[ÉúÌ«¼«]], _b(563)--[[±§²ÐÊ½]],
-			_b(584)--[[ÉÙÑôÖ¸]], _b(733)--[[Ì«ÒÒ]], _b(1553)--[[½£Ö÷ÌìµØ]], _b(1720)--[[¾ªÌÎ]], _b(2297)--[[Ç§Ë¿]], _b(2839)--[[çéÏÒ]], _b(3226)--[[¶¾ÝðÞ¼]], _b(4054)--[[Òµº£×ï¸¿]] },
+			-- ½£Ö÷ÌìµØ¿ÉÄÜ¸ÄÎª£º6072
+			-- _b(733)--[[Ì«ÒÒ]],
+			_b(4928)--[[¼õËÙ]], _b(549)--[[´©]], _b(450)--[[ÐþÒ»]], _b(523)--[[²½³Ù]], _b(2274)--[[²ø×ã]], _b(560)--[[ÉúÌ«¼«]],
+			_b(563)--[[±§²ÐÊ½]], _b(584)--[[ÉÙÑôÖ¸]], _b(1553)--[[½£Ö÷ÌìµØ]], _b(1720)--[[¾ªÌÎ]],
+			_b(2297)--[[Ç§Ë¿]], _b(2839)--[[çéÏÒ]], _b(3226)--[[¶¾ÝðÞ¼]], _b(4054)--[[Òµº£×ï¸¿]], _b(6275)--[[»ðÎè³¤¿Õ]],
+			_b(6259)--[[Ñ©ÖÐÐÐ]], _b(6191)--[[ÒµÁ¦]], _b(6162)--[[É½Õó]], _b(6130)--[[Âñ¹Ç]], _b(6078)--[[±©ÓêÀæ»¨Õë]]
+		},
 	}, {
 		szType = _L["Others"],	-- 13
-		tName = { _b(535)--[[°ë²½µß]], _b(678)--[[°ø»¨ËæÁø]], _b(3929)--[[Áú»ê]], _b(198)--[[ÐìÈçÁÖ]], _b(203)--[[Ð¥Èç»¢]], _b(3858)--[[ÉùÈ¤]], _b(994)--[[µ¹µØ]], _b(3399)--[[ÎÞÉù]], _b(3276)--[[×·ÃüÎÞÉù]], _b(4028)--[[Ê¥ÔÂÓÓ]] },
+		tName = {
+			_b(535)--[[°ë²½µß]], _b(678)--[[°ø»¨ËæÁø]], _b(3929)--[[Áú»ê]], _b(198)--[[ÐìÈçÁÖ]], _b(203)--[[Ð¥Èç»¢]],
+			_b(3858)--[[ÉùÈ¤]], _b(994)--[[µ¹µØ]], _b(3399)--[[ÎÞÉù]], _b(3276)--[[×·ÃüÎÞÉù]], _b(4028)--[[Ê¥ÔÂÓÓ]],
+			_b(6354)--[[Ðé»Ø]], _b(6346)--[[·ç¹ýÎÞºÛ]], _b(6350)--[[ÁÙ·ç]], _b(6266)--[[ÐÐÆøÑª]], _b(6224)--[[èÉÆü]],
+			_b(6172)--[[Ó¥Ä¿]], _b(6143)--[[ÈªÄýÔÂ]], _b(6125)--[[³¤Õ÷]], _b(6121)--[[·ç»¢]], _b(6122)--[[ÄÁÔÆ]],
+			_b(6085)--[[Ó°½Ý]], _b(5970)--[[·æÕë]], _b(5875)--[[ÉÆ»¤]], _b(5789)--[[·±Òô¼±½Ú]], _b(5666)--[[ÎíÍâ½­É½]],
+			_b(999)--[[Óê¼¯]], _b(6074)--[[¶ñ¹·À¹Â·]]
+		},
 	}
 }
 
 -- customdata
 HM.RegisterCustomData("HM_TargetMon")
-
--- update custom
-local tSkillMJ = HM_TargetMon.tSkillList[10]
-HM.RegisterCustomUpdater(function()
-	-- forced to update mingjiao BUFF/SKILL
-	if HM_TargetMon.tSkillList[10] and not IsEmpty(HM_TargetMon.tSkillList[10]) then
-		return
-	end
-	HM_TargetMon.tSkillList[10] = tSkillMJ
-	table.insert(HM_TargetMon.tBuffList[2].tName, _b(4053)--[[²ÀÎ·°µÐÌ]])
-	table.insert(HM_TargetMon.tBuffList[3].tName, _b(4421)--[[Áé»Ô]])
-	table.insert(HM_TargetMon.tBuffList[3].tName, _b(4468)--[[³¬È»]])
-	table.insert(HM_TargetMon.tBuffList[4].tName, _b(4029)--[[ÈÕ½Ù]])
-	table.insert(HM_TargetMon.tBuffList[4].tName, _b(4871)--[[ÎÞÃ÷»êËø]])
-	table.insert(HM_TargetMon.tBuffList[4].tName, _b(4875)--[[ÕòÄ§]])
-	table.insert(HM_TargetMon.tBuffList[8].tName, _b(4439)--[[Ì°Ä§Ìå]])
-	table.insert(HM_TargetMon.tBuffList[11].tName, _b(4030)--[[ÔÂ½Ù]])
-	table.insert(HM_TargetMon.tBuffList[12].tName, _b(4054)--[[Òµº£×ï¸¿]])
-	table.insert(HM_TargetMon.tBuffList[13].tName, _b(4028)--[[Ê¥ÔÂÓÓ]])
-end, 20130220)
 
 ---------------------------------------------------------------------
 -- ±¾µØº¯ÊýºÍ±äÁ¿
@@ -192,8 +218,8 @@ local _HM_TargetMon = {
 }
 
 -- save data to restore
-_HM_TargetMon.tBakSkill = HM_TargetMon.tSkillList
-_HM_TargetMon.tBakBuff = HM_TargetMon.tBuffList
+_HM_TargetMon.tBakSkill = HM_TargetMon.tSkillList2
+_HM_TargetMon.tBakBuff = HM_TargetMon.tBuffList2
 
 -- reset cd
 _HM_TargetMon.tSkillReset = {
@@ -211,19 +237,42 @@ _HM_TargetMon.tSkillReset = {
 
 -- special repeat-name buff
 _HM_TargetMon.tFixedBuffEx = {
+	[_L("Invincible_%s", _b(6182)--[[Ú¤Ôó]])] = 6182,
 	[_L("Silence_%s", _b(712)--[[À¼´ÝÓñÕÛ]])] = 712,
 	[_L("Halt_%s", _b(2780)--[[½£³åÒõÑô]])] = 2780,
+	[_L("Halt_%s", _b(5876)--[[ÉÆ»¤]])] = 5876,
 	[_L("Entrap_%s", _b(1931)--[[ÍÂ¹ÊÄÉÐÂ]])] = 1931,
+	[_L("Entrap_%s", _b(5809)--[[Ì«ÒÒ]])] = 5809,
+	[_L("Entrap_%s", _b(5764)--[[°Ù×ã]])] = 5764,
 	[_L("Freeze_%s", _b(685)--[[°ø»¨ËæÁø]])] = 685,
 	[_L("Freeze_%s", _b(1936)--[[ç­´½ÖéÐä]])] = 1936,
 	[_L("Freeze_%s", _b(2113)--[[ÈªÄýÔÂ]])] = 2113,
+	[_L("Freeze_%s", _b(6108)--[[Ìì¾øµØÃð]])] = 6108,
 	[_L("Uncontrollable2_%s", _b(374)--[[ÉúÌ«¼«]])] = 374,
+	[_L("Uncontrollable_%s", _b(730)--[[·ç¸®]])] = 730,
 	[_L("Uncontrollable_%s", _b(2781)--[[×ªÇ¬À¤]])] = 2781,
+	[_L("Uncontrollable_%s", _b(6314)--[[ÁãÂä]])] = 6314,
+	[_L("Uncontrollable_%s", _b(6292)--[[ÍÌÈÕÔÂ]])] = 6292,
+	[_L("Uncontrollable_%s", _b(6247)--[[ÃÔÐÄ¹Æ]])] = 6247,
+	[_L("Uncontrollable_%s", _b(5995)--[[Ð¦×í¿ñ]])] = 5995,
 	[_L("Slower_%s", _b(560)--[[ÉúÌ«¼«]])] = 560,
+	[_L("Slower_%s", _b(733)--[[Ì«ÒÒ]])] = 733,
 	[_L("Slower_%s", _b(2839)--[[çéÏÒ]])] = 2839,
+	[_L("Slower_%s", _b(6162)--[[É½Õó]])] = 6162,
+	[_L("Slower_%s", _b(6078)--[[±©ÓêÀæ»¨Õë]])] = 6078,
 	[_L("Halt_%s", _b(548)--[[Í»]])] = 548,
+	[_L("Dodge_%s", _b(5668)--[[·ç´µºÉ]])] = 5668,
 	[_L("Reduce-dealing_%s", _b(3195)--[[´©ÐÄåó]])] = 3195,
 	[_L("Reduce-injury_%s", _b(4439)--[[Ì°Ä§Ìå]])] = 4439,
+	[_L("Reduce-injury_%s", _b(6315)--[[ÁãÂä]])] = 6315,
+	[_L("Reduce-injury_%s", _b(6240)--[[ÐþË®¹Æ]])] = 6240,
+	[_L("Reduce-injury_%s", _b(5996)--[[Ð¦×í¿ñ]])] = 5996,
+	[_L("Reduce-injury_%s", _b(5810)--[[ÄÔ»§]])] = 5810,
+	[_L("Others_%s", _b(6354)--[[Ðé»Ø]])] = 6354,
+	[_L("Others_%s", _b(6266)--[[ÐÐÆøÑª]])] = 6266,
+	[_L("Others_%s", _b(5970)--[[·æÕë]])] = 5970,
+	[_L("Others_%s", _b(5875)--[[ÉÆ»¤]])] = 5875,
+	[_L("Others_%s", _b(5789)--[[·±Òô¼±½Ú]])] = 5789,
 }
 
 -- special skill alias
@@ -239,7 +288,7 @@ _HM_TargetMon.tFixedSkill = {
 -- load buffex cache
 _HM_TargetMon.LoadBuffEx = function()
 	local aCache = {}
-	for k, v in ipairs(HM_TargetMon.tBuffList) do
+	for k, v in ipairs(HM_TargetMon.tBuffList2) do
 		for _, vv in ipairs(v.tName) do
 			local dwFixedID = _HM_TargetMon.tFixedBuffEx[v.szType .. "_" .. vv]
 			if dwFixedID then
@@ -255,7 +304,7 @@ end
 -- load  monskill cache
 _HM_TargetMon.LoadSkillMon = function()
 	local aCache = {}
-	for _, v in ipairs(HM_TargetMon.tSkillList) do
+	for _, v in ipairs(HM_TargetMon.tSkillList2) do
 		for kk, vv in pairs(v) do
 			if vv > 0 then
 				aCache[kk] = vv
@@ -397,7 +446,7 @@ _HM_TargetMon.EditSkill = function(nForce, szName)
 				if not nForce then
 					HM.Alert(_L("Invalid skill name [%s]", szName))
 				else
-					HM_TargetMon.tSkillList[nForce][szName] = nTime
+					HM_TargetMon.tSkillList2[nForce][szName] = nTime
 					if not frm.nForce then
 						HM.Sysmsg(_L("Added skill CD monitor [%s-%s]", _HM_TargetMon.GetForceTitle(nForce), szName))
 					end
@@ -418,7 +467,7 @@ _HM_TargetMon.EditSkill = function(nForce, szName)
 	else
 		frm:Title(_L["Edit skill CD"])
 		frm:Fetch("Edit_Name"):Text(szName):Enable(false)
-		frm:Fetch("Edit_Time"):Text(tostring(math.abs(HM_TargetMon.tSkillList[nForce][szName])))
+		frm:Fetch("Edit_Time"):Text(tostring(math.abs(HM_TargetMon.tSkillList2[nForce][szName])))
 	end
 	frm:Toggle(true)
 end
@@ -429,7 +478,7 @@ _HM_TargetMon.GetSkillMenu = function()
 		{ szOption = _L["* New *"], fnAction = _HM_TargetMon.EditSkill },
 		{ bDevide = true, }
 	}
-	for k, v in ipairs(HM_TargetMon.tSkillList) do
+	for k, v in ipairs(HM_TargetMon.tSkillList2) do
 		if not IsEmpty(v) then
 			local m1 = { szOption = _HM_TargetMon.GetForceTitle(k) }
 			for kk, vv in pairs(v) do
@@ -449,7 +498,7 @@ _HM_TargetMon.GetSkillMenu = function()
 	table.insert(m0, { bDevide = true, })
 	table.insert(m0, { szOption = _L["* Reset *"],
 		fnAction = function()
-			HM_TargetMon.tSkillList = clone(_HM_TargetMon.tBakSkill)
+			HM_TargetMon.tSkillList2 = clone(_HM_TargetMon.tBakSkill)
 			_HM_TargetMon.tSkillCache = nil
 		end
 	})
@@ -466,7 +515,7 @@ _HM_TargetMon.EditBuff = function()
 		nX = frm:Append("WndEdit", "Edit_Name", { x = nX + 5, y = 20, limit = 100, w = 160, h = 25 } ):Pos_()
 		frm:Append("WndComboBox", "Combo_Type", { x = nX + 5, y = 20, w = 80, h = 25 } ):Menu( function()
 			local m0 = {}
-			for k, v in ipairs(HM_TargetMon.tBuffList) do
+			for k, v in ipairs(HM_TargetMon.tBuffList2) do
 				table.insert(m0, { szOption = v.szType, fnAction = function()
 					frm.nType = k
 					frm:Fetch("Combo_Type"):Text(v.szType)
@@ -480,7 +529,7 @@ _HM_TargetMon.EditBuff = function()
 			if szName == "" then
 				HM.Alert(_L["Buff name can not be empty"])
 			else
-				local tBuff = HM_TargetMon.tBuffList[frm.nType]
+				local tBuff = HM_TargetMon.tBuffList2[frm.nType]
 				if tBuff then
 					for _, v in ipairs(tBuff.tName) do
 						if v == szName then
@@ -498,9 +547,9 @@ _HM_TargetMon.EditBuff = function()
 		_HM_TargetMon.bFrame = frm
 	end
 	-- show frm
-	frm.nType = table.getn(HM_TargetMon.tBuffList)
+	frm.nType = table.getn(HM_TargetMon.tBuffList2)
 	frm:Fetch("Edit_Name"):Text("")
-	frm:Fetch("Combo_Type"):Text(HM_TargetMon.tBuffList[frm.nType].szType)
+	frm:Fetch("Combo_Type"):Text(HM_TargetMon.tBuffList2[frm.nType].szType)
 	frm:Title(_L["Add buff monitor"])
 	frm:Toggle(true)
 end
@@ -511,7 +560,7 @@ _HM_TargetMon.GetBuffMenu = function()
 		{ szOption = _L["* New *"], fnAction = _HM_TargetMon.EditBuff },
 		{ bDevide = true, }
 	}
-	for _, v in ipairs(HM_TargetMon.tBuffList) do
+	for _, v in ipairs(HM_TargetMon.tBuffList2) do
 		if not IsEmpty(v.tName) then
 			local m1 = { szOption = v.szType }
 			for kk, vv in ipairs(v.tName) do
@@ -542,7 +591,7 @@ _HM_TargetMon.GetBuffMenu = function()
 	table.insert(m0, { bDevide = true, })
 	table.insert(m0, { szOption = _L["* Reset *"],
 		fnAction = function()
-			HM_TargetMon.tBuffList = clone(_HM_TargetMon.tBakBuff)
+			HM_TargetMon.tBuffList2 = clone(_HM_TargetMon.tBakBuff)
 			_HM_TargetMon.tBuffCache = nil
 		end
 	})

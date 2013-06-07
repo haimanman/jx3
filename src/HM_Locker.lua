@@ -226,10 +226,12 @@ end
 -- arg8：nLevel，arg9：dwSkillSrcID
 -- 512=定军，761=众佛，1488=执迷，1729=风吹荷，2503=蟾躁，
 -- 2707=归去来棍，4059=极乐，4198=慈悲，4147=朝圣，4486=极乐
+-- 5645=强制，5753=贪魔体
 _HM_Locker.OnBuffUpdate = function()
 	local me = GetClientPlayer()
 	if arg0 == me.dwID and not arg1 and
 		(arg4 == 512 or arg4 == 761 or arg4 == 1488 or arg4 == 1729 or arg4 == 2503
+			or arg4 == 5645 or arg4 == 5753
 			or arg4 == 2707 or arg4 == 4059 or arg4 == 4198 or arg4 == 4147 or arg4 == 4486)
 	then
 		local _, tarID = me.GetTarget()
@@ -245,9 +247,13 @@ end
 -- cast tigger switch --
 -- 1665=风吹荷，402=定军，234=万佛朝宗，236=摩诃无量，
 -- 2476=蟾躁，2589=归去来棍，3982=慈悲愿，3985=朝圣言，3971=极乐引
+-- 6719=贪魔体，5692=沧月，5919=摩诃/执迷不返，5976=镇魔极道，5990=知我罪我
+-- 6009=极乐普渡，6518=守如山嘲讽，6719=伐魔忏罪
 _HM_Locker.OnSkillHit = function(dwCaster, dwTarget, dwID, dwLevel)
 	if HM_Locker.bLockScoff and dwTarget == GetClientPlayer().dwID then
 		if dwID == 234 or dwID == 236 or dwID == 402 or dwID == 1665
+			or dwID == 6719 or dwID == 5692 or dwID == 5919 or dwID == 5976 or dwID == 5990
+			or dwID == 6009 or dwID == 6518 or dwID == 6719
 			or dwID == 2476 or dwID == 2589 or dwID == 3982 or dwID == 3985 or dwID == 3971
 		then
 			local _, tarID = GetClientPlayer().GetTarget()
