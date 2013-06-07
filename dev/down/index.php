@@ -28,7 +28,7 @@ li h2 small { font-size: 14px; color: #666; font-weight: normal; }
 li p { margin: 0 0 20px 0; }
 p.offical { font-size: 16px; margin-left: 24px; }
 dl {
-  position: fixed; left: 660px; top: 10px;
+  position: absolute; left: 660px; top: 10px;
   background: #e1e2e6; color: #717375; padding: 10px;
   border-radius: 5px; -webkit-border-radius: 5px;
   text-align: center;
