@@ -144,7 +144,7 @@ $content = <<<EOF
   <name><![CDATA[{$name}]]></name>
   <desc><![CDATA[{$desc}]]></desc>
   <version dword="$dword_ver">$version</version>
-  <clientVersion dword="0x20100">2.1.0</clientVersion>
+  <clientVersion dword="0x20101">2.1.1</clientVersion>
   <urlPrefix>http://jx3.hightman.cn/sync/HM/</urlPrefix>
   <info>
     $info

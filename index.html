@@ -1,93 +1,225 @@
 <!DOCTYPE html>
 <html>
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="chrome=1" />
+<meta name="keywords" content="海鳗,插件,剑三,剑网3,剑侠3,剑侠情缘3,剑3,剑网3插件,海鳗插件,新剑网3,PVP插件" />
+<meta name="description" content="《剑网3》海鳗插件: 开源免费、简单实用、专注于 PVP！提供最新插件和源代码下载！" />
+<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+<title>《剑网3》海鳗插件(HM-2.0.19b12，最新版下载) - 剑侠情缘3/剑三最好用的 PVP 辅助插件！</title>
+<style type="text/css">
+body {
+	margin: 0;
+	padding: 0;
+	font-size: 16px;  
+	color: #373737;
+	background: #212121;
+	font-family: 'Myriad Pro', Calibri, Helvetica, Arial, sans-serif;
+	line-height: 1.5;
+	box-sizing: border-box;
+	-webkit-font-smoothing: antialiased;
+}
+p {
+	margin: 10px 0 15px 0; 
+}
+ul {
+	margin: 0 0 15px 0;
+	padding: 0;
+}
+ul li {
+	list-style: inside;
+	margin: 0;
+	padding: 0 0 0 20px;
+	vertical-align: baseline;
+}
+small {
+	font-size: 90%;
+}
+code {
+	padding: 3px;
+	margin: 0 3px;
+	box-shadow: 0 0 10px rgba(0,0,0,.1);
+	color: #222;
+	background-color: #fff;
+	font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
+	font-size: 14px;
+	border-radius: 2px;
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
+}
+a {
+	text-decoration: none;
+	color: #007edf;
+	text-shadow: none;
+	transition: color 0.5s ease;
+	transition: text-shadow 0.5s ease;
+	-webkit-transition: color 0.5s ease;
+	-webkit-transition: text-shadow 0.5s ease;
+	-moz-transition: color 0.5s ease;
+	-moz-transition: text-shadow 0.5s ease;
+	-o-transition: color 0.5s ease;
+	-o-transition: text-shadow 0.5s ease;
+	-ms-transition: color 0.5s ease;
+	-ms-transition: text-shadow 0.5s ease;
+}
+.inner {
+	position: relative;
+	margin: 0 auto;
+	padding: 20px 10px;
+	max-width: 720px;
+	*width: 720px;	
+}
 
-  <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="keywords" content="海鳗,插件,剑三,剑网3,剑侠3,剑侠情缘3,剑3,剑网3插件,海鳗插件,新剑网3,PVP插件" />
-    <meta name="description" content="《剑网3》海鳗插件: 开源免费、简单实用、专注于 PVP！提供最新插件和源代码下载！" />
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
-    <title>《剑网3》海鳗插件(HM-2.0.19b12，最新版下载) - 剑侠情缘3/剑三最好用的 PVP 辅助插件！</title>
-  </head>
+#header .inner {
+	padding: 40px 10px 10px 10px;
+}
+#header h1 {
+	color: #fff; font-size: 42px; font-weight: 700; margin: 0;
+}
+#header h2 {
+	color: #fff; font-size: 28px; font-weight: 300; margin: 0;
+}
+#header a {
+	display: block;
+	position: absolute;
+	top: 0;
+	right: 10px;
+	z-index: 10;
+	padding: 10px 50px 10px 10px;
+	color: #fff;
+	font-size: 16px;
+	background: url('images/blacktocat.png') #0090ff no-repeat 95% 50%;
+	font-weight: 700;
+	box-shadow: 0 0 10px rgba(0,0,0,.5);
+	border-bottom-left-radius: 2px;
+	border-bottom-right-radius: 2px;
+}
 
-  <body>
+#content { 
+	background: #f2f2f2; 
+}
+#content a:hover {
+	color: #0069ba;
+	text-shadow: #0090ff 0px 0px 2px;
+}
+#content h2 {
+	margin: 10px 0;
+	padding-bottom: 10px;
+	font-size: 28px;
+	background: url('images/bg_hr.png') repeat-x bottom;
+}
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/haimanman/jx3">查看源代码@GitHub</a>
-          <h1 id="project_title">《剑网3》海鳗插件</h1>
-          <h2 id="project_tagline">开源免费、简单实用、专注于 PVP</h2>
-        </header>
-    </div>
+#qrcode {
+	position: absolute;
+	top: -80px;
+	right: -80px;
+	background: #e1e2e6;
+	color: #717375;
+	padding: 10px;
+	border-radius: 5px;
+	-webkit-border-radius: 5px; 
+	text-align: center;
+}
+#qrcode dt, dd {
+	padding: 0;
+	margin: 0;
+	font-size: 12px;
+}
+#qrcode dt img {
+	width: 147px;
+	height: 147px;
+}
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <p>这是在国产3D网游《剑网3》中使用的辅助插件，遵循简单实用原则，侧重于 PVP 并且全部开源免费。</p>
-        <p><strong>好消息！</strong>最近发布的<a href="repack/">《PAK 文件清理小工具》</a>，可以帮助您节省游戏客户端所占的磁盘空间，略微提升游戏启动速度。</p>
-<h2>下载</h2>
-
-<ul>
-
-<li>最新版本：<a href="http://jx3.hightman.cn/down/">HM-2.0.19b12.zip</a> (<!--date-->2013/06/07) —— <strong style="color:red;">认清下载网址，避免上当和损失！！</strong><a href="http://weibo.com/2831843532/zoVdmuEFK" target="_blank">参见微博</a></li>
-<li><span style="color:red;">安史之乱：</span>最新插件管理器 <a href="#JX3HM-2.1.exe" onclick="alert('抱歉，发现 BUG 正在修改，稍后再来下载！'); return false;" style="text-decoration: underline; ">JX3HM-2.1.exe</a>，<a href="http://weibo.com/2831843532/zAeH7hqaR" target="_blank">[用法教程]</a> XP 上如运行失败请先<a href="http://www.microsoft.com/zh-cn/download/details.aspx?id=1639" target="_blank">下载安装 .NET2.0</a></li>
-<li>官方网站：<a href="http://haimanchajian.com">http://haimanchajian.com</a>
-</li>
-<li>更新日志：<a href="https://github.com/haimanman/jx3/commits/master">https://github.com/haimanman/jx3/commits/master</a>
-</li>
-<li>建议&amp;BUG报告：<a href="https://github.com/haimanman/jx3/issues">https://github.com/haimanman/jx3/issues</a>
-</li>
-<li>用户交流<code>YY</code>群： <em>6685583</em>
-</li>
-</ul><h2>WIKI & 文档</h2>
-
-<ul>
-<li><a href="https://github.com/haimanman/jx3/wiki/%E5%A6%82%E4%BD%95%E5%88%A0%E9%99%A4%E4%B8%8D%E5%BF%85%E8%A6%81%E7%9A%84%E5%8A%9F%E8%83%BD%E6%A8%A1%E5%9D%97">如何删除不必要的功能模块</a>
-</li>
-<li><a href="https://github.com/haimanman/jx3/wiki/%E5%A6%82%E4%BD%95%E5%90%AF%E7%94%A8%E8%8B%B1%E6%96%87%E7%95%8C%E9%9D%A2">如何启用英文界面</a>
-</li>
-<li><a href="https://github.com/haimanman/jx3/wiki/_pages">更多文档</a>
-</li>
-</ul><h2>主要功能</h2>
-
-<ul>
-<li>纯阳气场/唐门机关范围显示、归属显示、消失倒计时</li>
-<li>突出显示团队中的仙王蛊鼎，支持设定条件自动吃鼎</li>
-<li>虎跑目标锁定，目标脱离视线恢复锁定，TAB 只选玩家</li>
-<li>团队快速标记，快速选择，战场小队配置保存&amp;还原</li>
-<li>小地图红名显示，附近玩家统计与共享</li>
-<li>目标增强显示距离、内功、读条，BUFF 大小修改，精简 BOSS 的 DEBUFF，目标连接线绘制</li>
-<li>当前目标指示增强，显示方向、距离、最重要的 BUFF、人物状态等</li>
-<li>目标面向、脚底圈圈，焦点目标的面向、脚底圈圈</li>
-<li>监视目标的技能 CD，监视目标的重要 BUFF</li>
-<li>竞技场重伤自动交阵眼，战场守点方位提示，九宫计时，名剑币估算</li>
-<li>多焦点目标，目标列表筛选、排序等</li>
-<li>娱乐聊天助手，发布个人数据，ROLL 点娱乐等</li>
-</ul><h2>安装&amp;使用</h2>
-
-<ul>
-<li>解压下载的 <code>zip</code> 到 <em>JX3游戏目录</em> 下的 <code>bin/zhcn/interface</code> 目录</li>
-<li>小退可在插件管理界面看到默认打勾的“海鳗插件”，保持打勾进入游戏</li>
-<li>进入游戏后在玩家头像附近有一个褐色的 <code>HM</code> 小按纽，点击可以做插件设置</li>
-<li>ESC 进入快捷键设置，有一个分组“海鳗、实用插件集”，可详细设置相关快捷键</li>
-<li>玩家头像右键菜单、小地图下方的小板手菜单中也有相关菜单供快捷调用插件功能</li>
-</ul><h2>其它</h2>
-
-<p>本插件开源免费，但您在使用本插件前，请务必详细阅读<a href="http://haimanchajian.com/LICENSE.txt">用户使用许可协议</a>。</p>
-      </section>
-    </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">《剑网3》海鳗插件 maintained by <a href="https://github.com/haimanman">haimanman</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a> Friendly links: <a href="http://www.czxiu.com" target="_blank">QQ表情</a></p>
-      </footer>
-    </div>
-
-    
-
-  </body>
+#footer {
+	color: #f2f2f2;
+}
+#footer a:hover {
+	color: #43adff;
+	text-shadow: #0090ff 0px 0px 2px;
+}
+</style>
+</head>
+<body>
+<div id="header">
+	<div class="inner">
+		<h1>《剑网3》海鳗插件</h1>
+		<h2>开源免费、简单实用、专注于 PVP</h2>
+		<a href="https://github.com/haimanman/jx3">源代码@GitHub</a>
+	</div>
+</div><!-- header -->
+<div id="content">
+	<div class="inner">
+		<p>
+			<code>海鳗插件</code>是在剑侠情缘网络版叁（简称：剑网3）中使用的辅助插件，<br />
+			严格遵循官方白名单接口，遵循简单实用原则，侧重于 PVP 并且永远全部开源免费。
+		</p>
+		<ul>
+			<li><a href="repack/"><strong>PAK文件清理工具</strong></a>
+				<small>可以帮助您节省硬盘空间，略微提升游戏启动速度。</small>
+			</li>
+			<li><a href="#JX3HM-2.1.exe" onclick="alert('抱歉，发现 BUG 正在修改，稍后再来下载！');
+		return false;"><strong>更新管理器 JX3HM-2.1.exe</strong></a>
+				<small>支持功能筛选，<a href="http://weibo.com/2831843532/zAeH7hqaR" target="_blank">查看教程</a> 。XP上若运行不了请先<a href="http://www.microsoft.com/zh-cn/download/details.aspx?id=1639" target="_blank">安装 .NET2.0</a></small>
+			</li>
+		</ul>
+		<h2>下载</h2>
+		<ul>
+			<li>最新版本：<a href="http://jx3.hightman.cn/down/">HM-2.0.19b12.zip</a> (<!--date-->2013/06/07) —— <strong style="color:red;">认清下载网址，避免上当和损失！！</strong><a href="http://weibo.com/2831843532/zoVdmuEFK" target="_blank">参见微博</a></li>
+			<li>官方网站：<a href="http://haimanchajian.com">http://haimanchajian.com</a>
+			</li>
+			<li>更新日志：<a href="https://github.com/haimanman/jx3/commits/master">https://github.com/haimanman/jx3/commits/master</a>
+			</li>
+			<li>建议&amp;BUG报告：<a href="https://github.com/haimanman/jx3/issues">https://github.com/haimanman/jx3/issues</a>
+			</li>
+			<li>用户交流<code>YY</code>群： <em>6685583</em>
+			</li>
+		</ul>
+		<h2>WIKI & 文档</h2>
+		<ul>
+			<li><a href="https://github.com/haimanman/jx3/wiki/%E5%A6%82%E4%BD%95%E5%88%A0%E9%99%A4%E4%B8%8D%E5%BF%85%E8%A6%81%E7%9A%84%E5%8A%9F%E8%83%BD%E6%A8%A1%E5%9D%97">如何删除不必要的功能模块</a>
+			</li>
+			<li><a href="https://github.com/haimanman/jx3/wiki/%E5%A6%82%E4%BD%95%E5%90%AF%E7%94%A8%E8%8B%B1%E6%96%87%E7%95%8C%E9%9D%A2">如何启用英文界面</a>
+			</li>
+			<li><a href="https://github.com/haimanman/jx3/wiki/_pages">更多文档</a>
+			</li>
+		</ul>
+		<h2>主要功能</h2>
+		<ul>
+			<li>纯阳气场/唐门机关范围显示、归属显示、消失倒计时</li>
+			<li>突出显示团队中的仙王蛊鼎，支持设定条件自动吃鼎</li>
+			<li>虎跑目标锁定，目标脱离视线恢复锁定，TAB 只选玩家</li>
+			<li>团队快速标记，快速选择，战场小队配置保存&amp;还原</li>
+			<li>小地图红名显示，附近玩家统计与共享</li>
+			<li>目标增强显示距离、内功、读条，BUFF 大小修改，精简 BOSS 的 DEBUFF，目标连接线绘制</li>
+			<li>当前目标指示增强，显示方向、距离、最重要的 BUFF、人物状态等</li>
+			<li>目标面向、脚底圈圈，焦点目标的面向、脚底圈圈</li>
+			<li>监视目标的技能 CD，监视目标的重要 BUFF</li>
+			<li>竞技场重伤自动交阵眼，战场守点方位提示，九宫计时，名剑币估算</li>
+			<li>多焦点目标，目标列表筛选、排序等</li>
+			<li>娱乐聊天助手，发布个人数据，ROLL 点娱乐等</li>
+			<li>自动确认，商店买卖修装备，物品自动采集拾取等</li>
+		</ul>
+		<h2>安装&amp;使用</h2>
+		<ul>
+			<li>解压下载的 <code>zip</code> 到 <em>JX3游戏目录</em> 下的 <code>bin/zhcn/interface</code> 目录</li>
+			<li>小退可在插件管理界面看到默认打勾的“海鳗插件”，保持打勾进入游戏</li>
+			<li>进入游戏后在玩家头像附近有一个褐色的 <code>HM</code> 小按纽，点击可以做插件设置</li>
+			<li>ESC 进入快捷键设置，有一个分组“海鳗、实用插件集”，可详细设置相关快捷键</li>
+			<li>玩家头像右键菜单、小地图下方的小板手菜单中也有相关菜单供快捷调用插件功能</li>
+		</ul>
+		<h2>其它</h2>
+		<p>本插件开源免费，但您在使用本插件前，请务必详细阅读<a href="http://haimanchajian.com/LICENSE.txt">用户使用许可协议</a>。</p>
+		<dl id="qrcode">
+			<dt><img src="qrcode.jpg" alt="微信二维码" /></dt>
+			<dd>【剑三查询】<br />微信扫描即可添加关注</dd>
+		</dl><!-- qrcode-->		
+	</div><!-- inner -->
+</div><!-- content -->
+<div id="footer">
+	<div class="inner">
+		<p class="copyright">《剑网3》海鳗插件 maintained by <a href="https://github.com/haimanman">haimanman</a></p>
+		<p>Published with <a href="http://pages.github.com">GitHub Pages</a> Friendly links: <a href="http://www.czxiu.com" target="_blank">QQ表情</a></p>
+	</div>
+</div><!-- footer -->
+</body>
 </html>
