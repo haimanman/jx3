@@ -33,9 +33,10 @@ local _HM_Doodad = {
 	tCraft = {
 		1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009,
 		1010, 1011, 1012, 1015, 1016, 1017, 1018, 1019, 2641,
-		2642, 2643, 3321, 3358, 3359, 3360, 3361,
+		2642, 2643, 3321, 3358, 3359, 3360, 3361, 4227, 4228,
 		0,	-- switch
 		1020, 1021, 1022, 1023, 1024, 1025, 1027, 2644, 2645,
+		4229, 4230,
 	},
 	tDoodad = {},	-- 待处理的 doodad 列表
 	szIniFile = "interface\\HM\\ui\\HM_Area.ini",
@@ -410,12 +411,12 @@ _HM_Doodad.PS.OnPanelActive = function(frame)
 	end)
 	-- craft
 	nX = 10
-	local nY = 128
+	local nY = 124
 	for _, v in ipairs(_HM_Doodad.tCraft) do
 		if v == 0 then
 			nY = nY + 8
 			if nX ~= 10 then
-				nY = nY + 28
+				nY = nY + 24
 				nX = 10
 			end
 		else
@@ -429,10 +430,10 @@ _HM_Doodad.PS.OnPanelActive = function(frame)
 				end
 				_HM_Doodad.Reload()
 			end)
-			nX = nX + 100
+			nX = nX + 90
 			if nX > 500 then
 				nX = 10
-				nY = nY + 28
+				nY = nY + 24
 			end
 		end
 	end
