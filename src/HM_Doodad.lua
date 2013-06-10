@@ -237,6 +237,7 @@ _HM_Doodad.OnAutoDoodad = function()
 	local me = GetClientPlayer()
 	if not me or me.GetOTActionState() ~= 0
 		or (me.nMoveState ~= MOVE_STATE.ON_STAND and me.nMoveState ~= MOVE_STATE.ON_FLOAT)
+		or IsDialoguePanelOpened()
 	then
 		return
 	end

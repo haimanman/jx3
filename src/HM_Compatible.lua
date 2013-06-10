@@ -186,6 +186,17 @@ function OpenInternetExplorer(szAddr, bDisableSound)
 end
 end
 
+-- dialogue panel
+if not IsDialoguePanelOpened then
+function IsDialoguePanelOpened()
+	local frame = Station.Lookup("Normal/DialoguePanel")
+	if frame and frame:IsVisible() then
+		return true
+	end
+	return false
+end
+end
+
 -- get segment name
 if not Table_GetSegmentName then
 function Table_GetSegmentName(dwBookID, dwSegmentID)
