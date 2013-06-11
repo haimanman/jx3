@@ -197,6 +197,17 @@ function IsDialoguePanelOpened()
 end
 end
 
+-- doodad loot
+if not IsCorpseAndCanLoot then
+function IsCorpseAndCanLoot(dwDoodadID)
+	local doodad = GetDoodad(dwDoodadID)
+	if not doodad then
+		return false
+	end
+	return (doodad.nKind == DOODAD_KIND.CORPSE and doodad.CanLoot(GetClientPlayer().dwID))
+end
+end
+
 -- get segment name
 if not Table_GetSegmentName then
 function Table_GetSegmentName(dwBookID, dwSegmentID)

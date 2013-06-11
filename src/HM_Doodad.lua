@@ -40,6 +40,7 @@ local _HM_Doodad = {
 	},
 	tDoodad = {},	-- 待处理的 doodad 列表
 	szIniFile = "interface\\HM\\ui\\HM_Area.ini",
+	nToLoot = 0,	-- 待拾取处理数量（用于修复判断）
 }
 
 -- filter menu
@@ -136,7 +137,7 @@ _HM_Doodad.TryAdd = function(dwID, bDelay)
 		if d.nKind == DOODAD_KIND.CORPSE or d.nKind == DOODAD_KIND.NPCDROP then
 			if bDelay then
 				--HM.Debug("delay to try add [" .. d.szName .. "#" .. d.dwID .. "]")
-				return HM.DelayCall(250, function() _HM_Doodad.TryAdd(dwID) end)
+				return HM.DelayCall(500, function() _HM_Doodad.TryAdd(dwID) end)
 			end
 			if HM_Doodad.bLoot and d.CanLoot(me.dwID) then
 				data = { loot = true }
@@ -197,6 +198,23 @@ _HM_Doodad.SwitchName = function(bEnable)
 		_HM_Doodad.pLabel = nil
 		_HM_Doodad.Reload()
 	end
+end
+
+-- find & get opened dooad ID
+_HM_Doodad.GetOpenDooadID = function()
+	local dwID = _HM_Doodad.dwOpenID
+	if dwID then
+		_HM_Doodad.dwOpenID = nil
+	else
+		local tObject = Scene_SelectObject("all") or {}
+		for _, v in pairs(tObject) do
+			if v["Type"] == TARGET.DOODAD and IsCorpseAndCanLoot(v["ID"]) then
+				dwID = v["ID"]
+				break
+			end
+		end
+	end
+	return dwID
 end
 
 -------------------------------------
@@ -261,7 +279,7 @@ _HM_Doodad.OnAutoDoodad = function()
 		end
 		if bIntr then
 			HM.Debug("auto interact [" .. d.szName .. "]")
-			HM.BreatheCallDelayOnce("AutoDoodad", 250)
+			HM.BreatheCallDelayOnce("AutoDoodad", 500)
 			return InteractDoodad(k)
 		end
 	end
@@ -375,7 +393,6 @@ _HM_Doodad.PS.OnPanelActive = function(frame)
 	:Click(function(bChecked)
 		HM_Doodad.bLoot = bChecked
 		ui:Fetch("Check_Fight"):Enable(bChecked)
-		ui:Fetch("Combo_Filter"):Enable(bChecked)
 		_HM_Doodad.Reload()
 	end):Pos_()
 	local nX1 = nX
@@ -384,7 +401,7 @@ _HM_Doodad.PS.OnPanelActive = function(frame)
 		HM_Doodad.bLootFight = bChecked
 	end):Pos_()
 	local nX2 = nX
-	ui:Append("WndComboBox", "Combo_Filter", { txt = _L["Set pickup filter"], x = nX2 + 20, y = 28 }):Menu(_HM_Doodad.GetFilterMenu)
+	ui:Append("WndComboBox", { txt = _L["Set pickup filter"], x = nX2 + 20, y = 28 }):Menu(_HM_Doodad.GetFilterMenu)
 	-- doodad
 	ui:Append("Text", { txt = _L["Craft assit"], x = 0, y = 64, font = 27 })
 	nX = ui:Append("WndCheckBox", { txt = _L["Show the head name"], x = 10, y = 92, checked = HM_Doodad.bShowName })
@@ -472,9 +489,11 @@ HM.RegisterEvent("PLAYER_ENTER_GAME", function() _HM_Doodad.SwitchName(HM_Doodad
 HM.RegisterEvent("DOODAD_ENTER_SCENE", function() _HM_Doodad.TryAdd(arg0, true) end)
 HM.RegisterEvent("DOODAD_LEAVE_SCENE", function() _HM_Doodad.Remove(arg0) end)
 HM.RegisterEvent("HELP_EVENT", function()
-	if arg0 == "OnOpenpanel" and arg1 == "LOOT" and _HM_Doodad.dwOpenID then
-		_HM_Doodad.OnOpenDoodad(_HM_Doodad.dwOpenID)
-		_HM_Doodad.dwOpenID = nil
+	if arg0 == "OnOpenpanel" and arg1 == "LOOT" then
+		local dwOpenID =  _HM_Doodad.GetOpenDooadID()
+		if dwOpenID then
+			_HM_Doodad.OnOpenDoodad(dwOpenID)
+		end
 	end
 end)
 HM.RegisterEvent("QUEST_ACCEPTED", function()
