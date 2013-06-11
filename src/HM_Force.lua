@@ -177,12 +177,14 @@ end
 
 -- show jw or not
 _HM_Force.ShowJWBuff = function()
-	for i = 1, 10 do
+	for i = 1, 99 do
 		local buff = Table_GetBuff(409, i)
-		if HM_Force.bShowJW then
-			buff.bShow = 1
-		else
-			buff.bShow = 0
+		if buff then
+			if HM_Force.bShowJW then
+				buff.bShow = 1
+			else
+				buff.bShow = 0
+			end
 		end
 	end
 end
