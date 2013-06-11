@@ -564,7 +564,7 @@ end
 _HM_Camp.PS.OnPanelActive = function(frame)
 	local ui, nX = HM.UI(frame), 0
 	-- quick shield
-	ui:Append("Text", { txt = _L["Camp fight target"], x = 0, y = 0, font = 27 })
+	ui:Append("Text", { txt = _L["CampShield"], x = 0, y = 0, font = 27 })
 	_HM_Camp.HideBox = ui:Append("WndCheckBox", { x = 10, y = 28, checked = HM_Camp.bHideEnable })
 	:Text(_L["Enable shield (macro cmd: /"] .. _L["CampShield"] .. _L[", "]):Click(_HM_Camp.HideGF)
 	nX = _HM_Camp.HideBox:Pos_()
