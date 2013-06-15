@@ -32,9 +32,9 @@ HM_ToolBox = {
 	bAutoStack = true,	-- 一键堆叠（背包+仓库）
 	bAutoDiamond = true,	-- 五行石精炼完成后自动再摆上次材料
 	bAnyDiamond = false,	-- 忽略五行石颜色，只考虑等级
-	bChatTime = true,		-- 聊天复制党
+	bChatTime = false,		-- 聊天复制党
 	nBroadType = 0,
-	szBroadText = "Hi",
+	szBroadText = "Hi, nihao",
 }
 HM.RegisterCustomData("HM_ToolBox")
 
