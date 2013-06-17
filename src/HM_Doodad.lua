@@ -349,7 +349,7 @@ _HM_Doodad.OnUpdateMiniFlag = function()
 				local nX, _, nZ = Scene_GameWorldPositionToScenePosition(tar.nX, tar.nY, tar.nZ, 0)
 				local tpl = GetDoodadTemplate(tar.dwTemplateID)
 				if v.quest then
-					nF1 = 245
+					nF1 = 114
 				elseif tpl.dwCraftID == 1 then	-- 采金类
 					nF1, nF2 = 16, 47
 				elseif tpl.dwCraftID == 2 then	-- 神农类

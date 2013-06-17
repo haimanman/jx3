@@ -32,7 +32,7 @@ HM_ToolBox = {
 	bAutoStack = true,	-- 一键堆叠（背包+仓库）
 	bAutoDiamond = true,	-- 五行石精炼完成后自动再摆上次材料
 	bAnyDiamond = false,	-- 忽略五行石颜色，只考虑等级
-	bChatTime = false,		-- 聊天复制党
+	bChatTime = true,		-- 聊天复制党
 	nBroadType = 0,
 	szBroadText = "Hi, nihao",
 }
@@ -438,7 +438,7 @@ end
 _HM_ToolBox.BindStackButton = function()
 	-- bag
 	local btn1 = Station.Lookup("Normal/BigBagPanel/Btn_Split")
-	local btn2 = Station.Lookup("Normal/BigBagPanel/Btn_Stack")
+	local btn2 = Station.Lookup("Normal/BigBagPanel/Btn_Stack2")
 	if not HM_ToolBox.bAutoStack then
 		if btn2 then
 			btn2:Destroy()
@@ -450,7 +450,7 @@ _HM_ToolBox.BindStackButton = function()
 			btn1.nX, btn1.nY = nX, nY
 			if not btn2 then
 				local w, h = btn1:GetSize()
-				btn2 = HM.UI("Normal/BigBagPanel"):Append("WndButton", "Btn_Stack", { txt = _L["Stack"], w = w, h = h }):Raw()
+				btn2 = HM.UI("Normal/BigBagPanel"):Append("WndButton", "Btn_Stack2", { txt = _L["Stack"], w = w, h = h }):Raw()
 				btn2.OnLButtonClick = _HM_ToolBox.DoBagStack
 			end
 			btn2:SetRelPos(nX + btn1:GetSize(), nY)
@@ -458,7 +458,7 @@ _HM_ToolBox.BindStackButton = function()
 	end
 	-- bank
 	local btn1 = Station.Lookup("Normal/BigBankPanel/Btn_CU")
-	local btn2 = Station.Lookup("Normal/BigBankPanel/Btn_Stack")
+	local btn2 = Station.Lookup("Normal/BigBankPanel/Btn_Stack2")
 	if not HM_ToolBox.bAutoStack then
 		if btn2 then
 			btn2:Destroy()
@@ -470,7 +470,7 @@ _HM_ToolBox.BindStackButton = function()
 			btn1.nX, btn1.nY = nX, nY
 			if not btn2 then
 				local w, h = btn1:GetSize()
-				btn2 = HM.UI("Normal/BigBankPanel"):Append("WndButton", "Btn_Stack", { txt = _L["Stack"], w = w, h = h }):Raw()
+				btn2 = HM.UI("Normal/BigBankPanel"):Append("WndButton", "Btn_Stack2", { txt = _L["Stack"], w = w, h = h }):Raw()
 				btn2.OnLButtonClick = _HM_ToolBox.DoBankStack
 			end
 			btn2:SetRelPos(nX + btn1:GetSize(), nY)
@@ -669,7 +669,7 @@ end
 -- 插入聊天内容时加入时间
 _HM_ToolBox.AppendChatWithTime = function(h, szMsg)
     local i = h:GetItemCount()
-    h:AppendItemFromStringOrg(szMsg)
+    h:_AppendItemFromString(szMsg)
 	-- insert time
 	local h2 = h:Lookup(i)
 	if h2 and h2:GetType() == "Text" then
@@ -805,12 +805,12 @@ _HM_ToolBox.OnChatPanelInit = function()
 		local h = Station.Lookup("Lowest2/ChatPanel" .. i .. "/Wnd_Message", "Handle_Message")
 		if h and i ~= 5 then
 			if HM_ToolBox.bChatTime then
-				if not h.AppendItemFromStringOrg then
-					h.AppendItemFromStringOrg = h.AppendItemFromString
+				if not h._AppendItemFromString then
+					h._AppendItemFromString = h.AppendItemFromString
 				end
 				h.AppendItemFromString = _HM_ToolBox.AppendChatWithTime
-			elseif h.AppendItemFromStringOrg then
-				h.AppendItemFromString = h.AppendItemFromStringOrg
+			elseif h._AppendItemFromString then
+				h.AppendItemFromString = h._AppendItemFromString
 			end
 		end
 	end
@@ -903,7 +903,8 @@ end
 -- conflict
 _HM_ToolBox.PS.OnConflictCheck = function()
 	if Chat and HM_ToolBox.bChatTime then
-		Chat.tChannelEx = {}
+		Chat.bTime = false
+		Chat.bCopy = false
 	end
 end
 
