@@ -658,8 +658,8 @@ _HM_RedName.PS.OnPanelActive = function(frame)
 		HM_RedName.bAlertOnce = bChecked
 		ui:Fetch("Check_Settar"):Enable(bChecked)
 	end):Pos_()
-	ui:Append("WndCheckBox", "Check_Settar", { x = nX + 10, y = 84, checked = HM_RedName.bSettar, enable = HM_RedName.bAlertOnce })
-	:Text(_L["And set target"]):Enable(HM_RedName.bEnableMini):Click(function(bChecked)
+	ui:Append("WndCheckBox", "Check_Settar", { x = nX + 10, y = 84, checked = HM_RedName.bSettar })
+	:Text(_L["And set target"]):Enable(HM_RedName.bEnableMini and HM_RedName.bAlertOnce):Click(function(bChecked)
 		HM_RedName.bSettar = bChecked
 	end)
 	-- middle
