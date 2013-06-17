@@ -14,16 +14,17 @@ HM_Camp = {
 	bQuestAccept = true,	-- 自动接日常
 	bBossTime = false,			-- boss 刷新提醒
 	bBossTimeGF = true,		-- 攻防 BOSS 计时
-	tBossList = {
+	bAutoCampQueue = true,	-- 攻防排队自动进
+	tBossList2 = {
 		[_n(6219)--[[方超]]] = 5,
 		[_n(6222)--[[霸图]]] = 5,
 		[_n(6220)--[[赵新宇]]] = 5,
 		[_n(6221)--[[孙永恒]]] = 5,
-		[_n(14042)--[[冷翼毒神]]] = 1.5,
+		--[_n(14042)--[[冷翼毒神]]] = 1.5,
 		[_n(1308)--[[郭海宾]]] = 3,
 		[_n(1317)--[[左破天]]] = 3,
-		--[_n(1217)--[[催命判官]]] = 3,
-		--[_n(1215)--[[恶人谷练兵将]]] = 3,
+		[_n(1217)--[[催命判官]]] = 3,
+		[_n(1215)--[[恶人谷练兵将]]] = 4,
 	},
 }
 HM.RegisterCustomData("HM_Camp")
@@ -234,7 +235,7 @@ end
 -------------------------------------
 -- edit boss item
 _HM_Camp.EditBoss = function(szName, dwMin)
-	local frm, tBoss = _HM_Camp.kFrame, HM_Camp.tBossList
+	local frm, tBoss = _HM_Camp.kFrame, HM_Camp.tBossList2
 	if not frm then
 		frm = HM.UI.CreateFrame("HM_CAMP_BOSS", { close = false, w = 381, h = 240 })
 		frm:Append("Text", { txt = _L["Name of NPC"], x = 0, y = 0, font = 27 }):Pos_()
@@ -279,7 +280,7 @@ _HM_Camp.GetBossMenu = function()
 		{ szOption = _L["* New *"], fnAction = _HM_Camp.EditBoss },
 		{ bDevide = true },
 	}
-	for k, v in pairs(HM_Camp.tBossList) do
+	for k, v in pairs(HM_Camp.tBossList2) do
 		table.insert(m0, { szOption = k .. _L("(%smin)", v), fnAction = function() _HM_Camp.EditBoss(k, v) end })
 	end
 	return m0
@@ -314,10 +315,10 @@ end
 _HM_Camp.OnSysMsg = function()
 	if HM_Camp.bBossTime and arg0 == "UI_OME_DEATH_NOTIFY" then
 		local npc = GetNpc(arg1)
-		if npc and HM_Camp.tBossList[npc.szName] then
+		if npc and HM_Camp.tBossList2[npc.szName] then
 			local me = GetClientPlayer()
 			_HM_Camp.tDeadBoss[npc.szName] = {
-				tFrame = _HM_Camp.GetBossTime(math.floor(HM_Camp.tBossList[npc.szName] * 960)),
+				tFrame = _HM_Camp.GetBossTime(math.floor(HM_Camp.tBossList2[npc.szName] * 960)),
 				dwMapID = me.GetScene().dwMapID,
 				nX = npc.nX,
 				nY = npc.nY,
@@ -585,9 +586,13 @@ _HM_Camp.PS.OnPanelActive = function(frame)
 	ui:Append("WndComboBox", { txt = _L["Set BOSS time"], x = nX + 10, y = 212 }):Menu(_HM_Camp.GetBossMenu)
 	ui:Append("WndCheckBox", { x = 10, y = 240, checked = HM_Camp.bPartyAlert })
 	:Text(_L["Alert when different camp of players join the team"]):Click(function(bChecked) HM_Camp.bPartyAlert = bChecked end)
-	ui:Append("WndCheckBox", { x = 10, y = 268, checked = HM_Camp.bBossTimeGF})
+	ui:Append("WndCheckBox", { x = 10, y = 268, checked = HM_Camp.bBossTimeGF })
 	:Text(_L["Record BOSS time in camp fight (click icons of camp bar)"]):Click(function(bChecked)
 		HM_Camp.bBossTimeGF = bChecked
+	end)
+	ui:Append("WndCheckBox", { x = 10, y = 296, checked = HM_Camp.bAutoCampQueue })
+	:Text(_L["Auto enter map when over of the queue"]):Click(function(bChecked)
+		HM_Camp.bAutoCampQueue = bChecked
 	end)
 end
 

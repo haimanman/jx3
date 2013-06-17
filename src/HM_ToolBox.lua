@@ -740,6 +740,9 @@ _HM_ToolBox.OnShopUpdateItem = function()
 end
 
 _HM_ToolBox.OnAutoConfirm = function()
+	if HM_Camp and HM_Camp.bAutoCampQueue then
+		HM.DoMessageBox("CanJoinGongFangMapTip")
+	end
 	if HM_ToolBox.bIgnoreSell then
 		HM.DoMessageBox("SellItemSure")
 	end

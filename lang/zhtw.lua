@@ -150,6 +150,7 @@ data = {
 	["Set BOSS time"] = "設置 BOSS 時間",
 	["Alert when different camp of players join the team"] = "不同陣營的玩家加入團隊時發出警報",
 	["Record BOSS time in camp fight (click icons of camp bar)"] = "記錄攻防推BOSS時間及減傷層數（鼠標點擊士氣條的圖標查看）",
+	["Auto enter map when over of the queue"] = "攻防排隊就緒時自動進入地圖",
 	["Camp helper"] = "陣營活動助手",
 	["Auto camp target"] = "一鍵攻防目標",
 	["Super shield"] = "一鍵攻防屏蔽",
