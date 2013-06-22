@@ -10,6 +10,7 @@ foreach ($lines as $line)
 {
 	if (!preg_match('/\* ([0-9-]+) ([0-9:]+) \+0800 [0-9a-f]+ (\w+?): (.*)$/', $line, $match))
 		continue;
+    if (!strncmp($match[4], "Internal ", 9)) continue;
 	$release = !strncmp($match[4], 'Release ', 8) ? substr($match[4], 8) : false;
 	if ($release || $content === '')
 	{
