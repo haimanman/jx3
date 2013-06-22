@@ -422,6 +422,7 @@ _HM_CombatText.NewText = function(dwCharacterID, szText, fScale, szName)
 	text.fScale = fScale
 	text:Hide()
 	HM.ApplyTopPoint(function(nX, nY)
+		if not nX then return end
 		local nW, nH = text:GetSize()
 		text:SetAbsPos(nX - nW / 2, nX - nH / 2)
 		text:Show()
@@ -546,6 +547,7 @@ _HM_CombatText.OnBreathe = function()
 				-- adjust pos/size
 				if not bRemove then
 					local fnAction = function(nOrgX, nOrgY)
+						if not nOrgX then return end
 						--×ÖÌåÃ¿èå±ä»»
 						local cxText, cyText = text:GetSize()
 						nOrgX = nOrgX - cxText / 2

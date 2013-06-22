@@ -114,7 +114,7 @@ _HM_Guding.ShowName = function(tar)
 	end
 	-- adjust pos & show
 	HM.ApplyTopPoint(function(nX, nY)
-		if not nX or not nY then
+		if not nX then
 			return label:Hide()
 		end
 		local nW, nH = label:GetSize()

@@ -709,12 +709,18 @@ _HM_Target.DrawConnect = function(conn, me, tar)
 		conn:Show()
 	end
 	_ApplyPoint(function(x, y)
+		if not x then
+			return conn:Hide()
+		end
 		nX, nY = x, y
 		if nX1 and nY1 then
 			fnAction()
 		end
 	end, me)
 	_ApplyPoint(function(x, y)
+		if not x then
+			return conn:Hide()
+		end
 		nX1, nY1 = x, y
 		if nX and nY then
 			fnAction()

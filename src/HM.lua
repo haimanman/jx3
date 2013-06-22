@@ -1028,16 +1028,13 @@ HM.ApplyScreenPoint = function(fnAction, nX, nY, nZ)
 		nX, nY, nZ = tar.nX, tar.nY, tar.nZ
 	end
 	PostThreadCall(function(nX, nY, nZ)
-		if nX and nY and nZ then
-			PostThreadCall(function(nX, nY)
-				if nX and nY then
-					nX, nY = Station.AdjustToOriginalPos(nX, nY)
-				end
-				fnAction(nX, nY)
-			end, nil, "Scene_ScenePointToScreenPoint", nX, nY, nZ)
-		else
-			fnAction()
-		end
+		PostThreadCall(function(nX, nY, bOk)
+			if bOk then
+				fnAction(Station.AdjustToOriginalPos(nX, nY))
+			else
+				fnAction()
+			end
+		end, nil, "Scene_ScenePointToScreenPoint", nX, nY, nZ)
 	end, nil, "Scene_GameWorldPositionToScenePosition", nX, nY, nZ, false)
 end
 
@@ -1058,16 +1055,13 @@ HM.ApplyTopPoint = function(fnAction, tar, nH)
 	if not nH then
 		-- PostThreadCall(fnAction, nil, "Scene_GetCharacterTopScreenPos", tar.dwID)
 		PostThreadCall(function(nX, nY, nZ)
-			if nX and nY and nZ then
-				PostThreadCall(function(nX, nY)
-					if nX and nY then
-						nX, nY = Station.AdjustToOriginalPos(nX, nY)
-					end
-					fnAction(nX, nY)
-				end, nil, "Scene_ScenePointToScreenPoint", nX, nY, nZ)
-			else
-				fnAction()
-			end
+			PostThreadCall(function(nX, nY, bOk)
+				if bOk then
+					fnAction(Station.AdjustToOriginalPos(nX, nY))
+				else
+					fnAction()
+				end
+			end, nil, "Scene_ScenePointToScreenPoint", nX, nY, nZ)
 		end, nil, "Scene_GetCharacterTop", tar.dwID)
 	else
 		if nH < 64 then
