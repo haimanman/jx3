@@ -686,11 +686,6 @@ end
 -- ´°¿Úº¯Êý
 ---------------------------------------------------------------------
 _HM_Target.DrawConnect = function(conn, me, tar)
-	if not tar or me.dwID == tar.dwID then
-		return
-	end
-	conn:SetTriangleFan(true)
-	conn:ClearTriangleFanPoint()
 	local col, nAlpha = HM_Target.tConnColor, HM_Target.nConnAlpha
 	local nAlpha1 = math.ceil(nAlpha * 0.3)
 	local cX, cY  = HM_Target.nConnWidth, 0
@@ -704,6 +699,7 @@ _HM_Target.DrawConnect = function(conn, me, tar)
 		if dwAngle > 1 and dwAngle < 1.57 then
 			cX, cY = cY, cX
 		end
+		conn:ClearTriangleFanPoint()
 		conn:AppendTriangleFanPoint(nX1 - cX, nY1 + cY, col[1], col[2], col[3], nAlpha1)
 		conn:AppendTriangleFanPoint(nX1 + cX, nY1 - cY, col[1], col[2], col[3], nAlpha1)
 		cX  = cX + cX
@@ -731,17 +727,22 @@ _HM_Target.OnRender = function()
 	if not me then return end
 	local tar = GetTargetHandle(me.GetTarget())
 	-- conn
-	_HM_Target.hConnect:Hide()
 	if HM_Target.bConnect and tar and tar.dwID ~= me.dwID then
 		_HM_Target.DrawConnect(_HM_Target.hConnect, me, tar)
+	else
+		_HM_Target.hConnect:Hide()
 	end
 	-- ttconn
-	_HM_Target.hTTConnect:Hide()
+	local bShowTT = false
 	if HM_Target.bTTConnect and tar then
 		local ttar = GetTargetHandle(tar.GetTarget())
 		if ttar and ttar.dwID ~= tar.dwID and ttar.dwID ~= me.dwID then
 			_HM_Target.DrawConnect(_HM_Target.hTTConnect, tar, ttar)
+			bShowTT = true
 		end
+	end
+	if not bShowTT then
+		_HM_Target.hTTConnect:Hide()
 	end
 end
 
@@ -750,6 +751,8 @@ function HM_Target.OnFrameCreate()
 	_HM_Target.hTotal = this:Lookup("", "")
 	_HM_Target.hConnect = this:Lookup("", "Shadow_Connect")
 	_HM_Target.hTTConnect = this:Lookup("", "Shadow_TTConnect")
+	_HM_Target.hConnect:SetTriangleFan(true)
+	_HM_Target.hTTConnect:SetTriangleFan(true)
 	this:RegisterEvent("RENDER_FRAME_UPDATE")
 	this:RegisterEvent("SYS_MSG")
 	this:RegisterEvent("DO_SKILL_CAST")

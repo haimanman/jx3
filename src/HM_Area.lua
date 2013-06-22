@@ -377,10 +377,11 @@ _HM_Area.DrawCake = function(shape, tar, col, nRadius, nAlpha, bCircle)
 			table.insert(shape.tPoint, { nX, nY })
 		until dwMaxRad <= dwCurRad
 	end
-	shape:Hide()
 	-- center point
 	HM.ApplyScreenPoint(function(nX, nY)
-		if not nX then bCircle = false end
+		if not nX then
+			bCircle = false
+		end
 		-- update circle
 		if bCircle then
 			nAlpha = math.ceil(nAlpha / 3)
@@ -390,7 +391,7 @@ _HM_Area.DrawCake = function(shape, tar, col, nRadius, nAlpha, bCircle)
 			end
 		end
 		if not nX then
-			return
+			return shape:Hide()
 		end
 		-- update points
 		shape:ClearTriangleFanPoint()

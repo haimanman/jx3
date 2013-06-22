@@ -28,7 +28,6 @@ local _HM_TargetFace = {
 
 -- draw shape
 _HM_TargetFace.DrawShape = function(tar, sha, nDegree, nRadius, nAlpha, col)
-	sha:ClearTriangleFanPoint()
 	nRadius = nRadius * 64
 	local nFace = math.ceil(128 * nDegree / 360)
 	local dwRad1 = math.pi * (tar.nFaceDirection - nFace) / 128
@@ -43,7 +42,10 @@ _HM_TargetFace.DrawShape = function(tar, sha, nDegree, nRadius, nAlpha, col)
 	end
 	-- orgina point
 	HM.ApplyScreenPoint(function(nX, nY)
-		if not nX then return end
+		if not nX then
+			return sha:Hide()
+		end
+		sha:ClearTriangleFanPoint()
 		sha:AppendTriangleFanPoint(nX, nY, col[1], col[2], col[3], nAlpha)
 		-- points
 		repeat
