@@ -401,14 +401,12 @@ end
 
 -- 创建浮动文字
 _HM_CombatText.NewText = function(dwCharacterID, szText, fScale, szName)
-	local nX, nY = HM.GetTopPoint(dwCharacterID)
 	local handle = _HM_CombatText.GetHandle()
-	if not nX or not handle then
+	if not handle then
 		return
 	end
     local text = _HM_CombatText.GetFreeText(handle)
 	table.insert(_HM_CombatText.tTextQueue, text)
-    text:Show()
     text:SetText(szText)
     text:SetName(szName)
     text:SetFontScheme(19)
@@ -421,11 +419,15 @@ _HM_CombatText.NewText = function(dwCharacterID, szText, fScale, szName)
 	text.Alpha = nil
 	text.dwOwner = dwCharacterID
 	text.nFrameCount = 1
-	text.xScreen = nX
-	text.yScreen = nY
 	text.fScale = fScale
-	local nW, nH = text:GetSize()
-	text:SetAbsPos(nX - nW / 2, nX - nH / 2)
+	text:Hide()
+	HM.ApplyTopPoint(function(nX, nY)
+		local nW, nH = text:GetSize()
+		text:SetAbsPos(nX - nW / 2, nX - nH / 2)
+		text:Show()
+		text.xScreen = nX
+		text.yScreen = nY
+	end, dwCharacterID)
 	return text
 end
 
@@ -515,49 +517,49 @@ _HM_CombatText.OnBreathe = function()
 				end
 				text.nFrameCount = nFrameCount + 2 --跳真的速度
 				nFrameCount = nFrameCount + 2 --跳真的速度
-				local nOrgX, nOrgY
-				if dwOwner == GetClientPlayer().dwID then
-					nOrgX, nOrgY = text.xScreen, text.yScreen
-				else
-					nOrgX, nOrgY = HM.GetTopPoint(dwOwner)
+				local nFadeInFrame = 4		-- COMBAT_TEXT_FADE_IN_FRAME
+				local nHoldFrame =20			-- COMBAT_TEXT_HOLD_FRAME
+				local nFadeOutFrame = 8	-- COMBAT_TEXT_FADE_OUT_FRAME
+				if fScale ~= text.fScale then
+					text.fScale = fScale
+					text:SetFontScale(fScale)
+					text:AutoSize()
 				end
-				if nOrgX then
-					if fScale ~= text.fScale then
-						text.fScale = fScale
-						text:SetFontScale(fScale)
-						text:AutoSize()
-					end
-					--字体每桢变换
-					local cxText, cyText = text:GetSize()
-					nOrgX = nOrgX - cxText / 2
-					nOrgY = nOrgY - cyText / 2
-					-- 设置文字淡出,上移
-					local nNextPosX =  nOrgX + nDeltaPosX
-					local nNextPosY =  nOrgY + nDeltaPosY
-					text:SetAbsPos(nNextPosX, nNextPosY)
-					local nFadeInFrame = 4		-- COMBAT_TEXT_FADE_IN_FRAME
-					local nHoldFrame =20			-- COMBAT_TEXT_HOLD_FRAME
-					local nFadeOutFrame = 8	-- COMBAT_TEXT_FADE_OUT_FRAME
-					if text.Alpha then
-						local alpha = text.Alpha[nFrameCount]
-						if alpha then
-							text:SetAlpha(alpha)
-						else
-							bRemove = true
-						end
+				if text.Alpha then
+					local alpha = text.Alpha[nFrameCount]
+					if alpha then
+						text:SetAlpha(alpha)
 					else
-						if nFrameCount < nFadeInFrame then
-							text:SetAlpha(255 * nFrameCount / nFadeInFrame)
-						elseif nFrameCount < nFadeInFrame + nHoldFrame then
-							text:SetAlpha(255)
-						elseif nFrameCount < nFadeInFrame + nHoldFrame + nFadeOutFrame then
-							text:SetAlpha(255 * (1 - (nFrameCount - nFadeInFrame - nHoldFrame) / nFadeOutFrame))
-						else
-							bRemove = true
-						end
+						bRemove = true
 					end
 				else
-					bRemove = true
+					if nFrameCount < nFadeInFrame then
+						text:SetAlpha(255 * nFrameCount / nFadeInFrame)
+					elseif nFrameCount < nFadeInFrame + nHoldFrame then
+						text:SetAlpha(255)
+					elseif nFrameCount < nFadeInFrame + nHoldFrame + nFadeOutFrame then
+						text:SetAlpha(255 * (1 - (nFrameCount - nFadeInFrame - nHoldFrame) / nFadeOutFrame))
+					else
+						bRemove = true
+					end
+				end
+				-- adjust pos/size
+				if not bRemove then
+					local fnAction = function(nOrgX, nOrgY)
+						--字体每桢变换
+						local cxText, cyText = text:GetSize()
+						nOrgX = nOrgX - cxText / 2
+						nOrgY = nOrgY - cyText / 2
+						-- 设置文字淡出,上移
+						local nNextPosX =  nOrgX + nDeltaPosX
+						local nNextPosY =  nOrgY + nDeltaPosY
+						text:SetAbsPos(nNextPosX, nNextPosY)
+					end
+					if dwOwner == GetClientPlayer().dwID then
+						fnAction(text.xScreen, text.yScreen)
+					else
+						HM.ApplyTopPoint(fnAction, dwOwner)
+					end
 				end
 			else
 				bRemove = true

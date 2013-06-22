@@ -237,14 +237,16 @@ _HM_Doodad.OnRender = function()
 					v.label:SetText(tar.szName)
 					v.label:SetFontColor(unpack(HM_Doodad.tNameColor))
 				end
-				local nX, nY = HM.GetTopPoint(tar, 0)
-				if not nX then
-					v.label:Hide()
-				else
-					local nW, nH = v.label:GetSize()
-					v.label:SetAbsPos(nX - math.ceil(nW/2), nY - math.ceil(nH/2) - 40)
-					v.label:Show()
-				end
+				-- update pos
+				HM.ApplyTopPoint(function(nX, nY)
+					if not nX then
+						v.label:Hide()
+					else
+						local nW, nH = v.label:GetSize()
+						v.label:SetAbsPos(nX - math.ceil(nW/2), nY - math.ceil(nH/2) - 40)
+						v.label:Show()
+					end
+				end, tar, 0)
 			end
 		end
 	end
@@ -337,8 +339,8 @@ end
 -- mini flag
 _HM_Doodad.OnUpdateMiniFlag = function()
 	if not HM_Doodad.bMiniFlag then return end
-	local me, mini = GetClientPlayer(), Station.Lookup("Topmost/Minimap/Wnd_Minimap/Minimap_Map")
-	if not me or not mini then return end
+	local me = GetClientPlayer()
+	if not me then return end
 	for k, v in pairs(_HM_Doodad.tDoodad) do
 		if not v.loot then
 			local tar = GetDoodad(k)
@@ -346,7 +348,6 @@ _HM_Doodad.OnUpdateMiniFlag = function()
 				_HM_Doodad.Remove(k)
 			else
 				local dwType, nF1, nF2 = 5, 169, 48
-				local nX, _, nZ = Scene_GameWorldPositionToScenePosition(tar.nX, tar.nY, tar.nZ, 0)
 				local tpl = GetDoodadTemplate(tar.dwTemplateID)
 				if v.quest then
 					nF1 = 114
@@ -355,7 +356,7 @@ _HM_Doodad.OnUpdateMiniFlag = function()
 				elseif tpl.dwCraftID == 2 then	-- …Ò≈©¿‡
 					nF1 = 2
 				end
-				mini:UpdataArrowPoint(dwType, tar.dwID, nF1, nF2, nX, nZ, 16)
+				HM.UpdateMiniFlag(dwType, tar, nF1, nF2)
 			end
 		end
 	end

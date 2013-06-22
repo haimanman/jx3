@@ -694,13 +694,12 @@ _HM_Target.DrawConnect = function(conn, me, tar)
 	local col, nAlpha = HM_Target.tConnColor, HM_Target.nConnAlpha
 	local nAlpha1 = math.ceil(nAlpha * 0.3)
 	local cX, cY  = HM_Target.nConnWidth, 0
-	local _GetPoint = HM.GetTopPoint
+	local _ApplyPoint = HM.ApplyTopPoint
 	if HM_Target.bConnFoot then
-		_GetPoint = HM.GetScreenPoint
+		_ApplyPoint = HM.ApplyScreenPoint
 	end
-	local nX, nY = _GetPoint(me)
-	local nX1, nY1 = _GetPoint(tar)
-	if nX and nY and nX1 and nY1 then
+	local nX, nY, nX1, nY1
+	local fnAction = function()
 		local dwAngle = math.abs(math.atan((nX - nX1)/(nY1 - nY)))
 		if dwAngle > 1 and dwAngle < 1.57 then
 			cX, cY = cY, cX
@@ -713,6 +712,18 @@ _HM_Target.DrawConnect = function(conn, me, tar)
 		conn:AppendTriangleFanPoint(nX - cX, nY + cY, col[1], col[2], col[3], nAlpha)
 		conn:Show()
 	end
+	_ApplyPoint(function(x, y)
+		nX, nY = x, y
+		if nX1 and nY1 then
+			fnAction()
+		end
+	end, me)
+	_ApplyPoint(function(x, y)
+		nX1, nY1 = x, y
+		if nX and nY then
+			fnAction()
+		end
+	end, tar)
 end
 
 _HM_Target.OnRender = function()

@@ -96,10 +96,6 @@ _HM_Guding.ShowName = function(tar)
 		label:SetFontColor(unpack(HM_Guding.color))
 		data.label = label
 	end
-	local nX, nY = HM.GetTopPoint(tar, 768)
-	if not nX or not nY then
-		return label:Hide()
-	end
 	-- adjust text
 	local szText = tar.szName .. _L["-"] .. math.floor((data.dwTime + _HM_Guding.nMaxTime - GetTime())/1000)
 	local player = GetPlayer(data.dwCaster)
@@ -117,9 +113,14 @@ _HM_Guding.ShowName = function(tar)
 		end
 	end
 	-- adjust pos & show
-	local nW, nH = label:GetSize()
-	label:SetAbsPos(nX - math.ceil(nW/2), nY - math.ceil(nH/2))
-	label:Show()
+	HM.ApplyTopPoint(function(nX, nY)
+		if not nX or not nY then
+			return label:Hide()
+		end
+		local nW, nH = label:GetSize()
+		label:SetAbsPos(nX - math.ceil(nW/2), nY - math.ceil(nH/2))
+		label:Show()
+	end, tar, 768)
 	-- check to use
 	if HM_Guding.bAutoUse and label:GetAlpha() > 199 then
 		_HM_Guding.AutoUse(tar)
