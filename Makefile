@@ -51,8 +51,7 @@ archive: lang/zhtw.lua
 
 local: clean-check
 	$(PHP) dev/pre_release.php beta
-	$(MAKE) archive
-	git push --tags
+	git archive --format zip --prefix HM/ -o dist/HM-`cat VERSION`.zip HEAD
 
 beta: clean-check
 	$(PHP) dev/pre_release.php beta
