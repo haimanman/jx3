@@ -12,7 +12,7 @@ all:
 	@echo "------------------------------------------"
 	@echo "make beta    : create a beta release"
 	@echo "make stable  : create a stable release"
-	@echo "make local   : create a local beta release"
+	@echo "make alpha   : create a local alpha release"
 	@echo "------------------------------------------"
 	@echo "Homepage     : http://haimanchajian.com"
 
@@ -49,8 +49,9 @@ archive: lang/zhtw.lua
 	git tag `cat VERSION`
 	git archive --format zip --prefix HM/ -o dist/HM-`cat VERSION`.zip HEAD
 
-local: clean-check
-	$(PHP) dev/pre_release.php beta
+alpha: clean-check
+	$(PHP) dev/pre_release.php alpha
+	git ci -a -m "Internal alpha "`cat VERSION`
 	git archive --format zip --prefix HM/ -o dist/HM-`cat VERSION`.zip HEAD
 
 beta: clean-check
