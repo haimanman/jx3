@@ -1095,7 +1095,7 @@ HM.UpdateMiniFlag = function(dwType, tar, nF1, nF2)
 	else
 		PostThreadCall(function(nX, nY, nZ)
 			fnAction(nX, nZ)
-		end, nil, "Scene_GameWorldPositionToScenePosition", tar.nX, tar.nY, tar.nZ)
+		end, nil, "Scene_GameWorldPositionToScenePosition", tar.nX, tar.nY, tar.nZ, false)
 	end
 end
 
