@@ -228,7 +228,12 @@ static unsigned long long re_drop = 0, re_copy = 0;
 static char *re_buf = NULL;
 #define	XPACK_MMAP_SIZE		2147483648	// 2GB
 #endif
+#else
+#ifndef FAKE
+static char wr_buf[(1<<29)];	// 512 MB
+static int wr_off = 0;
 #endif
+#endif	/* HAVE_MMAP */
 
 struct old_pak
 {
@@ -238,9 +243,31 @@ struct old_pak
 
 #ifndef HAVE_MMAP
 #ifndef FAKE
+#define safe_write_flush(fd)	safe_write(fd, NULL, 0)
 static int safe_write(int fd, const void *buf, size_t size)
 {
 	size_t n1, n2 = 0;
+	if (buf == NULL)	/* flush */
+	{
+		buf = wr_buf;
+		size = wr_off;
+		wr_off = 0;
+	}
+	else
+	{
+		if ((size + wr_off) > sizeof(wr_buf))	/* flush */
+		{
+			if (safe_write_flush(fd) != 1)
+				return 0;
+		}
+		if ((size + wr_off) <= sizeof(wr_buf))
+		{
+			/* just copy */
+			memcpy(wr_buf + wr_off, buf, size);
+			wr_off += size;
+			return 1;
+		}
+	}
 	while (n2 < size)
 	{
 		n1 = write(fd, buf + n2, size - n2);
@@ -361,9 +388,11 @@ static int repack_after_add(int force)
 			munmap(re_buf, XPACK_MMAP_SIZE);
 			ftruncate(re_fd, re_size + re_hdr.uIndexTableOffset);
 #else
+			safe_write_flush(re_fd);
 			lseek(re_fd, re_hdr.uIndexTableOffset, SEEK_SET);
 			if (!safe_write(re_fd, re_info, re_size))
 				return 0;
+			safe_write_flush(re_fd);
 			lseek(re_fd, 0, SEEK_SET);
 			write(re_fd, &re_hdr, sizeof(re_hdr));
 #endif
@@ -527,9 +556,9 @@ int main(int argc, char *argv[])
 	re_hdr.uDataOffset = sizeof(re_hdr);
 
 #ifdef FAKE
-	ECHO("*** JX3 Pak 冗余检测 (by @海鳗鳗) ***\n");
+	ECHO("*** JX3 Pak 冗余检测！(by @海鳗鳗) v1.1 ***\n");
 #else
-	ECHO("*** JX3 Pak 冗余清理，时间长请耐心！ (by @海鳗鳗) ***\n");
+	ECHO("*** JX3 Pak 冗余清理，时间长请耐心！ (by @海鳗鳗) v1.1 ***\n");
 #endif
 
 	// init uuid
@@ -592,7 +621,12 @@ int main(int argc, char *argv[])
 	{
 		int i;
 		char fpath2[128];
-
+		// clean exists: update_re_??.pak
+		for (i = 0; i < re_index + re_index; i++)
+		{
+			sprintf(fpath, "%supdate_re_%d.pak", pak_root, i);
+			unlink(fpath);
+		}
 		fprintf(fp, "[SO3Client]\r\nPath=%s\r\n", pak_root + strlen(*root));
 		for (i = 0; re_index > 0; i++)
 		{
