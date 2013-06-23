@@ -201,7 +201,7 @@ _HM_Doodad.SwitchName = function(bEnable)
 end
 
 -- find & get opened dooad ID
-_HM_Doodad.GetOpenDooadID = function()
+_HM_Doodad.GetOpenDoodadID = function()
 	local dwID = _HM_Doodad.dwOpenID
 	if dwID then
 		_HM_Doodad.dwOpenID = nil
@@ -287,26 +287,35 @@ end
 
 -- open doodad (loot)
 _HM_Doodad.OnOpenDoodad = function(dwID)
+	_HM_Doodad.Remove(dwID)	-- 从列表删除
 	local d = GetDoodad(dwID)
 	if d then
-		local bP, nM, me = false, d.GetLootMoney(), GetClientPlayer()
-		if nM > 0 then
-			LootMoney(d.dwID)
-		end
-		-- 如果是需要庖丁的尸体，则不过滤
+		local bP, bClear, me = false, true, GetClientPlayer()
+		-- 如需庖丁，则不要过滤灰色
 		if HM_Doodad.bInteract and HM_Doodad.bCustom
 			and HM_Doodad.tCustom[d.szName] and GetDoodadTemplate(d.dwTemplateID).dwCraftID == 3
 		then
 			_HM_Doodad.tDoodad[dwID] = { craft = true }
 			bP = true
-		else
-			-- 否则就从列表中删除
-			_HM_Doodad.Remove(dwID)
 		end
+		-- money
+		local nM = d.GetLootMoney() or 0
+		if nM > 0 then
+			LootMoney(d.dwID)
+		end
+		-- items
 		for i = 0, 31 do
 			local it, bRoll, bDist = d.GetLootItem(i, me)
 			if not it then
 				break
+			end
+			-- 如有待分配物品，则取消庖丁并且不清空列表
+			if bDist and bClear then
+				bClear = false
+				if bP then
+					_HM_Doodad.tDoodad[dwID] = nil
+					bP = false
+				end
 			end
 			local bLoot, szName = true, GetItemNameByItem(it)
 			if bP then
@@ -327,9 +336,11 @@ _HM_Doodad.OnOpenDoodad = function(dwID)
 				HM.Debug("filter loot [" .. szName .. "]")
 			end
 		end
-		local hL = Station.Lookup("Normal/LootList", "Handle_LootList")
-		if hL then
-			hL:Clear()
+		if bClear then
+			local hL = Station.Lookup("Normal/LootList", "Handle_LootList")
+			if hL then
+				hL:Clear()
+			end
 		end
 	end
 end
@@ -489,8 +500,8 @@ HM.RegisterEvent("PLAYER_ENTER_GAME", function() _HM_Doodad.SwitchName(HM_Doodad
 HM.RegisterEvent("DOODAD_ENTER_SCENE", function() _HM_Doodad.TryAdd(arg0, true) end)
 HM.RegisterEvent("DOODAD_LEAVE_SCENE", function() _HM_Doodad.Remove(arg0) end)
 HM.RegisterEvent("HELP_EVENT", function()
-	if arg0 == "OnOpenpanel" and arg1 == "LOOT" then
-		local dwOpenID =  _HM_Doodad.GetOpenDooadID()
+	if arg0 == "OnOpenpanel" and arg1 == "LOOT" and HM_Doodad.bLoot then
+		local dwOpenID =  _HM_Doodad.GetOpenDoodadID()
 		if dwOpenID then
 			_HM_Doodad.OnOpenDoodad(dwOpenID)
 		end
