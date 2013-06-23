@@ -345,6 +345,21 @@ _HM_Doodad.OnOpenDoodad = function(dwID)
 	end
 end
 
+-- save manual doodad
+_HM_Doodad.OnLootDoodad = function()
+	if not HM_Doodad.bCustom then
+		return
+	end
+	local d = GetDoodad(arg0)
+	if not d or d.CanLoot(GetClientPlayer().dwID) then
+		return
+	end
+	local t = GetDoodadTemplate(d.dwTemplateID)
+	if t.dwCraftID >= 1 and t.dwCraftID <= 3 then
+		HM_Doodad.tCustom[d.szName] = true
+	end
+end
+
 -- mini flag
 _HM_Doodad.OnUpdateMiniFlag = function()
 	if not HM_Doodad.bMiniFlag then return end
@@ -481,6 +496,7 @@ _HM_Doodad.PS.OnPanelActive = function(frame)
 	:Text(_HM_Doodad.GetCustomText()):Enable(HM_Doodad.bCustom)
 	:Change(function(szText)
 		local t = {}
+		szText = StringReplaceW(szText, "£ü", "|")
 		for _, v in ipairs(HM.Split(szText, "|")) do
 			v = HM.Trim(v)
 			if v ~= "" then
@@ -499,6 +515,7 @@ end
 HM.RegisterEvent("PLAYER_ENTER_GAME", function() _HM_Doodad.SwitchName(HM_Doodad.bShowName) end)
 HM.RegisterEvent("DOODAD_ENTER_SCENE", function() _HM_Doodad.TryAdd(arg0, true) end)
 HM.RegisterEvent("DOODAD_LEAVE_SCENE", function() _HM_Doodad.Remove(arg0) end)
+HM.RegisterEvent("OPEN_DOODAD", _HM_Doodad.OnLootDoodad)
 HM.RegisterEvent("HELP_EVENT", function()
 	if arg0 == "OnOpenpanel" and arg1 == "LOOT" and HM_Doodad.bLoot then
 		local dwOpenID =  _HM_Doodad.GetOpenDoodadID()
