@@ -14,6 +14,7 @@ HM_Force = {
 	tSelfQC = { [358] = true },	-- 默认只开生太极
 	bWarningDebuff = true,	-- 警告  debuff 类型
 	nDebuffNum = 3,			-- debuff 类型达到几个时警告
+	bActionTime = true,	-- 显示读条动作计时
 }
 HM.RegisterCustomData("HM_Force")
 
@@ -22,6 +23,7 @@ HM.RegisterCustomData("HM_Force")
 ---------------------------------------------------------------------
 local _HM_Force = {
 	nFrameXJ = 0,
+	-- nActionTotal, nActionEnd, bActionDec
 }
 
 -- qichang
@@ -225,6 +227,42 @@ _HM_Force.OnBuffUpdate = function()
 	end
 end
 
+-- record otaction
+_HM_Force.SaveOTAction = function(nTotal, bDec)
+	if HM_Force.bActionTime then
+		_HM_Force.nActionTotal = nTotal
+		_HM_Force.nActionEnd = GetLogicFrameCount() + nTotal
+		_HM_Force.bActionDec = bDec
+	end
+end
+
+-- update otaction bar
+_HM_Force.UpdateOTActionBar = function()
+	if not HM_Force.bActionTime or not _HM_Force.nActionTotal then
+		return
+	end
+	local frame = Station.Lookup("Topmost/OTActionBar")
+	if not frame or not frame.bShow then
+		_HM_Force.nActionTotal = nil
+		return
+	end
+	local nFrame = _HM_Force.nActionEnd - GetLogicFrameCount()
+	if nFrame < 0 then
+		_HM_Force.nActionTotal = nil
+		nFrame = 0
+	end
+	local handle = frame:Lookup("", "Handle_Common")
+	local hText = handle:Lookup("Text_Name")
+	if not handle:IsVisible() then
+		hText = frame:Lookup("", "Handle_GaiBang"):Lookup("Text_GBName")
+	end
+	local szText = string.gsub(hText:GetText(), " %(.-%)$", "")
+	if not _HM_Force.bActionDec then
+		nFrame = _HM_Force.nActionTotal - nFrame
+	end
+	hText:SetText(szText .. string.format(" (%.2g/%.2g)", nFrame / 16, _HM_Force.nActionTotal / 16))
+end
+
 -------------------------------------
 -- 设置界面
 -------------------------------------
@@ -294,12 +332,23 @@ _HM_Force.PS.OnPanelActive = function(frame)
 		end
 		return m0
 	end)
+	-- otaction time
+	ui:Append("WndCheckBox", { txt = _L["Show time description of OTActionBar"], checked = HM_Force.bActionTime })
+	:Pos(10, 316):Click(function(bChecked)
+		HM_Force.bActionTime = bChecked
+		if not bChecked then
+			_HM_Force.nActionTotal = nil
+		end
+	end)
 end
 
 -- conflict check
 _HM_Force.PS.OnConflictCheck = function()
 	if Ktemp and HM_Force.bHorsePage then
 		Ktemp.bchange = false
+	end
+	if OTAPlus and HM_Force.bActionTime then
+		OTAPlus.bTime = false
 	end
 end
 
@@ -336,13 +385,39 @@ HM.RegisterEvent("DO_SKILL_CAST", function()
 end)
 HM.RegisterEvent("OT_ACTION_PROGRESS_BREAK", function()
 	if arg0 == GetClientPlayer().dwID then
+		_HM_Force.nActionTotal = nil
 		_HM_Force.RestoreTarget()
 	end
+end)
+HM.RegisterEvent("OT_ACTION_PROGRESS_UPDATE", function()
+	if _HM_Force.nActionTotal then
+		_HM_Force.nActionTotal = _HM_Force.nActionTotal + arg0
+		_HM_Force.nActionEnd = _HM_Force.nActionEnd + arg0
+	end
+end)
+HM.RegisterEvent("DO_SKILL_PREPARE_PROGRESS", function()
+	_HM_Force.SaveOTAction(arg0, false)
+end)
+HM.RegisterEvent("DO_SKILL_CHANNEL_PROGRESS", function()
+	_HM_Force.SaveOTAction(arg0, true)
+end)
+HM.RegisterEvent("DO_SKILL_HOARD_PROGRESS", function()
+	_HM_Force.SaveOTAction(arg0, false)
+end)
+HM.RegisterEvent("DO_PICK_PREPARE_PROGRESS", function()
+	_HM_Force.SaveOTAction(arg0, false)
+end)
+HM.RegisterEvent("DO_CUSTOM_OTACTION_PROGRESS ", function()
+	_HM_Force.SaveOTAction(arg0, arg2 ~= 0)
+end)
+HM.RegisterEvent("DO_RECIPE_PREPARE_PROGRESS", function()
+	_HM_Force.SaveOTAction(arg0, false)
 end)
 HM.RegisterEvent("BUFF_UPDATE", _HM_Force.OnBuffUpdate)
 
 -- breathe
 HM.BreatheCall("HM_Force", _HM_Force.OnBreathe, 200)
+HM.BreatheCall("HM_OTAction", _HM_Force.UpdateOTActionBar)
 
 -- add to HM panel
 HM.RegisterPanel(_L["School feature"], 327, nil, _HM_Force.PS)
