@@ -10,6 +10,7 @@ HM_Doodad = {
 	tLootFilter = {},			-- 过滤不捡的物品 [名称] => true/false,
 	bLootOnly = false,		-- 只拾取指定物品
 	tLootOnly = {},				-- 指定物品列表 [名称] => true/false,
+	bManualFilter = true,	-- 手动拾取也过滤？=> true/false
 	bQuest = true,				-- 自动采集任务物品
 	bShowName = true,	-- 显示物品名称
 	bMiniFlag = true,		-- 显示小地图标记
@@ -47,6 +48,11 @@ local _HM_Doodad = {
 _HM_Doodad.GetFilterMenu = function()
 	local m0 = {
 		{
+			szOption = _L["Filter on manual"], bCheck = true, bChecked = HM_Doodad.bManualFilter,
+			fnAction = function(d, b) HM_Doodad.bManualFilter = b end,
+		}, {
+			bDevide = true,
+		}, {
 			szOption = _L["Filter gray items"], bCheck = true, bChecked = not HM_Doodad.bLootGray,
 			fnDisable = function() return HM_Doodad.bLootOnly end,
 			fnAction = function(d, b) HM_Doodad.bLootGray = not b end,
@@ -205,7 +211,7 @@ _HM_Doodad.GetOpenDoodadID = function()
 	local dwID = _HM_Doodad.dwOpenID
 	if dwID then
 		_HM_Doodad.dwOpenID = nil
-	else
+	elseif HM_Doodad.bManualFilter then
 		local tObject = Scene_SelectObject("all") or {}
 		for _, v in pairs(tObject) do
 			if v["Type"] == TARGET.DOODAD and IsCorpseAndCanLoot(v["ID"]) then
@@ -419,15 +425,16 @@ _HM_Doodad.PS.OnPanelActive = function(frame)
 	:Click(function(bChecked)
 		HM_Doodad.bLoot = bChecked
 		ui:Fetch("Check_Fight"):Enable(bChecked)
+		ui:Fetch("Combo_Filter"):Enable(bChecked)
 		_HM_Doodad.Reload()
 	end):Pos_()
 	local nX1 = nX
-	nX = ui:Append("WndCheckBox", "Check_Fight", { txt = _L["Pickup in fight"], x = nX1 + 40, y = 28, checked = HM_Doodad.bLootFight })
+	nX = ui:Append("WndCheckBox", "Check_Fight", { txt = _L["Pickup in fight"], x = nX1 + 40, y = 28, checked = HM_Doodad.bLootFight, enable = HM_Doodad.bLoot })
 	:Click(function(bChecked)
 		HM_Doodad.bLootFight = bChecked
 	end):Pos_()
 	local nX2 = nX
-	ui:Append("WndComboBox", { txt = _L["Set pickup filter"], x = nX2 + 20, y = 28 }):Menu(_HM_Doodad.GetFilterMenu)
+	ui:Append("WndComboBox", "Combo_Filter", { txt = _L["Set pickup filter"], x = nX2 + 20, y = 28, enable = HM_Doodad.bLoot }):Menu(_HM_Doodad.GetFilterMenu)
 	-- doodad
 	ui:Append("Text", { txt = _L["Craft assit"], x = 0, y = 64, font = 27 })
 	nX = ui:Append("WndCheckBox", { txt = _L["Show the head name"], x = 10, y = 92, checked = HM_Doodad.bShowName })

@@ -758,6 +758,7 @@ data = {
 	["The foot shape transparency"] = "圈圈透明度",
 	["Only show the facing and foot shape of the last added focus target"] = "只會顯示最后設置的焦點目標的面向和圈圈",
 	-- HM_Doodad.lua --
+	["Filter on manual"] = "手動拾取也過濾",
 	["Filter gray items"] = "過濾灰色物品",
 	["Filter white items"] = "過濾白色物品",
 	["Filter green items"] = "過濾綠色物品",
