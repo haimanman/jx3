@@ -1083,18 +1083,10 @@ end
 -- nF1			-- 图标帧次
 -- nF2			-- 箭头帧次，默认 48 就行
 HM.UpdateMiniFlag = function(dwType, tar, nF1, nF2)
-	local fnAction = function(nX, nZ)
-		local m = Station.Lookup("Topmost/Minimap/Wnd_Minimap/Minimap_Map")
-		if m then
-			m:UpdataArrowPoint(dwType, tar.dwID, nF1, nF2 or 48, nX, nZ, 16)
-		end
-	end
-	if Scene_PlaneGameWorldPosToScene then
-		fnAction(Scene_PlaneGameWorldPosToScene(tar.nX, tar.nY))
-	else
-		PostThreadCall(function(nX, nY, nZ)
-			fnAction(nX, nZ)
-		end, nil, "Scene_GameWorldPositionToScenePosition", tar.nX, tar.nY, tar.nZ, false)
+	local nX, nZ = Scene_PlaneGameWorldPosToScene(tar.nX, tar.nY)
+	local m = Station.Lookup("Topmost/Minimap/Wnd_Minimap/Minimap_Map")
+	if m then
+		m:UpdataArrowPoint(dwType, tar.dwID, nF1, nF2 or 48, nX, nZ, 16)
 	end
 end
 
