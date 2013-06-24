@@ -346,15 +346,17 @@ _HM_Area.DrawCircle = function(shape, tar, col, nRadius, nAlpha, nThick)
 	end
 	-- draw shadows
 	for _, v in ipairs(shape.tCircle) do
-		v:ClearTriangleFanPoint()
-		for _, vv in ipairs(v.tPoint) do
+		for kk, vv in ipairs(v.tPoint) do
 			HM.ApplyScreenPoint(function(nX, nY)
+				if kk == 1 then
+					v:ClearTriangleFanPoint()
+					v:Show()
+				end
 				if nX then
 					v:AppendTriangleFanPoint(nX, nY, col[1], col[2], col[3], nAlpha)
 				end
 			end, vv[1], vv[2], tar.nZ)
 		end
-		v:Show()
 	end
 end
 
@@ -393,18 +395,18 @@ _HM_Area.DrawCake = function(shape, tar, col, nRadius, nAlpha, bCircle)
 		if not nX then
 			return shape:Hide()
 		end
-		-- update points
 		shape:ClearTriangleFanPoint()
 		shape:AppendTriangleFanPoint(nX, nY, col[1], col[2], col[3], 0)
-		for k, v in ipairs(shape.tPoint) do
-			HM.ApplyScreenPoint(function(nX, nY)
-				if nX then
-					shape:AppendTriangleFanPoint(nX, nY, col[1], col[2], col[3], nAlpha)
-				end
-			end, v[1], v[2], tar.nZ)
-		end
 		shape:Show()
 	end, tar.nX, tar.nY,tar.nZ)
+	-- points
+	for k, v in ipairs(shape.tPoint) do
+		HM.ApplyScreenPoint(function(nX, nY)
+			if nX then
+				shape:AppendTriangleFanPoint(nX, nY, col[1], col[2], col[3], nAlpha)
+			end
+		end, v[1], v[2], tar.nZ)
+	end
 end
 
 -- draw area (draw shape only for far objects)
