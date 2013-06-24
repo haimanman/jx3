@@ -68,7 +68,7 @@ _HM_Area.tSkill = {
 	}, {
 		dwID = 360,
 		dwTemplateID = 4978,
-		nLeft = 24,
+		nLeft = 8,
 	}, {
 		dwID = 361,
 		dwTemplateID = 4979,
