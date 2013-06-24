@@ -686,25 +686,20 @@ end
 -- ´°¿Úº¯Êý
 ---------------------------------------------------------------------
 _HM_Target.DrawConnect = function(conn, me, tar)
-	if not tar or me.dwID == tar.dwID then
-		return
-	end
-	conn:SetTriangleFan(true)
-	conn:ClearTriangleFanPoint()
 	local col, nAlpha = HM_Target.tConnColor, HM_Target.nConnAlpha
 	local nAlpha1 = math.ceil(nAlpha * 0.3)
 	local cX, cY  = HM_Target.nConnWidth, 0
-	local _GetPoint = HM.GetTopPoint
+	local _ApplyPoint = HM.ApplyTopPoint
 	if HM_Target.bConnFoot then
-		_GetPoint = HM.GetScreenPoint
+		_ApplyPoint = HM.ApplyScreenPoint
 	end
-	local nX, nY = _GetPoint(me)
-	local nX1, nY1 = _GetPoint(tar)
-	if nX and nY and nX1 and nY1 then
+	local nX, nY, nX1, nY1
+	local fnAction = function()
 		local dwAngle = math.abs(math.atan((nX - nX1)/(nY1 - nY)))
 		if dwAngle > 1 and dwAngle < 1.57 then
 			cX, cY = cY, cX
 		end
+		conn:ClearTriangleFanPoint()
 		conn:AppendTriangleFanPoint(nX1 - cX, nY1 + cY, col[1], col[2], col[3], nAlpha1)
 		conn:AppendTriangleFanPoint(nX1 + cX, nY1 - cY, col[1], col[2], col[3], nAlpha1)
 		cX  = cX + cX
@@ -713,6 +708,24 @@ _HM_Target.DrawConnect = function(conn, me, tar)
 		conn:AppendTriangleFanPoint(nX - cX, nY + cY, col[1], col[2], col[3], nAlpha)
 		conn:Show()
 	end
+	_ApplyPoint(function(x, y)
+		if not x then
+			return conn:Hide()
+		end
+		nX, nY = x, y
+		if nX1 and nY1 then
+			fnAction()
+		end
+	end, me)
+	_ApplyPoint(function(x, y)
+		if not x then
+			return conn:Hide()
+		end
+		nX1, nY1 = x, y
+		if nX and nY then
+			fnAction()
+		end
+	end, tar)
 end
 
 _HM_Target.OnRender = function()
@@ -720,17 +733,22 @@ _HM_Target.OnRender = function()
 	if not me then return end
 	local tar = GetTargetHandle(me.GetTarget())
 	-- conn
-	_HM_Target.hConnect:Hide()
 	if HM_Target.bConnect and tar and tar.dwID ~= me.dwID then
 		_HM_Target.DrawConnect(_HM_Target.hConnect, me, tar)
+	else
+		_HM_Target.hConnect:Hide()
 	end
 	-- ttconn
-	_HM_Target.hTTConnect:Hide()
+	local bShowTT = false
 	if HM_Target.bTTConnect and tar then
 		local ttar = GetTargetHandle(tar.GetTarget())
 		if ttar and ttar.dwID ~= tar.dwID and ttar.dwID ~= me.dwID then
 			_HM_Target.DrawConnect(_HM_Target.hTTConnect, tar, ttar)
+			bShowTT = true
 		end
+	end
+	if not bShowTT then
+		_HM_Target.hTTConnect:Hide()
 	end
 end
 
@@ -739,6 +757,8 @@ function HM_Target.OnFrameCreate()
 	_HM_Target.hTotal = this:Lookup("", "")
 	_HM_Target.hConnect = this:Lookup("", "Shadow_Connect")
 	_HM_Target.hTTConnect = this:Lookup("", "Shadow_TTConnect")
+	_HM_Target.hConnect:SetTriangleFan(true)
+	_HM_Target.hTTConnect:SetTriangleFan(true)
 	this:RegisterEvent("RENDER_FRAME_UPDATE")
 	this:RegisterEvent("SYS_MSG")
 	this:RegisterEvent("DO_SKILL_CAST")

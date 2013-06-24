@@ -286,8 +286,7 @@ end
 _HM_RedName.AddMiniMapBreathe = function()
 	if HM_RedName.bEnableMini and _HM_RedName.nMiniFrame == 0 then
 		local me, nF1, nF2, nN = GetClientPlayer(), 199, 47, 0
-		local mini = Station.Lookup("Topmost/Minimap/Wnd_Minimap/Minimap_Map")
-		if not me or not mini then return end
+		if not me then return end
 		if HM_RedName.bUseGreen then
 			nF1, nF2 = 1, 48
 		end
@@ -295,9 +294,7 @@ _HM_RedName.AddMiniMapBreathe = function()
 			if IsEnemy(me.dwID, v.dwID)
 				and (HM_RedName.bDeathMini or v.nMoveState ~= MOVE_STATE.ON_DEATH)
 			then
-				-- Minimap.dwRedName = 8
-				local nX, _, nZ = Scene_GameWorldPositionToScenePosition(v.nX, v.nY, v.nZ, 0)
-				mini:UpdataArrowPoint(8, v.dwID, nF1, nF2, nX, nZ, 16)
+				HM.UpdateMiniFlag(8, v, nF1, nF2)
 				if HM_RedName.bAlertOnce and _HM_RedName.bNeedAlert
 					and me.GetOTActionState() == 0 and v.szName ~= ""
 					and (not HM_Force or not HM_Force.HasBuff(4052, true))	-- 排除明教隐身中 (暗尘弥散)

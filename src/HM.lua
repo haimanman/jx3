@@ -1014,55 +1014,82 @@ HM.GetDistance = function(nX, nY, nZ)
 	return math.floor(((me.nX - nX) ^ 2 + (me.nY - nY) ^ 2 + (me.nZ/8 - nZ/8) ^ 2) ^ 0.5)/64
 end
 
--- 根据目标所在位置、世界坐标点计算在屏幕上的相应位置
--- (number, number) HM.GetScreenPoint(KObject tar)
--- (number, number) HM.GetScreenPoint(number nX, number nY, number nZ)
+-- 根据目标所在位置、世界坐标点计算在屏幕上的相应位置并执行回调函数
+-- (void) HM.ApplyScreenPoint(func fnAction, KObject tar)
+-- (void) HM.ApplyScreenPoint(func fnAction, number nX, number nY, number nZ)
+-- fnAction -- 取到坐标后调用，原型为 fnAction(nX, nY)，其中 nX, nY 为屏幕坐标，失败时参数为 nil
 -- tar		-- 带有 nX，nY，nZ 三属性的 table 或 KPlayer，KNpc，KDoodad
 -- nX		-- 世界坐标系下的目标点 X 值
 -- nY		-- 世界坐标系下的目标点 Y 值
 -- nZ		-- 世界坐标系下的目标点 Z 值
--- 返回值：屏幕坐标的 X，Y 值，转换失败返回 nil
-HM.GetScreenPoint = function(nX, nY, nZ)
+HM.ApplyScreenPoint = function(fnAction, nX, nY, nZ)
 	if not nY then
 		local tar = nX
 		nX, nY, nZ = tar.nX, tar.nY, tar.nZ
 	end
-	nX, nY, nZ = Scene_GameWorldPositionToScenePosition(nX, nY, nZ, 0)
-	if nX and nY and nZ then
-		nX, nY, nZ = Scene_ScenePointToScreenPoint(nX, nY, nZ)
-		if nZ then
-			return Station.AdjustToOriginalPos(nX, nY)
-		end
-	end
+	PostThreadCall(function(nX, nY, nZ)
+		PostThreadCall(function(nX, nY, bOk)
+			if bOk then
+				fnAction(Station.AdjustToOriginalPos(nX, nY))
+			else
+				fnAction()
+			end
+		end, nil, "Scene_ScenePointToScreenPoint", nX, nY, nZ)
+	end, nil, "Scene_GameWorldPositionToScenePosition", nX, nY, nZ, false)
 end
 
--- (number, number) HM.GetTopPoint(KObject tar[, number nH])
--- (number, number) HM.GetTopPoint(number dwID[, number nH])
+-- 计算目标头顶坐标点计算在屏幕上的相应位置并执行回调函数
+-- (void) HM.ApplyTopPoint(func fnAction, KObject tar[, number nH])
+-- (void) HM.ApplyTopPoint(func fnAction, number dwID[, number nH])
+-- fnAction -- 取到坐标后调用，原型为 fnAction(nX, nY)，其中 nX, nY 为屏幕坐标，失败时参数为 nil
 -- tar			-- 目标对象 KPlayer，KNpc，KDoodad
 -- dwID		-- 目标 ID
 -- nH			-- *可选* 高度，单位是：尺*64，默认对于 NPC/PLAYER 可智能计算头顶
-HM.GetTopPoint = function(tar, nH)
+HM.ApplyTopPoint = function(fnAction, tar, nH)
 	if type(tar) == "number" then
 		tar = HM.GetTarget(tar)
 	end
-	if tar then
-		local nX, nY, nZ = nil, nil, nil
-		if not nH then
-			nX, nY, nZ = Scene_GetCharacterTop(tar.dwID)
+	if not tar then
+		return fnAction()
+	end
+	if not nH then
+		-- PostThreadCall(fnAction, nil, "Scene_GetCharacterTopScreenPos", tar.dwID)
+		PostThreadCall(function(nX, nY, nZ)
+			PostThreadCall(function(nX, nY, bOk)
+				if bOk then
+					fnAction(Station.AdjustToOriginalPos(nX, nY))
+				else
+					fnAction()
+				end
+			end, nil, "Scene_ScenePointToScreenPoint", nX, nY, nZ)
+		end, nil, "Scene_GetCharacterTop", tar.dwID)
+	else
+		if nH < 64 then
+			nH = nH * 64
 		end
-		if not nX and tar.nX and tar.nY and tar.nZ then
-			nH = nH or 768
-			if nH < 64 then
-				nH = nH * 64
-			end
-			nX, nY, nZ = Scene_GameWorldPositionToScenePosition(tar.nX, tar.nY, tar.nZ + nH, 0)
+		HM.ApplyScreenPoint(fnAction, tar.nX, tar.nY, tar.nZ + nH)
+	end
+end
+
+-- 追加小地图标记
+-- (void) HM.UpdateMiniFlag(number dwType, KObject tar, number nF1[, number nF2])
+-- dwType	-- 类型，8 - 红名，5 - Doodad，7 - 功能 NPC，2 - 提示点，1 - 队友，4 - 任务 NPC
+-- tar			-- 目标对象 KPlayer，KNpc，KDoodad
+-- nF1			-- 图标帧次
+-- nF2			-- 箭头帧次，默认 48 就行
+HM.UpdateMiniFlag = function(dwType, tar, nF1, nF2)
+	local fnAction = function(nX, nZ)
+		local m = Station.Lookup("Topmost/Minimap/Wnd_Minimap/Minimap_Map")
+		if m then
+			m:UpdataArrowPoint(dwType, tar.dwID, nF1, nF2 or 48, nX, nZ, 16)
 		end
-		if nX and nY and nZ then
-			nX, nY, nZ = Scene_ScenePointToScreenPoint(nX, nY, nZ)
-			if nZ then
-				return Station.AdjustToOriginalPos(nX, nY)
-			end
-		end
+	end
+	if Scene_PlaneGameWorldPosToScene then
+		fnAction(Scene_PlaneGameWorldPosToScene(tar.nX, tar.nY))
+	else
+		PostThreadCall(function(nX, nY, nZ)
+			fnAction(nX, nZ)
+		end, nil, "Scene_GameWorldPositionToScenePosition", tar.nX, tar.nY, tar.nZ, false)
 	end
 end
 

@@ -28,11 +28,7 @@ local _HM_TargetFace = {
 
 -- draw shape
 _HM_TargetFace.DrawShape = function(tar, sha, nDegree, nRadius, nAlpha, col)
-	sha:ClearTriangleFanPoint()
 	nRadius = nRadius * 64
-	-- orgina point
-	local nX, nY = HM.GetScreenPoint(tar.nX, tar.nY, tar.nZ)
-	if not nX then return end
 	local nFace = math.ceil(128 * nDegree / 360)
 	local dwRad1 = math.pi * (tar.nFaceDirection - nFace) / 128
 	if tar.nFaceDirection > (256 - nFace) then
@@ -44,16 +40,24 @@ _HM_TargetFace.DrawShape = function(tar, sha, nDegree, nRadius, nAlpha, col)
 		nAlpha, nAlpha2 = nAlpha2, nAlpha
 		dwRad2 = dwRad2 + math.pi / 16
 	end
-	sha:AppendTriangleFanPoint(nX, nY, col[1], col[2], col[3], nAlpha)
-	-- points
-	repeat
-		nX, nY = HM.GetScreenPoint(tar.nX + math.cos(dwRad1) * nRadius, tar.nY + math.sin(dwRad1) * nRadius, tar.nZ)
-		if nX then
-			sha:AppendTriangleFanPoint(nX, nY, col[1], col[2], col[3], nAlpha2)
+	-- orgina point
+	HM.ApplyScreenPoint(function(nX, nY)
+		if not nX then
+			return sha:Hide()
 		end
-		dwRad1 = dwRad1 + math.pi / 16
-	until dwRad1 > dwRad2
-	sha:Show()
+		sha:ClearTriangleFanPoint()
+		sha:AppendTriangleFanPoint(nX, nY, col[1], col[2], col[3], nAlpha)
+		-- points
+		repeat
+			HM.ApplyScreenPoint(function(nX, nY)
+				if nX then
+					sha:AppendTriangleFanPoint(nX, nY, col[1], col[2], col[3], nAlpha2)
+				end
+			end, tar.nX + math.cos(dwRad1) * nRadius, tar.nY + math.sin(dwRad1) * nRadius, tar.nZ)
+			dwRad1 = dwRad1 + math.pi / 16
+		until dwRad1 > dwRad2
+		sha:Show()
+	end, tar.nX, tar.nY, tar.nZ)
 end
 
 -------------------------------------

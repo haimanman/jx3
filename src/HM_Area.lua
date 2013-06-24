@@ -291,10 +291,6 @@ _HM_Area.ShowName = function(tar)
 		data.label = _HM_Area.pLabel:New()
 		data.label:SetText(tar.szName)
 	end
-	local nX, nY = HM.GetTopPoint(tar)
-	if not nX then
-		return data.label:Hide()
-	end
 	-- adjust text & color
 	data.label:SetFontColor(unpack(_HM_Area.GetColor(_HM_Area.GetRelation(data.dwCaster), tar.dwTemplateID)))
 	if data.dwCaster ~= 0 then
@@ -310,9 +306,15 @@ _HM_Area.ShowName = function(tar)
 		data.label:SetText(szText)
 	end
 	-- adjust pos
-	local nW, nH = data.label:GetSize()
-	data.label:SetAbsPos(nX - math.ceil(nW/2), nY - math.ceil(nH/2))
-	data.label:Show()
+	HM.ApplyTopPoint(function(nX, nY)
+		if not nX then
+			data.label:Hide()
+		else
+			local nW, nH = data.label:GetSize()
+			data.label:SetAbsPos(nX - math.ceil(nW/2), nY - math.ceil(nH/2))
+			data.label:Show()
+		end
+	end, tar)
 end
 
 -- draw circle (N * shadow)
@@ -346,10 +348,11 @@ _HM_Area.DrawCircle = function(shape, tar, col, nRadius, nAlpha, nThick)
 	for _, v in ipairs(shape.tCircle) do
 		v:ClearTriangleFanPoint()
 		for _, vv in ipairs(v.tPoint) do
-			local nX, nY = HM.GetScreenPoint(vv[1], vv[2], tar.nZ)
-			if nX then
-				v:AppendTriangleFanPoint(nX, nY, col[1], col[2], col[3], nAlpha)
-			end
+			HM.ApplyScreenPoint(function(nX, nY)
+				if nX then
+					v:AppendTriangleFanPoint(nX, nY, col[1], col[2], col[3], nAlpha)
+				end
+			end, vv[1], vv[2], tar.nZ)
 		end
 		v:Show()
 	end
@@ -374,31 +377,34 @@ _HM_Area.DrawCake = function(shape, tar, col, nRadius, nAlpha, bCircle)
 			table.insert(shape.tPoint, { nX, nY })
 		until dwMaxRad <= dwCurRad
 	end
-	shape:Hide()
 	-- center point
-	local nX, nY = HM.GetScreenPoint(tar.nX, tar.nY, tar.nZ)
-	if not nX then bCircle = false end
-	-- update circle
-	if bCircle then
-		nAlpha = math.ceil(nAlpha / 3)
-	elseif shape.tCircle then
-		for _, v in ipairs(shape.tCircle) do
-			v:Hide()
+	HM.ApplyScreenPoint(function(nX, nY)
+		if not nX then
+			bCircle = false
 		end
-	end
-	if not nX then
-		return
-	end
-	-- update points
-	shape:ClearTriangleFanPoint()
-	shape:AppendTriangleFanPoint(nX, nY, col[1], col[2], col[3], 0)
-	for k, v in ipairs(shape.tPoint) do
-		local nX, nY = HM.GetScreenPoint(v[1], v[2], tar.nZ)
-		if nX then
-			shape:AppendTriangleFanPoint(nX, nY, col[1], col[2], col[3], nAlpha)
+		-- update circle
+		if bCircle then
+			nAlpha = math.ceil(nAlpha / 3)
+		elseif shape.tCircle then
+			for _, v in ipairs(shape.tCircle) do
+				v:Hide()
+			end
 		end
-	end
-	shape:Show()
+		if not nX then
+			return shape:Hide()
+		end
+		-- update points
+		shape:ClearTriangleFanPoint()
+		shape:AppendTriangleFanPoint(nX, nY, col[1], col[2], col[3], 0)
+		for k, v in ipairs(shape.tPoint) do
+			HM.ApplyScreenPoint(function(nX, nY)
+				if nX then
+					shape:AppendTriangleFanPoint(nX, nY, col[1], col[2], col[3], nAlpha)
+				end
+			end, v[1], v[2], tar.nZ)
+		end
+		shape:Show()
+	end, tar.nX, tar.nY,tar.nZ)
 end
 
 -- draw area (draw shape only for far objects)

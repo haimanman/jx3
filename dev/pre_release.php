@@ -26,7 +26,7 @@ if (($pos1 = strpos($body, $tag_version)))
 		$version = (intval($match[1]) << 24) | (intval($match[2]) << 16);
 		$min = intval($match[3]);
 		$version |= ($min << 8);
-		if ($type == 'beta')
+		if ($type == 'beta' || $type === 'alpha')
 		{
 			$version += (isset($match[4]) ? intval($match[4]) : 1);
 			if (($min & 1) == 0)
@@ -43,7 +43,7 @@ if (($pos1 = strpos($body, $tag_version)))
 		// auto-version
 		$version = hexdec(substr($body, $pos1, $pos2 - $pos1));
 		$min = ($version >> 8) & 0xff;
-		if ($type == 'beta')
+		if ($type == 'beta' || $type === 'alpha')
 		{
 			$version += 1;
 			if (($min & 1) == 0)
@@ -59,7 +59,7 @@ if (($pos1 = strpos($body, $tag_version)))
 }
 $version_str = sprintf('%d.%d.%d', $version>>24, ($version>>16)&0xff, ($version>>8)&0xff);
 if ($version & 0xff)
-	$version_str .= sprintf('b%d', $version & 0xff);
+	$version_str .= sprintf('%s%d', $type === 'alpha' ? 'a' : 'b', $version & 0xff);
 if (($pos1 = strpos($body, $tag_build)))
 {
 	$pos1 = $pos1 + strlen($tag_build);
@@ -97,6 +97,9 @@ foreach ($files as $file)
 file_put_contents('info.ini', $info);
 
 // --- UPDATE README.md ---
-echo "updateing README.md ...\n";
-$body = preg_replace('#HM\-(.+?)\.zip#', 'HM-' . $version_str . '.zip', file_get_contents('README.md'));
-file_put_contents('README.md', $body);
+if ($type !== 'alpha')
+{
+	echo "updateing README.md ...\n";
+	$body = preg_replace('#HM\-(.+?)\.zip#', 'HM-' . $version_str . '.zip', file_get_contents('README.md'));
+	file_put_contents('README.md', $body);
+}
