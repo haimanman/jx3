@@ -10,7 +10,7 @@ HM_Doodad = {
 	tLootFilter = {},			-- 过滤不捡的物品 [名称] => true/false,
 	bLootOnly = false,		-- 只拾取指定物品
 	tLootOnly = {},				-- 指定物品列表 [名称] => true/false,
-	bManualFilter = true,	-- 手动拾取也过滤？=> true/false
+	bManualFilter2 = false,	-- 手动拾取也过滤？=> true/false
 	bQuest = true,				-- 自动采集任务物品
 	bShowName = true,	-- 显示物品名称
 	bMiniFlag = true,		-- 显示小地图标记
@@ -48,8 +48,8 @@ local _HM_Doodad = {
 _HM_Doodad.GetFilterMenu = function()
 	local m0 = {
 		{
-			szOption = _L["Filter on manual"], bCheck = true, bChecked = HM_Doodad.bManualFilter,
-			fnAction = function(d, b) HM_Doodad.bManualFilter = b end,
+			szOption = _L["Filter on manual"], bCheck = true, bChecked = HM_Doodad.bManualFilter2,
+			fnAction = function(d, b) HM_Doodad.bManualFilter2 = b end,
 		}, {
 			bDevide = true,
 		}, {
@@ -211,7 +211,7 @@ _HM_Doodad.GetOpenDoodadID = function()
 	local dwID = _HM_Doodad.dwOpenID
 	if dwID then
 		_HM_Doodad.dwOpenID = nil
-	elseif HM_Doodad.bManualFilter then
+	elseif HM_Doodad.bManualFilter2 then
 		local tObject = Scene_SelectObject("all") or {}
 		for _, v in pairs(tObject) do
 			if v["Type"] == TARGET.DOODAD and IsCorpseAndCanLoot(v["ID"]) then
