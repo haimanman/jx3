@@ -50,7 +50,7 @@ _HM_Area.tRelation = { _L["Own"], _L["Team"], _L["Enemy"], _L["Others"] }
 -- skill list
 _HM_Area.tSkill = {
 	{
-		dwID = 6911,				-- 技能 ID
+		dwID = 6911,				-- 技能 ID 或 371
 		dwTemplateID = 4982,	-- 模板 ID
 		nLeft = 8,						-- 存在总时间，单位：秒
 	}, {
@@ -130,7 +130,7 @@ end
 -- get template id by skill
 _HM_Area.GetTemplateID = function(dwID)
 	for _, v in ipairs(_HM_Area.tSkill) do
-		if v.dwID == dwID then
+		if v.dwID == dwID or (v.dwID == 6911 and dwID == 371) then
 			return v.dwTemplateID
 		elseif v.tOther then
 			for kk, vv in pairs(v.tOther) do
