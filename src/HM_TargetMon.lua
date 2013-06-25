@@ -200,7 +200,7 @@ HM_TargetMon.tBuffList2 = {
 			_b(6354)--[[虚回]], _b(6346)--[[风过无痕]], _b(6350)--[[临风]], _b(6266)--[[行气血]], _b(6224)--[[枭泣]],
 			_b(6172)--[[鹰目]], _b(6143)--[[泉凝月]], _b(6125)--[[长征]], _b(6121)--[[风虎]], _b(6122)--[[牧云]],
 			_b(6085)--[[影捷]], _b(5970)--[[锋针]], _b(5875)--[[善护]], _b(5789)--[[繁音急节]], _b(5666)--[[雾外江山]],
-			_b(999)--[[雨集]], _b(6074)--[[恶狗拦路]]
+			_b(999)--[[雨集]], _b(6074)--[[恶狗拦路]], _b(376)--[[冲阴阳]]
 		},
 	}
 }
@@ -475,6 +475,13 @@ end
 _HM_TargetMon.GetSkillMenu = function()
 	local m0 = {
 		{ szOption = _L["* New *"], fnAction = _HM_TargetMon.EditSkill },
+		{
+			szOption = _L["* Reset *"],
+			fnAction = function()
+				HM_TargetMon.tSkillList2 = clone(_HM_TargetMon.tBakSkill)
+				_HM_TargetMon.tSkillCache = nil
+			end
+		},
 		{ bDevide = true, }
 	}
 	for k, v in ipairs(HM_TargetMon.tSkillList2) do
@@ -494,13 +501,6 @@ _HM_TargetMon.GetSkillMenu = function()
 			table.insert(m0, m1)
 		end
 	end
-	table.insert(m0, { bDevide = true, })
-	table.insert(m0, { szOption = _L["* Reset *"],
-		fnAction = function()
-			HM_TargetMon.tSkillList2 = clone(_HM_TargetMon.tBakSkill)
-			_HM_TargetMon.tSkillCache = nil
-		end
-	})
 	return m0
 end
 
@@ -557,6 +557,13 @@ end
 _HM_TargetMon.GetBuffMenu = function()
 	local m0 = {
 		{ szOption = _L["* New *"], fnAction = _HM_TargetMon.EditBuff },
+		{
+			szOption = _L["* Reset *"],
+			fnAction = function()
+				HM_TargetMon.tBuffList2 = clone(_HM_TargetMon.tBakBuff)
+				_HM_TargetMon.tBuffCache = nil
+			end
+		},
 		{ bDevide = true, }
 	}
 	for _, v in ipairs(HM_TargetMon.tBuffList2) do
@@ -587,13 +594,6 @@ _HM_TargetMon.GetBuffMenu = function()
 			table.insert(m0, m1)
 		end
 	end
-	table.insert(m0, { bDevide = true, })
-	table.insert(m0, { szOption = _L["* Reset *"],
-		fnAction = function()
-			HM_TargetMon.tBuffList2 = clone(_HM_TargetMon.tBakBuff)
-			_HM_TargetMon.tBuffCache = nil
-		end
-	})
 	return m0
 end
 
