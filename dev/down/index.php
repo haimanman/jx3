@@ -12,6 +12,14 @@ foreach ($files as $file)
 	$list[] = $file;
 }
 $title = '《剑网3》、海鳗插件 - 下载';
+function get_li_class($i, $file)
+{
+	if ($i == 0)
+		return 'first';
+	else if (strpos($file, 'b') !== false)
+		return 'beta';
+	return 'normal';
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -25,6 +33,8 @@ a { color: #07c; }
 li { padding: 0; margin: 0 0 0 10px; }
 li h2 { font-size: 18px; margin-bottom: 10px; }
 li h2 small { font-size: 14px; color: #666; font-weight: normal; }
+li.first h2 a { color: #f00; font-size: 18px; }
+li.beta h2 a { color: #8be; }
 li p { margin: 0 0 20px 0; }
 p.offical { font-size: 16px; margin-left: 24px; }
 dl {
@@ -67,8 +77,8 @@ function SaveClick(v)
 其它工具：<a href="http://haimanchajian.com/repack/">PAK 文件清理工具</a>，<a href="JX3HM-2.1.exe">JX3HM-2.1.exe</a>（安史之乱风格：自动更新、功能筛选）
 </p>
 <ol>
-  <?php foreach($list as $file): ?>
-  <li>
+  <?php foreach($list as $i => $file): ?>
+  <li class="<?php echo get_li_class($i, $file['file']); ?>">
     <h2>
 	  <a href="<?php echo $file['file']; ?>" onclick="return SaveClick('<?php echo $file['version']; ?>');"><?php echo $file['file']; ?></a>
 	  <small>(<?php echo $file['date']; ?>，<?php echo $file['size']; ?>，<?php echo $file['click']; ?> Dowloads)</small>
