@@ -114,7 +114,7 @@ _HM_Guding.ShowName = function(tar)
 	end
 	-- adjust pos & show
 	HM.ApplyTopPoint(function(nX, nY)
-		if not lable:IsValid() or label.bFree then
+		if not label:IsValid() or label.bFree then
 			return
 		end
 		if not nX then
