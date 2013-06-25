@@ -317,34 +317,33 @@ _HM_Doodad.OnOpenDoodad = function(dwID)
 		-- items
 		for i = 0, 31 do
 			local it, bRoll, bDist = d.GetLootItem(i, me)
-			if not it then
-				break
-			end
-			-- 如有待分配物品，则取消庖丁并且不清空列表
-			if bDist and bClear then
-				bClear = false
-				if bP then
-					_HM_Doodad.tDoodad[dwID] = nil
-					bP = false
+			if it then
+				-- 如有待分配物品，则取消庖丁并且不清空列表
+				if bDist and bClear then
+					bClear = false
+					if bP then
+						_HM_Doodad.tDoodad[dwID] = nil
+						bP = false
+					end
 				end
-			end
-			local bLoot, szName = true, GetItemNameByItem(it)
-			if bP then
-				bLoot = true
-			elseif HM_Doodad.bLootOnly then
-				bLoot = HM_Doodad.tLootOnly[szName] == true
-			elseif (it.nQuality == 0 and not HM_Doodad.bLootGray)
-				or (it.nQuality == 1 and not HM_Doodad.bLootWhite)
-				or (it.nQuality == 2 and not HM_Doodad.bLootGreen)
-				or HM_Doodad.tLootFilter[szName] == true
-			then
-				bLoot = false
-			end
-			if bLoot then
-				LootItem(d.dwID, it.dwID)
-				HM.Debug("auto loot [" .. szName .. "]")
-			else
-				HM.Debug("filter loot [" .. szName .. "]")
+				local bLoot, szName = true, GetItemNameByItem(it)
+				if bP then
+					bLoot = true
+				elseif HM_Doodad.bLootOnly then
+					bLoot = HM_Doodad.tLootOnly[szName] == true
+				elseif (it.nQuality == 0 and not HM_Doodad.bLootGray)
+					or (it.nQuality == 1 and not HM_Doodad.bLootWhite)
+					or (it.nQuality == 2 and not HM_Doodad.bLootGreen)
+					or HM_Doodad.tLootFilter[szName] == true
+				then
+					bLoot = false
+				end
+				if bLoot then
+					LootItem(d.dwID, it.dwID)
+					HM.Debug("auto loot [" .. szName .. "]")
+				else
+					HM.Debug("filter loot [" .. szName .. "]")
+				end
 			end
 		end
 		if bClear then
