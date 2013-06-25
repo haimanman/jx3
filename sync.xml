@@ -2,11 +2,11 @@
 <jx3:hm xmlns:jx3="http://haimanchajian.com">
   <name><![CDATA[海鳗、插件集]]></name>
   <desc><![CDATA[大量非常方便的 PVP 插件！ --== 海鳗鳗@步莲台 ==--]]></desc>
-  <version dword="0x2010400">2.1.4</version>
+  <version dword="0x2010501">2.1.5b1</version>
   <clientVersion dword="0x20101">2.1.1</clientVersion>
   <urlPrefix>http://jx3.hightman.cn/sync/HM/</urlPrefix>
   <info>
-    <file size="20063" title="纯阳气场/唐门机关范围显示、归属显示、消失倒计时">src/HM_Area.lua</file>
+    <file size="20106" title="纯阳气场/唐门机关范围显示、归属显示、消失倒计时">src/HM_Area.lua</file>
     <file size="14024" title="战场竞技场助手、死后交阵眼、九宫计时、名剑币估算">src/HM_Battle.lua</file>
     <file size="21926" title="攻防屏蔽及智能选BOSS、任务BOSS计时等">src/HM_Camp.lua</file>
     <file size="16270" title="自动拾取和过滤、自动采集助手">src/HM_Doodad.lua</file>
@@ -31,7 +31,7 @@
     <file size="22464">API.md</file>
     <file size="19630">CHANGELOG.txt</file>
     <file size="2874">LICENSE.txt</file>
-    <file size="2070">README.md</file>
+    <file size="2072">README.md</file>
     <file size="16741">hero/female_cont_1.wav</file>
     <file size="19746">hero/female_cont_2.wav</file>
     <file size="15476">hero/female_normal_1.wav</file>
@@ -40,7 +40,7 @@
     <file size="15318">hero/male_cont_2.wav</file>
     <file size="8834">hero/male_normal_1.wav</file>
     <file size="18797">hero/male_normal_2.wav</file>
-    <file size="1011">info.ini</file>
+    <file size="1013">info.ini</file>
     <file size="10400">lab/HM_Taoguan.lua</file>
     <file size="397">lang/default.lua</file>
     <file size="40000">lang/zhcn.lua</file>
