@@ -7,6 +7,7 @@ HM_Force = {
 	bSelfTaiji = true,			-- 智能对自己生太极（仅纯阳）
 	bSelfTaiji2 = false,		-- 永远只对自己生太极
 	bAlertPet = true,			-- 五毒宠物消失提醒
+	bMarkPet = true,			-- 五毒宠物标记
 	bAutoDance = true,	-- 七秀自动剑舞
 	bAutoXyz = true,		-- 自动对目标执行范围指向技能
 	bAutoXyzSelf = true,	-- 自动对自己放
@@ -24,6 +25,7 @@ HM.RegisterCustomData("HM_Force")
 local _HM_Force = {
 	nFrameXJ = 0,
 	-- nActionTotal, nActionEnd, bActionDec
+	nFrameMP = 0,
 }
 
 -- qichang
@@ -72,6 +74,18 @@ _HM_Force.OnUseEmptySkill = function(dwID)
 	end
 end
 
+-- update pet mark
+_HM_Force.UpdatePetMark = function(bMark)
+	local pet = GetClientPlayer().GetPet()
+	if pet then
+		local dwEffect = 13
+		if not bMark then
+			dwEffect = 0
+		end
+		SceneObject_SetTitleEffect(TARGET.NPC, pet.dwID, dwEffect)
+	end
+end
+
 -- check horse page
 _HM_Force.OnRideHorse = function()
 	if HM_Force.bHorsePage then
@@ -86,6 +100,18 @@ _HM_Force.OnRideHorse = function()
 					SelectMainActionBarPage(1)
 				end
 			end
+		end
+	end
+end
+
+-- check to mark pet
+_HM_Force.OnNpcEnter = function()
+	if HM_Force.bMarkPet then
+		local pet = GetClientPlayer().GetPet()
+		if pet and arg0 == pet.dwID then
+			HM.DelayCall(500, function()
+				_HM_Force.UpdatePetMark(true)
+			end)
 		end
 	end
 end
@@ -144,12 +170,23 @@ _HM_Force.OnBreathe = function()
 	if not me or not me.GetKungfuMount() or me.GetOTActionState() ~= 0 then
 		return
 	end
+	-- 7x
 	if me.GetKungfuMount().dwMountType == 4 then
 		-- auto dance
 		if HM_Force.bAutoDance and me.nAccumulateValue == 0
 			and (me.nMoveState == MOVE_STATE.ON_STAND or me.nMoveState == MOVE_STATE.ON_FLOAT)
 		then
 			return HM_Force.OnUseEmptySkill(537)
+		end
+	end
+	-- 5d
+	if me.GetKungfuMount().dwMountType == 9 and HM_Force.bMarkPet then
+		local nFrame = GetLogicFrameCount() - _HM_Force.nFrameMP
+		if nFrame < 0 or nFrame >= 16 then
+			local pet = me.GetPet()
+			if pet then
+				HM.UpdateMiniFlag(7, pet, 1, 48)
+			end
 		end
 	end
 end
@@ -311,6 +348,12 @@ _HM_Force.PS.OnPanelActive = function(frame)
 	:Pos(nX + 10, 232):Enable(HM_Force.bAutoXyz):Click(function(bChecked)
 		HM_Force.bAutoXyzSelf = not bChecked
 	end)
+	-- mark pet
+	ui:Append("WndCheckBox", { txt = _L["Mark pet"], checked = HM_Force.bMarkPet })
+	:Pos(nX + 10, 176):Click(function(bChecked)
+		HM_Force.bMarkPet = bChecked
+		_HM_Force.UpdatePetMark(bChecked)
+	end)
 	ui:Append("WndCheckBox", { txt = _L["Show dance buff and its stack num of 7X"], checked = HM_Force.bShowJW })
 	:Pos(10, 260):Click(function(bChecked)
 		HM_Force.bShowJW = bChecked
@@ -357,6 +400,7 @@ end
 -- 注册事件、初始化
 ---------------------------------------------------------------------
 -- horse
+HM.RegisterEvent("NPC_ENTER_SCENE", _HM_Force.OnNpcEnter)
 HM.RegisterEvent("NPC_LEAVE_SCENE", _HM_Force.OnNpcLeave)
 HM.RegisterEvent("SYNC_ROLE_DATA_END", function()
 	_HM_Force.OnRideHorse()
