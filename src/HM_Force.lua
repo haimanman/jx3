@@ -247,6 +247,7 @@ _HM_Force.UpdateOTActionBar = function()
 		return
 	end
 	local nFrame = _HM_Force.nActionEnd - GetLogicFrameCount()
+	local nTotal = _HM_Force.nActionTotal
 	if nFrame < 0 then
 		_HM_Force.nActionTotal = nil
 		nFrame = 0
@@ -258,9 +259,9 @@ _HM_Force.UpdateOTActionBar = function()
 	end
 	local szText = string.gsub(hText:GetText(), " %(.-%)$", "")
 	if not _HM_Force.bActionDec then
-		nFrame = _HM_Force.nActionTotal - nFrame
+		nFrame = nTotal - nFrame
 	end
-	hText:SetText(szText .. string.format(" (%.2g/%.2g)", nFrame / 16, _HM_Force.nActionTotal / 16))
+	hText:SetText(szText .. string.format(" (%.2g/%.2g)", nFrame / 16, nTotal / 16))
 end
 
 -------------------------------------
