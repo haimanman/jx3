@@ -50,7 +50,7 @@ _HM_Area.tRelation = { _L["Own"], _L["Team"], _L["Enemy"], _L["Others"] }
 -- skill list
 _HM_Area.tSkill = {
 	{
-		dwID = 371,					-- 技能 ID
+		dwID = 6911,				-- 技能 ID
 		dwTemplateID = 4982,	-- 模板 ID
 		nLeft = 8,						-- 存在总时间，单位：秒
 	}, {
@@ -307,6 +307,9 @@ _HM_Area.ShowName = function(tar)
 	end
 	-- adjust pos
 	HM.ApplyTopPoint(function(nX, nY)
+		if not data.label:IsValid() or data.label.bFree then
+			return
+		end
 		if not nX then
 			data.label:Hide()
 		else
@@ -348,6 +351,9 @@ _HM_Area.DrawCircle = function(shape, tar, col, nRadius, nAlpha, nThick)
 	for _, v in ipairs(shape.tCircle) do
 		for kk, vv in ipairs(v.tPoint) do
 			HM.ApplyScreenPoint(function(nX, nY)
+				if not v:IsValid() or v.bFree then
+					return
+				end
 				if kk == 1 then
 					v:ClearTriangleFanPoint()
 					v:Show()
@@ -381,6 +387,9 @@ _HM_Area.DrawCake = function(shape, tar, col, nRadius, nAlpha, bCircle)
 	end
 	-- center point
 	HM.ApplyScreenPoint(function(nX, nY)
+		if not shape:IsValid() or shape.bFree then
+			return
+		end
 		if not nX then
 			bCircle = false
 		end
@@ -402,6 +411,9 @@ _HM_Area.DrawCake = function(shape, tar, col, nRadius, nAlpha, bCircle)
 	-- points
 	for k, v in ipairs(shape.tPoint) do
 		HM.ApplyScreenPoint(function(nX, nY)
+			if not shape:IsValid() or shape.bFree then
+				return
+			end
 			if nX then
 				shape:AppendTriangleFanPoint(nX, nY, col[1], col[2], col[3], nAlpha)
 			end
@@ -566,11 +578,12 @@ _HM_Area.OnRender = function()
 	local nCount, nTime = 0, GetTime()
 	for k, v in pairs(_HM_Area.tList) do
 		local tar = GetNpc(k)
-		if not tar or nCount >= HM_Area.nMaxNum
+		local bEnd = (nTime - v.dwTime) >= v.nLeft
+		if not tar or nCount >= HM_Area.nMaxNum or bEnd
 			or not _HM_Area.CheckTemplateID(tar.dwTemplateID)
 			or _HM_Area.GetHide(_HM_Area.GetRelation(v.dwCaster), tar.dwTemplateID)
 		then
-			if not v.bHide or (nTime - v.dwTime) >= v.nLeft then
+			if not v.bHide or bEnd then
 				v.bHide = true
 				_HM_Area.RemoveFromList(k)
 			end

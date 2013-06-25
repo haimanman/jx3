@@ -245,6 +245,9 @@ _HM_Doodad.OnRender = function()
 				end
 				-- update pos
 				HM.ApplyTopPoint(function(nX, nY)
+					if not v.label:IsValid() or v.label.bFree then
+						return
+					end
 					if not nX then
 						v.label:Hide()
 					else

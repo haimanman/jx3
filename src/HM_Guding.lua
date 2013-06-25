@@ -114,6 +114,9 @@ _HM_Guding.ShowName = function(tar)
 	end
 	-- adjust pos & show
 	HM.ApplyTopPoint(function(nX, nY)
+		if not lable:IsValid() or label.bFree then
+			return
+		end
 		if not nX then
 			return label:Hide()
 		end
@@ -180,8 +183,9 @@ end
 _HM_Guding.OnRender = function()
 	for k, v in pairs(_HM_Guding.tList) do
 		local tar = GetDoodad(k)
-		if not tar or not HM_Guding.bEnable then
-			if not v.bHide or (GetTime() - v.dwTime) >= _HM_Guding.nMaxTime then
+		local bEnd = (GetTime() - v.dwTime) >= _HM_Guding.nMaxTime
+		if not tar or not HM_Guding.bEnable or bEnd then
+			if not v.bHide or bEnd then
 				v.bHide = true
 				_HM_Guding.RemoveFromList(k)
 			end
