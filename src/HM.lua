@@ -1057,11 +1057,11 @@ HM.ApplyTopPoint = function(fnAction, tar, nH)
 		return fnAction()
 	end
 	if not nH then
-		PostThreadCall(function(nX, nY, sX, sY, sZ)
-			if nX and sX ~= 0 and sY ~= 0 then
-				nX, nY = Station.AdjustToOriginalPos(nX, nY)
-			else
+		PostThreadCall(function(nX, nY)
+			if not nX or (nX > 0 and nX < 0.00001 and nY > 0 and nY < 0.00001) then
 				nX, nY = nil, nil
+			else
+				nX, nY = Station.AdjustToOriginalPos(nX, nY)
 			end
 			local res, err = pcall(fnAction, nX, nY)
 			if not res then
