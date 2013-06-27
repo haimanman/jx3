@@ -922,7 +922,9 @@ _HM_TargetMon.OnSkillCast = function(dwCaster, dwSkillID, dwLevel, szEvent)
 		return
 	end
 	_HM_TargetMon.PurgeData()
-	HM.Debug2("#" .. dwCaster .. "#" .. szEvent .. " (" .. szName .. "#" .. dwSkillID .. ", Lv" .. dwLevel .. ")")
+	if not HM_Jabber then
+		HM.Debug3("#" .. dwCaster .. "#" .. szEvent .. " (" .. szName .. "#" .. dwSkillID .. ", Lv" .. dwLevel .. ")")
+	end
 	-- check reset
 	local aReset = _HM_TargetMon.tSkillReset[szName] or {}
 	for _, v in ipairs(aReset) do
