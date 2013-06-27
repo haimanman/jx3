@@ -276,6 +276,19 @@ _HM.FetchMenuItem = function(tData, szOption)
 	end
 end
 
+-- callback of apply point
+_HM.ApplyPointCallback = function(fnAction, nX, nY)
+	if not nX or (nX > 0 and nX < 0.00001 and nY > 0 and nY < 0.00001) then
+		nX, nY = nil, nil
+	else
+		nX, nY = Station.AdjustToOriginalPos(nX, nY)
+	end
+	local res, err = pcall(fnAction, nX, nY)
+	if not res then
+		HM.Debug("ApplyScreenPoint ERROR: " .. err)
+	end
+end
+
 -------------------------------------
 -- 更新设置面板界面
 -------------------------------------
@@ -1027,19 +1040,8 @@ HM.ApplyScreenPoint = function(fnAction, nX, nY, nZ)
 		local tar = nX
 		nX, nY, nZ = tar.nX, tar.nY, tar.nZ
 	end
-	PostThreadCall(function(nX, nY, nZ)
-		PostThreadCall(function(nX, nY, bOk)
-			if bOk then
-				nX, nY = Station.AdjustToOriginalPos(nX, nY)
-			else
-				nX, nY = nil, nil
-			end
-			local res, err = pcall(fnAction, nX, nY)
-			if not res then
-				HM.Debug("ApplyScreenPoint ERROR: " .. err)
-			end
-		end, nil, "Scene_ScenePointToScreenPoint", nX, nY, nZ)
-	end, nil, "Scene_GameWorldPositionToScenePosition", nX, nY, nZ, false)
+	PostThreadCall(_HM.ApplyPointCallback, fnAction,
+		"Scene_GameWorldPositionToScreenPoint", nX, nY, nZ, false)
 end
 
 -- 计算目标头顶坐标点计算在屏幕上的相应位置并执行回调函数
@@ -1057,22 +1059,14 @@ HM.ApplyTopPoint = function(fnAction, tar, nH)
 		return fnAction()
 	end
 	if not nH then
-		PostThreadCall(function(nX, nY)
-			if not nX or (nX > 0 and nX < 0.00001 and nY > 0 and nY < 0.00001) then
-				nX, nY = nil, nil
-			else
-				nX, nY = Station.AdjustToOriginalPos(nX, nY)
-			end
-			local res, err = pcall(fnAction, nX, nY)
-			if not res then
-				HM.Debug("ApplyTopPoint ERROR: " .. err)
-			end
-		end, nil, "Scene_GetCharacterTopScreenPos", tar.dwID)
+		PostThreadCall(_HM.ApplyPointCallback, fnAction,
+			"Scene_GetCharacterTopScreenPos", tar.dwID)
 	else
 		if nH < 64 then
 			nH = nH * 64
 		end
-		HM.ApplyScreenPoint(fnAction, tar.nX, tar.nY, tar.nZ + nH)
+		PostThreadCall(_HM.ApplyPointCallback, fnAction,
+			"Scene_GameWorldPositionToScreenPoint", tar.nX, tar.nY, tar.nZ + nH, false)
 	end
 end
 
