@@ -115,6 +115,7 @@ _HM_Force.OnNpcEnter = function()
 		end
 	end
 end
+_HM_Force.OnNpcUpdate = _HM_Force.OnNpcEnter
 
 -- check pet of 5D £¨XJ£º2226£©
 _HM_Force.OnNpcLeave = function()
@@ -177,16 +178,6 @@ _HM_Force.OnBreathe = function()
 			and (me.nMoveState == MOVE_STATE.ON_STAND or me.nMoveState == MOVE_STATE.ON_FLOAT)
 		then
 			return HM_Force.OnUseEmptySkill(537)
-		end
-	end
-	-- 5d
-	if me.GetKungfuMount().dwMountType == 9 and HM_Force.bMarkPet then
-		local nFrame = GetLogicFrameCount() - _HM_Force.nFrameMP
-		if nFrame < 0 or nFrame >= 16 then
-			local pet = me.GetPet()
-			if pet then
-				HM.UpdateMiniFlag(7, pet, 1, 48)
-			end
 		end
 	end
 end
@@ -402,6 +393,7 @@ end
 -- horse
 HM.RegisterEvent("NPC_ENTER_SCENE", _HM_Force.OnNpcEnter)
 HM.RegisterEvent("NPC_LEAVE_SCENE", _HM_Force.OnNpcLeave)
+HM.RegisterEvent("NPC_DISPLAY_DATA_UPDATE", _HM_Force.OnNpcUpdate)
 HM.RegisterEvent("SYNC_ROLE_DATA_END", function()
 	_HM_Force.OnRideHorse()
 	_HM_Force.BindQXBtn()
