@@ -579,7 +579,7 @@ _HM_Area.OnRender = function()
 	for k, v in pairs(_HM_Area.tList) do
 		local tar = GetNpc(k)
 		local bEnd = (nTime - v.dwTime) >= v.nLeft
-		if not tar or nCount >= HM_Area.nMaxNum or bEnd
+		if not tar or nCount >= HM_Area.nMaxNum or (v.dwTime ~= 0 and bEnd)
 			or not _HM_Area.CheckTemplateID(tar.dwTemplateID)
 			or _HM_Area.GetHide(_HM_Area.GetRelation(v.dwCaster), tar.dwTemplateID)
 		then
@@ -613,6 +613,7 @@ function HM_Area.OnFrameCreate()
 	this:RegisterEvent("SYS_MSG")
 	this:RegisterEvent("NPC_ENTER_SCENE")
 	this:RegisterEvent("RENDER_FRAME_UPDATE")
+	this:RegisterEvent("DO_SKILL_CAST")
 end
 
 -- event
@@ -627,6 +628,8 @@ function HM_Area.OnEvent(event)
 		_HM_Area.OnNpcEnter()
 	elseif event == "RENDER_FRAME_UPDATE" then
 		_HM_Area.OnRender()
+	elseif event == "DO_SKILL_CAST" then
+		_HM_Area.OnSkillCast(arg0, arg1, arg2, event)
 	end
 end
 
