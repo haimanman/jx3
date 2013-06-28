@@ -148,6 +148,13 @@ _HM_Area.GetTemplateName = function(dwTemplateID)
 		if v.dwTemplateID == dwTemplateID then
 			return HM.GetSkillName(v.dwID)
 		end
+		if v.tOther then
+			for kk, vv in pairs(v.tOther) do
+				if vv == dwTemplateID then
+					return HM.GetSkillName(kk)
+				end
+			end
+		end
 	end
 end
 
@@ -317,7 +324,7 @@ _HM_Area.ShowName = function(tar)
 			data.label:SetAbsPos(nX - math.ceil(nW/2), nY - math.ceil(nH/2))
 			data.label:Show()
 		end
-	end, tar, "HAN_" .. tar.dwID)
+	end, tar, 384, "HAN_" .. tar.dwID)
 end
 
 -- draw circle (N * shadow)
