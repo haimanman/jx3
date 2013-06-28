@@ -1145,7 +1145,9 @@ end
 HM.GetSkillName = function(dwSkillID, dwLevel)
 	if not _HM.tSkillCache[dwSkillID] then
 		local tLine = Table_GetSkill(dwSkillID, dwLevel)
-		if tLine and tLine.dwSkillID > 0 and tLine.bShow and StringFindW(tLine.szDesc, "_") == nil then
+		if tLine and tLine.dwSkillID > 0 and tLine.bShow
+			and (StringFindW(tLine.szDesc, "_") == nil  or StringFindW(tLine.szDesc, "<") ~= nil)
+		then
 			_HM.tSkillCache[dwSkillID] = { tLine.szName, tLine.dwIconID }
 		else
 			local szName = "SKILL#" .. dwSkillID
