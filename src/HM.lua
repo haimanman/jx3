@@ -277,13 +277,17 @@ _HM.FetchMenuItem = function(tData, szOption)
 end
 
 -- callback of apply point
-_HM.ApplyPointCallback = function(fnAction, nX, nY)
+_HM.tApplyPointKey = {}
+_HM.ApplyPointCallback = function(data, nX, nY)
 	if not nX or (nX > 0 and nX < 0.00001 and nY > 0 and nY < 0.00001) then
 		nX, nY = nil, nil
 	else
 		nX, nY = Station.AdjustToOriginalPos(nX, nY)
 	end
-	local res, err = pcall(fnAction, nX, nY)
+	if data.szKey then
+		_HM.tApplyPointKey[data.szKey] = nil
+	end
+	local res, err = pcall(data.fnAction, nX, nY)
 	if not res then
 		HM.Debug("ApplyScreenPoint ERROR: " .. err)
 	end
@@ -1028,44 +1032,65 @@ HM.GetDistance = function(nX, nY, nZ)
 end
 
 -- 根据目标所在位置、世界坐标点计算在屏幕上的相应位置并执行回调函数
--- (void) HM.ApplyScreenPoint(func fnAction, KObject tar)
--- (void) HM.ApplyScreenPoint(func fnAction, number nX, number nY, number nZ)
+-- (void) HM.ApplyScreenPoint(func fnAction, KObject tar[, string szKey])
+-- (void) HM.ApplyScreenPoint(func fnAction, number nX, number nY, number nZ[, string szKey])
 -- fnAction -- 取到坐标后调用，原型为 fnAction(nX, nY)，其中 nX, nY 为屏幕坐标，失败时参数为 nil
 -- tar		-- 带有 nX，nY，nZ 三属性的 table 或 KPlayer，KNpc，KDoodad
 -- nX		-- 世界坐标系下的目标点 X 值
 -- nY		-- 世界坐标系下的目标点 Y 值
 -- nZ		-- 世界坐标系下的目标点 Z 值
-HM.ApplyScreenPoint = function(fnAction, nX, nY, nZ)
-	if not nY then
+-- szKey	-- *可选* 调用标识（防止发送过多的请求，优化性能）
+HM.ApplyScreenPoint = function(fnAction, nX, nY, nZ, szKey)
+	if not nZ then
 		local tar = nX
-		nX, nY, nZ = tar.nX, tar.nY, tar.nZ
+		szKey, nX, nY, nZ = nY, tar.nX, tar.nY, tar.nZ
 	end
-	PostThreadCall(_HM.ApplyPointCallback, fnAction,
+	if szKey and IsMultiThread() then
+		if _HM.tApplyPointKey[szKey] then
+			return
+		end
+		_HM.tApplyPointKey[szKey] = true
+	else
+		szKey = nil
+	end
+	PostThreadCall(_HM.ApplyPointCallback, { fnAction = fnAction, szKey = szKey },
 		"Scene_GameWorldPositionToScreenPoint", nX, nY, nZ, false)
 end
 
 -- 计算目标头顶坐标点计算在屏幕上的相应位置并执行回调函数
--- (void) HM.ApplyTopPoint(func fnAction, KObject tar[, number nH])
--- (void) HM.ApplyTopPoint(func fnAction, number dwID[, number nH])
+-- (void) HM.ApplyTopPoint(func fnAction, KObject tar[, number nH[, string szKey]])
+-- (void) HM.ApplyTopPoint(func fnAction, number dwID[, number nH[, string szKey]])
 -- fnAction -- 取到坐标后调用，原型为 fnAction(nX, nY)，其中 nX, nY 为屏幕坐标，失败时参数为 nil
 -- tar			-- 目标对象 KPlayer，KNpc，KDoodad
 -- dwID		-- 目标 ID
 -- nH			-- *可选* 高度，单位是：尺*64，默认对于 NPC/PLAYER 可智能计算头顶
-HM.ApplyTopPoint = function(fnAction, tar, nH)
+-- szKey		-- *可选* 调用标识（防止发送过多的请求，优化性能）
+HM.ApplyTopPoint = function(fnAction, tar, nH, szKey)
 	if type(tar) == "number" then
 		tar = HM.GetTarget(tar)
 	end
 	if not tar then
 		return fnAction()
 	end
+	if type(nH) == "string" then
+		szKey, nH = nH, nil
+	end
+	if szKey and IsMultiThread() then
+		if _HM.tApplyPointKey[szKey] then
+			return
+		end
+		_HM.tApplyPointKey[szKey] = true
+	else
+		szKey = nil
+	end
 	if not nH then
-		PostThreadCall(_HM.ApplyPointCallback, fnAction,
+		PostThreadCall(_HM.ApplyPointCallback, { fnAction = fnAction, szKey = szKey },
 			"Scene_GetCharacterTopScreenPos", tar.dwID)
 	else
 		if nH < 64 then
 			nH = nH * 64
 		end
-		PostThreadCall(_HM.ApplyPointCallback, fnAction,
+		PostThreadCall(_HM.ApplyPointCallback, { fnAction = fnAction, szKey = szKey },
 			"Scene_GameWorldPositionToScreenPoint", tar.nX, tar.nY, tar.nZ + nH, false)
 	end
 end

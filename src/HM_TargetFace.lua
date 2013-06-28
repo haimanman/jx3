@@ -48,14 +48,16 @@ _HM_TargetFace.DrawShape = function(tar, sha, nDegree, nRadius, nAlpha, col)
 		sha:ClearTriangleFanPoint()
 		sha:AppendTriangleFanPoint(nX, nY, col[1], col[2], col[3], nAlpha)
 		sha:Show()
-	end, tar.nX, tar.nY, tar.nZ)
+	end, tar.nX, tar.nY, tar.nZ, "HTF_" .. sha:GetName())
 	-- points
+	local k = 1
 	repeat
 		HM.ApplyScreenPoint(function(nX, nY)
 			if nX then
 				sha:AppendTriangleFanPoint(nX, nY, col[1], col[2], col[3], nAlpha2)
 			end
-		end, tar.nX + math.cos(dwRad1) * nRadius, tar.nY + math.sin(dwRad1) * nRadius, tar.nZ)
+		end, tar.nX + math.cos(dwRad1) * nRadius, tar.nY + math.sin(dwRad1) * nRadius, tar.nZ, "HTF_" .. sha:GetName() .. "_" .. k)
+		k = k + 1
 		dwRad1 = dwRad1 + math.pi / 16
 	until dwRad1 > dwRad2
 end

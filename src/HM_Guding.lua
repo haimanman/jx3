@@ -123,7 +123,7 @@ _HM_Guding.ShowName = function(tar)
 		local nW, nH = label:GetSize()
 		label:SetAbsPos(nX - math.ceil(nW/2), nY - math.ceil(nH/2))
 		label:Show()
-	end, tar, 768)
+	end, tar, 768, "HG_" .. tar.dwID)
 	-- check to use
 	if HM_Guding.bAutoUse and label:GetAlpha() > 199 then
 		_HM_Guding.AutoUse(tar)

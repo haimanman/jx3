@@ -317,7 +317,7 @@ _HM_Area.ShowName = function(tar)
 			data.label:SetAbsPos(nX - math.ceil(nW/2), nY - math.ceil(nH/2))
 			data.label:Show()
 		end
-	end, tar)
+	end, tar, "HAN_" .. tar.dwID)
 end
 
 -- draw circle (N * shadow)
@@ -348,7 +348,7 @@ _HM_Area.DrawCircle = function(shape, tar, col, nRadius, nAlpha, nThick)
 		until dwMaxRad <= dwCurRad
 	end
 	-- draw shadows
-	for _, v in ipairs(shape.tCircle) do
+	for k, v in ipairs(shape.tCircle) do
 		for kk, vv in ipairs(v.tPoint) do
 			HM.ApplyScreenPoint(function(nX, nY)
 				if not v:IsValid() or v.bFree then
@@ -361,7 +361,7 @@ _HM_Area.DrawCircle = function(shape, tar, col, nRadius, nAlpha, nThick)
 				if nX then
 					v:AppendTriangleFanPoint(nX, nY, col[1], col[2], col[3], nAlpha)
 				end
-			end, vv[1], vv[2], tar.nZ)
+			end, vv[1], vv[2], tar.nZ, "HAC_" .. tar.dwID .."_" .. k .. "_" .. kk)
 		end
 	end
 end
@@ -407,7 +407,7 @@ _HM_Area.DrawCake = function(shape, tar, col, nRadius, nAlpha, bCircle)
 		shape:ClearTriangleFanPoint()
 		shape:AppendTriangleFanPoint(nX, nY, col[1], col[2], col[3], 0)
 		shape:Show()
-	end, tar.nX, tar.nY,tar.nZ)
+	end, tar.nX, tar.nY,tar.nZ, "HAK_" .. tar.dwID)
 	-- points
 	for k, v in ipairs(shape.tPoint) do
 		HM.ApplyScreenPoint(function(nX, nY)
@@ -417,7 +417,7 @@ _HM_Area.DrawCake = function(shape, tar, col, nRadius, nAlpha, bCircle)
 			if nX then
 				shape:AppendTriangleFanPoint(nX, nY, col[1], col[2], col[3], nAlpha)
 			end
-		end, v[1], v[2], tar.nZ)
+		end, v[1], v[2], tar.nZ, "HAK_" .. tar.dwID .. "_" .. k)
 	end
 end
 

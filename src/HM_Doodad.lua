@@ -255,7 +255,7 @@ _HM_Doodad.OnRender = function()
 						v.label:SetAbsPos(nX - math.ceil(nW/2), nY - math.ceil(nH/2) - 40)
 						v.label:Show()
 					end
-				end, tar, 0)
+				end, tar, 0, "HD_" .. tar.dwID)
 			end
 		end
 	end

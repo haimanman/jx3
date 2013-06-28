@@ -716,7 +716,7 @@ _HM_Target.DrawConnect = function(conn, me, tar)
 		if nX1 and nY1 then
 			fnAction()
 		end
-	end, me)
+	end, me, "HTL_" .. conn:GetName() .. "_" .. me.dwID)
 	_ApplyPoint(function(x, y)
 		if not x then
 			return conn:Hide()
@@ -725,7 +725,7 @@ _HM_Target.DrawConnect = function(conn, me, tar)
 		if nX and nY then
 			fnAction()
 		end
-	end, tar)
+	end, tar, "HTL_" .. conn:GetName() .. "_" .. tar.dwID)
 end
 
 _HM_Target.OnRender = function()
