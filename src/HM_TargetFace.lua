@@ -7,13 +7,13 @@ HM_TargetFace = {
 	bFocusFace = false,			-- 是否画出焦点的面向
 	nSectorDegree = 90,			-- 扇形角度
 	nSectorRadius = 6,				-- 扇形半径（尺）
-	nSectorAlpha = 40,				-- 扇形透明度
+	nSectorAlpha = 80,				-- 扇形透明度
 	tTargetFaceColor = { 255, 0, 128 },		-- 目标面向颜色
 	tFocusFaceColor = { 0, 128, 255 },		-- 焦点面向颜色
 	bTargetShape = false,		-- 目标脚底圈圈
 	bFocusShape = true,			-- 焦点脚底圈圈
 	nShapeRadius = 2,				-- 脚底圈圈半径
-	nShapeAlpha = 60,				-- 脚底圈圈透明度
+	nShapeAlpha = 100,				-- 脚底圈圈透明度
 	tTargetShapeColor = { 255, 0, 0 },
 	tFocusShapeColor = { 0, 0, 255 },
 }
@@ -198,7 +198,9 @@ _HM_TargetFace.PS.OnPanelActive = function(frame)
 	:Range(1, 26, 25):Value(t.nSectorRadius):Change(function(nVal) t.nSectorRadius = nVal end)
 	nX = ui:Append("Text", { txt = _L["The sector transparency"], x = 37, y = 140 }):Pos_()
 	ui:Append("WndTrackBar", { x = nX, y = 144 })
-	:Range(0, 200, 100):Value(t.nSectorAlpha):Change(function(nVal) t.nSectorAlpha = nVal end)
+	:Range(0, 100, 50):Value(math.ceil((200 - t.nSectorAlpha)/2)):Change(function(nVal)
+		t.nSectorAlpha = (100 - nVal) * 2
+	end)
 	-- foot shape
 	nX = ui:Append("WndCheckBox", { txt = _L["Display the foot shape of target, change color"], checked = t.bTargetShape })
 	:Pos(10, 168):Click(function(bChecked)
@@ -227,7 +229,9 @@ _HM_TargetFace.PS.OnPanelActive = function(frame)
 	:Range(1, 26, 25):Value(t.nShapeRadius):Change(function(nVal) t.nShapeRadius = nVal end)
 	nX = ui:Append("Text", { txt = _L["The foot shape transparency"], x = 37, y = 256 }):Pos_()
 	ui:Append("WndTrackBar", { x = nX, y = 260 })
-	:Range(0, 200, 100):Value(t.nShapeAlpha):Change(function(nVal) t.nShapeAlpha = nVal end)
+	:Range(0, 100, 50):Value(math.ceil((200 - t.nShapeAlpha)/2)):Change(function(nVal)
+		t.nShapeAlpha = (100 - nVal) * 2
+	end)
 	-- tips
 	ui:Append("Text", { x = 0, y = 284, txt = _L["Tips"], font = 27 })
 	ui:Append("Text", { x = 10, y = 312, txt = _L["Only show the facing and foot shape of the last added focus target"] })
