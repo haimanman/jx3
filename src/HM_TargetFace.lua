@@ -41,23 +41,14 @@ _HM_TargetFace.DrawShape = function(tar, sha, nDegree, nRadius, nAlpha, col)
 		dwRad2 = dwRad2 + math.pi / 16
 	end
 	-- orgina point
-	HM.ApplyScreenPoint(function(nX, nY)
-		if not nX then
-			return sha:Hide()
-		end
-		sha:ClearTriangleFanPoint()
-		sha:AppendTriangleFanPoint(nX, nY, col[1], col[2], col[3], nAlpha)
-		sha:Show()
-	end, tar.nX, tar.nY, tar.nZ, "HTF_" .. sha:GetName())
+	sha:SetTriangleFan(true, Scene_GetSceneID())
+	sha:ClearTriangleFanPoint()
+	sha:AppendTriangleFan3DPoint(tar.nX, tar.nY, tar.nZ, col[1], col[2], col[3], nAlpha)
+	sha:Show()
 	-- points
-	local k = 1
 	repeat
-		HM.ApplyScreenPoint(function(nX, nY)
-			if nX then
-				sha:AppendTriangleFanPoint(nX, nY, col[1], col[2], col[3], nAlpha2)
-			end
-		end, tar.nX + math.cos(dwRad1) * nRadius, tar.nY + math.sin(dwRad1) * nRadius, tar.nZ, "HTF_" .. sha:GetName() .. "_" .. k)
-		k = k + 1
+		local nX, nY = tar.nX + math.cos(dwRad1) * nRadius, tar.nY + math.sin(dwRad1) * nRadius
+		sha:AppendTriangleFan3DPoint(nX, nY, tar.nZ, col[1], col[2], col[3], nAlpha2)
 		dwRad1 = dwRad1 + math.pi / 16
 	until dwRad1 > dwRad2
 end
@@ -126,9 +117,7 @@ end
 function HM_TargetFace.OnFrameCreate()
 	-- shadows
 	for _, v in ipairs({ "TargetFace", "TargetShape", "FocusFace", "FocusShape" }) do
-		local sha = this:Lookup("", "Shadow_" .. v)
-		sha:SetTriangleFan(true)
-		_HM_TargetFace["h" .. v]  = sha
+		_HM_TargetFace["h" .. v]  = this:Lookup("", "Shadow_" .. v)
 	end
 	-- events
 	this:RegisterEvent("UPDATE_SELECT_TARGET")

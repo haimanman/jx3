@@ -327,56 +327,41 @@ _HM_Area.ShowName = function(tar)
 	end, tar, 384, "HAN_" .. tar.dwID)
 end
 
--- draw circle (N * shadow)
+-- draw circle (TriangleStrip)
 _HM_Area.DrawCircle = function(shape, tar, col, nRadius, nAlpha, nThick)
-	if not shape.tCircle then
-		-- count circle shadows
-		shape.tCircle = {}
+	if not shape.tPoint then
+		shape:SetTriangleFan(true, Scene_GetSceneID())
+		shape:SetD3DPT(D3DPT.TRIANGLESTRIP)
+		-- count points
+		shape.tPoint = {}
 		nRadius = nRadius or 640
 		nThick = nThick or math.ceil(6 * nRadius / 640)
 		local dwMaxRad = math.pi + math.pi
-		local dwCurRad, dwStepRad = 0, dwMaxRad / (nRadius / 16)
+		local dwStepRad = dwMaxRad / (nRadius / 16)
+		local dwCurRad = 0 - dwStepRad
 		repeat
-			local sha = _HM_Area.pDraw:New()
 			local tRad = {}
 			tRad[1] = { nRadius, dwCurRad }
 			tRad[2] = { nRadius - nThick, dwCurRad }
-			tRad[3] = { nRadius - nThick, dwCurRad + dwStepRad }
-			tRad[4] = { nRadius, dwCurRad + dwStepRad }
-			sha.tPoint = {}
 			for _, v in ipairs(tRad) do
-				nX = tar.nX + math.ceil(math.cos(v[2]) * v[1])
-				nY = tar.nY + math.ceil(math.sin(v[2]) * v[1])
-				table.insert(sha.tPoint, { nX, nY, tar.nZ })
+				local nX = tar.nX + math.ceil(math.cos(v[2]) * v[1])
+				local nY = tar.nY + math.ceil(math.sin(v[2]) * v[1])
+				table.insert(shape.tPoint, { nX, nY })
 			end
-			sha:SetTriangleFan(true)
-			table.insert(shape.tCircle, sha)
 			dwCurRad = dwCurRad + dwStepRad
 		until dwMaxRad <= dwCurRad
 	end
-	-- draw shadows
-	for k, v in ipairs(shape.tCircle) do
-		for kk, vv in ipairs(v.tPoint) do
-			HM.ApplyScreenPoint(function(nX, nY)
-				if not v:IsValid() or v.bFree then
-					return
-				end
-				if kk == 1 then
-					v:ClearTriangleFanPoint()
-					v:Show()
-				end
-				if nX then
-					v:AppendTriangleFanPoint(nX, nY, col[1], col[2], col[3], nAlpha)
-				end
-			end, vv[1], vv[2], tar.nZ, "HAC_" .. tar.dwID .."_" .. k .. "_" .. kk)
-		end
+	-- draw points
+	shape:ClearTriangleFanPoint()
+	shape:Show()
+	for k, v in ipairs(shape.tPoint) do
+		shape:AppendTriangleFan3DPoint(v[1], v[2], tar.nZ, col[1], col[2], col[3], nAlpha)
 	end
 end
 
 -- draw shape (1 shadow)
-_HM_Area.DrawCake = function(shape, tar, col, nRadius, nAlpha, bCircle)
+_HM_Area.DrawCake = function(shape, tar, col, nRadius, nAlpha)
 	if not shape.tPoint then
-		shape:SetTriangleFan(true)
 		shape.tPoint = {}
 		nRadius = nRadius or 640
 		local dwMaxRad = math.pi + math.pi
@@ -391,40 +376,16 @@ _HM_Area.DrawCake = function(shape, tar, col, nRadius, nAlpha, bCircle)
 			nY = tar.nY + math.ceil(math.sin(dwCurRad) * nRadius)
 			table.insert(shape.tPoint, { nX, nY })
 		until dwMaxRad <= dwCurRad
+		shape:SetTriangleFan(true, Scene_GetSceneID())
+		shape:SetD3DPT(D3DPT.TRIANGLEFAN)
 	end
+	shape:ClearTriangleFanPoint()
+	shape:Show()
 	-- center point
-	HM.ApplyScreenPoint(function(nX, nY)
-		if not shape:IsValid() or shape.bFree then
-			return
-		end
-		if not nX then
-			bCircle = false
-		end
-		-- update circle
-		if bCircle then
-			nAlpha = math.ceil(nAlpha / 3)
-		elseif shape.tCircle then
-			for _, v in ipairs(shape.tCircle) do
-				v:Hide()
-			end
-		end
-		if not nX then
-			return shape:Hide()
-		end
-		shape:ClearTriangleFanPoint()
-		shape:AppendTriangleFanPoint(nX, nY, col[1], col[2], col[3], 0)
-		shape:Show()
-	end, tar.nX, tar.nY,tar.nZ, "HAK_" .. tar.dwID)
+	shape:AppendTriangleFan3DPoint(tar.nX, tar.nY, tar.nZ, col[1], col[2], col[3], 0)
 	-- points
 	for k, v in ipairs(shape.tPoint) do
-		HM.ApplyScreenPoint(function(nX, nY)
-			if not shape:IsValid() or shape.bFree then
-				return
-			end
-			if nX then
-				shape:AppendTriangleFanPoint(nX, nY, col[1], col[2], col[3], nAlpha)
-			end
-		end, v[1], v[2], tar.nZ, "HAK_" .. tar.dwID .. "_" .. k)
+		shape:AppendTriangleFan3DPoint(v[1], v[2], tar.nZ, col[1], col[2], col[3], nAlpha)
 	end
 end
 
@@ -444,10 +405,16 @@ _HM_Area.DrawArea = function(tar)
 		data.shape = _HM_Area.pDraw:New()
 	end
 	if nRadius >= 256 and nDistance < 35 then
-		_HM_Area.DrawCake(data.shape, tar, color, nRadius, nAlpha, true)
-		_HM_Area.DrawCircle(data.shape, tar, color, nRadius, nAlpha * 1.3)
+		if not data.circle then
+			data.circle = _HM_Area.pDraw:New()
+		end
+		_HM_Area.DrawCake(data.shape, tar, color, nRadius, nAlpha / 3)
+		_HM_Area.DrawCircle(data.circle, tar, color, nRadius, nAlpha * 1.3)
 	else
-		_HM_Area.DrawCake(data.shape, tar, color, nRadius, nAlpha, false)
+		if data.circle then
+			data.circle:Hide()
+		end
+		_HM_Area.DrawCake(data.shape, tar, color, nRadius, nAlpha)
 	end
 end
 
@@ -491,17 +458,12 @@ _HM_Area.RemoveFromList = function(dwID)
 			_HM_Area.pLabel:Free(data.label)
 		end
 		if data.shape then
-			if data.shape.tCircle then
-				for _, v in ipairs(data.shape.tCircle) do
-					v.tPoint = nil
-					_HM_Area.pDraw:Free(v)
-					--_HM_Area.pDraw:Remove(v)
-				end
-			end
-			data.shape.tCircle = nil
 			data.shape.tPoint = nil
 			_HM_Area.pDraw:Free(data.shape)
-			--_HM_Area.pDraw:Remove(data.shape)
+		end
+		if data.circle then
+			data.circle.tPoint = nil
+			_HM_Area.pDraw:Free(data.circle)
 		end
 		_HM_Area.tList[dwID] = nil
 	else
@@ -510,9 +472,9 @@ _HM_Area.RemoveFromList = function(dwID)
 		end
 		if data.shape then
 			data.shape:Hide()
-			if data.shape.tCircle then
-				for _, v in ipairs(data.shape.tCircle) do v:Hide() end
-			end
+		end
+		if data.circle then
+			data.circle:Hide()
 		end
 	end
 end
