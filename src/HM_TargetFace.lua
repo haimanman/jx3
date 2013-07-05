@@ -80,7 +80,7 @@ _HM_TargetFace.OnRender = function()
 				_t.hTargetFace:Hide()
 			end
 			if HM_TargetFace.bTargetShape then
-				_t.DrawShape(tar, _t.hTargetShape, 360, t.nShapeRadius, t.nShapeAlpha, t.tTargetShapeColor)
+				_t.DrawShape(tar, _t.hTargetShape, 360, t.nShapeRadius / 2, t.nShapeAlpha, t.tTargetShapeColor)
 			else
 				_t.hTargetShape:Hide()
 			end
@@ -102,7 +102,7 @@ _HM_TargetFace.OnRender = function()
 				_t.hFocusFace:Hide()
 			end
 			if HM_TargetFace.bFocusShape and (not HM_TargetFace.bTargetShape or not bIsTarget) then
-				_t.DrawShape(tar, _t.hFocusShape, 360, t.nShapeRadius, t.nShapeAlpha, t.tFocusShapeColor)
+				_t.DrawShape(tar, _t.hFocusShape, 360, t.nShapeRadius / 2, t.nShapeAlpha, t.tFocusShapeColor)
 			else
 				_t.hFocusShape:Hide()
 			end
@@ -214,7 +214,7 @@ _HM_TargetFace.PS.OnPanelActive = function(frame)
 		end)
 	end)
 	nX = ui:Append("Text", { txt = _L["The foot shape radius"], x = 37, y = 228 }):Pos_()
-	ui:Append("WndTrackBar", { x = nX, y = 232, txt = _L[" feet"] })
+	ui:Append("WndTrackBar", { x = nX, y = 232, txt = "/2" .. _L[" feet"] })
 	:Range(1, 26, 25):Value(t.nShapeRadius):Change(function(nVal) t.nShapeRadius = nVal end)
 	nX = ui:Append("Text", { txt = _L["The foot shape transparency"], x = 37, y = 256 }):Pos_()
 	ui:Append("WndTrackBar", { x = nX, y = 260 })
