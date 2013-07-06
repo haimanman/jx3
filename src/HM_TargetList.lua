@@ -1470,6 +1470,9 @@ end
 
 HM_TargetList.OnItemRButtonDown = function()
 	if this.dwID and this.szName then
+		if _HM_TargetList.bInArena then
+			return HM.SetTarget(this.dwID)
+		end
 		local m0 = {}
 		table.insert(m0, _HM_TargetList.GetFocusItemMenu(this.dwID))
 		if IsPlayer(this.dwID) then
@@ -1489,6 +1492,7 @@ HM_TargetList.OnItemRButtonDown = function()
 				fnDisable = function() return not GetPlayer(dwID) end,
 				fnAction = function() ViewInviteToPlayer(dwID) end
 			})
+			--[[
 			table.insert(m0, { szOption = g_tStrings.LOOKUP_CHANNEL,
 				fnDisable = function() return not GetPlayer(dwID) end,
 				fnAction = function() ViewOtherPlayerChannels(dwID) end
@@ -1501,6 +1505,7 @@ HM_TargetList.OnItemRButtonDown = function()
 				end,
 				fnAction = function() ViewOtherZhenPaiSkill(dwID) end
 			})
+			--]]
 			table.insert(m0, { szOption = g_tStrings.LOOKUP_CORPS,
 				fnDisable = function() return not GetPlayer(dwID) end,
 				fnAction = function()
