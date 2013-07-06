@@ -1163,19 +1163,23 @@ end
 -- 根据Buff ID 及等级获取 BUFF 的名称及图标 ID（内置缓存处理）
 -- (string, number) HM.GetBuffName(number dwBuffID[, number dwLevel])
 HM.GetBuffName = function(dwBuffID, dwLevel)
-	if not _HM.tBuffCache[dwBuffID] then
+	local xKey = dwBuffID
+	if dwBuffID == 4937 and dwLevel ~= nil then
+		xKey = dwBuffID .. "_" .. dwLevel
+	end
+	if not _HM.tBuffCache[xKey] then
 		local tLine = Table_GetBuff(dwBuffID, dwLevel or 1)
 		if tLine then
-			_HM.tBuffCache[dwBuffID] = { tLine.szName, tLine.dwIconID }
+			_HM.tBuffCache[xKey] = { tLine.szName, tLine.dwIconID }
 		else
 			local szName = "BUFF#" .. dwBuffID
 			if dwLevel then
 				szName = szName .. ":" .. dwLevel
 			end
-			_HM.tBuffCache[dwBuffID] = { szName, -1 }
+			_HM.tBuffCache[xKey] = { szName, -1 }
 		end
 	end
-	return unpack(_HM.tBuffCache[dwBuffID])
+	return unpack(_HM.tBuffCache[xKey])
 end
 
 -- 注册事件，和系统的区别在于可以指定一个 KEY 防止多次加载
