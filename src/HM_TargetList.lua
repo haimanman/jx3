@@ -480,7 +480,12 @@ _HM_TargetList.UpdateFocusItem = function(h, tar)
 				else
 					hBox:SetOverText(0, "")
 				end
-				hBox:SetOverText(1, string.format("%d\"", (buff.nEndFrame - GetLogicFrameCount()) / GLOBAL.GAME_FPS))
+				local nSec = (buff.nEndFrame - GetLogicFrameCount()) / GLOBAL.GAME_FPS
+				if nSec < 3600 then
+					hBox:SetOverText(1, string.format("%d\"", nSec))
+				else
+					hBox:SetOverText(1, "")
+				end
 				hBox.dwOwner = tar.dwID
 			end
 			hText:SetText(szText)

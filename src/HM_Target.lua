@@ -889,8 +889,10 @@ HM_TargetDir.UpdateState = function(frame, tar)
 		local nSec = (buff.nEndFrame - GetLogicFrameCount()) / GLOBAL.GAME_FPS
 		if nSec < 3 then
 			hBox:SetOverText(1, string.format("%.1f\"", nSec))
-		else
+		elseif nSec < 3600 then
 			hBox:SetOverText(1, string.format("%d\"", nSec))
+		else
+			hBox:SetOverText(1, "")
 		end
 		hBox.dwOwner = tar.dwID
 	end
