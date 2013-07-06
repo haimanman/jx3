@@ -293,6 +293,98 @@ _HM.ApplyPointCallback = function(data, nX, nY)
 	end
 end
 
+-- channel skill
+_HM.tChannelSkill = {
+	[300] = 80, [368] = 80, [565] = 48, [567] = 160, [570] = 80, [1645] = 84,
+	[2233] = 80, [2235] = 128, [2589] = 96, [2636] = 80, [2674] = 8, [2707] = 48,
+	[2724] = 40, [3093] = 40, [3100] = 48, [3961] = 120, [3985] = 114, [5268] = 40,
+	[5270] = 153, [6444] = 40, [6675] = 80, [7967] = 96, [7968] = 96,
+}
+
+-- broken skill
+_HM.tNonBrokenSkill = {
+	[62] = true, [72] = true, [173] = true, [832] = true, [841] = true, [847] = true,
+	[854] = true, [855] = true, [961] = true, [974] = true, [986] = true, [1019] = true,
+	[1036] = true, [1039] = true, [1041] = true, [1045] = true, [1047] = true, [1049] = true,
+	[1051] = true, [1055] = true, [1056] = true, [1067] = true, [1081] = true, [1133] = true,
+	[1134] = true, [1135] = true, [1136] = true, [1138] = true, [1139] = true, [1140] = true,
+	[1142] = true, [1143] = true, [1144] = true, [1146] = true, [1147] = true, [1148] = true,
+	[1182] = true, [1184] = true, [1193] = true, [1194] = true, [1245] = true, [1248] = true,
+	[1249] = true, [1294] = true, [1328] = true, [1330] = true, [1332] = true, [1340] = true,
+	[1342] = true, [1344] = true, [1347] = true, [1348] = true, [1349] = true, [1351] = true,
+	[1357] = true, [1362] = true, [1375] = true, [1381] = true, [1413] = true, [1443] = true,
+	[1448] = true, [1452] = true, [1482] = true, [1492] = true, [1501] = true, [1514] = true,
+	[1542] = true, [1546] = true, [1547] = true, [1560] = true, [1562] = true, [1624] = true,
+	[1629] = true, [1630] = true, [1631] = true, [1632] = true, [1634] = true, [1635] = true,
+	[1639] = true, [1640] = true, [1641] = true, [1645] = true, [1652] = true, [1680] = true,
+	[1742] = true, [1767] = true, [1770] = true, [1778] = true, [1804] = true, [1821] = true,
+	[1953] = true, [1960] = true, [1963] = true, [1970] = true, [1977] = true, [1979] = true,
+	[1996] = true, [2005] = true, [2008] = true, [2010] = true, [2013] = true, [2015] = true,
+	[2026] = true, [2029] = true, [2031] = true, [2036] = true, [2038] = true, [2041] = true,
+	[2048] = true, [2050] = true, [2051] = true, [2054] = true, [2080] = true, [2094] = true,
+	[2105] = true, [2118] = true, [2141] = true, [2157] = true, [2193] = true, [2198] = true,
+	[2199] = true, [2203] = true, [2208] = true, [2235] = true, [2255] = true, [2259] = true,
+	[2271] = true, [2279] = true, [2282] = true, [2285] = true, [2289] = true, [2290] = true,
+	[2296] = true, [2311] = true, [2312] = true, [2346] = true, [2347] = true, [2348] = true,
+	[2349] = true, [2360] = true, [2361] = true, [2362] = true, [2366] = true, [2368] = true,
+	[2370] = true, [2371] = true, [2510] = true, [2514] = true, [2522] = true, [2531] = true,
+	[2532] = true, [2533] = true, [2534] = true, [2535] = true, [2548] = true, [2777] = true,
+	[2782] = true, [2798] = true, [2809] = true, [2812] = true, [2824] = true, [2829] = true,
+	[2874] = true, [2879] = true, [2880] = true, [2881] = true, [2882] = true, [2883] = true,
+	[2885] = true, [2886] = true, [2887] = true, [2889] = true, [2890] = true, [2892] = true,
+	[2901] = true, [3011] = true, [3022] = true, [3025] = true, [3033] = true, [3100] = true,
+	[3128] = true, [3129] = true, [3134] = true, [3135] = true, [3137] = true, [3143] = true,
+	[3149] = true, [3164] = true, [3166] = true, [3173] = true, [3177] = true, [3179] = true,
+	[3180] = true, [3182] = true, [3196] = true, [3197] = true, [3246] = true, [3250] = true,
+	[3254] = true, [3256] = true, [3257] = true, [3318] = true, [3365] = true, [3377] = true,
+	[3392] = true, [3398] = true, [3504] = true, [3530] = true, [3531] = true, [3533] = true,
+	[3535] = true, [3536] = true, [3539] = true, [3547] = true, [3549] = true, [3564] = true,
+	[3566] = true, [3571] = true, [3577] = true, [3578] = true, [3580] = true, [3585] = true,
+	[3590] = true, [3592] = true, [3593] = true, [3595] = true, [3597] = true, [3602] = true,
+	[3603] = true, [3613] = true, [3616] = true, [3623] = true, [3628] = true, [3641] = true,
+	[3651] = true, [3660] = true, [3664] = true, [3666] = true, [3669] = true, [3671] = true,
+	[3682] = true, [3684] = true, [3685] = true, [3688] = true, [3703] = true, [3705] = true,
+	[3708] = true, [3713] = true, [3714] = true, [3717] = true, [3718] = true, [3719] = true,
+	[3731] = true, [3760] = true, [3792] = true, [3793] = true, [3874] = true, [3900] = true,
+	[3912] = true, [3914] = true, [3917] = true, [3926] = true, [3970] = true, [3985] = true,
+	[4023] = true, [4127] = true, [4128] = true, [4152] = true, [4169] = true, [4170] = true,
+	[4171] = true, [4177] = true, [4179] = true, [4193] = true, [4200] = true, [4202] = true,
+	[4204] = true, [4206] = true, [4208] = true, [4210] = true, [4230] = true, [4231] = true,
+	[4240] = true, [4248] = true, [4250] = true, [4252] = true, [4269] = true, [4274] = true,
+	[4306] = true, [4310] = true, [4312] = true, [4315] = true, [4337] = true, [4343] = true,
+	[4360] = true, [4364] = true, [4372] = true, [4377] = true, [4379] = true, [4381] = true,
+	[4385] = true, [4398] = true, [4399] = true, [4400] = true, [4402] = true, [4403] = true,
+	[4412] = true, [4455] = true, [4456] = true, [4457] = true, [4496] = true, [4751] = true,
+	[4757] = true, [4782] = true, [4801] = true, [4813] = true, [4861] = true, [4865] = true,
+	[4953] = true, [4975] = true, [4977] = true, [4980] = true, [5131] = true, [5133] = true,
+	[5137] = true, [5233] = true, [5247] = true, [5255] = true, [5256] = true, [5270] = true,
+	[5277] = true, [5282] = true, [5284] = true, [5293] = true, [5297] = true, [5425] = true,
+	[5427] = true, [5430] = true, [5438] = true, [5441] = true, [5443] = true, [5446] = true,
+	[5447] = true, [5450] = true, [5458] = true, [5459] = true, [5477] = true, [5481] = true,
+	[5493] = true, [5495] = true, [5496] = true, [5512] = true, [5513] = true, [5531] = true,
+	[5549] = true, [5599] = true, [5609] = true, [5616] = true, [5624] = true, [5627] = true,
+	[5631] = true, [5642] = true, [6161] = true, [6184] = true, [6223] = true, [6225] = true,
+	[6245] = true, [6278] = true, [6280] = true, [6286] = true, [6306] = true, [6309] = true,
+	[6313] = true, [6314] = true, [6318] = true, [6332] = true, [6414] = true, [6427] = true,
+	[6916] = true, [7190] = true, [7194] = true, [7196] = true, [7200] = true, [7202] = true,
+	[7203] = true, [7204] = true, [7205] = true, [7206] = true, [7210] = true, [7215] = true,
+	[7216] = true, [7217] = true, [7218] = true, [7219] = true, [7220] = true, [7225] = true,
+	[7228] = true, [7229] = true, [7230] = true, [7242] = true, [7259] = true, [7280] = true,
+	[7281] = true, [7331] = true, [7343] = true, [7347] = true, [7361] = true, [7364] = true,
+	[7379] = true, [7381] = true, [7392] = true, [7393] = true, [7395] = true, [7396] = true,
+	[7397] = true, [7398] = true, [7399] = true, [7469] = true, [7485] = true, [7492] = true,
+	[7503] = true, [7535] = true, [7562] = true, [7623] = true, [7625] = true, [7629] = true,
+	[7632] = true, [7661] = true, [7662] = true, [7676] = true, [7679] = true, [7681] = true,
+	[7719] = true, [7720] = true, [7721] = true, [7722] = true, [7730] = true, [7731] = true,
+	[7732] = true, [7736] = true, [7744] = true, [7747] = true, [7751] = true, [7757] = true,
+	[7758] = true, [7770] = true, [7782] = true, [7784] = true, [7787] = true, [7789] = true,
+	[7790] = true, [7795] = true, [7797] = true, [7806] = true, [7809] = true, [7813] = true,
+	[7835] = true, [7867] = true, [7868] = true, [7869] = true, [7894] = true, [7897] = true,
+	[7898] = true, [7902] = true, [7905] = true, [7908] = true, [7913] = true, [7917] = true,
+	[7919] = true, [7925] = true, [7933] = true, [7941] = true, [7942] = true, [7952] = true,
+	[7953] = true, [7954] = true,
+}
+
 -------------------------------------
 -- 更新设置面板界面
 -------------------------------------
@@ -1256,6 +1348,18 @@ HM.CanUseSkill = function(dwSkillID)
 		end
 	end
 	return false
+end
+
+-- 根据技能 ID 获取引导帧数，非引导技能返回 nil
+-- (number) HM.GetChannelSkillFrame(number dwSkillID)
+HM.GetChannelSkillFrame = function(dwSkillID)
+	return _HM.tChannelSkill[dwSkillID]
+end
+
+-- 根据技能 ID 判断当前技能是否可打断
+-- (bool) HM.CanBrokenSkill(number dwSkillID)
+HM.CanBrokenSkill = function(dwSkillID)
+	return not _HM.tNonBrokenSkill[dwSkillID]
 end
 
 -- 根据名称获取弹出菜单数据，可调返回值中的 fnAction 执行操作
