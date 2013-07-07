@@ -4,7 +4,8 @@
 
 HM_About = {
 	bPlayOpen = true,	-- 播放开场音乐
-	szDate = "",
+	szCheckDate = "",	-- 更新检测日期
+	nSkipAlert = 0,			-- 忽略更新提醒天数（取消后忽略7天）
 }
 HM.RegisterCustomData("HM_About")
 
@@ -119,7 +120,7 @@ _HM_About.CheckUpdate = function(btn)
 		szUrl = szUrl .. "&manual=yes"
 		btn:Text(_L["Checking..."]):Enable(false)
 	else
-		if szDate == HM_About.szDate then
+		if szDate == HM_About.szCheckDate then
 			_HM_About.bChecked = true
 			return
 		end
@@ -135,15 +136,22 @@ _HM_About.CheckUpdate = function(btn)
 			if btn then
 				HM.Alert(_L["Already up to date!"])
 			end
-		else
+		elseif btn or HM_About.nSkipAlert <= 0 then
 			HM.Confirm(_L("The new HM version: %s, Goto download page?", szTitle), function()
 				OpenInternetExplorer(_HM_About.szHost .. "down/", true)
+			end, function()
+				if not btn then
+					HM_About.nSkipAlert = 7
+				end
 			end)
 		end
 		if btn then
 			btn:Text(_L["Check update"]):Enable(true)
 		else
-			HM_About.szDate = szDate
+			if HM_About.nSkipAlert > 0 then
+				HM_About.nSkipAlert = HM_About.nSkipAlert - 1
+			end
+			HM_About.szCheckDate = szDate
 			_HM_About.bChecked = true
 		end
 	end)
