@@ -639,6 +639,7 @@ data = {
 	["Dodge_%s"] = "…¡±‹_%s",
 	["Uncontrollable2_%s"] = "√‚øÿ2_%s",
 	["Uncontrollable_%s"] = "√‚øÿ_%s",
+	["Breakout_%s"] = "±¨∑¢_%s",
 	["Slower_%s"] = "ºıÀŸ_%s",
 	["Reduce-dealing_%s"] = "ºı¡∆_%s",
 	["Reduce-injury_%s"] = "ºı…À_%s",

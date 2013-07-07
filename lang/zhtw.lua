@@ -639,6 +639,7 @@ data = {
 	["Dodge_%s"] = "閃避_%s",
 	["Uncontrollable2_%s"] = "免控2_%s",
 	["Uncontrollable_%s"] = "免控_%s",
+	["Breakout_%s"] = "爆發_%s",
 	["Slower_%s"] = "減速_%s",
 	["Reduce-dealing_%s"] = "減療_%s",
 	["Reduce-injury_%s"] = "減傷_%s",
