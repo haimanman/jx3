@@ -829,6 +829,8 @@ HM_TargetDir.GetState = function(tar, bBuff)
 		return 2027, g_tStrings.tPlayerMoveState[tar.nMoveState]
 	elseif tar.nMoveState == MOVE_STATE.ON_DASH then
 		return 2030, g_tStrings.tPlayerMoveState[tar.nMoveState]
+	elseif tar.nMoveState == MOVE_STATE.ON_SKILL_MOVE_DST then
+		return 1487, _L["Move"]
 	else
 		local szText, dwIcon, buff
 		-- check buff

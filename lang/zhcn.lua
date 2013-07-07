@@ -507,6 +507,7 @@ data = {
 	["Freeze"] = "定身",
 	["Entrap"] = "锁足",
 	["Slower"] = "减速",
+	["Move"] = "位移",
 	["HM target direction"] = "海鳗目标指示",
 	["%d feet"] = "%d尺",
 	["%.1f feet"] = "%.1f尺",
