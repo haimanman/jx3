@@ -496,6 +496,16 @@ end
 ---------------------------------------------------------------------
 -- 事件处理函数
 ---------------------------------------------------------------------
+-- 图标为 13 的特殊喊话技能
+_HM_Jabber.tSpecialSkill = {
+	[9007] = true,	[53] = true,	[54] = true,
+	[4097] = true,	[3691] = true,	[4972] = true,
+	[4973] = true,	[5129] = true,	[5130] = true,
+	[5209] = true,	[5210] = true,	[5211] = true,
+	[5212] = true,	[5215] = true,	[5218] = true,
+	[5244] = true,
+}
+
 _HM_Jabber.OnSkillHit = function(dwCaster, dwTarget, dwID, dwLevel, nType)
 	local me = GetClientPlayer()
 	if dwID == _HM_Jabber.dwPrepareID then
@@ -510,9 +520,7 @@ _HM_Jabber.OnSkillHit = function(dwCaster, dwTarget, dwID, dwLevel, nType)
 	local tMessage = HM_Jabber.tMessage.skill
 	local szName, dwIcon = HM.GetSkillName(dwID, dwLevel)
 	HM.Debug3("#" .. dwCaster .. "#" .. arg0 .. " (" .. szName .. ", Lv" .. dwLevel .. ")")
-	if szName ~= "" and (dwIcon ~= 13 or dwID == 9007 or dwID == 53 or dwID == 54 or dwID == 4097 or dwID == 3691)
-		and tMessage[szName]
-	then
+	if szName ~= "" and (dwIcon ~= 13 or _HM_Jabber.tSpecialSkill[dwID]) and tMessage[szName] then
 		local tar, szMsg = nil, nil
 		if dwCaster == me.dwID then
 			tar = HM.GetTarget(dwTarget)
