@@ -1331,13 +1331,16 @@ HM.RegisterCustomUpdater = function(fnAction, nUpdateDate)
 end
 
 -- 判断当前用户是否可用某个技能
--- (bool) HM.CanUseSkill(number dwSkillID)
-HM.CanUseSkill = function(dwSkillID)
+-- (bool) HM.CanUseSkill(number dwSkillID[, dwLevel])
+HM.CanUseSkill = function(dwSkillID, dwLevel)
 	local me, box = GetClientPlayer(), _HM.hBox
 	if me and box then
-		local dwLevel = 1
-		if dwSkillID ~= 9007 then
-			dwLevel = me.GetSkillLevel(dwSkillID)
+		if not dwLevel then
+			if dwSkillID ~= 9007 then
+				dwLevel = me.GetSkillLevel(dwSkillID)
+			else
+				dwLevel = 1
+			end
 		end
 		if dwLevel > 0 then
 			box:EnableObject(false)
