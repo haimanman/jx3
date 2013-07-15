@@ -2,7 +2,7 @@
 <jx3:hm xmlns:jx3="http://haimanchajian.com">
   <name><![CDATA[海鳗、插件集]]></name>
   <desc><![CDATA[大量非常方便的 PVP 插件！ --== 海鳗鳗@步莲台 ==--]]></desc>
-  <version dword="0x2010904">2.1.9b4</version>
+  <version dword="0x2020000">2.2.0</version>
   <clientVersion dword="0x20101">2.1.1</clientVersion>
   <urlPrefix>http://jx3.hightman.cn/sync/HM/</urlPrefix>
   <info>
@@ -31,7 +31,8 @@
     <file size="22464">API.md</file>
     <file size="19630">CHANGELOG.txt</file>
     <file size="2874">LICENSE.txt</file>
-    <file size="2072">README.md</file>
+    <file size="13715">MACRO.txt</file>
+    <file size="2151">README.md</file>
     <file size="16741">hero/female_cont_1.wav</file>
     <file size="19746">hero/female_cont_2.wav</file>
     <file size="15476">hero/female_normal_1.wav</file>
@@ -40,7 +41,7 @@
     <file size="15318">hero/male_cont_2.wav</file>
     <file size="8834">hero/male_normal_1.wav</file>
     <file size="18797">hero/male_normal_2.wav</file>
-    <file size="1013">info.ini</file>
+    <file size="1048">info.ini</file>
     <file size="10400">lab/HM_Taoguan.lua</file>
     <file size="397">lang/default.lua</file>
     <file size="40108">lang/zhcn.lua</file>
