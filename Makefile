@@ -46,6 +46,8 @@ lang/zhtw.lua: lang/zhcn.lua
 
 dist-zip:
 	git archive --prefix HM/ HEAD | tar -x
+	cp -f src/HM.lua HM/src/HM.lua
+	cp -f info.ini HM/info.ini
 	luac -s -o HM/lab/HM_Cast.lua lab/HM_Cast.lua
 	zip -qrm9 dist/HM-`cat VERSION`.zip HM
 
