@@ -51,10 +51,14 @@ dist-zip:
 	luac -s -o HM/lab/HM_Cast.lua lab/HM_Cast.lua
 	zip -qrm9 dist/HM-`cat VERSION`.zip HM
 
+src-bak:
+	zip -rq9 dist/HM-`cat VERSION`-src.zip * -x dist/*.zip
+
 archive: lang/zhtw.lua
 	git ci -a -m "Release "`cat VERSION`
 	git tag `cat VERSION`
 	$(MAKE) dist-zip
+	$(MAKE) src-bak
 
 alpha: clean-check
 	$(PHP) dev/pre_release.php alpha
