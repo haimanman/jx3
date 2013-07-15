@@ -28,7 +28,7 @@ sync-page:
 	$(PHP) update_version.php
 	$(PHP) update_sync_file.php
 	git ci -a -m "Update gh-pages to "`cat VERSION`
-	git push
+	git push -f
 	scp sync.xml release.dat changelog.html jx3.hm:$(JX3_HM_DIR)/sync
 	scp dist/HM-`cat VERSION`.zip jx3.hm:$(JX3_HM_DIR)/down
 	ssh jx3.hm unzip -qq -o -d $(JX3_HM_DIR)/sync $(JX3_HM_DIR)/down/HM-`cat VERSION`.zip
