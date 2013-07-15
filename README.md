@@ -7,7 +7,7 @@
 下载
 -----
 
-  * 最新版本：[HM-2.1.9b2.zip](http://jx3.hightman.cn/down/)
+  * 最新版本：[HM-2.1.9b3.zip](http://jx3.hightman.cn/down/)
   * 官方网站：<http://haimanchajian.com>
   * 历史版本：<http://jx3.hightman.cn/down/>
   * 更新日志：<https://github.com/haimanman/jx3/commits/master>
@@ -30,6 +30,7 @@
   * 竞技场重伤自动交阵眼，战场守点方位提示，九宫计时，名剑币估算
   * 多焦点目标，目标列表筛选、排序等
   * 娱乐聊天助手，发布个人数据，ROLL 点娱乐等
+  * PVE 宏扩展，更丰富的判断条件及扩展技能
 
 
 wiki & 文档

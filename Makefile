@@ -24,7 +24,7 @@ clean-check:
 
 sync-page:
 	git co gh-pages
-	git co master -- LICENSE.txt
+	git co master -- LICENSE.txt MACRO.txt
 	$(PHP) update_version.php
 	$(PHP) update_sync_file.php
 	git ci -a -m "Update gh-pages to "`cat VERSION`
