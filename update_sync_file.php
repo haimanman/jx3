@@ -99,6 +99,7 @@ $modules = array(
 	'src/HM_Suit2.lua' => '可共享部位的快速脱换装助手、橙武必备',
 	'src/HM_ToolBox.lua' => '自动修理卖物、自动确认、自动五行石和一键交易行',
 	'src/HM_Doodad.lua' => '自动拾取和过滤、自动采集助手',
+	'lab/HM_Cast.lua' => 'PVE 宏扩展，打怪更高效',
 	//'lab/HM_Taoguan.lua' => '新年活动智能砸年兽陶罐',
 );
 
