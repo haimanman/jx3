@@ -24,7 +24,7 @@ clean-check:
 
 sync-page:
 	git co gh-pages
-	git co master -- LICENSE.txt
+	git co master -- LICENSE.txt MACRO.txt
 	$(PHP) update_version.php
 	$(PHP) update_sync_file.php
 	git ci -a -m "Update gh-pages to "`cat VERSION`
@@ -44,15 +44,20 @@ lang/zhtw.lua: lang/zhcn.lua
 	$(PHP) -r 'echo mb_convert_encoding(file_get_contents("tmp.lang"), "utf8", "big5");' > lang/zhtw.lua
 	rm -f tmp.lang
 
+dist-zip:
+	git archive --prefix HM/ HEAD | tar -x
+	luac -s -o HM/lab/HM_Cast.lua lab/HM_Cast.lua
+	zip -qrm9 dist/HM-`cat VERSION`.zip HM
+
 archive: lang/zhtw.lua
 	git ci -a -m "Release "`cat VERSION`
 	git tag `cat VERSION`
-	git archive --format zip --prefix HM/ -o dist/HM-`cat VERSION`.zip HEAD
+	$(MAKE) dist-zip
 
 alpha: clean-check
 	$(PHP) dev/pre_release.php alpha
-	git ci -a -m "Internal alpha "`cat VERSION`
-	git archive --format zip --prefix HM/ -o dist/HM-`cat VERSION`.zip HEAD
+	$(MAKE) dist-zip
+	git reset --hard HEAD
 
 beta: clean-check
 	$(PHP) dev/pre_release.php beta
