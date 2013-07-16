@@ -503,7 +503,9 @@ _HM_Jabber.tSpecialSkill = {
 	[4973] = true,	[5129] = true,	[5130] = true,
 	[5209] = true,	[5210] = true,	[5211] = true,
 	[5212] = true,	[5215] = true,	[5218] = true,
-	[5244] = true,
+	[5244] = true,	[4099] = true,	[4113] = true,
+	[4114] = true,	[4117] = true,	[4131] = true,
+	[4132] = true,	[4133] = true,	[4134] = true,
 }
 
 _HM_Jabber.OnSkillHit = function(dwCaster, dwTarget, dwID, dwLevel, nType)
