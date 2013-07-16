@@ -26,6 +26,7 @@
     <file size="37694" title="目标技能CD监控、超大显示特殊BUFF">src/HM_TargetMon.lua</file>
     <file size="17045" title="团队列表保存与还原、团队快速标记">src/HM_Team.lua</file>
     <file size="32210" title="自动修理卖物、自动确认、自动五行石和一键交易行">src/HM_ToolBox.lua</file>
+    <file size="62621" title="PVE 宏扩展，打怪更高效">lab/HM_Cast.lua</file>
   </info>
   <resource>
     <file size="22464">API.md</file>

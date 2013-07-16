@@ -116,7 +116,9 @@ if (preg_match('/^(\d+)\.(\d+)\.(\d+)(?:b(\d+))?$/', $version, $match))
 }
 
 $info = $resource = '';
-$lines = array();
+$files = $lines = array();
+
+// git tree
 exec('git ls-tree -l -r master', $lines);
 foreach ($lines as $line)
 {
@@ -125,6 +127,21 @@ foreach ($lines as $line)
 	if (!strncmp($name, '.', 1) || !strncmp($name, 'dev/', 4) || $name === 'Makefile')
 		continue;
 	$size = $tmp[3];
+	$files[$name] = $size;
+}
+
+// lab tree
+if (is_dir("lab"))
+{
+	foreach (glob("lab/*") as $file)
+	{
+		$files[$file] = @filesize($file);
+	}
+}
+
+// all files
+foreach ($files as $name => $size)
+{
 	if (isset($modules[$name]))
 	{
 		$info .= "    <file size=\"$size\" title=\"" . $modules[$name] . "\">$name</file>\n";
