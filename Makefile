@@ -13,6 +13,7 @@ all:
 	@echo "make beta    : create a beta release"
 	@echo "make stable  : create a stable release"
 	@echo "make alpha   : create a local alpha release"
+	@echo "make hotfix  : just update the current package"
 	@echo "------------------------------------------"
 	@echo "Homepage     : http://haimanchajian.com"
 
@@ -31,6 +32,7 @@ sync-page:
 	git push -f
 	scp sync.xml release.dat changelog.html jx3.hm:$(JX3_HM_DIR)/sync
 	scp dist/HM-`cat VERSION`.zip jx3.hm:$(JX3_HM_DIR)/down
+	ssh jx3.hm rm -rf -d $(JX3_HM_DIR)/sync/HM
 	ssh jx3.hm unzip -qq -o -d $(JX3_HM_DIR)/sync $(JX3_HM_DIR)/down/HM-`cat VERSION`.zip
 	git co master
 
@@ -59,6 +61,13 @@ archive: lang/zhtw.lua
 	git tag `cat VERSION`
 	$(MAKE) dist-zip
 	$(MAKE) src-bak
+
+hotfix: clean-check
+	$(MAKE) dist-zip
+	$(MAKE) src-bak
+	scp dist/HM-`cat VERSION`.zip jx3.hm:$(JX3_HM_DIR)/down
+	ssh jx3.hm rm -rf -d $(JX3_HM_DIR)/sync/HM
+	ssh jx3.hm unzip -qq -o -d $(JX3_HM_DIR)/sync $(JX3_HM_DIR)/down/HM-`cat VERSION`.zip
 
 alpha: clean-check
 	$(PHP) dev/pre_release.php alpha
