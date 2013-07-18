@@ -33,6 +33,7 @@ HM_ToolBox = {
 	bAutoDiamond = true,	-- 五行石精炼完成后自动再摆上次材料
 	bAnyDiamond = false,	-- 忽略五行石颜色，只考虑等级
 	bChatTime = true,		-- 聊天复制党
+	bNonwar = true,		-- 神行到非战乱地图
 	nBroadType = 0,
 	szBroadText = "Hi, nihao",
 }
@@ -478,6 +479,65 @@ _HM_ToolBox.BindStackButton = function()
 	end
 end
 
+-- 非战乱地图数据（相对于副本：战宝军械库位置 id = 160）
+_HM_ToolBox.tNonwarData = {
+	{ id = 15, x = -220, y = 20 }, -- 长安
+	{ id = 8, x = 40, y = -50 }, -- 洛阳
+	{ id = 11, x = 30, y = -140 }, -- 天策
+	{ id = 12, x = -30, y = 140 }, -- 枫华
+}
+
+-- 加入非战乱地图的神行按钮
+_HM_ToolBox.BindNonwarButton = function()
+	local h = Station.Lookup("Topmost1/WorldMap/Wnd_All", "Handle_CopyBtn")
+	if not h then return end
+	if HM_ToolBox.bNonwar and not h.bNonwared then
+		local me = GetClientPlayer()
+		if not me then return end
+		for i = 0, h:GetItemCount() - 1 do
+			local m = h:Lookup(i)
+			if m and m.mapid == 160 then
+				local _w, _ = m:GetSize()
+				local fS = m.w / _w
+				for _, v in ipairs(_HM_ToolBox.tNonwarData) do
+					local bOpen = me.GetMapVisitFlag(v.id)
+					local szFile, nFrame = "ui/Image/MiddleMap/MapWindow.UITex", 41
+					if bOpen then
+						nFrame = 98
+					end
+					h:AppendItemFromString("<image>name=\"nonwar_" .. v.id .. "\" path="..EncodeComponentsString(szFile).." frame="..nFrame.." eventid=341</image>")
+					local img = h:Lookup(h:GetItemCount() - 1)
+					img.bEnable, img.bSelect = bOpen, bOpen
+					img.x = m.x + v.x
+					img.y = m.y + v.y
+					img.w, img.h = m.w, m.h
+					img.id, img.mapid = v.id, v.id
+					img.middlemapindex = 0
+					img.name = Table_GetMapName(v.mapid)
+					img.city = img.name
+					img.button = m.button
+					img.copy = true
+					img:SetSize(img.w / fS, img.h / fS)
+					img:SetRelPos(img.x / fS - (img.w / fS / 2), img.y / fS - (img.h / fS / 2))
+				end
+				h:FormatAllItemPos()
+				break
+			end
+		end
+		h.bNonwared = true
+	end
+	if not HM_ToolBox.bNonwar and h.bNonwared then
+		for _, v in ipairs(_HM_ToolBox.tNonwarData) do
+			local img = h:Lookup("nonwar_" .. v.id)
+			if img then
+				h:RemoveItem(img)
+			end
+		end
+		h:FormatAllItemPos()
+		h.bNonwared = nil
+	end
+end
+
 -- 装备所在的 box 列表
 _HM_ToolBox.tEquipBox = {
 	["Wnd_Equit"] = {
@@ -765,6 +825,7 @@ _HM_ToolBox.OnAutoConfirm = function()
 		HM.DoMessageBox(szName)
 	end
 	_HM_ToolBox.BindStackButton()
+	_HM_ToolBox.BindNonwarButton()
 end
 
 -- 自动摆五行石材料
@@ -883,6 +944,11 @@ _HM_ToolBox.PS.OnPanelActive = function(frame)
 	:Click(function(bChecked)
 		HM_ToolBox.bChatTime = bChecked
 		_HM_ToolBox.OnChatPanelInit()
+	end)
+	-- fly to non-war map
+	ui:Append("WndCheckBox", { txt = _L["Allow fly to non-war maps"], x = nX + 10, y = 232, checked = HM_ToolBox.bNonwar })
+	:Click(function(bChecked)
+		HM_ToolBox.bNonwar = bChecked
 	end)
 	-- tong broadcast
 	ui:Append("Text", { txt = _L["Group whisper oline (Guild perm required)"], x = 0, y = 268, font = 27 })

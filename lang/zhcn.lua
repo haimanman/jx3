@@ -747,7 +747,8 @@ data = {
 	["Enable stack items by button"] = "启用一键堆叠按纽（背包/仓库）",
 	["Stack"] = "堆叠",
 	["Display equipment durability"] = "显示玩家装备耐久度",
-	["Show time and support copy in chat panel"] = "在聊天栏显示时间并支持复制",
+	["Show time and support copy in chat panel"] = "在聊天栏显示时间支持复制",
+	["Allow fly to non-war maps"] = "允许神行到非战乱地图",
 	-- src/HM_Marker.lua --
 	[" feet"] = " 尺",
 	-- src/HM_TargetFace.lua --
