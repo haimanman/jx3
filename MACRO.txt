@@ -94,6 +94,8 @@ puppet/nopuppet 自身带有千机变/没有千机变          puppet 或 puppet:底座|连弩|重
 party/noparty   自身有队友/没队友                  party=5 或 party>15 表示队友数量（含自己）
 --------------------------------------------------------------------------------
 qidian          自身职业点数(剑气/神机值/剑舞)     qidan>3 或 qidian=3 或 qidian<80
+rage            藏剑的剑气值                       rage>10 或 rage=100
+tm              唐门的神机值判断                   tm=100 或 tm<50
 life            自身生命值 (<=1表示百分比)         life>0.5 或 life=1 或 life< 100
 mana            自身内力值 (<=1表示百分比)         mana>0.5 或 mana=1 或 mana<10000
 camp            自身所在阵营为指定名称             camp:中立 或 camp:中立|恶人谷
