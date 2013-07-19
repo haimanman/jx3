@@ -94,6 +94,8 @@ puppet/nopuppet 自身带有千机变/没有千机变          puppet 或 puppet:底座|连弩|重
 party/noparty   自身有队友/没队友                  party=5 或 party>15 表示队友数量（含自己）
 --------------------------------------------------------------------------------
 qidian          自身职业点数(剑气/神机值/剑舞)     qidan>3 或 qidian=3 或 qidian<80
+rage            藏剑的剑气值                       rage>10 或 rage=100
+tm              唐门的神机值判断                   tm=100 或 tm<50
 life            自身生命值 (<=1表示百分比)         life>0.5 或 life=1 或 life< 100
 mana            自身内力值 (<=1表示百分比)         mana>0.5 或 mana=1 或 mana<10000
 camp            自身所在阵营为指定名称             camp:中立 或 camp:中立|恶人谷
@@ -144,7 +146,7 @@ debufftime       自身减益 BUFF 时间符合条件        debufftime:破风>3-定军<5
 inbufftime       自身增益 BUFF 时间符合条件        inbufftime:撼如雷<10
 > 可用 - 连接表示并且关系，用 | 连接表示或者关系
 > 可用 <>= 组合判断 buff 层数，bufftime 时间单位是秒
-> 不存在相关 BUFF 时，层数、时间判断相当于为 0，如 nobuff:破风 和 buff:破风=0 或 bufftime:破风=0 是等价的
+> 不存在相关 BUFF 时，层数相当于为 0，如 nobuff:破风 和 buff:破风=0 是等价的，但是 bufftime 之类均不通过检测。
 > 还可以用“海鳗插件、BUFF 监控”中的分组别名来判断，比如“免控”直接包含了里头列出的所有免控 BUFF 了。
 --------------------------------------------------------------------------------
 btype            自身有指定类型的增益BUFF          btype:外攻 或 btype:外攻|阳性
