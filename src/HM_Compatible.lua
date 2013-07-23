@@ -633,3 +633,11 @@ function DoAcceptJoinArena(nArenaType, nCenterID, dwMapID, nCopyIndex, nGroupID,
 	HM.DoMessageBox("Arena_Enter_" .. nArenaType, 1)
 end
 end
+
+if not MakeNameLink then
+function MakeNameLink(szName, szFont)
+	local szLink = "<text>text="..EncodeComponentsString(szName)..
+	szFont.." name=\"namelink\" eventid=515</text>"
+	return szLink
+end
+end
