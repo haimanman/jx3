@@ -51,6 +51,7 @@ dist-zip:
 	cp -f src/HM.lua HM/src/HM.lua
 	cp -f info.ini HM/info.ini
 	luac -s -o HM/lab/HM_Cast.lua lab/HM_Cast.lua
+	luac -s -o HM/lab/HM_Love.lua lab/HM_Love.lua
 	zip -qrm9 dist/HM-`cat VERSION`.zip HM
 
 src-bak:
