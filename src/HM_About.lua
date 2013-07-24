@@ -202,7 +202,15 @@ _HM_About.PS.OnTaboxCheck = function(frame, nIndex, szTitle)
 	local szName, me = _L["You"], GetClientPlayer()
 	if me then szName = me.szName end
 	-- info
-	ui:Append("Image", { x = 0, y = 5, w = 532, h = 168 }):File("interface\\HM\\ui\\image.UITEX", 0)
+	local nF = 0
+	if GetCurrentTime() < 1376409600 then
+		nF = 1
+	end
+	ui:Append("Image", { x = 0, y = 5, w = 532, h = 168 }):File("interface\\HM\\ui\\image.UITEX", nF):Click(function()
+		if nF == 1 and HM_Love then
+			HM.OpenPanel(HM_Love.szTitle)
+		end
+	end)
 	ui:Append("Text", { txt = _L("%s are welcome to use HM plug-in", szName), x = 10, y = 190, font = 19 })
 	ui:Append("Text", { txt = _L["Free & open source, Utility, Focus on PVP!"], x = 10, y = 220, font = 19 })
 	ui:Append("Text", { txt = _L["YY-group: 6685583"], x = 10, y = 280, font = 27 })
