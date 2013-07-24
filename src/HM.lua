@@ -723,7 +723,7 @@ HM.Debug3 = function(szMsg, szHead) HM.Debug(szMsg, szHead, 3) end
 HM.Alert = function(szMsg, fnAction, szSure)
 	local nW, nH = Station.GetClientSize()
 	local tMsg = {
-		x = nW / 2, y = nH / 2, szMessage = szMsg, szName = "HM_Alert",
+		x = nW / 2, y = nH / 3, szMessage = szMsg, szName = "HM_Alert",
 		{
 			szOption = szSure or g_tStrings.STR_HOTKEY_SURE,
 			fnAction = fnAction,
@@ -742,7 +742,7 @@ end
 HM.Confirm = function(szMsg, fnAction, fnCancel, szSure, szCancel)
 	local nW, nH = Station.GetClientSize()
 	local tMsg = {
-		x = nW / 2, y = nH / 2, szMessage = szMsg, szName = "HM_Confirm",
+		x = nW / 2, y = nH / 3, szMessage = szMsg, szName = "HM_Confirm",
 		{
 			szOption = szSure or g_tStrings.STR_HOTKEY_SURE,
 			fnAction = fnAction,
