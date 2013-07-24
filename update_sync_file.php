@@ -100,6 +100,7 @@ $modules = array(
 	'src/HM_ToolBox.lua' => '自动修理卖物、自动确认、自动五行石和一键交易行',
 	'src/HM_Doodad.lua' => '自动拾取和过滤、自动采集助手',
 	'lab/HM_Cast.lua' => 'PVE 宏扩展，打怪更高效',
+	'lab/HM_Love.lua' => '情缘功能，助您剑侠之路不再孤单',
 	//'lab/HM_Taoguan.lua' => '新年活动智能砸年兽陶罐',
 );
 
