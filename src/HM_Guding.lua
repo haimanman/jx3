@@ -169,7 +169,7 @@ function HM_Guding.OnFrameBreathe()
 				if player then
 					szText = player.szName .. _L["-"] .. szText
 				end
-				sha:AppendDoodadID(tar.dwID, r, g, b, a, 64, 199, szText, 0, 1)
+				sha:AppendDoodadID(tar.dwID, r, g, b, a, 160, 199, szText, 0, 1)
 				-- auto use
 				if HM_Guding.bAutoUse and a > 199 then
 					_HM_Guding.AutoUse(tar)
