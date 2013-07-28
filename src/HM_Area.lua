@@ -279,29 +279,18 @@ _HM_Area.SetColor = function(nRelation, dwTemplateID, r, g, b)
 		HM_Area.tColor[nRelation] = {}
 	end
 	HM_Area.tColor[nRelation][dwTemplateID] = { r, g, b }
+	_HM_Area.bUpdateArea = true
 end
 
 -------------------------------------
 -- 画范围外观
 -------------------------------------
-
 -- show name
 _HM_Area.ShowName = function(tar)
 	local data = _HM_Area.tList[tar.dwID]
-	if not HM_Area.bShowName then
-		if data.label then
-			data.label:Hide()
-		end
-		return
-	end
-	if not data.label then
-		data.label = _HM_Area.pLabel:New()
-		data.label:SetText(tar.szName)
-	end
-	-- adjust text & color
-	data.label:SetFontColor(unpack(_HM_Area.GetColor(_HM_Area.GetRelation(data.dwCaster), tar.dwTemplateID)))
+	local r, g, b = unpack(_HM_Area.GetColor(_HM_Area.GetRelation(data.dwCaster), tar.dwTemplateID))
+	local szText = tar.szName
 	if data.dwCaster ~= 0 then
-		local szText = tar.szName
 		local player = GetPlayer(data.dwCaster)
 		if player then
 			data.szName = data.szName or _HM_Area.GetTemplateName(tar.dwTemplateID) or szText
@@ -310,27 +299,14 @@ _HM_Area.ShowName = function(tar)
 		if data.nLeft > 0 and data.dwTime ~= 0 then
 			szText = szText .. _L["-"] .. math.ceil((data.nLeft + data.dwTime - GetTime())/1000)
 		end
-		data.label:SetText(szText)
 	end
-	-- adjust pos
-	HM.ApplyTopPoint(function(nX, nY)
-		if not data.label:IsValid() or data.label.bFree then
-			return
-		end
-		if not nX then
-			data.label:Hide()
-		else
-			local nW, nH = data.label:GetSize()
-			data.label:SetAbsPos(nX - math.ceil(nW/2), nY - math.ceil(nH/2))
-			data.label:Show()
-		end
-	end, tar, 384, "HAN_" .. tar.dwID)
+	_HM_Area.pLabel:AppendCharacterID(tar.dwID, true, r, g, b, 185, 0, 40, szText, 0, 1)
 end
 
 -- draw circle (TriangleStrip)
 _HM_Area.DrawCircle = function(shape, tar, col, nRadius, nAlpha, nThick)
 	if not shape.tPoint then
-		shape:SetTriangleFan(true, Scene_GetSceneID())
+		shape:SetTriangleFan(GEOMETRY_TYPE.TRIANGLE)
 		shape:SetD3DPT(D3DPT.TRIANGLESTRIP)
 		-- count points
 		shape.tPoint = {}
@@ -376,7 +352,7 @@ _HM_Area.DrawCake = function(shape, tar, col, nRadius, nAlpha)
 			nY = tar.nY + math.ceil(math.sin(dwCurRad) * nRadius)
 			table.insert(shape.tPoint, { nX, nY })
 		until dwMaxRad <= dwCurRad
-		shape:SetTriangleFan(true, Scene_GetSceneID())
+		shape:SetTriangleFan(GEOMETRY_TYPE.TRIANGLE)
 		shape:SetD3DPT(D3DPT.TRIANGLEFAN)
 	end
 	shape:ClearTriangleFanPoint()
@@ -405,16 +381,31 @@ _HM_Area.DrawArea = function(tar)
 		data.shape = _HM_Area.pDraw:New()
 	end
 	if nRadius >= 256 and nDistance < 35 then
+		if not data.shape.bNear or _HM_Area.bUpdateArea then
+			_HM_Area.DrawCake(data.shape, tar, color, nRadius, nAlpha / 3)
+			data.shape.bNear = true
+			data.shape.bFar = nil
+		else
+			data.shape:Show()
+		end
 		if not data.circle then
 			data.circle = _HM_Area.pDraw:New()
 		end
-		_HM_Area.DrawCake(data.shape, tar, color, nRadius, nAlpha / 3)
-		_HM_Area.DrawCircle(data.circle, tar, color, nRadius, nAlpha * 1.3)
+		if not data.circle.bDraw or _HM_Area.bUpdateArea then
+			_HM_Area.DrawCircle(data.circle, tar, color, nRadius, nAlpha * 1.3)
+			data.circle.bDraw = true
+		else
+			data.circle:Show()
+		end
 	else
 		if data.circle then
 			data.circle:Hide()
 		end
-		_HM_Area.DrawCake(data.shape, tar, color, nRadius, nAlpha)
+		if not data.shape.bFar or _HM_Area.bUpdateArea then
+			_HM_Area.DrawCake(data.shape, tar, color, nRadius, nAlpha)
+			data.shape.bFar = true
+			data.shape.bNear = nil
+		end
 	end
 end
 
@@ -452,31 +443,18 @@ end
 -- remove record
 _HM_Area.RemoveFromList = function(dwID)
 	local data = _HM_Area.tList[dwID]
-	local nTime = GetTime() - data.dwTime
-	if nTime >= data.nLeft then
-		if data.label then
-			_HM_Area.pLabel:Free(data.label)
-		end
-		if data.shape then
-			data.shape.tPoint = nil
-			_HM_Area.pDraw:Free(data.shape)
-		end
-		if data.circle then
-			data.circle.tPoint = nil
-			_HM_Area.pDraw:Free(data.circle)
-		end
-		_HM_Area.tList[dwID] = nil
-	else
-		if data.label then
-			data.label:Hide()
-		end
-		if data.shape then
-			data.shape:Hide()
-		end
-		if data.circle then
-			data.circle:Hide()
-		end
+	if data.shape then
+		data.shape.tPoint = nil
+		data.shape.bNear = nil
+		data.shape.bFar = nil
+		_HM_Area.pDraw:Free(data.shape)
 	end
+	if data.circle then
+		data.circle.tPoint = nil
+		data.circle.bDraw = nil
+		_HM_Area.pDraw:Free(data.circle)
+	end
+	_HM_Area.tList[dwID] = nil
 end
 
 -------------------------------------
@@ -542,38 +520,14 @@ _HM_Area.OnNpcEnter = function()
 	_HM_Area.AddToList(tar, dwCaster, dwTime, szEvent)
 end
 
--- draw content
-_HM_Area.OnRender = function()
-	local nCount, nTime = 0, GetTime()
-	for k, v in pairs(_HM_Area.tList) do
-		local tar = GetNpc(k)
-		local bEnd = (nTime - v.dwTime) >= v.nLeft
-		if not tar or nCount >= HM_Area.nMaxNum or (v.dwTime ~= 0 and bEnd)
-			or not _HM_Area.CheckTemplateID(tar.dwTemplateID)
-			or _HM_Area.GetHide(_HM_Area.GetRelation(v.dwCaster), tar.dwTemplateID)
-		then
-			if not v.bHide or bEnd then
-				v.bHide = true
-				_HM_Area.RemoveFromList(k)
-			end
-		else
-			v.bHide = false
-			nCount = nCount + 1
-			_HM_Area.DrawArea(tar)
-			_HM_Area.ShowName(tar)
-		end
-	end
-end
-
 -------------------------------------
 -- 窗口函数
 -------------------------------------
 -- create
 function HM_Area.OnFrameCreate()
-	-- label pool
-	local hnd = this:Lookup("", "Handle_Label")
-	local xml = "<text>w=10 h=36 halign=1 valign=1 alpha=185 font=40 lockshowhide=1</text>"
-	_HM_Area.pLabel = HM.HandlePool(hnd, xml)
+	-- label shadow
+	_HM_Area.pLabel = this:Lookup("", "Shadow_Label")
+	_HM_Area.pLabel:SetTriangleFan(GEOMETRY_TYPE.TEXT)
 	-- draw pool
 	local hnd = this:Lookup("", "Handle_Draw")
 	local xml = "<shadow>w=1 h=1 lockshowhide=1</shadow>"
@@ -581,8 +535,35 @@ function HM_Area.OnFrameCreate()
 	-- events
 	this:RegisterEvent("SYS_MSG")
 	this:RegisterEvent("NPC_ENTER_SCENE")
-	this:RegisterEvent("RENDER_FRAME_UPDATE")
 	this:RegisterEvent("DO_SKILL_CAST")
+end
+
+-- breathe
+function HM_Area.OnFrameBreathe()
+	local nCount, nTime = 0, GetTime()
+	_HM_Area.pLabel:ClearTriangleFanPoint()
+	for k, v in pairs(_HM_Area.tList) do
+		local tar = GetNpc(k)
+		local nLeft = v.nLeft + v.dwTime - nTime
+		if (nLeft < 0 and v.dwTime ~= 0) or (not tar and v.dwTime == 0) then
+			_HM_Area.RemoveFromList(k)
+		else
+			if not tar or nCount >= HM_Area.nMaxNum
+				or not _HM_Area.CheckTemplateID(tar.dwTemplateID)
+				or _HM_Area.GetHide(_HM_Area.GetRelation(v.dwCaster), tar.dwTemplateID)
+			then
+				if v.shape then v.shape:Hide() end
+				if v.circle then v.circle:Hide() end
+			else
+				nCount = nCount + 1
+				_HM_Area.DrawArea(tar)
+				if HM_Area.bShowName then
+					_HM_Area.ShowName(tar)
+				end
+			end
+		end
+	end
+	_HM_Area.bUpdateArea = false
 end
 
 -- event
@@ -595,8 +576,6 @@ function HM_Area.OnEvent(event)
 		end
 	elseif event == "NPC_ENTER_SCENE" then
 		_HM_Area.OnNpcEnter()
-	elseif event == "RENDER_FRAME_UPDATE" then
-		_HM_Area.OnRender()
 	elseif event == "DO_SKILL_CAST" then
 		_HM_Area.OnSkillCast(arg0, arg1, arg2, event)
 	end
@@ -628,6 +607,7 @@ _HM_Area.PS.OnPanelActive = function(frame)
 	ui:Append("WndCheckBox", "Check_Big", { txt = _L["Always display 11 feet range of SHENGTAIJI"], x = 10, y = 84, checked = HM_Area.bBigTaiji })
 	:Enable(HM_Area.bQichang):Click(function(bChecked)
 		HM_Area.bBigTaiji = bChecked
+		_HM_Area.bUpdateArea = true
 	end)
 	ui:Append("WndComboBox", { txt = _L["Select range type"], x = 12, y = 114 }):Menu(_HM_Area.GetSkillMenu)
 	-- others
@@ -639,6 +619,7 @@ _HM_Area.PS.OnPanelActive = function(frame)
 	ui:Append("WndTrackBar", { x = nX + 5, y = 208 })
 	:Range(0, 100, 50):Value(100 - math.floor(HM_Area.nAlpha/2)):Change(function(nVal)
 		HM_Area.nAlpha = 200 - nVal - nVal
+		_HM_Area.bUpdateArea = true
 	end)
 	-- tips
 	ui:Append("Text", { txt = _L["Tips"], x = 0, y = 242, font = 27 })

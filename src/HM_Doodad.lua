@@ -29,7 +29,7 @@ local function _d(dwID)
 	return GetDoodadTemplate(dwID).szName
 end
 
-local _HM_Doodad = {
+_HM_Doodad = {
 	-- 草药、矿石列表
 	tCraft = {
 		1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009,
@@ -161,6 +161,7 @@ _HM_Doodad.TryAdd = function(dwID, bDelay)
 		end
 		if data then
 			_HM_Doodad.tDoodad[dwID] = data
+			_HM_Doodad.bUpdateLabel = true
 		end
 	end
 end
@@ -170,21 +171,17 @@ _HM_Doodad.Remove = function(dwID)
 	local data = _HM_Doodad.tDoodad[dwID]
 	if data then
 		_HM_Doodad.tDoodad[dwID] = nil
-		if data.label then
-			_HM_Doodad.pLabel:Free(data.label)
-		end
+		_HM_Doodad.bUpdateLabel = true
 	end
 end
 
 -- reload doodad
 _HM_Doodad.Reload = function()
 	_HM_Doodad.tDoodad = {}
-	if _HM_Doodad.pLabel then
-		_HM_Doodad.pLabel:Clear()
-	end
 	for k, _ in pairs(HM.GetAllDoodadID()) do
 		_HM_Doodad.TryAdd(k)
 	end
+	_HM_Doodad.bUpdateLabel = true
 end
 
 -- switch name
@@ -226,44 +223,37 @@ end
 -------------------------------------
 -- 事件处理
 -------------------------------------
--- draw name
-_HM_Doodad.OnRender = function()
-	local me = GetClientPlayer()
-	if not me then
+-- head name
+_HM_Doodad.OnUpdateHeadName = function()
+	if not _HM_Doodad.pLabel then
 		return
 	end
+	local sha = _HM_Doodad.pLabel
+	local r, g, b = unpack(HM_Doodad.tNameColor)
+	sha:SetTriangleFan(GEOMETRY_TYPE.TEXT)
+	sha:ClearTriangleFanPoint()
 	for k, v in pairs(_HM_Doodad.tDoodad) do
 		if not v.loot then
 			local tar = GetDoodad(k)
 			if not tar or (v.quest and not tar.HaveQuest(me.dwID)) then
 				_HM_Doodad.Remove(k)
 			else
-				if not v.label then
-					v.label = _HM_Doodad.pLabel:New()
-					v.label:SetText(tar.szName)
-					v.label:SetFontColor(unpack(HM_Doodad.tNameColor))
-				end
-				-- update pos
-				HM.ApplyTopPoint(function(nX, nY)
-					if not v.label:IsValid() or v.label.bFree then
-						return
-					end
-					if not nX then
-						v.label:Hide()
-					else
-						local nW, nH = v.label:GetSize()
-						v.label:SetAbsPos(nX - math.ceil(nW/2), nY - math.ceil(nH/2) - 40)
-						v.label:Show()
-					end
-				end, tar, 0, "HD_" .. tar.dwID)
+				sha:AppendDoodadID(tar.dwID, r, g, b, 185, 128, 40, tar.szName, 0, 1)
 			end
 		end
 	end
+	sha:Show()
 end
 
 -- auto interact
 _HM_Doodad.OnAutoDoodad = function()
 	local me = GetClientPlayer()
+	-- update head name
+	if me and _HM_Doodad.pLabel and _HM_Doodad.bUpdateLabel then
+		_HM_Doodad.bUpdateLabel = false
+		_HM_Doodad.OnUpdateHeadName()
+	end
+	-- auto interact
 	if not me or me.GetOTActionState() ~= 0
 		or (me.nMoveState ~= MOVE_STATE.ON_STAND and me.nMoveState ~= MOVE_STATE.ON_FLOAT)
 		or IsDialoguePanelOpened()
@@ -307,6 +297,7 @@ _HM_Doodad.OnOpenDoodad = function(dwID)
 			and HM_Doodad.tCustom[d.szName] and GetDoodadTemplate(d.dwTemplateID).dwCraftID == 3
 		then
 			_HM_Doodad.tDoodad[dwID] = { craft = true }
+			_HM_Doodad.bUpdateLabel = true
 			bP = true
 		end
 		-- money
@@ -322,7 +313,7 @@ _HM_Doodad.OnOpenDoodad = function(dwID)
 				if bDist and bClear then
 					bClear = false
 					if bP then
-						_HM_Doodad.tDoodad[dwID] = nil
+						_HM_Doodad.Remove(dwID)
 						bP = false
 					end
 				end
@@ -399,19 +390,18 @@ end
 -------------------------------------
 -- 头顶名称绘制
 -------------------------------------
-HM_Doodad.OnFrameCreate = function()
-	-- label pool
-	local hnd = this:Lookup("", "Handle_Label")
-	local xml = "<text>w=10 h=36 halign=1 valign=1 alpha=255 font=40 lockshowhide=1</text>"
-	_HM_Doodad.pLabel = HM.HandlePool(hnd, xml)
+function HM_Doodad.OnFrameCreate()
+	-- label shadow
+	_HM_Doodad.pLabel = this:Lookup("", "Shadow_Label")
+	_HM_Doodad.bUpdateLabel = true
 	-- events
-	this:RegisterEvent("RENDER_FRAME_UPDATE")
 end
 
-HM_Doodad.OnEvent = function(event)
-	if event == "RENDER_FRAME_UPDATE" then
-		_HM_Doodad.OnRender()
-	end
+function HM_Doodad.OnFrameBreathe()
+	_HM_Doodad.OnAutoDoodad()
+end
+
+function HM_Doodad.OnEvent(event)
 end
 
 -------------------------------------
@@ -539,7 +529,6 @@ HM.RegisterEvent("QUEST_ACCEPTED", function()
 		_HM_Doodad.Reload()
 	end
 end)
-HM.BreatheCall("AutoDoodad", _HM_Doodad.OnAutoDoodad)
 HM.BreatheCall("UpdateMiniFlag", _HM_Doodad.OnUpdateMiniFlag, 500)
 
 -- add to HM collector

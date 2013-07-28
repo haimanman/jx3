@@ -41,7 +41,8 @@ _HM_TargetFace.DrawShape = function(tar, sha, nDegree, nRadius, nAlpha, col)
 		dwRad2 = dwRad2 + math.pi / 16
 	end
 	-- orgina point
-	sha:SetTriangleFan(true, Scene_GetSceneID())
+	sha:SetTriangleFan(GEOMETRY_TYPE.TRIANGLE)
+	sha:SetD3DPT(D3DPT.TRIANGLEFAN)
 	sha:ClearTriangleFanPoint()
 	sha:AppendTriangleFan3DPoint(tar.nX, tar.nY, tar.nZ, col[1], col[2], col[3], nAlpha)
 	sha:Show()

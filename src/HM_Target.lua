@@ -63,22 +63,31 @@ _HM_Target.GetConnMenu = function()
 		{
 			szOption = _L["Set connected line color"],
 			bColorTable = true, bNotChangeSelfColor = false, rgb = HM_Target.tConnColor,
-			fnChangeColor = function(data, r, g, b) HM_Target.tConnColor = { r, g, b } end
+			fnChangeColor = function(data, r, g, b)
+				HM_Target.tConnColor = { r, g, b }
+				_HM_Target.OnUpdateConnLine()
+			end
 		},
 	}
 	local m1 = { szOption = _L["Set connected line width"], }
 	for i = 1, 5 do
 		local m2 = { szOption = tostring(i), bCheck = true, bMCheck = true }
 		m2.bChecked = HM_Target.nConnWidth == i
-		m2.fnAction = function() HM_Target.nConnWidth = i end
+		m2.fnAction = function()
+			HM_Target.nConnWidth = i
+			_HM_Target.OnUpdateConnLine()
+		end
 		table.insert(m1, m2)
 	end
 	table.insert(m0, m1)
 	m1 = { szOption = _L["Connected line opacity"], }
 	for i = 60, 200, 20 do
-		local m2 = { szOption = tostring(i), bCheck = true, bMCheck = true }
+		local m2 = { szOption = tostring(i / 2), bCheck = true, bMCheck = true }
 		m2.bChecked = HM_Target.nConnAlpha == i
-		m2.fnAction = function() HM_Target.nConnAlpha = i end
+		m2.fnAction = function()
+			HM_Target.nConnAlpha = i
+			_HM_Target.OnUpdateConnLine()
+		end
 		table.insert(m1, m2)
 	end
 	table.insert(m0, m1)
@@ -635,70 +644,37 @@ end
 ---------------------------------------------------------------------
 -- ´°¿Úº¯Êý
 ---------------------------------------------------------------------
-_HM_Target.DrawConnect = function(conn, me, tar)
-	local col, nAlpha = HM_Target.tConnColor, HM_Target.nConnAlpha
-	local nAlpha1 = math.ceil(nAlpha * 0.3)
-	local cX, cY  = HM_Target.nConnWidth, 0
-	local _ApplyPoint = HM.ApplyTopPoint
-	if HM_Target.bConnFoot then
-		_ApplyPoint = HM.ApplyScreenPoint
-	end
-	local nX, nY, nX1, nY1
-	local fnAction = function()
-		local dwAngle = math.abs(math.atan((nX - nX1)/(nY1 - nY)))
-		if dwAngle > 1 and dwAngle < 1.57 then
-			cX, cY = cY, cX
-		end
-		conn:ClearTriangleFanPoint()
-		conn:AppendTriangleFanPoint(nX1 - cX, nY1 + cY, col[1], col[2], col[3], nAlpha1)
-		conn:AppendTriangleFanPoint(nX1 + cX, nY1 - cY, col[1], col[2], col[3], nAlpha1)
-		cX  = cX + cX
-		cY = cY + cY
-		conn:AppendTriangleFanPoint(nX + cX, nY - cY, col[1], col[2], col[3], nAlpha)
-		conn:AppendTriangleFanPoint(nX - cX, nY + cY, col[1], col[2], col[3], nAlpha)
-		conn:Show()
-	end
-	_ApplyPoint(function(x, y)
-		if not x then
-			return conn:Hide()
-		end
-		nX, nY = x, y
-		if nX1 and nY1 then
-			fnAction()
-		end
-	end, me, "HTL_" .. conn:GetName() .. "_" .. me.dwID)
-	_ApplyPoint(function(x, y)
-		if not x then
-			return conn:Hide()
-		end
-		nX1, nY1 = x, y
-		if nX and nY then
-			fnAction()
-		end
-	end, tar, "HTL_" .. conn:GetName() .. "_" .. tar.dwID)
-end
-
-_HM_Target.OnRender = function()
+-- draw connect
+_HM_Target.OnUpdateConnLine = function()
 	local me = GetClientPlayer()
 	if not me then return end
 	local tar = GetTargetHandle(me.GetTarget())
-	-- conn
-	if HM_Target.bConnect and tar and tar.dwID ~= me.dwID then
-		_HM_Target.DrawConnect(_HM_Target.hConnect, me, tar)
+	local bTop = not HM_Target.bConnFoot
+	local r, g, b = unpack(HM_Target.tConnColor)
+	local a = HM_Target.nConnAlpha
+	-- me <-> tar
+	local sha = _HM_Target.hConnect
+	if HM_Target.bConnect and tar then
+		sha:SetTriangleFan(GEOMETRY_TYPE.LINE, HM_Target.nConnWidth * 3)
+		sha:ClearTriangleFanPoint()
+		sha:AppendCharacterID(me.dwID, bTop, r, g, b, a)
+		sha:AppendCharacterID(tar.dwID, bTop, r, g, b, a * 0.3)
+		sha:Show()
 	else
-		_HM_Target.hConnect:Hide()
+		sha:Hide()
 	end
-	-- ttconn
-	local bShowTT = false
+	-- ttar <-> tar
+	local sha = _HM_Target.hTTConnect
+	sha:Hide()
 	if HM_Target.bTTConnect and tar then
 		local ttar = GetTargetHandle(tar.GetTarget())
-		if ttar and ttar.dwID ~= tar.dwID and ttar.dwID ~= me.dwID then
-			_HM_Target.DrawConnect(_HM_Target.hTTConnect, tar, ttar)
-			bShowTT = true
+		if ttar and ttar.dwID ~= tar.dwID and (not HM_Target.bConnect or ttar.dwID ~= me.dwID) then
+			sha:SetTriangleFan(GEOMETRY_TYPE.LINE, HM_Target.nConnWidth * 3)
+			sha:ClearTriangleFanPoint()
+			sha:AppendCharacterID(tar.dwID, bTop, r, g, b, a)
+			sha:AppendCharacterID(ttar.dwID, bTop, r, g, b, a * 0.3)
+			sha:Show()
 		end
-	end
-	if not bShowTT then
-		_HM_Target.hTTConnect:Hide()
 	end
 end
 
@@ -707,18 +683,15 @@ function HM_Target.OnFrameCreate()
 	_HM_Target.hTotal = this:Lookup("", "")
 	_HM_Target.hConnect = this:Lookup("", "Shadow_Connect")
 	_HM_Target.hTTConnect = this:Lookup("", "Shadow_TTConnect")
-	_HM_Target.hConnect:SetTriangleFan(true)
-	_HM_Target.hTTConnect:SetTriangleFan(true)
-	this:RegisterEvent("RENDER_FRAME_UPDATE")
 	this:RegisterEvent("SYS_MSG")
 	this:RegisterEvent("DO_SKILL_CAST")
+	this:RegisterEvent("UPDATE_SELECT_TARGET")
+	this:RegisterEvent("PLAYER_ENTER_SCENE")
 end
 
 -- event
 function HM_Target.OnEvent(event)
-	if event == "RENDER_FRAME_UPDATE" then
-		_HM_Target.OnRender()
-	elseif event == "SYS_MSG" then
+	if event == "SYS_MSG" then
 		if arg0 == "UI_OME_SKILL_HIT_LOG" and arg3 == SKILL_EFFECT_TYPE.SKILL then
 			_HM_Target.OnSkillCast(arg1, arg4, arg5, arg0)
 		elseif arg0 == "UI_OME_SKILL_EFFECT_LOG" and arg4 == SKILL_EFFECT_TYPE.SKILL then
@@ -730,6 +703,10 @@ function HM_Target.OnEvent(event)
 		_HM_Target.OnBuffUpdate()
 	elseif event == "NPC_STATE_UPDATE" or event == "PLAYER_STATE_UPDATE" then
 		_HM_Target.OnUpdateLM()
+	elseif event == "UPDATE_SELECT_TARGET" then
+		_HM_Target.OnUpdateConnLine()
+	elseif event == "PLAYER_ENTER_SCENE" and arg0 == GetClientPlayer().dwID then
+		_HM_Target.OnUpdateConnLine()
 	end
 end
 
@@ -1102,18 +1079,21 @@ _HM_Target.PS.OnPanelActive = function(frame)
 	nX = ui:Append("WndCheckBox", { x = 10, y = 148, checked = HM_Target.bConnect })
 	:Text(_L["Draw line from target to you"]):Click(function(bChecked)
 		HM_Target.bConnect = bChecked
+		_HM_Target.OnUpdateConnLine()
 		ui:Fetch("Combo_Conn"):Enable(bChecked)
 		ui:Fetch("Check_Foot"):Enable(bChecked)
 	end):Pos_()
 	ui:Append("WndCheckBox", { x = nX + 20, y = 148, checked = HM_Target.bTTConnect })
 	:Text(_L["Draw line from target to target target"]):Click(function(bChecked)
 		HM_Target.bTTConnect = bChecked
+		_HM_Target.OnUpdateConnLine()
 	end)
 	ui:Append("WndComboBox", "Combo_Conn", { x = 14, y = 178, txt = _L["Line setting"] })
 	:Menu(_HM_Target.GetConnMenu)
 	ui:Append("WndCheckBox", "Check_Foot", { x = nX + 20, y = 178, checked = HM_Target.bConnFoot })
 	:Text(_L["Show line on foot"]):Click(function(bChecked)
 		HM_Target.bConnFoot = bChecked
+		_HM_Target.OnUpdateConnLine()
 	end)
 	-- action bar
 	ui:Append("Text", { txt = _L["Prepared skill enhancement"], x = 0, y = 214, font = 27 })
