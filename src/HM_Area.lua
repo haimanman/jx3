@@ -382,6 +382,7 @@ _HM_Area.DrawArea = function(tar)
 	end
 	if nRadius >= 256 and nDistance < 35 then
 		if not data.shape.bNear or _HM_Area.bUpdateArea then
+			data.shape.tPoint = nil
 			_HM_Area.DrawCake(data.shape, tar, color, nRadius, nAlpha / 3)
 			data.shape.bNear = true
 			data.shape.bFar = nil
@@ -392,6 +393,7 @@ _HM_Area.DrawArea = function(tar)
 			data.circle = _HM_Area.pDraw:New()
 		end
 		if not data.circle.bDraw or _HM_Area.bUpdateArea then
+			data.circle.tPoint = nil
 			_HM_Area.DrawCircle(data.circle, tar, color, nRadius, nAlpha * 1.3)
 			data.circle.bDraw = true
 		else
