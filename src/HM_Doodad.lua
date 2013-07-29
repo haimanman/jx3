@@ -225,20 +225,18 @@ end
 -------------------------------------
 -- head name
 _HM_Doodad.OnUpdateHeadName = function()
-	if not _HM_Doodad.pLabel then
-		return
-	end
 	local sha = _HM_Doodad.pLabel
+	if not sha then return end
 	local r, g, b = unpack(HM_Doodad.tNameColor)
 	sha:SetTriangleFan(GEOMETRY_TYPE.TEXT)
 	sha:ClearTriangleFanPoint()
 	for k, v in pairs(_HM_Doodad.tDoodad) do
 		if not v.loot then
 			local tar = GetDoodad(k)
-			if not tar or (v.quest and not tar.HaveQuest(me.dwID)) then
+			if not tar or (v.quest and not tar.HaveQuest(GetClientPlayer().dwID)) then
 				_HM_Doodad.Remove(k)
 			else
-				sha:AppendDoodadID(tar.dwID, r, g, b, 185, 128, 40, tar.szName, 0, 1)
+				sha:AppendDoodadID(tar.dwID, r, g, b, 255, 128, 40, tar.szName, 0, 1)
 			end
 		end
 	end

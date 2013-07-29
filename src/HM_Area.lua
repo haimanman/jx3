@@ -300,69 +300,59 @@ _HM_Area.ShowName = function(tar)
 			szText = szText .. _L["-"] .. math.ceil((data.nLeft + data.dwTime - GetTime())/1000)
 		end
 	end
-	_HM_Area.pLabel:AppendCharacterID(tar.dwID, true, r, g, b, 185, 0, 40, szText, 0, 1)
+	_HM_Area.pLabel:AppendCharacterID(tar.dwID, true, r, g, b, 200, 0, 40, szText, 0, 1)
 end
 
 -- draw circle (TriangleStrip)
-_HM_Area.DrawCircle = function(shape, tar, col, nRadius, nAlpha, nThick)
-	if not shape.tPoint then
-		shape:SetTriangleFan(GEOMETRY_TYPE.TRIANGLE)
-		shape:SetD3DPT(D3DPT.TRIANGLESTRIP)
-		-- count points
-		shape.tPoint = {}
-		nRadius = nRadius or 640
-		nThick = nThick or math.ceil(6 * nRadius / 640)
-		local dwMaxRad = math.pi + math.pi
-		local dwStepRad = dwMaxRad / (nRadius / 16)
-		local dwCurRad = 0 - dwStepRad
-		repeat
-			local tRad = {}
-			tRad[1] = { nRadius, dwCurRad }
-			tRad[2] = { nRadius - nThick, dwCurRad }
-			for _, v in ipairs(tRad) do
-				local nX = tar.nX + math.ceil(math.cos(v[2]) * v[1])
-				local nY = tar.nY + math.ceil(math.sin(v[2]) * v[1])
-				table.insert(shape.tPoint, { nX, nY })
-			end
-			dwCurRad = dwCurRad + dwStepRad
-		until dwMaxRad <= dwCurRad
-	end
-	-- draw points
-	shape:ClearTriangleFanPoint()
-	shape:Show()
-	for k, v in ipairs(shape.tPoint) do
-		shape:AppendTriangleFan3DPoint(v[1], v[2], tar.nZ, col[1], col[2], col[3], nAlpha)
-	end
+_HM_Area.DrawCircle = function(sha, tar, col, nRadius, nAlpha, nThick)
+	-- setting
+	sha:SetTriangleFan(GEOMETRY_TYPE.TRIANGLE)
+	sha:SetD3DPT(D3DPT.TRIANGLESTRIP)
+	sha:ClearTriangleFanPoint()
+	sha:Show()
+	local r, g, b = unpack(col)
+	-- points
+	nRadius = nRadius or 640
+	nThick = nThick or math.ceil(6 * nRadius / 640)
+	local dwMaxRad = math.pi + math.pi
+	local dwStepRad = dwMaxRad / (nRadius / 16)
+	local dwCurRad = 0 - dwStepRad
+	repeat
+		local tRad = {}
+		tRad[1] = { nRadius, dwCurRad }
+		tRad[2] = { nRadius - nThick, dwCurRad }
+		for _, v in ipairs(tRad) do
+			local nX = tar.nX + math.ceil(math.cos(v[2]) * v[1])
+			local nY = tar.nY + math.ceil(math.sin(v[2]) * v[1])
+			sha:AppendTriangleFan3DPoint(nX, nY, tar.nZ, r, g, b, nAlpha)
+		end
+		dwCurRad = dwCurRad + dwStepRad
+	until dwMaxRad <= dwCurRad
 end
 
 -- draw shape (1 shadow)
-_HM_Area.DrawCake = function(shape, tar, col, nRadius, nAlpha)
-	if not shape.tPoint then
-		shape.tPoint = {}
-		nRadius = nRadius or 640
-		local dwMaxRad = math.pi + math.pi
-		local dwStepRad = dwMaxRad / (nRadius / 16)
-		local dwCurRad = 0 - dwStepRad
-		repeat
-			dwCurRad = dwCurRad + dwStepRad
-			if dwCurRad > dwMaxRad then
-				dwCurRad = dwMaxRad
-			end
-			nX = tar.nX + math.ceil(math.cos(dwCurRad) * nRadius)
-			nY = tar.nY + math.ceil(math.sin(dwCurRad) * nRadius)
-			table.insert(shape.tPoint, { nX, nY })
-		until dwMaxRad <= dwCurRad
-		shape:SetTriangleFan(GEOMETRY_TYPE.TRIANGLE)
-		shape:SetD3DPT(D3DPT.TRIANGLEFAN)
-	end
-	shape:ClearTriangleFanPoint()
-	shape:Show()
-	-- center point
-	shape:AppendTriangleFan3DPoint(tar.nX, tar.nY, tar.nZ, col[1], col[2], col[3], 0)
+_HM_Area.DrawCake = function(sha, tar, col, nRadius, nAlpha)
+	-- setting
+	sha:SetTriangleFan(GEOMETRY_TYPE.TRIANGLE)
+	sha:SetD3DPT(D3DPT.TRIANGLEFAN)
+	sha:ClearTriangleFanPoint()
+	sha:Show()
+	local r, g, b = unpack(col)
 	-- points
-	for k, v in ipairs(shape.tPoint) do
-		shape:AppendTriangleFan3DPoint(v[1], v[2], tar.nZ, col[1], col[2], col[3], nAlpha)
-	end
+	sha:AppendTriangleFan3DPoint(tar.nX, tar.nY, tar.nZ, r, g, b, 0)
+	nRadius = nRadius or 640
+	local dwMaxRad = math.pi + math.pi
+	local dwStepRad = dwMaxRad / (nRadius / 16)
+	local dwCurRad = 0 - dwStepRad
+	repeat
+		dwCurRad = dwCurRad + dwStepRad
+		if dwCurRad > dwMaxRad then
+			dwCurRad = dwMaxRad
+		end
+		nX = tar.nX + math.ceil(math.cos(dwCurRad) * nRadius)
+		nY = tar.nY + math.ceil(math.sin(dwCurRad) * nRadius)
+		sha:AppendTriangleFan3DPoint(nX, nY, tar.nZ, r, g, b, nAlpha)
+	until dwMaxRad <= dwCurRad
 end
 
 -- draw area (draw shape only for far objects)
@@ -377,25 +367,18 @@ _HM_Area.DrawArea = function(tar)
 		nRadius = nRadius + 64
 	end
 	-- draw cake & circle
-	if not data.shape then
-		data.shape = _HM_Area.pDraw:New()
-	end
+	data.shape = data.shape or _HM_Area.pDraw:New()
 	if nRadius >= 256 and nDistance < 35 then
-		if not data.shape.bNear or _HM_Area.bUpdateArea then
-			data.shape.tPoint = nil
+		if data.shape.nType ~= 1 or _HM_Area.bUpdateArea then
+			data.shape.nType = 1
 			_HM_Area.DrawCake(data.shape, tar, color, nRadius, nAlpha / 3)
-			data.shape.bNear = true
-			data.shape.bFar = nil
 		else
 			data.shape:Show()
 		end
-		if not data.circle then
-			data.circle = _HM_Area.pDraw:New()
-		end
-		if not data.circle.bDraw or _HM_Area.bUpdateArea then
-			data.circle.tPoint = nil
-			_HM_Area.DrawCircle(data.circle, tar, color, nRadius, nAlpha * 1.3)
-			data.circle.bDraw = true
+		data.circle = data.circle or _HM_Area.pDraw:New()
+		if data.circle.nType ~= 1 or _HM_Area.bUpdateArea then
+			data.circle.nType = 1
+			_HM_Area.DrawCircle(data.circle, tar, color, nRadius, nAlpha * 1.4)
 		else
 			data.circle:Show()
 		end
@@ -403,10 +386,11 @@ _HM_Area.DrawArea = function(tar)
 		if data.circle then
 			data.circle:Hide()
 		end
-		if not data.shape.bFar or _HM_Area.bUpdateArea then
+		if data.shape.nType ~= 2 or _HM_Area.bUpdateArea then
+			data.shape.nType = 2
 			_HM_Area.DrawCake(data.shape, tar, color, nRadius, nAlpha)
-			data.shape.bFar = true
-			data.shape.bNear = nil
+		else
+			data.shape:Show()
 		end
 	end
 end
@@ -446,14 +430,11 @@ end
 _HM_Area.RemoveFromList = function(dwID)
 	local data = _HM_Area.tList[dwID]
 	if data.shape then
-		data.shape.tPoint = nil
-		data.shape.bNear = nil
-		data.shape.bFar = nil
+		data.shape.nType = nil
 		_HM_Area.pDraw:Free(data.shape)
 	end
 	if data.circle then
-		data.circle.tPoint = nil
-		data.circle.bDraw = nil
+		data.circle.nType = nil
 		_HM_Area.pDraw:Free(data.circle)
 	end
 	_HM_Area.tList[dwID] = nil

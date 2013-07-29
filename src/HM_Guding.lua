@@ -24,7 +24,7 @@ local _HM_Guding = {
 	szIniFile = "interface\\HM\\ui\\HM_Guding.ini",
 	tList = {},					-- 显示记录 (#ID => nTime)
 	tCast = {},				-- 技能释放记录
-	nUseFrame = 0,		-- 上次自动吃鼎时间
+	nFrame = 0,			-- 上次自动吃鼎、绘制帧次
 }
 
 -- sysmsg
@@ -57,25 +57,6 @@ end
 -- remove record
 _HM_Guding.RemoveFromList = function(dwID)
 	_HM_Guding.tList[dwID] = nil
-end
-
--- auto eat (fast to eat twice)
-_HM_Guding.AutoUse = function(tar)
-	local me, nFrame = GetClientPlayer(), GetLogicFrameCount()
-	if nFrame >= _HM_Guding.nUseFrame and (nFrame - _HM_Guding.nUseFrame) <= 8 then
-		return
-	end
-	_HM_Guding.nUseFrame = nFrame
-	if me.nMoveState == MOVE_STATE.ON_STAND
-		and not me.bOnHorse
-		and me.GetOTActionState() == 0
-		and HM.GetDistance(tar) < 6
-		and ((me.nCurrentMana / me.nMaxMana) <= (HM_Guding.nAutoMp / 100)
-			or (me.nCurrentLife / me.nMaxLife) <= (HM_Guding.nAutoHp / 100))
-	then
-		InteractDoodad(tar.dwID)
-		_HM_Guding.Sysmsg(_L["Auto use GUDING"])
-	end
 end
 
 -------------------------------------
@@ -141,6 +122,13 @@ end
 
 -- breathe
 function HM_Guding.OnFrameBreathe()
+	-- skip frame
+	local nFrame = GetLogicFrameCount()
+	if nFrame >= _HM_Guding.nFrame and (nFrame - _HM_Guding.nFrame) < 8 then
+		return
+	end
+	_HM_Guding.nFrame = nFrame
+	-- check empty
 	local sha, me = _HM_Guding.pLabel, GetClientPlayer()
 	if not me or not HM_Guding.bEnable or IsEmpty(_HM_Guding.tList) then
 		return sha:Hide()
@@ -154,8 +142,19 @@ function HM_Guding.OnFrameBreathe()
 			break
 		end
 	end
+	-- can use or not
+	local bCanUse = false
+	if HM_Guding.bAutoUse and a > 199
+		and not me.bOnHorse and me.nMoveState == MOVE_STATE.ON_STAND and me.GetOTActionState() == 0
+		and ((me.nCurrentMana / me.nMaxMana) <= (HM_Guding.nAutoMp / 100)
+			or (me.nCurrentLife / me.nMaxLife) <= (HM_Guding.nAutoHp / 100))
+	then
+		bCanUse = true
+	end
+	-- shadow text
 	sha:SetTriangleFan(GEOMETRY_TYPE.TEXT)
 	sha:ClearTriangleFanPoint()
+	sha:Show()
 	for k, v in pairs(_HM_Guding.tList) do
 		local nLeft = v.dwTime + _HM_Guding.nMaxTime - GetTime()
 		if nLeft < 0 then
@@ -163,21 +162,24 @@ function HM_Guding.OnFrameBreathe()
 		else
 			local tar = GetDoodad(k)
 			if tar then
-				-- name
-				local szText = tar.szName .. _L["-"] .. math.floor(nLeft / 1000)
+				--  show name
+				local szText = _L["-"] .. math.floor(nLeft / 1000)
 				local player = GetPlayer(v.dwCaster)
 				if player then
-					szText = player.szName .. _L["-"] .. szText
+					szText = player.szName .. szText
+				else
+					szText = tar.szName .. szText
 				end
-				sha:AppendDoodadID(tar.dwID, r, g, b, a, 160, 199, szText, 0, 1)
-				-- auto use
-				if HM_Guding.bAutoUse and a > 199 then
-					_HM_Guding.AutoUse(tar)
+				sha:AppendDoodadID(tar.dwID, r, g, b, a, 192, 199, szText, 0, 1)
+				--  check to use
+				if bCanUse and HM.GetDistance(tar) < 6 then
+					bCanUse = false
+					InteractDoodad(tar.dwID)
+					_HM_Guding.Sysmsg(_L["Auto use GUDING"])
 				end
 			end
 		end
 	end
-	sha:Show()
 end
 
 -- event

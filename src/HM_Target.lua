@@ -680,7 +680,6 @@ end
 
 -- create
 function HM_Target.OnFrameCreate()
-	_HM_Target.hTotal = this:Lookup("", "")
 	_HM_Target.hConnect = this:Lookup("", "Shadow_Connect")
 	_HM_Target.hTTConnect = this:Lookup("", "Shadow_TTConnect")
 	this:RegisterEvent("SYS_MSG")
