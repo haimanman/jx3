@@ -56,16 +56,7 @@ end
 
 -- remove record
 _HM_Guding.RemoveFromList = function(dwID)
-	local data = _HM_Guding.tList[dwID]
-	local nTime = GetTime() - data.dwTime
-	if nTime >=  _HM_Guding.nMaxTime then
-		if data.label then
-			_HM_Guding.pLabel:Free(data.label)
-		end
-		_HM_Guding.tList[dwID] = nil
-	elseif data.label then
-		data.label:Hide()
-	end
+	_HM_Guding.tList[dwID] = nil
 end
 
 -- auto eat (fast to eat twice)
@@ -84,49 +75,6 @@ _HM_Guding.AutoUse = function(tar)
 	then
 		InteractDoodad(tar.dwID)
 		_HM_Guding.Sysmsg(_L["Auto use GUDING"])
-	end
-end
-
--- show name
-_HM_Guding.ShowName = function(tar)
-	local data = _HM_Guding.tList[tar.dwID]
-	local label = data.label
-	if not label or not label:IsValid() then
-		label = _HM_Guding.pLabel:New()
-		label:SetFontColor(unpack(HM_Guding.color))
-		data.label = label
-	end
-	-- adjust text
-	local szText = tar.szName .. _L["-"] .. math.floor((data.dwTime + _HM_Guding.nMaxTime - GetTime())/1000)
-	local player = GetPlayer(data.dwCaster)
-	if player then
-		szText = player.szName .. _L["-"] .. szText
-	end
-	label:SetText(szText)
-	-- adjust alpha (eat/not, auto eat ...)
-	local tBuff = GetClientPlayer().GetBuffList() or {}
-	label:SetAlpha(200)
-	for _, v in ipairs(tBuff) do
-		if v.dwID == 3448 and not v.bCanCancel then
-			label:SetAlpha(120)
-			break
-		end
-	end
-	-- adjust pos & show
-	HM.ApplyTopPoint(function(nX, nY)
-		if not label:IsValid() or label.bFree then
-			return
-		end
-		if not nX then
-			return label:Hide()
-		end
-		local nW, nH = label:GetSize()
-		label:SetAbsPos(nX - math.ceil(nW/2), nY - math.ceil(nH/2))
-		label:Show()
-	end, tar, 768, "HG_" .. tar.dwID)
-	-- check to use
-	if HM_Guding.bAutoUse and label:GetAlpha() > 199 then
-		_HM_Guding.AutoUse(tar)
 	end
 end
 
@@ -179,36 +127,57 @@ _HM_Guding.OnSkillNotify = function()
 	end
 end
 
--- draw name
-_HM_Guding.OnRender = function()
-	for k, v in pairs(_HM_Guding.tList) do
-		local tar = GetDoodad(k)
-		local bEnd = (GetTime() - v.dwTime) >= _HM_Guding.nMaxTime
-		if not tar or not HM_Guding.bEnable or bEnd then
-			if not v.bHide or bEnd then
-				v.bHide = true
-				_HM_Guding.RemoveFromList(k)
-			end
-		else
-			v.bHide = false
-			_HM_Guding.ShowName(tar)
-		end
-	end
-end
-
 -------------------------------------
 -- ´°¿Úº¯Êý
 -------------------------------------
 -- create
 function HM_Guding.OnFrameCreate()
-	local hnd = this:Lookup("", "")
-	local xml = "<text>w=10 h=36 halign=1 valign=2 alpha=185 font=199 lockshowhide=1</text>"
-	_HM_Guding.pLabel = HM.HandlePool(hnd, xml)
+	_HM_Guding.pLabel = this:Lookup("", "Shadow_Label")
 	this:RegisterEvent("SYS_MSG")
 	this:RegisterEvent("DO_SKILL_CAST")
 	this:RegisterEvent("DOODAD_ENTER_SCENE")
 	this:RegisterEvent("ON_BG_CHANNEL_MSG")
-	this:RegisterEvent("RENDER_FRAME_UPDATE")
+end
+
+-- breathe
+function HM_Guding.OnFrameBreathe()
+	local sha, me = _HM_Guding.pLabel, GetClientPlayer()
+	if not me or not HM_Guding.bEnable or IsEmpty(_HM_Guding.tList) then
+		return sha:Hide()
+	end
+	-- color, alpha
+	local r, g, b = unpack(HM_Guding.color)
+	local a = 200
+	for _, v in ipairs(me.GetBuffList()) do
+		if v.dwID == 3448 and not v.bCanCancel then
+			a = 120
+			break
+		end
+	end
+	sha:SetTriangleFan(GEOMETRY_TYPE.TEXT)
+	sha:ClearTriangleFanPoint()
+	for k, v in pairs(_HM_Guding.tList) do
+		local nLeft = v.dwTime + _HM_Guding.nMaxTime - GetTime()
+		if nLeft < 0 then
+			_HM_Guding.RemoveFromList(k)
+		else
+			local tar = GetDoodad(k)
+			if tar then
+				-- name
+				local szText = tar.szName .. _L["-"] .. math.floor(nLeft / 1000)
+				local player = GetPlayer(v.dwCaster)
+				if player then
+					szText = player.szName .. _L["-"] .. szText
+				end
+				sha:AppendDoodadID(tar.dwID, r, g, b, a, 160, 199, szText, 0, 1)
+				-- auto use
+				if HM_Guding.bAutoUse and a > 199 then
+					_HM_Guding.AutoUse(tar)
+				end
+			end
+		end
+	end
+	sha:Show()
 end
 
 -- event
@@ -227,8 +196,6 @@ function HM_Guding.OnEvent(event)
 		_HM_Guding.OnDoodadEnter()
 	elseif event == "ON_BG_CHANNEL_MSG" then
 		_HM_Guding.OnSkillNotify()
-	elseif event == "RENDER_FRAME_UPDATE" then
-		_HM_Guding.OnRender()
 	end
 end
 
@@ -248,16 +215,12 @@ _HM_Guding.PS.OnPanelActive = function(frame)
 		ui:Fetch("Check_Say"):Enable(bChecked)
 		ui:Fetch("Track_MP"):Enable(bChecked)
 		ui:Fetch("Track_HP"):Enable(bChecked)
-		if not bChecked then
-			_HM_Guding.pLabel:Clear()
-		end
 	end):Pos_()
 	nX = ui:Append("Shadow", "Shadow_Color", { x = nX + 2, y = 32, w = 18, h = 18 })
 	:Color(unpack(HM_Guding.color)):Click(function()
 		OpenColorTablePanel(function(r, g, b)
 			ui:Fetch("Shadow_Color"):Color(r, g, b)
 			HM_Guding.color = { r, g, b }
-			_HM_Guding.pLabel:Clear()
 		end)
 	end):Pos_()
 	ui:Append("WndCheckBox", "Check_Use", { txt = _L["Auto use GUDING in some condition (only when standing)"], checked = HM_Guding.bAutoUse })

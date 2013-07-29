@@ -5,7 +5,7 @@
 HM_TargetFace = {
 	bTargetFace = true,			-- 是否画出目标面向
 	bFocusFace = false,			-- 是否画出焦点的面向
-	nSectorDegree = 90,			-- 扇形角度
+	nSectorDegree = 110,		-- 扇形角度
 	nSectorRadius = 6,				-- 扇形半径（尺）
 	nSectorAlpha = 80,				-- 扇形透明度
 	tTargetFaceColor = { 255, 0, 128 },		-- 目标面向颜色
@@ -41,7 +41,8 @@ _HM_TargetFace.DrawShape = function(tar, sha, nDegree, nRadius, nAlpha, col)
 		dwRad2 = dwRad2 + math.pi / 16
 	end
 	-- orgina point
-	sha:SetTriangleFan(true, Scene_GetSceneID())
+	sha:SetTriangleFan(GEOMETRY_TYPE.TRIANGLE)
+	sha:SetD3DPT(D3DPT.TRIANGLEFAN)
 	sha:ClearTriangleFanPoint()
 	sha:AppendTriangleFan3DPoint(tar.nX, tar.nY, tar.nZ, col[1], col[2], col[3], nAlpha)
 	sha:Show()
