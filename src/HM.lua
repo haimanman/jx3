@@ -1195,7 +1195,7 @@ end
 -- nF2			-- 箭头帧次，默认 48 就行
 HM.UpdateMiniFlag = function(dwType, tar, nF1, nF2)
 	local nX, nZ = Scene_PlaneGameWorldPosToScene(tar.nX, tar.nY)
-	local m = Station.Lookup("Topmost/Minimap/Wnd_Minimap/Minimap_Map")
+	local m = Station.Lookup("Normal/Minimap/Wnd_Minimap/Minimap_Map")
 	if m then
 		m:UpdataArrowPoint(dwType, tar.dwID, nF1, nF2 or 48, nX, nZ, 16)
 	end

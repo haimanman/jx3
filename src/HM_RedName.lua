@@ -176,14 +176,10 @@ _HM_RedName.tNonBoss = {
 _HM_RedName.ShowAroundInfo = function(nType)
 	local me = GetClientPlayer()
 	local scene, szInfo = me.GetScene(), _HM_RedName.GetAroundInfo(nType or _HM_RedName.nAcctType)
-	local hName = Station.Lookup("Topmost/Minimap/Wnd_Minimap/Wnd_Over", "Text_Name")
-	if not hName then
-		hName = Station.Lookup("Topmost/Minimap/Wnd_Corner", "Text_Name")
-	end
-	local szRegion = hName:GetText()
+	local hName = Station.Lookup("Normal/Minimap/Wnd_Minimap/Wnd_Over", "Text_Name")
 	local szText = _L[" ["] .. Table_GetMapName(scene.dwMapID)
-	if szRszRegion ~= "" then
-		szText = szText .. _L["-"] .. szRegion
+	if hName then
+		szText = szText .. _L["-"] .. hName:GetText()
 	end
 	for _, v in ipairs(HM.GetAllNpc()) do
 		if v.szName == _n(14042) --[[¿‰“Ì∂æ…Ò]]
