@@ -306,6 +306,7 @@ end
 -- update buff time
 _HM_Target.UpdateBuffTime = function(hBuffList, hTextList)
 	local nCount = hBuffList:GetItemCount() - 1
+	--[[
 	if HM_Target.bSubDebuff and hBuffList:GetName() == "Handle_Debuff" then
 		local tBuffID, tRemove = {}, {}
 		for i = 0, nCount do
@@ -331,6 +332,7 @@ _HM_Target.UpdateBuffTime = function(hBuffList, hTextList)
 			nCount = nCount - nRemove
 		end
 	end
+	--]]
 	if not HM_Target.bNoSpark and hTextList then
 		return
 	end
