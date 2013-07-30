@@ -246,11 +246,6 @@ end
 -- auto interact
 _HM_Doodad.OnAutoDoodad = function()
 	local me = GetClientPlayer()
-	-- update head name
-	if me and _HM_Doodad.pLabel and _HM_Doodad.bUpdateLabel then
-		_HM_Doodad.bUpdateLabel = false
-		_HM_Doodad.OnUpdateHeadName()
-	end
 	-- auto interact
 	if not me or me.GetOTActionState() ~= 0
 		or (me.nMoveState ~= MOVE_STATE.ON_STAND and me.nMoveState ~= MOVE_STATE.ON_FLOAT)
@@ -396,7 +391,10 @@ function HM_Doodad.OnFrameCreate()
 end
 
 function HM_Doodad.OnFrameBreathe()
-	_HM_Doodad.OnAutoDoodad()
+	if _HM_Doodad.bUpdateLabel then
+		_HM_Doodad.bUpdateLabel = false
+		_HM_Doodad.OnUpdateHeadName()
+	end
 end
 
 function HM_Doodad.OnEvent(event)
@@ -527,6 +525,7 @@ HM.RegisterEvent("QUEST_ACCEPTED", function()
 		_HM_Doodad.Reload()
 	end
 end)
+HM.BreatheCall("AutoDoodad", _HM_Doodad.OnAutoDoodad)
 HM.BreatheCall("UpdateMiniFlag", _HM_Doodad.OnUpdateMiniFlag, 500)
 
 -- add to HM collector
