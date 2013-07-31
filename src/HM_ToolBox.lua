@@ -486,6 +486,7 @@ _HM_ToolBox.tNonwarData = {
 	{ id = 11, x = 30, y = -140 }, -- 天策
 	{ id = 12, x = -30, y = 140 }, -- 枫华
 	{ id = 26, x = -70, y = 110}, -- 荻花宫
+	{ id = 32, x = 80, y = -60 },	-- 小战宝
 }
 
 -- 加入非战乱地图的神行按钮
@@ -509,7 +510,7 @@ _HM_ToolBox.BindNonwarButton = function()
 					h:AppendItemFromString("<image>name=\"nonwar_" .. v.id .. "\" path="..EncodeComponentsString(szFile).." frame="..nFrame.." eventid=341</image>")
 					local img = h:Lookup(h:GetItemCount() - 1)
 					img.bEnable = bOpen
-					img.bSelect = bOpen and v.id ~= 26
+					img.bSelect = bOpen and v.id ~= 26 and v.id ~= 32
 					img.x = m.x + v.x
 					img.y = m.y + v.y
 					img.w, img.h = m.w, m.h
