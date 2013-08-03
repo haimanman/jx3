@@ -29,7 +29,7 @@ local function _b(dwBuffID, dwLevel)
 end
 
 -- skill list (by force, < 0 disable )
-HM_TargetMon.tSkillList = {
+HM_TargetMon.tSkillList4 = {
 	{		-- ÉÙÁÖ
 		[_s(236)--[[Ä¦Ú­ÎÞÁ¿]]] = 25,
 		[_s(242)--[[×½Ó°Ê½]]] = 17,
@@ -106,7 +106,7 @@ HM_TargetMon.tSkillList = {
 }
 
 --buff list (by type)
-HM_TargetMon.tBuffList = {
+HM_TargetMon.tBuffList4 = {
 	{
 		szType = _L["Invincible"],	-- 1
 		tName = {
@@ -126,7 +126,7 @@ HM_TargetMon.tBuffList = {
 			_b(2756)--[[×ÝÇáÆï]], _b(2781)--[[×ªÇ¬À¤]], _b(3279)--[[ÉúËÀÖ®½»]], _b(1856)--[[²»¹¤]], _b(1676)--[[ÓñÈªÓãÔ¾]], -- ×ªÇ¬À¤2£º2781
 			_b(1686)--[[ÃÎÈª»¢ÅÜ]], _b(2840)--[[¹Æ³æ¿ñ±©]], _b(2544)--[[·çòÚÏ×¼À]], _b(3822)--[[±ÌµûÏ×¼À]], _b(4245)--[[Ê¥Ìå]],
 			_b(4421)--[[Áé»Ô]], _b(4468)--[[³¬È»]], _b(6373)--[[³öÔ¨]], _b(6361)--[[·É½«]], _b(6314)--[[ÁãÂä]], _b(6292)--[[ÍÌÈÕÔÂ]],
-			_b(6247)--[[ÃÔÐÄ¹Æ]], _b(6192)--[[ÆÐÌáÉí]], _b(6131)--[[ÇàÑô]], _b(5995)--[[Ð¦×í¿ñ]],
+			_b(6247)--[[ÃÔÐÄ¹Æ]], _b(6192)--[[ÆÐÌáÉí]], _b(6131)--[[ÇàÑô]], _b(5995)--[[Ð¦×í¿ñ]], _b(6459)--[[ÑÌÓêÐÐ]],
 			_b(6015)--[[ÁúÔ¾ÓÚÔ¨]], _b(6369)--[[¾ÆÖÐÏÉ]]
 		},
 	}, {
@@ -172,7 +172,8 @@ HM_TargetMon.tBuffList = {
 	}, {
 		szType = _L["Dodge"],	-- 9
 		tName = {
-			_b(677)--[[ÈµÌ¤Ö¦]], _b(3214)--[[¾ªºèÓÎÁú]], _b(2065)--[[ÔÆÆÜËÉ]], _b(5668)--[[·ç´µºÉ]], _b(6434)--[[×íåÐÒ£]]
+			_b(677)--[[ÈµÌ¤Ö¦]], _b(3214)--[[¾ªºèÓÎÁú]], _b(2065)--[[ÔÆÆÜËÉ]], _b(5668)--[[·ç´µºÉ]], _b(6434)--[[×íåÐÒ£]],
+			_b(6299)--[[Óù·ç¶øÐÐ]],
 		},
 	}, {
 		szType = _L["Uncontrollable2"],	-- 10
@@ -203,7 +204,8 @@ HM_TargetMon.tBuffList = {
 			_b(6354)--[[Ðé»Ø]], _b(6346)--[[·ç¹ýÎÞºÛ]], _b(6350)--[[ÁÙ·ç]], _b(6266)--[[ÐÐÆøÑª]], _b(6224)--[[èÉÆü]],
 			_b(6172)--[[Ó¥Ä¿]], _b(6143)--[[ÈªÄýÔÂ]], _b(6121)--[[·ç»¢]], _b(6122)--[[ÄÁÔÆ]], _b(6425)--[[ÌìµØ¸ù]],
 			_b(6085)--[[Ó°½Ý]], _b(5970)--[[·æÕë]], _b(5875)--[[ÉÆ»¤]], _b(5789)--[[·±Òô¼±½Ú]], _b(5666)--[[ÎíÍâ½­É½]],
-			_b(999)--[[Óê¼¯]], _b(6074)--[[¶ñ¹·À¹Â·]], _b(376)--[[³åÒõÑô]], _b(4937)--[[ÈÕÔÂÁé»ê]], _b(4937,2)--[[ÈÕÔÂÍ¬»Ô]]
+			_b(999)--[[Óê¼¯]], _b(6074)--[[¶ñ¹·À¹Â·]], _b(376)--[[³åÒõÑô]], _b(4937)--[[ÈÕÔÂÁé»ê]], _b(4937,2)--[[ÈÕÔÂÍ¬»Ô]],
+			_b(2315)--[[Å®æ´²¹Ìì]],
 		},
 	}, {
 		szType = _L["Silence2"],	-- 14
@@ -225,8 +227,8 @@ local _HM_TargetMon = {
 }
 
 -- save data to restore
-_HM_TargetMon.tBakSkill = HM_TargetMon.tSkillList
-_HM_TargetMon.tBakBuff = HM_TargetMon.tBuffList
+_HM_TargetMon.tBakSkill = HM_TargetMon.tSkillList4
+_HM_TargetMon.tBakBuff = HM_TargetMon.tBuffList4
 
 -- reset cd
 _HM_TargetMon.tSkillReset = {
@@ -272,6 +274,7 @@ _HM_TargetMon.tFixedBuffEx = {
 	[_L("Slower_%s", _b(6078)--[[±©ÓêÀæ»¨Õë]])] = 6078,
 	[_L("Halt_%s", _b(548)--[[Í»]])] = 548,
 	[_L("Dodge_%s", _b(5668)--[[·ç´µºÉ]])] = 5668,
+	[_L("Dodge_%s", _b(6299)--[[Óù·ç¶øÐÐ]])] = 6299,
 	[_L("Reduce-dealing_%s", _b(3195)--[[´©ÐÄåó]])] = 3195,
 	[_L("Reduce-injury_%s", _b(384)--[[×ªÇ¬À¤]])] = 384,
 	[_L("Reduce-injury_%s", _b(4439)--[[Ì°Ä§Ìå]])] = 4439,
@@ -300,7 +303,7 @@ _HM_TargetMon.tFixedSkill = {
 -- load buffex cache
 _HM_TargetMon.LoadBuffEx = function()
 	local aCache = {}
-	for k, v in ipairs(HM_TargetMon.tBuffList) do
+	for k, v in ipairs(HM_TargetMon.tBuffList4) do
 		for _, vv in ipairs(v.tName) do
 			local dwFixedID = _HM_TargetMon.tFixedBuffEx[v.szType .. "_" .. vv]
 			if dwFixedID then
@@ -316,7 +319,7 @@ end
 -- load  monskill cache
 _HM_TargetMon.LoadSkillMon = function()
 	local aCache = {}
-	for _, v in ipairs(HM_TargetMon.tSkillList) do
+	for _, v in ipairs(HM_TargetMon.tSkillList4) do
 		for kk, vv in pairs(v) do
 			if vv > 0 then
 				aCache[kk] = vv
@@ -458,7 +461,7 @@ _HM_TargetMon.EditSkill = function(nForce, szName)
 				if not nForce then
 					HM.Alert(_L("Invalid skill name [%s]", szName))
 				else
-					HM_TargetMon.tSkillList[nForce][szName] = nTime
+					HM_TargetMon.tSkillList4[nForce][szName] = nTime
 					if not frm.nForce then
 						HM.Sysmsg(_L("Added skill CD monitor [%s-%s]", _HM_TargetMon.GetForceTitle(nForce), szName))
 					end
@@ -479,7 +482,7 @@ _HM_TargetMon.EditSkill = function(nForce, szName)
 	else
 		frm:Title(_L["Edit skill CD"])
 		frm:Fetch("Edit_Name"):Text(szName):Enable(false)
-		frm:Fetch("Edit_Time"):Text(tostring(math.abs(HM_TargetMon.tSkillList[nForce][szName])))
+		frm:Fetch("Edit_Time"):Text(tostring(math.abs(HM_TargetMon.tSkillList4[nForce][szName])))
 	end
 	frm:Toggle(true)
 end
@@ -491,13 +494,13 @@ _HM_TargetMon.GetSkillMenu = function()
 		{
 			szOption = _L["* Reset *"],
 			fnAction = function()
-				HM_TargetMon.tSkillList = clone(_HM_TargetMon.tBakSkill)
+				HM_TargetMon.tSkillList4 = clone(_HM_TargetMon.tBakSkill)
 				_HM_TargetMon.tSkillCache = nil
 			end
 		},
 		{ bDevide = true, }
 	}
-	for k, v in ipairs(HM_TargetMon.tSkillList) do
+	for k, v in ipairs(HM_TargetMon.tSkillList4) do
 		if not IsEmpty(v) then
 			local m1 = { szOption = _HM_TargetMon.GetForceTitle(k) }
 			for kk, vv in pairs(v) do
@@ -527,7 +530,7 @@ _HM_TargetMon.EditBuff = function()
 		nX = frm:Append("WndEdit", "Edit_Name", { x = nX + 5, y = 20, limit = 100, w = 160, h = 25 } ):Pos_()
 		frm:Append("WndComboBox", "Combo_Type", { x = nX + 5, y = 20, w = 80, h = 25 } ):Menu( function()
 			local m0 = {}
-			for k, v in ipairs(HM_TargetMon.tBuffList) do
+			for k, v in ipairs(HM_TargetMon.tBuffList4) do
 				table.insert(m0, { szOption = v.szType, fnAction = function()
 					frm.nType = k
 					frm:Fetch("Combo_Type"):Text(v.szType)
@@ -541,7 +544,7 @@ _HM_TargetMon.EditBuff = function()
 			if szName == "" then
 				HM.Alert(_L["Buff name can not be empty"])
 			else
-				local tBuff = HM_TargetMon.tBuffList[frm.nType]
+				local tBuff = HM_TargetMon.tBuffList4[frm.nType]
 				if tBuff then
 					for _, v in ipairs(tBuff.tName) do
 						if v == szName then
@@ -559,9 +562,9 @@ _HM_TargetMon.EditBuff = function()
 		_HM_TargetMon.bFrame = frm
 	end
 	-- show frm
-	frm.nType = table.getn(HM_TargetMon.tBuffList)
+	frm.nType = table.getn(HM_TargetMon.tBuffList4)
 	frm:Fetch("Edit_Name"):Text("")
-	frm:Fetch("Combo_Type"):Text(HM_TargetMon.tBuffList[frm.nType].szType)
+	frm:Fetch("Combo_Type"):Text(HM_TargetMon.tBuffList4[frm.nType].szType)
 	frm:Title(_L["Add buff monitor"])
 	frm:Toggle(true)
 end
@@ -573,13 +576,13 @@ _HM_TargetMon.GetBuffMenu = function()
 		{
 			szOption = _L["* Reset *"],
 			fnAction = function()
-				HM_TargetMon.tBuffList = clone(_HM_TargetMon.tBakBuff)
+				HM_TargetMon.tBuffList4 = clone(_HM_TargetMon.tBakBuff)
 				_HM_TargetMon.tBuffCache = nil
 			end
 		},
 		{ bDevide = true, }
 	}
-	for _, v in ipairs(HM_TargetMon.tBuffList) do
+	for _, v in ipairs(HM_TargetMon.tBuffList4) do
 		if not IsEmpty(v.tName) then
 			local m1 = { szOption = v.szType }
 			for kk, vv in ipairs(v.tName) do
