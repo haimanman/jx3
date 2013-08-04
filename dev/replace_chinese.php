@@ -39,7 +39,7 @@ echo " OK, " . count($replace2) . " strings\n";
 // 
 
 // replace all lua files
-$files = glob("src/*.lua");
+$files = array_merge(glob("src/*.lua"), glob("lab/*.lua"));
 foreach ($files as $file)
 {
 	echo "  replacing $file ...\n";

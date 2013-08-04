@@ -35,7 +35,7 @@ foreach ($lines as $no => $line)
 }
 
 // load new data from lua files
-$files = glob("src/*.lua");
+$files = array_merge(glob("src/*.lua"), glob("lab/*.lua"));
 foreach ($files as $file)
 {
 	$body = file_get_contents($file);
@@ -59,6 +59,7 @@ foreach ($files as $file)
 			{
 				$key = 'TODO#' . (count($data2) + 1);
 				$data2[$key] = true;
+				$data3[$tmp] = $key;
 				$data[$fname][$key] = $tmp;
 			}
 			else
