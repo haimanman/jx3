@@ -148,8 +148,8 @@ _HM_Target.UpdateAction = function(frame)
 		return handle:Hide()
 	end
 	-- check broken
-	local bPrePare, dwID, dwLevel, _ = tar.GetSkillPrepareState()
-	if bPrePare then
+	local _, dwID, _, _ = tar.GetSkillPrepareState()
+	if dwID ~= 0 then
 		text:SetFontColor(255, 255, 255)
 		if HM_Target.bEnableBreak and not HM.CanBrokenSkill(dwID) then
 			text:SetFontColor(180, 180, 180)
