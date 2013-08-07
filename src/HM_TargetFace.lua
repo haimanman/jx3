@@ -57,14 +57,6 @@ _HM_TargetFace.DrawShape = function(tar, sha, nDegree, nRadius, nAlpha, col)
 end
 
 -------------------------------------
--- 事件处理
--------------------------------------
--- render shape
-_HM_TargetFace.OnRender = function()
-
-end
-
--------------------------------------
 -- 窗口函数
 -------------------------------------
 -- create
