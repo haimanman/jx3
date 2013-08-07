@@ -24,6 +24,7 @@ HM.RegisterCustomData("HM_TargetFace")
 ---------------------------------------------------------------------
 local _HM_TargetFace = {
 	szIniFile = "interface\\HM\\ui\\HM_TargetFace.ini",
+	dwFocusID = 0,
 }
 
 -- draw shape
@@ -44,12 +45,13 @@ _HM_TargetFace.DrawShape = function(tar, sha, nDegree, nRadius, nAlpha, col)
 	sha:SetTriangleFan(GEOMETRY_TYPE.TRIANGLE)
 	sha:SetD3DPT(D3DPT.TRIANGLEFAN)
 	sha:ClearTriangleFanPoint()
-	sha:AppendTriangleFan3DPoint(tar.nX, tar.nY, tar.nZ, col[1], col[2], col[3], nAlpha)
+	sha:AppendCharacterID(tar.dwID, false, col[1], col[2], col[3], nAlpha)
 	sha:Show()
-	-- points
+	-- relative points
+	local sX, sZ = Scene_PlaneGameWorldPosToScene(tar.nX, tar.nY)
 	repeat
-		local nX, nY = tar.nX + math.cos(dwRad1) * nRadius, tar.nY + math.sin(dwRad1) * nRadius
-		sha:AppendTriangleFan3DPoint(nX, nY, tar.nZ, col[1], col[2], col[3], nAlpha2)
+		local sX_, sZ_ = Scene_PlaneGameWorldPosToScene(tar.nX + math.cos(dwRad1) * nRadius, tar.nY + math.sin(dwRad1) * nRadius)
+		sha:AppendCharacterID(tar.dwID, false, col[1], col[2], col[3], nAlpha2, { sX_ - sX, 0, sZ_ - sZ })
 		dwRad1 = dwRad1 + math.pi / 16
 	until dwRad1 > dwRad2
 end
@@ -57,58 +59,9 @@ end
 -------------------------------------
 -- 事件处理
 -------------------------------------
--- update target
-_HM_TargetFace.OnUpdateTarget = function()
-	local _, dwID = GetClientPlayer().GetTarget()
-	_HM_TargetFace.bTargetActive = dwID ~= 0
-end
-
--- render interval
+-- render shape
 _HM_TargetFace.OnRender = function()
-	local _t, t, tar = _HM_TargetFace, HM_TargetFace, nil
-	-- target face
-	if not _t.bTargetActive then
-		_t.hTargetFace:Hide()
-		_t.hTargetShape:Hide()
-	else
-		tar = HM.GetTarget()
-		if not tar then
-			_t.bTargetActive = false
-		else
-			if HM_TargetFace.bTargetFace then
-				_t.DrawShape(tar, _t.hTargetFace, t.nSectorDegree, t.nSectorRadius, t.nSectorAlpha, t.tTargetFaceColor)
-			else
-				_t.hTargetFace:Hide()
-			end
-			if HM_TargetFace.bTargetShape then
-				_t.DrawShape(tar, _t.hTargetShape, 360, t.nShapeRadius / 2, t.nShapeAlpha, t.tTargetShapeColor)
-			else
-				_t.hTargetShape:Hide()
-			end
-		end
-	end
-	-- focus
-	if not _t.bFocusActive then
-		_t.hFocusFace:Hide()
-		_t.hFocusShape:Hide()
-	else
-		local bIsTarget = tar and _t.dwFocusID == tar.dwID
-		tar = HM.GetTarget(_t.dwFocusID)
-		if not tar then
-			_t.bFocusActive = false
-		else
-			if HM_TargetFace.bFocusFace and (not HM_TargetFace.bTargetFace or not bIsTarget) then
-				_t.DrawShape(tar, _t.hFocusFace, t.nSectorDegree, t.nSectorRadius, t.nSectorAlpha, t.tFocusFaceColor)
-			else
-				_t.hFocusFace:Hide()
-			end
-			if HM_TargetFace.bFocusShape and (not HM_TargetFace.bTargetShape or not bIsTarget) then
-				_t.DrawShape(tar, _t.hFocusShape, 360, t.nShapeRadius / 2, t.nShapeAlpha, t.tFocusShapeColor)
-			else
-				_t.hFocusShape:Hide()
-			end
-		end
-	end
+
 end
 
 -------------------------------------
@@ -122,29 +75,57 @@ function HM_TargetFace.OnFrameCreate()
 	end
 	-- events
 	this:RegisterEvent("UPDATE_SELECT_TARGET")
-	this:RegisterEvent("RENDER_FRAME_UPDATE")
-	this:RegisterEvent("NPC_ENTER_SCENE")
-	this:RegisterEvent("PLAYER_ENTER_SCENE")
 	this:RegisterEvent("HM_ADD_FOCUS_TARGET")
 	this:RegisterEvent("HM_DEL_FOCUS_TARGET")
 end
 
+-- breathe
+function HM_TargetFace.OnFrameBreathe()
+	local _t, t, tar = _HM_TargetFace, HM_TargetFace, nil
+	-- target face
+	tar = HM.GetTarget()
+	if t.bTargetFace and tar then
+		_t.DrawShape(tar, _t.hTargetFace, t.nSectorDegree, t.nSectorRadius, t.nSectorAlpha, t.tTargetFaceColor)
+	else
+		_t.hTargetFace:Hide()
+	end
+	-- foot shape
+	if _t.bReRender then
+		if t.bTargetShape and tar then
+			_t.DrawShape(tar, _t.hTargetShape, 360, t.nShapeRadius / 2, t.nShapeAlpha, t.tTargetShapeColor)
+		else
+			_t.hTargetShape:Hide()
+		end
+	end
+	-- focus face
+	local bIsTarget = tar and _t.dwFocusID == tar.dwID
+	tar = HM.GetTarget(_t.dwFocusID)
+	if t.bFocusFace and tar and (not t.bTargetFace or not bIsTarget) then
+		_t.DrawShape(tar, _t.hFocusFace, t.nSectorDegree, t.nSectorRadius, t.nSectorAlpha, t.tFocusFaceColor)
+	else
+		_t.hFocusFace:Hide()
+	end
+	-- focus shape
+	if _t.bReRender then
+		if t.bFocusShape and tar and (not t.bTargetShape or not bIsTarget) then
+			_t.DrawShape(tar, _t.hFocusShape, 360, t.nShapeRadius / 2, t.nShapeAlpha, t.tFocusShapeColor)
+		else
+			_t.hFocusShape:Hide()
+		end
+	end
+	_t.bReRender = false
+end
+
 -- event
 function HM_TargetFace.OnEvent(event)
-	if event == "RENDER_FRAME_UPDATE" then
-		_HM_TargetFace.OnRender()
-	elseif event == "UPDATE_SELECT_TARGET" then
-		_HM_TargetFace.OnUpdateTarget()
+	if event == "UPDATE_SELECT_TARGET" then
+		_HM_TargetFace.bReRender = true
 	elseif event == "HM_ADD_FOCUS_TARGET" then
 		_HM_TargetFace.dwFocusID = arg0
-		_HM_TargetFace.bFocusActive = true
+		_HM_TargetFace.bReRender = true
 	elseif event == "HM_DEL_FOCUS_TARGET" and arg0 == _HM_TargetFace.dwFocusID then
 		_HM_TargetFace.dwFocusID = 0
-		_HM_TargetFace.bFocusActive = false
-	elseif event == "NPC_ENTER_SCENE" or event == "PLAYER_ENTER_SCENE" then
-		if arg0 == _HM_TargetFace.dwFocusID then
-			_HM_TargetFace.bFocusActive = true
-		end
+		_HM_TargetFace.bReRender = true
 	end
 end
 
@@ -161,66 +142,85 @@ _HM_TargetFace.PS.OnPanelActive = function(frame)
 	local nX = ui:Append("WndCheckBox", { txt = _L["Display the sector of target facing, change color"], checked = t.bTargetFace })
 	:Pos(10, 28):Click(function(bChecked)
 		t.bTargetFace = bChecked
+		_HM_TargetFace.bReRender = true
 	end):Pos_()
 	ui:Append("Shadow", "Color_TargetFace", { x = nX + 2, y = 32, w = 18, h = 18 })
 	:Color(unpack(t.tTargetFaceColor)):Click(function()
 		OpenColorTablePanel(function(r, g, b)
 			ui:Fetch("Color_TargetFace"):Color(r, g, b)
 			t.tTargetFaceColor = { r, g, b }
+			_HM_TargetFace.bReRender = true
 		end)
 	end)
 	nX = ui:Append("WndCheckBox", { txt = _L["Display the sector of focus facing, change color"], checked = t.bFocusFace })
 	:Pos(10, 56):Enable(HM_TargetList ~= nil):Click(function(bChecked)
 		t.bFocusFace = bChecked
+		_HM_TargetFace.bReRender = true
 	end):Pos_()
 	ui:Append("Shadow", "Color_FocusFace", { x = nX + 2, y = 60, w = 18, h = 18 })
 	:Color(unpack(t.tFocusFaceColor)):Click(function()
 		OpenColorTablePanel(function(r, g, b)
 			ui:Fetch("Color_FocusFace"):Color(r, g, b)
 			t.tFocusFaceColor = { r, g, b }
+			_HM_TargetFace.bReRender = true
 		end)
 	end)
 	nX = ui:Append("Text", { txt = _L["The sector angle"], x = 37, y = 84}):Pos_()
 	ui:Append("WndTrackBar", { x = nX, y = 88, txt = _L[" degree"] })
-	:Range(30, 180, 30):Value(t.nSectorDegree):Change(function(nVal) t.nSectorDegree = nVal end)
+	:Range(30, 180, 30):Value(t.nSectorDegree):Change(function(nVal)
+		t.nSectorDegree = nVal
+		_HM_TargetFace.bReRender = true
+	end)
 	nX = ui:Append("Text", { txt = _L["The sector radius"], x = 37, y = 112 }):Pos_()
 	ui:Append("WndTrackBar", { x = nX, y = 116, txt = _L[" feet"] })
-	:Range(1, 26, 25):Value(t.nSectorRadius):Change(function(nVal) t.nSectorRadius = nVal end)
+	:Range(1, 26, 25):Value(t.nSectorRadius):Change(function(nVal)
+		t.nSectorRadius = nVal
+		_HM_TargetFace.bReRender = true
+	end)
 	nX = ui:Append("Text", { txt = _L["The sector transparency"], x = 37, y = 140 }):Pos_()
 	ui:Append("WndTrackBar", { x = nX, y = 144 })
 	:Range(0, 100, 50):Value(math.ceil((200 - t.nSectorAlpha)/2)):Change(function(nVal)
 		t.nSectorAlpha = (100 - nVal) * 2
+		_HM_TargetFace.bReRender = true
 	end)
 	-- foot shape
 	nX = ui:Append("WndCheckBox", { txt = _L["Display the foot shape of target, change color"], checked = t.bTargetShape })
 	:Pos(10, 168):Click(function(bChecked)
 		t.bTargetShape = bChecked
+		_HM_TargetFace.bReRender = true
 	end):Pos_()
 	ui:Append("Shadow", "Color_TargetShape", { x = nX + 2, y = 172, w = 18, h = 18 })
 	:Color(unpack(t.tTargetShapeColor)):Click(function()
 		OpenColorTablePanel(function(r, g, b)
 			ui:Fetch("Color_TargetShape"):Color(r, g, b)
 			t.tTargetShapeColor = { r, g, b }
+			_HM_TargetFace.bReRender = true
 		end)
 	end)
 	nX = ui:Append("WndCheckBox", { txt = _L["Display the foot shape of focus, change color"], checked = t.bFocusShape })
 	:Pos(10, 196):Enable(HM_TargetList ~= nil):Click(function(bChecked)
 		t.bFocusShape = bChecked
+		_HM_TargetFace.bReRender = true
 	end):Pos_()
 	ui:Append("Shadow", "Color_FocusShape", { x = nX + 2, y = 200, w = 18, h = 18 })
 	:Color(unpack(t.tFocusShapeColor)):Click(function()
 		OpenColorTablePanel(function(r, g, b)
 			ui:Fetch("Color_FocusShape"):Color(r, g, b)
 			t.tFocusShapeColor = { r, g, b }
+			_HM_TargetFace.bReRender = true
 		end)
 	end)
 	nX = ui:Append("Text", { txt = _L["The foot shape radius"], x = 37, y = 228 }):Pos_()
 	ui:Append("WndTrackBar", { x = nX, y = 232, txt = "/2" .. _L[" feet"] })
-	:Range(1, 26, 25):Value(t.nShapeRadius):Change(function(nVal) t.nShapeRadius = nVal end)
+	:Range(1, 26, 25):Value(t.nShapeRadius):Change(function(nVal)
+		t.nShapeRadius = nVal
+		_HM_TargetFace.bReRender = true
+	end)
 	nX = ui:Append("Text", { txt = _L["The foot shape transparency"], x = 37, y = 256 }):Pos_()
 	ui:Append("WndTrackBar", { x = nX, y = 260 })
 	:Range(0, 100, 50):Value(math.ceil((200 - t.nShapeAlpha)/2)):Change(function(nVal)
 		t.nShapeAlpha = (100 - nVal) * 2
+		_HM_TargetFace.bReRender = true
 	end)
 	-- tips
 	ui:Append("Text", { x = 0, y = 284, txt = _L["Tips"], font = 27 })
