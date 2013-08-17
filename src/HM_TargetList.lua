@@ -1464,11 +1464,16 @@ HM_TargetList.OnItemLButtonDown = function()
 	elseif this:GetName() == "Text_LTitle" then
 		_HM_TargetList.bCustom = not _HM_TargetList.bCustom
 		_HM_TargetList.UpdateListTitle()
-	elseif this.dwID then
-		if IsShiftKeyDown() and HM_TargetList.bAltFocus then
-			_HM_TargetList.SwitchFocus(this.dwID)
-		else
-			HM.SetTarget(this.dwID)
+	else
+		if not HM_TargetList.bFocusTarget2 and this:GetName() == "Text_Target" then
+			this = this:GetParent()
+		end
+		if this.dwID then
+			if IsShiftKeyDown() and HM_TargetList.bAltFocus then
+				_HM_TargetList.SwitchFocus(this.dwID)
+			else
+				HM.SetTarget(this.dwID)
+			end
 		end
 	end
 end
@@ -1534,6 +1539,7 @@ HM_TargetList.OnItemLButtonDBClick = function()
 	if HM_TargetList.bJihuo and HM_Marker and this.dwID and this:GetName() ~= "Text_Target" then
 		local tar = HM.GetTarget(this.dwID)
 		if tar and HM_Marker.CanJihuo() then
+			HM.SetTarget(this.dwID)
 			HM_Marker.Jihuo(tar)
 		end
 	end
