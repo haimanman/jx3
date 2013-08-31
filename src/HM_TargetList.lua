@@ -1090,13 +1090,16 @@ _HM_TargetList.ShowAcctInfo = function()
 	if nChannel == PLAYER_TALK_CHANNEL.WHISPER then
 		nChannel = szName
 	end
-	local t = _HM_TargetList.GetAcctInfo()
+	local t, nCamp = _HM_TargetList.GetAcctInfo(), GetClientPlayer().nCamp
 	if t.Enemy.total > 0 then
-		local szText = _L["Enemy"] .. _L(": Live(%d) Dead(%d) Total(%d)", t.Enemy.live, t.Enemy.dead, t.Enemy.total)
+		local nCamp2 = (nCamp + nCamp) % 3
+		local szText = g_tStrings.STR_CAMP_TITLE[nCamp2] .. _L["Enemy"]
+		szText = szText .. _L(": Live(%d) Dead(%d) Total(%d)", t.Enemy.live, t.Enemy.dead, t.Enemy.total)
 		HM.Talk2(nChannel, szText)
 	end
 	if t.Ally.total > 0 then
-		local szText = _L["Ally"] .. _L(": Live(%d) Dead(%d) Total(%d)", t.Ally.live, t.Ally.dead, t.Ally.total)
+		local szText = g_tStrings.STR_CAMP_TITLE[nCamp] .. _L["Ally"]
+		szText = szText .. _L(": Live(%d) Dead(%d) Total(%d)", t.Ally.live, t.Ally.dead, t.Ally.total)
 		HM.Talk2(nChannel, szText)
 	end
 	if t.Neutral.total > 0 then
