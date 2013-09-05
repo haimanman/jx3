@@ -2,7 +2,7 @@
 <jx3:hm xmlns:jx3="http://haimanchajian.com">
   <name><![CDATA[海鳗、插件集]]></name>
   <desc><![CDATA[大量非常方便的 PVP 插件！ --== 海鳗鳗@步莲台 ==--]]></desc>
-  <version dword="0x2020200">2.2.2</version>
+  <version dword="0x2020400">2.2.4</version>
   <clientVersion dword="0x20101">2.1.1</clientVersion>
   <urlPrefix>http://jx3.hightman.cn/sync/HM/</urlPrefix>
   <info>
@@ -21,12 +21,12 @@
     <file size="7369" title="团队 ROLL 点娱乐、自动记录胜负">src/HM_Roll.lua</file>
     <file size="8299" title="可共享部位的快速脱换装助手、橙武必备">src/HM_Suit2.lua</file>
     <file size="37891" title="目标增强、BUFF放大、方向指示及连接线">src/HM_Target.lua</file>
-    <file size="9042" title="目标和焦点的脚底面向及圈圈指示">src/HM_TargetFace.lua</file>
-    <file size="57084" title="多焦点目标、目标列表、定制筛选排序">src/HM_TargetList.lua</file>
-    <file size="37841" title="目标技能CD监控、超大显示特殊BUFF">src/HM_TargetMon.lua</file>
+    <file size="8753" title="目标和焦点的脚底面向及圈圈指示">src/HM_TargetFace.lua</file>
+    <file size="57423" title="多焦点目标、目标列表、定制筛选排序">src/HM_TargetList.lua</file>
+    <file size="38073" title="目标技能CD监控、超大显示特殊BUFF">src/HM_TargetMon.lua</file>
     <file size="17045" title="团队列表保存与还原、团队快速标记">src/HM_Team.lua</file>
     <file size="34499" title="自动修理卖物、自动确认、自动五行石和一键交易行">src/HM_ToolBox.lua</file>
-    <file size="64660" title="PVE 宏扩展，打怪更高效">lab/HM_Cast.lua</file>
+    <file size="65107" title="PVE 宏扩展，打怪更高效">lab/HM_Cast.lua</file>
     <file size="28461" title="情缘功能，助您剑侠之路不再孤单">lab/HM_Love.lua</file>
   </info>
   <resource>
