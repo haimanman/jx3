@@ -492,7 +492,7 @@ _HM_Doodad.PS.OnPanelActive = function(frame)
 	:Text(_HM_Doodad.GetCustomText()):Enable(HM_Doodad.bCustom)
 	:Change(function(szText)
 		local t = {}
-		szText = StringReplaceW(szText, "£ü", "|")
+		szText = StringReplaceW(szText, _L[" | "], "|")
 		for _, v in ipairs(HM.Split(szText, "|")) do
 			v = HM.Trim(v)
 			if v ~= "" then

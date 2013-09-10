@@ -195,7 +195,7 @@ _HM_Taoguan.PS = {}
 -- init
 _HM_Taoguan.PS.OnPanelActive = function(frame)
 	local ui, nX = HM.UI(frame), 0
-	ui:Append("Text", { txt = "功能设置", x = 0, y = 0, font = 27 })
+	ui:Append("Text", { txt = _L["Feature setting"], x = 0, y = 0, font = 27 })
 	-- gold
 	nX = ui:Append("Text", { txt = "优先使用小金锤，当分数达到", x = 10, y = 28 }):Pos_()
 	nX = ui:Append("WndComboBox", "Combo_Size1", { x = nX, y = 28, w = 100, h = 25 })
@@ -272,7 +272,7 @@ _HM_Taoguan.PS.OnPanelActive = function(frame)
 	ui:Append("Text", { x = nX + 10, y = 140, txt = "（打勾的不捡，若还捡请关盒子的自动拾取）" })
 	-- begin
 	nX = ui:Append("WndButton", { x = 10, y = 176, txt = "开始/停止砸罐" }):AutoSize():Click(_HM_Taoguan.Switch):Pos_()
-	ui:Append("Text", { x = nX + 10, y = 176, txt = "（宏命令开关：/" .. _HM_Taoguan.szName .. "）" })
+	ui:Append("Text", { x = nX + 10, y = 176, txt = "（宏命令开关：/" .. _HM_Taoguan.szName .. _L[") "] })
 end
 
 ---------------------------------------------------------------------
