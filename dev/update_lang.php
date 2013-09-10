@@ -29,7 +29,7 @@ foreach ($lines as $no => $line)
 		if (isset($data2[$k]))
 			echo "-- conflict english '$k' in line $no\n";
 		$data2[$k] = false;
-		if ($lang == 'zhcn')
+		if ($lang == 'vivn')
 			$data3[$v] = $k;
 	}
 }
@@ -49,7 +49,7 @@ foreach ($files as $file)
 		$data2[$tmp] = true;	// marked to keep
 	}
 	// scan new chinese string
-	if ($lang == 'zhcn')
+	if ($lang == 'vivn')
 	{
 		preg_match_all('/"(.*?)(?<!\\\\)"/', $body, $matches);
 		foreach ($matches[1] as $tmp)
