@@ -916,6 +916,9 @@ _HM_TargetList.CheckListItem = function(tar, nMode)
 			local tong = GetTongClient()
 			for k, v in pairs(HM_TargetList.tCustomTong) do
 				if v then
+					if (k == "NONE" or k == "none") and tar.dwTongID == 0 then
+						return true
+					end
 					if tar.dwTongID ~= 0 and k == tong.ApplyGetTongName(tar.dwTongID) then
 						return true
 					end
