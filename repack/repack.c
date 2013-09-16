@@ -8,6 +8,8 @@
 // ------------------------------------
 // gcc -Wall -O2 -mno-cygwin repack.c -o /cygdrive/g/game/jx3/repack.exe
 // gcc -Wall -O2 -mno-cygwin -DFAKE repack.c -o /cygdrive/g/game/jx3/repack_¿ìËÙ¼ì²â.exe
+// /bin/i686-pc-mingw32-gcc.exe -Wall -O2 repack.c -o /cygdrive/g/game/jx3/repack.exe
+// /bin/i686-pc-mingw32-gcc.exe -Wall -O2 -DFAKE repack.c -o /cygdrive/g/game/jx3/repack_¿ìËÙ¼ì²â.exe
 //
 
 //#define	FAKE
@@ -237,6 +239,7 @@ static int wr_off = 0;
 
 struct old_pak
 {
+	int index;
 	char name[64];
 	struct old_pak *next;
 };
@@ -537,13 +540,33 @@ int main(int argc, char *argv[])
 			{
 				struct old_pak *op = (struct old_pak *) malloc(sizeof(struct old_pak));
 				strcpy(op->name, ptr);	// FIXME: may cause buffer overflow
+				op->index = atoi(fpath);
 				op->next = NULL;
 				if (old_head == NULL)
 					old_tail = old_head = op;
-				else
+				else if (op->index < old_head->index)
+				{
+					op->next = old_head;
+					old_head = op;
+				}
+				else if (op->index > old_tail->index)
 				{
 					old_tail->next = op;
 					old_tail = op;
+				}
+				else
+				{
+					struct old_pak *oop = old_head;
+					while (oop->next != NULL)
+					{
+						if (op->index > oop->index && op->index < oop->next->index)
+						{
+							op->next = oop->next;
+							oop->next = op;
+							break;
+						}
+						oop = oop->next;
+					}
 				}
 			}
 		}
@@ -567,7 +590,10 @@ int main(int argc, char *argv[])
 	strcpy(fpath, pak_root);
 	ptr = fpath + strlen(fpath);
 	if (ptr[-1] != '\\' && ptr[-1] != '/')
+	{
 		*ptr++ = '\\';
+		strcat(pak_root, "\\");
+	}
 	ECHO("¼ì²âµ½ PAK Ä¿Â¼: %s\n¼ì²âµ½ PAK ÅäÖÃ: %s\n", pak_root, pak_ini);
 	for (old_tail = old_head; old_tail != NULL; old_tail = old_tail->next)
 	{
