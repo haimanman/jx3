@@ -6,7 +6,7 @@ local _i = Table_GetItemName
 HM_ToolBox = {
 	bAutoRepair = true,	-- 打开 NPC 后自动修理
 	bSellGray = true,		-- 打开 NPC 后自动卖掉灰色物品
-	bSellWhiteBook = true,	-- 自动出售已读白书
+	bSellWhiteBook2 = false,	-- 自动出售已读白书
 	bSellGreenBook = false,	-- 自动出售已读绿书
 	bSellBlueBook = false,	-- 自动出售已读蓝书
 	tSellItem = {
@@ -54,8 +54,8 @@ _HM_ToolBox.GetSellMenu = function()
 	local m0 = {
 		{ szOption = _L["Sell grey items"], bCheck = true, bChecked = HM_ToolBox.bSellGray,
 			fnAction = function(d, b) HM_ToolBox.bSellGray = b end,
-		}, { szOption = _L["Sell white books"], bCheck = true, bChecked = HM_ToolBox.bSellWhiteBook,
-			fnAction = function(d, b) HM_ToolBox.bSellWhiteBook = b end,
+		}, { szOption = _L["Sell white books"], bCheck = true, bChecked = HM_ToolBox.bSellWhiteBook2,
+			fnAction = function(d, b) HM_ToolBox.bSellWhiteBook2 = b end,
 			fnDisable = function() return not HM_ToolBox.bSellGray end
 		}, { szOption = _L["Sell green books"], bCheck = true, bChecked = HM_ToolBox.bSellGreenBook,
 			fnAction = function(d, b) HM_ToolBox.bSellGreenBook = b end,
@@ -104,7 +104,7 @@ _HM_ToolBox.SellGrayItem = function(nNpcID, nShopID)
 				if not bSell and item.nGenre == ITEM_GENRE.BOOK
 					and me.IsBookMemorized(GlobelRecipeID2BookID(item.nBookID))
 				then
-					if (HM_ToolBox.bSellWhiteBook and item.nQuality == 1)
+					if (HM_ToolBox.bSellWhiteBook2 and item.nQuality == 1)
 						or (HM_ToolBox.bSellGreenBook and item.nQuality == 2)
 						or (HM_ToolBox.bSellBlueBook and item.nQuality == 3)
 					then
