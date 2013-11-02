@@ -25,6 +25,7 @@ HM.RegisterCustomData("HM_TargetFace")
 local _HM_TargetFace = {
 	szIniFile = "interface\\HM\\ui\\HM_TargetFace.ini",
 	dwFocusID = 0,
+	bLockFocus = false,
 }
 
 -- draw shape
@@ -112,11 +113,13 @@ end
 function HM_TargetFace.OnEvent(event)
 	if event == "UPDATE_SELECT_TARGET" then
 		_HM_TargetFace.bReRender = true
-	elseif event == "HM_ADD_FOCUS_TARGET" then
+	elseif event == "HM_ADD_FOCUS_TARGET" and (arg1 or not _HM_TargetFace.bLockFocus) then
 		_HM_TargetFace.dwFocusID = arg0
+		_HM_TargetFace.bLockFocus = arg1
 		_HM_TargetFace.bReRender = true
 	elseif event == "HM_DEL_FOCUS_TARGET" and arg0 == _HM_TargetFace.dwFocusID then
 		_HM_TargetFace.dwFocusID = 0
+		_HM_TargetFace.bLockFocus = false
 		_HM_TargetFace.bReRender = true
 	end
 end

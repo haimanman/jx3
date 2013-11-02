@@ -179,7 +179,7 @@ _HM_TargetList.AddFocus = function(dwID)
 		HM_TargetList.bShowFocus = true
 		_HM_TargetList.UpdateSize(true)
 	end
-	FireUIEvent("HM_ADD_FOCUS_TARGET", dwID)
+	FireUIEvent("HM_ADD_FOCUS_TARGET", dwID, false)
 end
 
 -- del focus
@@ -579,7 +579,10 @@ end
 -- hook target menu
 _HM_TargetList.HookTargetMenu = function()
 	Target_AppendAddonMenu({ function(dwID)
-		return { _HM_TargetList.GetFocusItemMenu(dwID) }
+		return {
+			_HM_TargetList.GetFocusItemMenu(dwID),
+			{ szOption = _L["Lock as single focus"], fnAction = function() HM_SingleFocus.Lock(dwID) end }
+		}
 	end })
 end
 
@@ -1285,6 +1288,7 @@ HM_TargetList.OnEvent = function(event)
 						hnd.OnItemRButtonDown = function()
 							local menu = {}
 							table.insert(menu, _HM_TargetList.GetFocusItemMenu(frm.dwID))
+							table.insert(menu, { szOption = _L["Lock as single focus"], fnAction = function() HM_SingleFocus.Lock(frm.dwID) end })
 							PopupMenu(menu)
 						end
 					end
@@ -1561,6 +1565,9 @@ HM_TargetList.OnItemRButtonDown = function()
 				})
 			end
 		end
+		-- single focus
+		local dwID = this.dwID
+		table.insert(m0, { szOption = _L["Lock as single focus"], fnAction = function() HM_SingleFocus.Lock(dwID) end })
 		PopupMenu(m0)
 	end
 end
@@ -1678,10 +1685,11 @@ HM_SingleFocus.OnEvent = function(event)
 		UpdateCustomModeWindow(this)
 	elseif event == "UI_SCALED" then
 		HM_SingleFocus.UpdateAnchor(this)
-	elseif event == "HM_ADD_FOCUS_TARGET" and this.focus then
+	elseif event == "HM_ADD_FOCUS_TARGET" and this.focus and not this.focus.locked then
 		this.focus.dwID = arg0
 	elseif event == "HM_DEL_FOCUS_TARGET" and this.focus and arg0 == this.focus.dwID then
 		this.focus.dwID = nil
+		this.focus.locked = nil
 	elseif event == "LOADING_END" then
 		this.nFrame = nil
 	end
@@ -1701,6 +1709,18 @@ HM_SingleFocus.Switch = function(bEnable)
 		end
 	elseif not frame then
 		Wnd.OpenWindow("interface\\HM\\ui\\HM_TargetMon.ini", "HM_SingleFocus")
+	end
+end
+
+-- lock as single focus
+HM_SingleFocus.Lock = function(dwID)
+	HM_SingleFocus.Switch(true)
+	local frame = Station.Lookup("Normal/HM_SingleFocus")
+	if frame and frame.focus then
+		frame.focus.dwID = dwID
+		frame.focus.locked = true
+		_HM_TargetList.AddFocus(dwID)
+		FireUIEvent("HM_ADD_FOCUS_TARGET", dwID, true)
 	end
 end
 
