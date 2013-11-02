@@ -1793,7 +1793,7 @@ HM.RegisterEvent("LOADING_END", function()
 	_HM_TargetList.bInArena = IsInArena()
 	_HM_TargetList.nBeginArena = nil
 	_HM_TargetList.nFrameAcct = 0
-	if _HM_TargetList.bInArena or IsInQWG() then
+	if _HM_TargetList.bInArena then
 		_HM_TargetList.bShowList = HM_TargetList.bShowList
 		HM_TargetList.bShowList = false
 		_HM_TargetList.UpdateSize()
