@@ -1539,6 +1539,20 @@ HM_TargetList.OnItemRButtonDown = function()
 					OpenArenaCorpsPanel(true, dwID)
 				end
 			})
+			-- view qixue
+			local t = {}
+			InsertTargetMenu(t, dwID)
+			for _, v in ipairs(t) do
+				if v.szOption == g_tStrings.LOOKUP_INFO then
+					for _, vv in ipairs(v) do
+						if vv.szOption == g_tStrings.LOOKUP_NEW_TANLENT then
+							table.insert(m0, vv)
+							break
+						end
+					end
+					break
+				end
+			end
 		else
 			if this.bList then
 				local szName = this.szName
