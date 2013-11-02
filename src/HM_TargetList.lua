@@ -90,6 +90,12 @@ local _HM_TargetList = {
 	bCustom = false,		-- 启用自定义
 }
 
+-- 是否在齐物阁中
+local function IsInQWG()
+	local me = GetClientPlayer()
+	return me ~= nil and me.GetScene().dwMapID == 173
+end
+
 ---------------------------------------------------------------------
 -- 焦点目标
 ---------------------------------------------------------------------
@@ -1300,8 +1306,8 @@ HM_TargetList.OnEvent = function(event)
 	then
 		-- auto focus in arean
 		if HM_TargetList.bAutoArena and event == "PLAYER_ENTER_SCENE"
-			and IsInArena() and not _HM_TargetList.IsFocus(arg0)
-			and IsEnemy(GetClientPlayer().dwID, arg0)
+			and not _HM_TargetList.IsFocus(arg0) and IsEnemy(GetClientPlayer().dwID, arg0)
+			and (IsInArena() or (IsInQWG() and GetCharacterDistance(arg0, GetClientPlayer().dwID) <= 6400))
 		then
 			_HM_TargetList.AddFocus(arg0)
 		end
@@ -1500,7 +1506,7 @@ end
 
 HM_TargetList.OnItemRButtonDown = function()
 	if this.dwID and this.szName then
-		if _HM_TargetList.bInArena then
+		if _HM_TargetList.bInArena and _HM_TargetList.nBeginArena then
 			return HM.SetTarget(this.dwID)
 		end
 		local m0 = {}
@@ -1787,7 +1793,7 @@ HM.RegisterEvent("LOADING_END", function()
 	_HM_TargetList.bInArena = IsInArena()
 	_HM_TargetList.nBeginArena = nil
 	_HM_TargetList.nFrameAcct = 0
-	if _HM_TargetList.bInArena then
+	if _HM_TargetList.bInArena or IsInQWG() then
 		_HM_TargetList.bShowList = HM_TargetList.bShowList
 		HM_TargetList.bShowList = false
 		_HM_TargetList.UpdateSize()

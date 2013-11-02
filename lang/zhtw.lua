@@ -765,7 +765,7 @@ data = {
 	["Display the foot shape of focus, change color"] = "顯示焦點底部的圈圈，設置顏色",
 	["The foot shape radius"] = "圈圈半徑",
 	["The foot shape transparency"] = "圈圈透明度",
-	["Only show the facing and foot shape of the last added focus target"] = "只會顯示最后設置的焦點目標的面向和圈圈",
+	["Only show the facing and foot shape of the last added focus target"] = "只會顯示最后設置或鎖定為獨立的焦點目標的面向和圈圈",
 	-- HM_Doodad.lua --
 	["Filter on manual"] = "手動拾取也過濾",
 	["Filter gray items"] = "過濾灰色物品",
