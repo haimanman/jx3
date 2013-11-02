@@ -5,7 +5,8 @@
 HM_TargetList = {
 	bShow = true,				-- 开启功能
 	bJihuo = true,				-- 开启双击集火（要求 HM_Marker）
-	bAutoArean = true,		-- 开启竞技场模式（自动全部焦点对方）
+	bAutoArena = true,		-- 开启竞技场模式（自动全部焦点对方）
+	bAutoBigBoss = true,	-- 自动焦点攻防/计时 BOSS
 	----
 	--bShowFocus = true,	-- 显示焦点目标
 	bFocusState = true,		-- 显示焦点状态/BUFF
@@ -96,7 +97,7 @@ local _HM_TargetList = {
 _HM_TargetList.GetFocusMenu = function()
 	local n = HM_TargetList.nMaxFocus
 	return {
-		{ szOption = _L["Display the latest focus alone"], rgb = { 255, 126, 126 },
+		{ szOption = _L["Display the latest focus alone"],
 			bCheck = true, bChecked = HM_SingleFocus.bEnable2,
 			fnAction = function(d, b) HM_SingleFocus.Switch(b) end
 		}, { szOption = _L["Show move state/buff"],
@@ -107,9 +108,12 @@ _HM_TargetList.GetFocusMenu = function()
 			bCheck = true, bChecked = HM_TargetList.bFocusTarget2,
 			fnDisable = function() return not HM_TargetList.bShowFocus end,
 			fnAction = function() HM_TargetList.bFocusTarget2 = not HM_TargetList.bFocusTarget2 end
-		}, { szOption = _L["Auto focus enemy in arean"], bCheck = true, bChecked = HM_TargetList.bAutoArean,
+		}, { szOption = _L["Auto focus enemy in arena/qiwuge"], bCheck = true, bChecked = HM_TargetList.bAutoArena,
 			fnDisable = function() return not HM_TargetList.bShowFocus end,
-			fnAction = function() HM_TargetList.bAutoArean = not HM_TargetList.bAutoArean end
+			fnAction = function() HM_TargetList.bAutoArena = not HM_TargetList.bAutoArena end
+		}, { szOption = _L["Auto focus big/camp boss"], bCheck = true, bChecked = HM_TargetList.bAutoBigBoss,
+			fnDisable = function() return not HM_TargetList.bShowFocus and HM_Camp end,
+			fnAction = function() HM_TargetList.bAutoBigBoss = not HM_TargetList.bAutoBigBoss end
 		}, { szOption = _L["Use old focused interface"], bCheck = true, bChecked = HM_TargetList.bFocusOld,
 			fnDisable = function() return not HM_TargetList.bShowFocus end,
 			fnAction = function()
@@ -126,7 +130,7 @@ _HM_TargetList.GetFocusMenu = function()
 			{ szOption = "3", bCheck = true, bMCheck = true, UserData = 3, bChecked = n == 3 , fnAction = _HM_TargetList.AdjustMaxFocus },
 			{ szOption = "4", bCheck = true, bMCheck = true, UserData = 4, bChecked = n == 4 , fnAction = _HM_TargetList.AdjustMaxFocus },
 			{ szOption = "5", bCheck = true, bMCheck = true, UserData = 5, bChecked = n == 5 , fnAction = _HM_TargetList.AdjustMaxFocus },
-		}, { szOption = _L["<Shift-Click to add focus>"], rgb = { 255, 126, 126 },
+		}, { szOption = _L["<Shift-Click to add focus>"],
 			bCheck = true, bChecked = HM_TargetList.bAltFocus,
 			fnAction = function(d, b) HM_TargetList.bAltFocus = b end,
 		},
@@ -661,7 +665,7 @@ _HM_TargetList.GetListMenu = function()
 	end
 	table.insert(m0, m1)
 	-- custom
-	local m1 = { szOption = _L["Enable custom option"], rgb = { 255, 126, 126 },
+	local m1 = { szOption = _L["Enable custom option"],
 		bCheck = true, bChecked = _HM_TargetList.bCustom,
 		fnAction = function(d, b)
 			_HM_TargetList.bCustom = b
@@ -1291,9 +1295,15 @@ HM_TargetList.OnEvent = function(event)
 		or event == "NPC_ENTER_SCENE" or event == "NPC_LEAVE_SCENE"
 	then
 		-- auto focus in arean
-		if HM_TargetList.bAutoArean and event == "PLAYER_ENTER_SCENE"
+		if HM_TargetList.bAutoArena and event == "PLAYER_ENTER_SCENE"
 			and IsInArena() and not _HM_TargetList.IsFocus(arg0)
 			and IsEnemy(GetClientPlayer().dwID, arg0)
+		then
+			_HM_TargetList.AddFocus(arg0)
+		end
+		-- auto focus big boss
+		if HM_TargetList.bAutoBigBoss and HM_Camp and event == "NPC_ENTER_SCENE"
+			and not _HM_TargetList.IsFocus(arg0) and HM_Camp.IsCareNpc(GetNpc(arg0))
 		then
 			_HM_TargetList.AddFocus(arg0)
 		end

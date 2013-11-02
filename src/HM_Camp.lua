@@ -54,6 +54,30 @@ _HM_Camp.tBossGF = {
 	[_n(16902)--[[Ð¤Ò©¶ù]]] = 2, [_n(16901)--[[ÉòÃß·ç]]] = 2, [_n(16899)--[[ÌÕº®Í¤]]] = 2, [_n(16903)--[[ÑÌ]]] = 2,  [_n(20274)--[[ÍõÒÅ·ç]]] = 4, [_n(20428)--[[ÄªÓê]]] = 6,
 }
 
+-- is care npc/boss
+_HM_Camp.IsCareNpc = function(v)
+	if not v then return false end
+	-- only in 22, 25, 27, 30 (camp fight map)
+	local dwMapID = GetClientPlayer().GetScene().dwMapID
+	if dwMapID == 22 or dwMapID == 25 or dwMapID == 27 or dwMapID == 30 then
+		local n = _HM_Camp.tBossGF[v.szName]
+		if n then
+			for _, vv in ipairs(HM.GetAllNpc()) do
+				if vv.dwID ~= v.dwID and _HM_Camp.tBossGF[vv.szName] == 4 then
+					return false
+				end
+			end
+			return true
+		end
+	end
+	if IsEnemy(GetClientPlayer().dwID, v.dwID)
+		and (HM_Camp.tBossList2[v.szName] or v.nMaxLife >= 200000000)
+	then
+		return true
+	end
+	return false
+end
+
 -- get boss camp
 _HM_Camp.GetBossCamp = function(szName)
 	local n = _HM_Camp.tBossGF[szName]
@@ -647,3 +671,4 @@ HM.BreatheCall("HM_Camp", _HM_Camp.OnBreathe)
 HM_Camp.TargetGF = _HM_Camp.TargetGF
 HM_Camp.GetHideMenu = _HM_Camp.GetHideMenu
 HM_Camp.HideGF = _HM_Camp.HideGF
+HM_Camp.IsCareNpc = _HM_Camp.IsCareNpc
