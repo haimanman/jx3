@@ -1825,3 +1825,6 @@ TraceButton_AppendAddonMenu({ function()
 	}}
 end })
 
+-- shared with HM_Marker
+HM_TargetList.AddFocus = _HM_TargetList.AddFocus
+HM_TargetList.DelFocus = _HM_TargetList.DelFocus
