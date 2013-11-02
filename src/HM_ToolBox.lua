@@ -867,7 +867,8 @@ end
 _HM_ToolBox.OnChatPanelInit = function()
 	for i = 1, 10 do
 		local h = Station.Lookup("Lowest2/ChatPanel" .. i .. "/Wnd_Message", "Handle_Message")
-		if h and i ~= 5 then
+		local ttl = Station.Lookup("Lowest2/ChatPanel" .. i .. "/CheckBox_Title", "Text_TitleName")
+		if h and (not ttl or ttl:GetText() ~= g_tStrings.CHANNEL_MENTOR) then
 			if HM_ToolBox.bChatTime then
 				if not h._AppendItemFromString then
 					h._AppendItemFromString = h.AppendItemFromString
