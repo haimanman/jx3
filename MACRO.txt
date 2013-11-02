@@ -128,6 +128,7 @@ nostatus         ×ÔÉí²»ÎªÖ¸¶¨ÈËÎï×´Ì¬              tnostatus:Õ¾Á¢ »ò tnostatus:±
 > ×´Ì¬ÀàÐÍ2£ºÕ¾Á¢|ÅÜ²½|ÌøÔ¾|ÓÎÓ¾|Ë®ÖÐÐü¸¡|×øÏÂ|Ë®ÖÐÌøÔ¾
 > ×´Ì¬ÀàÐÍ3£º±»»÷ÍË|±»»÷·É|³Ë½»Í¨¹¤¾ß|ÖØÉË|³å´Ì|±»×¥|»¬ÐÐ|ÅÀÆð|¼¼ÄÜÊÕÕÐ×´Ì¬
 --------------------------------------------------------------------------------
+have             ÅÐ¶ÏÊÇ·ñÁì»áÏà¹Ø¼¼ÄÜ£¨Ö§³ÖÆæÑ¨£©  have:¼¤À× »ò have:¼¤À×-ÇàÑô
 cd               Ö¸¶¨¼¼ÄÜÕýÔÚÀäÈ´ÖÐ                cd:ÆÆ·ç »ò cd:ÆÆ·ç-¶¨¾ü »ò cd:ÆÆ·ç|¶¨¾ü
 nocd             Ö¸¶¨¼¼ÄÜÒÑ¾­ÀäÈ´Íê±Ï              nocd:ÆÆ·ç »ò nocd:ÆÆ·ç-¶¨¾ü »ò nocd:ÆÆ·ç|¶¨¾ü
 cdtime           ¼¼ÄÜÀäÈ´Ê±¼ä·ûºÏÌõ¼þ              cdtime:¶¨¾ü>5 »ò cdtime:¶¨¾ü>5|ÆÆ·ç>3 »ò cdtime:¶¨¾ü>5-ÆÆ·ç>3
@@ -239,6 +240,7 @@ $¼¼ÄÜ     Èç¹û³É¹¦ÊÍ·Å¼¼ÄÜ£¬Ôò²»ÔÙÖ´ÐÐºóÃæµÄºêÓï¾ä£¨½öÏÞ±¾´Î£©
 8. alias           »º´æÌõ¼þÅÐ¶Ï½á¹û£¬²ÎÊýÎª»º´æÃû³Æ£¬²»¿ÉÓëÃüÃûÌõ¼þ³åÍ»£¬Ö§³Ö ! ·ñ¶¨ÅÐ¶Ï
 9. debug           ÇÐ»» DEBUG ×´Ì¬
 10.È¡Ïûbuff        ÓÃÀ´È¡ÏûÉíÉÏµÄÄ³¸öÔöÒæ BUFF£¬²ÎÊýÎª BUFF Ãû³Æ
+11.buffdelay       ÉèÖÃ buff ÅÐ¶ÏÏà¹ØµÄÑÓ³ÙÃëÊýÐÞÕý£¬Ö§³ÖÐ¡Êýµã¡£
 
 
 ºêÓï¾ä½»Á÷ÓëÊ¾·¶
