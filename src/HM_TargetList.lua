@@ -90,10 +90,16 @@ local _HM_TargetList = {
 	bCustom = false,		-- 启用自定义
 }
 
--- 是否在齐物阁中
-local function IsInQWG()
+-- 是否在齐物阁同一区域：距离 100 尺内并且垂直距离 20尺内 (nZ/64*8)
+local function IsInSameQWG(dwPlayer)
 	local me = GetClientPlayer()
-	return me ~= nil and me.GetScene().dwMapID == 173
+	if me and me.GetScene().dwMapID == 173 then
+		local tar = GetPlayer(dwPlayer)
+		if tar and HM.GetDistance(tar) < 100 and math.abs(me.nZ - tar.nZ) < 10240 then
+			return true
+		end
+	end
+	return false
 end
 
 ---------------------------------------------------------------------
@@ -1307,7 +1313,7 @@ HM_TargetList.OnEvent = function(event)
 		-- auto focus in arean
 		if HM_TargetList.bAutoArena and event == "PLAYER_ENTER_SCENE"
 			and not _HM_TargetList.IsFocus(arg0) and IsEnemy(GetClientPlayer().dwID, arg0)
-			and (IsInArena() or (IsInQWG() and GetCharacterDistance(arg0, GetClientPlayer().dwID) <= 6400))
+			and (IsInArena() or IsInSameQWG(arg0))
 		then
 			_HM_TargetList.AddFocus(arg0)
 		end
