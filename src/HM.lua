@@ -201,6 +201,7 @@ _HM.tTalkChannelHeader = {
 	[PLAYER_TALK_CHANNEL.FRIENDS] = "/o ",
 	[PLAYER_TALK_CHANNEL.TONG_ALLIANCE] = "/a ",
 	[PLAYER_TALK_CHANNEL.RAID] = "/t ",
+	[PLAYER_TALK_CHANNEL.BATTLE_FIELD] = "/b ",
 	[PLAYER_TALK_CHANNEL.TONG] = "/g ",
 	[PLAYER_TALK_CHANNEL.SENCE] = "/y ",
 	[PLAYER_TALK_CHANNEL.FORCE] = "/f ",
@@ -915,6 +916,18 @@ HM.CanTalk = function(nChannel)
 	return false
 end
 
+-- 切换聊天频道
+-- (void) HM.SwitchChat(number nChannel)
+HM.SwitchChat = function(nChannel)
+	local szHeader = _HM.tTalkChannelHeader[nChannel]
+	if szHeader then
+		SwitchChatChannel(szHeader)
+	elseif type(nChannel) == "string" then
+		SwitchChatChannel("/w " .. nChannel .. " ")
+	end
+end
+
+
 -- 发布聊天内容
 -- (void) HM.Talk(string szTarget, string szText[, boolean bNoEmotion])
 -- (void) HM.Talk([number nChannel, ] string szText[, boolean bNoEmotion])
@@ -969,10 +982,7 @@ HM.Talk = function(nChannel, szText, bNoEmotion, bSaveDeny)
 			end
 		end
 		-- change to this channel
-		local szHeader = _HM.tTalkChannelHeader[nChannel]
-		if szHeader then
-			SwitchChatChannel(szHeader)
-		end
+		HM.SwitchChat(nChannel)
 	end
 end
 
