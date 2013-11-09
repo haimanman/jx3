@@ -358,6 +358,7 @@ end
 -- draw area (draw shape only for far objects)
 _HM_Area.DrawArea = function(tar)
 	local data = _HM_Area.tList[tar.dwID]
+	if not data then return end
 	local color =  _HM_Area.GetColor(_HM_Area.GetRelation(data.dwCaster), tar.dwTemplateID)
 	local nAlpha, nRadius = HM_Area.nAlpha, _HM_Area.GetAreaRadius(tar.dwTemplateID)
 	local nDistance = HM.GetDistance(tar)
