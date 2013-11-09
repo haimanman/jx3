@@ -94,8 +94,11 @@ local _HM_TargetList = {
 local function IsInSameQWG(dwPlayer)
 	local me = GetClientPlayer()
 	if me and me.GetScene().dwMapID == 173 then
+		if not dwPlayer then
+			return true
+		end
 		local tar = GetPlayer(dwPlayer)
-		if tar and HM.GetDistance(tar) < 100 and math.abs(me.nZ - tar.nZ) < 10240 then
+		if tar and HM.GetDistance(tar) < 100 and math.abs(me.nZ - tar.nZ) < 5120 then
 			return true
 		end
 	end
@@ -1076,9 +1079,9 @@ end
 
 -- arean monitor
 _HM_TargetList.MonitorArena = function(szMsg)
-	if StringFindW(szMsg, _L["Arean begin!!!"]) then
+	if StringFindW(szMsg, _L["Arean begin!!!"]) or StringFindW(szMsg, _L["Battle begin."]) then
 		_HM_TargetList.nBeginArena = GetLogicFrameCount()
-		UnRegisterMsgMonitor(_HM_TargetList.MonitorArena, {"MSG_SYS"})
+		--UnRegisterMsgMonitor(_HM_TargetList.MonitorArena, {"MSG_SYS"})
 	end
 end
 
@@ -1799,10 +1802,12 @@ HM.RegisterEvent("LOADING_END", function()
 	_HM_TargetList.bInArena = IsInArena()
 	_HM_TargetList.nBeginArena = nil
 	_HM_TargetList.nFrameAcct = 0
-	if _HM_TargetList.bInArena then
-		_HM_TargetList.bShowList = HM_TargetList.bShowList
-		HM_TargetList.bShowList = false
-		_HM_TargetList.UpdateSize()
+	if _HM_TargetList.bInArena or IsInSameQWG() then
+		if _HM_TargetList.bInArena then
+			_HM_TargetList.bShowList = HM_TargetList.bShowList
+			HM_TargetList.bShowList = false
+			_HM_TargetList.UpdateSize()
+		end
 		RegisterMsgMonitor(_HM_TargetList.MonitorArena, {"MSG_SYS"})
 	else
 		if _HM_TargetList.bShowList then

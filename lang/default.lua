@@ -5,6 +5,7 @@ data = {
 	["point. (1-100)"] = "点。(1 - 100)",
 	["\"(.-) rolled (%d+) point."] = "\"(.-)掷出(%d+)点。",
 	["Arean begin!!!"] = "竞技场开始!!!",
+	["Battle begin."] = "争夺开始。",
 	["HuiZhenYan"] = "汇珍宴",
 	["DiamondRegex"] = "五行石·(.-)（(.-)级）",
 }
