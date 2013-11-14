@@ -288,6 +288,7 @@ end
 -- show name
 _HM_Area.ShowName = function(tar)
 	local data = _HM_Area.tList[tar.dwID]
+	if not data then return end
 	local r, g, b = unpack(_HM_Area.GetColor(_HM_Area.GetRelation(data.dwCaster), tar.dwTemplateID))
 	local szText = tar.szName
 	if data.dwCaster ~= 0 then
