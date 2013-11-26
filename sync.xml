@@ -2,11 +2,11 @@
 <jx3:hm xmlns:jx3="http://haimanchajian.com">
   <name><![CDATA[海鳗、插件集]]></name>
   <desc><![CDATA[大量非常方便的 PVP 插件！ --== 海鳗鳗@步莲台 ==--]]></desc>
-  <version dword="0x2020600">2.2.6</version>
+  <version dword="0x2020702">2.2.7b2</version>
   <clientVersion dword="0x20101">2.1.1</clientVersion>
   <urlPrefix>http://jx3.hightman.cn/sync/HM/</urlPrefix>
   <info>
-    <file size="18735" title="纯阳气场/唐门机关范围显示、归属显示、消失倒计时">src/HM_Area.lua</file>
+    <file size="18795" title="纯阳气场/唐门机关范围显示、归属显示、消失倒计时">src/HM_Area.lua</file>
     <file size="14024" title="战场竞技场助手、死后交阵眼、九宫计时、名剑币估算">src/HM_Battle.lua</file>
     <file size="22618" title="攻防屏蔽及智能选BOSS、任务BOSS计时等">src/HM_Camp.lua</file>
     <file size="15945" title="自动拾取和过滤、自动采集助手">src/HM_Doodad.lua</file>
@@ -23,19 +23,19 @@
     <file size="37891" title="目标增强、BUFF放大、方向指示及连接线">src/HM_Target.lua</file>
     <file size="8892" title="目标和焦点的脚底面向及圈圈指示">src/HM_TargetFace.lua</file>
     <file size="59803" title="多焦点目标、目标列表、定制筛选排序">src/HM_TargetList.lua</file>
-    <file size="38117" title="目标技能CD监控、超大显示特殊BUFF">src/HM_TargetMon.lua</file>
+    <file size="38373" title="目标技能CD监控、超大显示特殊BUFF">src/HM_TargetMon.lua</file>
     <file size="17045" title="团队列表保存与还原、团队快速标记">src/HM_Team.lua</file>
     <file size="34648" title="自动修理卖物、自动确认、自动五行石和一键交易行">src/HM_ToolBox.lua</file>
-    <file size="67568" title="PVE 宏扩展，打怪更高效">lab/HM_Cast.lua</file>
-    <file size="29285" title="情缘功能，助您剑侠之路不再孤单">lab/HM_Love.lua</file>
+    <file size="67794" title="PVE 宏扩展，打怪更高效">lab/HM_Cast.lua</file>
+    <file size="29818" title="情缘功能，助您剑侠之路不再孤单">lab/HM_Love.lua</file>
   </info>
   <resource>
     <file size="22464">API.md</file>
-    <file size="691">CHANGELOG.lab</file>
+    <file size="778">CHANGELOG.lab</file>
     <file size="19630">CHANGELOG.txt</file>
     <file size="2874">LICENSE.txt</file>
     <file size="14067">MACRO.txt</file>
-    <file size="2198">README.md</file>
+    <file size="2200">README.md</file>
     <file size="16741">hero/female_cont_1.wav</file>
     <file size="19746">hero/female_cont_2.wav</file>
     <file size="15476">hero/female_normal_1.wav</file>
@@ -44,7 +44,7 @@
     <file size="15318">hero/male_cont_2.wav</file>
     <file size="8834">hero/male_normal_1.wav</file>
     <file size="18797">hero/male_normal_2.wav</file>
-    <file size="1085">info.ini</file>
+    <file size="1087">info.ini</file>
     <file size="10415">lab/HM_Taoguan.lua</file>
     <file size="432">lang/default.lua</file>
     <file size="49682">lang/zhcn.lua</file>
