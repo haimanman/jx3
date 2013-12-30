@@ -321,7 +321,9 @@ _HM_RedName.GetBreatheCheck = function()
 	local bRender, bComm = false, false
 	local nFrame, me = GetLogicFrameCount(), GetClientPlayer()
 	if me then
-		if nFrame >= _HM_RedName.nRefreshFrame then
+		if nFrame >= _HM_RedName.nRefreshFrame
+			or (_HM_RedName.nRefreshFrame - nFrame) > 16
+		then
 			_HM_RedName.nCommFrame = nFrame + 8
 			_HM_RedName.nRefreshFrame = nFrame + 16
 			bRender = true
