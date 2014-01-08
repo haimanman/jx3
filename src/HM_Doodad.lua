@@ -29,7 +29,7 @@ local function _d(dwID)
 	return GetDoodadTemplate(dwID).szName
 end
 
-_HM_Doodad = {
+local _HM_Doodad = {
 	-- 草药、矿石列表
 	tCraft = {
 		1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009,
@@ -503,6 +503,15 @@ _HM_Doodad.PS.OnPanelActive = function(frame)
 		_HM_Doodad.Reload()
 	end)
 	ui:Append("Text", { txt = _L["Tip: Enter the name of dead animals can be automatically Paoding!"], x = 10, y = nY + 28 })
+end
+
+_HM_Doodad.PS.OnConflictCheck  = function()
+	if IsEmpty(HM_Doodad.tCustom) then
+		-- 粮草堆，散落的镖银，阵营首领战利品
+		for _, v in ipairs({ 3996, 3874, 4254, 4315 }) do
+			HM_Doodad.tCustom[_d(v)] = true
+		end
+	end
 end
 
 ---------------------------------------------------------------------
