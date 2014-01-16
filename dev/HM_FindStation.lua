@@ -19,7 +19,7 @@ _HM_FindStation.UpdateButton = function()
 	local function fnApply(wnd)
 		if wnd and wnd:IsVisible() then
 			-- update mouse tips
-			if wnd:GetType() == "WndButton" then
+			if wnd:GetType() == "WndButton" or wnd:GetType() == "WndCheckBox" then
 				if _HM_FindStation.bButton then
 					wnd._OnMouseEnter = wnd.OnMouseEnter
 					wnd.OnMouseEnter = function()
