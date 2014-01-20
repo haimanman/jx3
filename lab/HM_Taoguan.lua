@@ -9,6 +9,7 @@ HM_Taoguan = {
 	nUseJX = 80,				-- 自动用掉锦囊、香囊
 	bNonZS = false,	-- 不使用醉生
 	bUseGold = false,	-- 没银锤时使用金锤
+	bUseTaoguan = true,	-- 必要时自动使用背包的陶罐
 	tFilterItem = {
 		["鞭炮"] = true,
 		["火树银花"] = true,
@@ -21,7 +22,7 @@ HM_Taoguan = {
 		["剪纸：凤舞"] = true,
 		["元宝灯"] = true,
 		["桃花灯"] = true,
-		["桃木牌·蛇"] = false,
+		["桃木牌·马"] = false,
 		["桃木牌·年"] = false,
 		["桃木牌·吉"] = false,
 		["桃木牌·祥"] = true,
@@ -50,7 +51,7 @@ local _HM_Taoguan = {
 -- use bag item
 _HM_Taoguan.UseBagItem = function(szName, bWarn)
 	local me = GetClientPlayer()
-	for i = 1, 5 do
+	for i = 1, 6 do
 		for j = 0, me.GetBoxSize(i) - 1 do
 		local it = GetPlayerItem(me, i, j)
 			if it and it.szName == szName then
@@ -78,14 +79,19 @@ end
 
 -- search next
 _HM_Taoguan.FindNear = function()
+	local bFound = false
 	_HM_Taoguan.bReachLimit = nil
 	for k, _ in pairs(_HM_Taoguan.tListed) do
 		local npc = GetNpc(k)
 		if not npc then
 			_HM_Taoguan.tListed[k] = nil
 		elseif HM.GetDistance(npc) < 4 then
+			bFound = true
 			FireUIEvent("NPC_ENTER_SCENE", k)
 		end
+	end
+	if not bFound and HM_Taoguan.bUseTaoguan then
+		_HM_Taoguan.UseBagItem(_HM_Taoguan.szName)
 	end
 end
 
@@ -214,7 +220,7 @@ _HM_Taoguan.PS.OnPanelActive = function(frame)
 	:Click(function(bChecked) HM_Taoguan.bUseGold = bChecked end)
 	-- max
 	nX = ui:Append("Text", { txt = "停止无脑砸罐子，当分数达到", x = 10, y = 56 }):Pos_()
-	ui:Append("WndComboBox", "Combo_Size3", { x = nX, y = 56, w = 100, h = 25 })
+	nX = ui:Append("WndComboBox", "Combo_Size3", { x = nX, y = 56, w = 100, h = 25 })
 	:Text(tostring(HM_Taoguan.nPausePoint)):Menu(function()
 		local m0 = {}
 		for i = 7, 17 do
@@ -225,7 +231,9 @@ _HM_Taoguan.PS.OnPanelActive = function(frame)
 			end })
 		end
 		return m0
-	end)
+	end):Pos_()
+	ui:Append("WndCheckBox", { txt = "必要时自动放罐子？", x = nX + 10, y = 56, checked = HM_Taoguan.bUseTaoguan })
+	:Click(function(bChecked) HM_Taoguan.bUseTaoguan = bChecked end)
 	-- zj
 	nX = ui:Append("Text", { txt = "使用寄忧谷醉生，当分数达到", x = 10, y = 84 }):Pos_()
 	nX = ui:Append("WndComboBox", "Combo_Size2", { x = nX, y = 84, w = 100, h = 25 })

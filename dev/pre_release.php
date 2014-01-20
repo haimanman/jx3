@@ -88,9 +88,9 @@ for ($i = 0; $i < count($required); $i++)
 }
 foreach ($files as $file)
 {
-	// remove HM_Taoguan.lua
-	if ($file === 'lab/HM_Taoguan.lua')
-		continue;
+	// remove HM_Taoguan.lua (unless 1.10-2.20)
+	//if ($file === 'lab/HM_Taoguan.lua')
+	//	continue;
 	if (in_array(basename($file), $required)) continue;
 	$file = str_replace('/', '\\', $file);
 	$info .= "lua_{$i}=interface\\HM\\$file\r\n";
