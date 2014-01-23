@@ -59,6 +59,7 @@ _HM_Team.Save = function()
 		return _HM_Team.Sysmsg(_L["You are not in a team"])
 	end
 	-- auth info
+	assert(team.GetClientTeamMemberName)
 	local _GetName = team.GetClientTeamMemberName
 	_HM_Team.szLeader = _GetName(team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.LEADER))
 	_HM_Team.szMark = _GetName(team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.MARK))
@@ -114,6 +115,7 @@ _HM_Team.Restore = function()
 		return _HM_Team.Sysmsg(_L["You have  not saved team list data"])
 	end
 	-- get perm
+	assert(team.GetClientTeamMemberName)
 	local _GetName = team.GetClientTeamMemberName
 	if team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.LEADER) ~= me.dwID then
 		local nGroup = team.GetMemberGroupIndex(me.dwID) + 1
@@ -277,6 +279,7 @@ _HM_Team.Mark = function(bClear, bClearOnly)
 		if me.dwID == team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.LEADER) then
 			team.SetAuthorityInfo(TEAM_AUTHORITY_TYPE.MARK, me.dwID)
 		else
+			assert(team.GetClientTeamMemberName)
 			local _GetName, nGroup = team.GetClientTeamMemberName, team.GetMemberGroupIndex(me.dwID) + 1
 			local szLeader = _GetName(team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.LEADER))
 			local szText = "[" .. _GetName(team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.MARK)) .. "] "
