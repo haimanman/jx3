@@ -72,6 +72,11 @@ _HM_Taoguan.Switch = function()
 	if _HM_Taoguan.bEnable then
 		HM.Sysmsg("自动砸陶罐：开")
 		_HM_Taoguan.FindNear()
+		if HM_Doodad and HM_Doodad.bLoot then
+			HM.Confirm("嘿！你还开着自动拾取呢，这会造成砸陶罐过滤失效。\n是否先关闭自动拾取？ ", function()
+				HM_Doodad.bLoot = false
+			end)
+		end
 	else
 		HM.Sysmsg("自动砸陶罐：关")
 	end
