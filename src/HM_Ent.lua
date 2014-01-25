@@ -75,6 +75,9 @@ _HM_Ent.tInfo = {
 		return _HM_Ent.ReNum(GetPingValue()/2)
 	end },
 	{ szName = "FPS",bChecked = true, fnValue = function() return GetFPS() end },
+	{ szName = _L["EquipScore"], bChecked = true, fnValue = function()
+		return GetClientPlayer().GetTotalEquipScore() end
+	},
 }
 
 -- renum

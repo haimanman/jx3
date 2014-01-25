@@ -187,6 +187,7 @@ data = {
 	["Money"] = "金錢",
 	["Coin"] = "通寶",
 	["Ping"] = "延遲",
+	["EquipScore"] = "裝備分",
 	["%.1fw"] = "%.1f萬",
 	["%.2fw"] = "%.2f萬",
 	["@_@ Take look around a comparison, My "] = "#呲牙 瞧一瞧比一比，我的",
