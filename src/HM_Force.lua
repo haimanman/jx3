@@ -192,9 +192,9 @@ _HM_Force.BindQXBtn = function()
 				HM.Sysmsg(_L["Enable auto sword dance"])
 			else
 				local aBuff = GetClientPlayer().GetBuffList()
-				for _,v in pairs(aBuff) do
+				for _, v in pairs(aBuff) do
 					if v.dwID == 409 then
-						GetClientPlayer().CancelBuff(v.dwID)
+						GetClientPlayer().CancelBuff(v.nIndex)
 						break
 					end
 				end
