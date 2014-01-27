@@ -59,18 +59,16 @@ _HM_Team.Save = function()
 		return _HM_Team.Sysmsg(_L["You are not in a team"])
 	end
 	-- auth info
-	assert(team.GetClientTeamMemberName)
-	local _GetName = team.GetClientTeamMemberName
-	_HM_Team.szLeader = _GetName(team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.LEADER))
-	_HM_Team.szMark = _GetName(team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.MARK))
-	_HM_Team.szDistribute = _GetName(team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.DISTRIBUTE))
+	_HM_Team.szLeader = team.GetClientTeamMemberName(team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.LEADER))
+	_HM_Team.szMark = team.GetClientTeamMemberName(team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.MARK))
+	_HM_Team.szDistribute = team.GetClientTeamMemberName(team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.DISTRIBUTE))
 	_HM_Team.nLootMode = team.nLootMode
 	-- members
 	local tMark = team.GetTeamMark()
 	for nGroup = 0, team.nGroupNum - 1 do
 		local tGroupInfo = team.GetGroupInfo(nGroup)
 		for _, dwID in ipairs(tGroupInfo.MemberList) do
-			local szName = _GetName(dwID)
+			local szName = team.GetClientTeamMemberName(dwID)
 			if szName then
 				local item = {}
 				item.nGroup = nGroup
@@ -115,11 +113,9 @@ _HM_Team.Restore = function()
 		return _HM_Team.Sysmsg(_L["You have  not saved team list data"])
 	end
 	-- get perm
-	assert(team.GetClientTeamMemberName)
-	local _GetName = team.GetClientTeamMemberName
 	if team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.LEADER) ~= me.dwID then
 		local nGroup = team.GetMemberGroupIndex(me.dwID) + 1
-		local szLeader = _GetName(team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.LEADER))
+		local szLeader = team.GetClientTeamMemberName(team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.LEADER))
 		local szText = _L("[%s] quick to set %d group of member [%s] as team leader, I am using HM plug-in to restore team", szLeader, nGroup, me.szName)
 		HM.Talk(PLAYER_TALK_CHANNEL.RAID, szText)
 		HM.Talk(szLeader, szText)
@@ -137,7 +133,7 @@ _HM_Team.Restore = function()
 		tWrong[nGroup] = {}
 		local tGroupInfo = team.GetGroupInfo(nGroup)
 		for _, dwID in pairs(tGroupInfo.MemberList) do
-			local szName = _GetName(dwID)
+			local szName = team.GetClientTeamMemberName(dwID)
 			if not szName then
 				_HM_Team.Debug("unable get player of " .. string.format("%d", nGroup + 1) .. " group: #" .. dwID)
 			else
@@ -279,10 +275,9 @@ _HM_Team.Mark = function(bClear, bClearOnly)
 		if me.dwID == team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.LEADER) then
 			team.SetAuthorityInfo(TEAM_AUTHORITY_TYPE.MARK, me.dwID)
 		else
-			assert(team.GetClientTeamMemberName)
-			local _GetName, nGroup = team.GetClientTeamMemberName, team.GetMemberGroupIndex(me.dwID) + 1
-			local szLeader = _GetName(team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.LEADER))
-			local szText = "[" .. _GetName(team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.MARK)) .. "] "
+			local nGroup = team.GetMemberGroupIndex(me.dwID) + 1
+			local szLeader = team.GetClientTeamMemberName(team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.LEADER))
+			local szText = "[" .. team.GetClientTeamMemberName(team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.MARK)) .. "] "
 			if team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.MARK) ~= team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.LEADER) then
 				szText = szText .. "[" .. szLeader .. "] "
 			end
