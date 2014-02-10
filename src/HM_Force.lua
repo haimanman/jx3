@@ -16,6 +16,7 @@ HM_Force = {
 	bWarningDebuff = true,	-- 警告  debuff 类型
 	nDebuffNum = 3,			-- debuff 类型达到几个时警告
 	bActionTime = true,	-- 显示读条动作计时
+	bAlertWanted = true,	-- 在线被悬赏时提醒自己
 }
 HM.RegisterCustomData("HM_Force")
 
@@ -292,6 +293,21 @@ _HM_Force.UpdateOTActionBar = function()
 	hText:SetText(szText .. string.format(" (%.2g/%.2g)", nFrame / 16, nTotal / 16))
 end
 
+-- on wanted msg
+_HM_Force.OnMsgAnnounce = function(szMsg)
+    local _, _, sM, sN = string.find(szMsg, "现有人愿付(%d+)金，对(.-)进行悬赏")
+	if sM and sN == GetClientPlayer().szName then
+		local fW = function()
+			OutputWarningMessage("MSG_WARNING_RED", "恭喜你被悬赏 [" .. sM .. "]，肥水自己喝啊！！")
+			PlaySound(SOUND.UI_SOUND, g_sound.CloseAuction)
+        end
+        SceneObject_SetTitleEffect(TARGET.PLAYER, GetClientPlayer().dwID, 47)
+        fW()
+        HM.DelayCall(2000, fW)
+		HM.DelayCall(4000, fW)
+    end
+end
+
 -------------------------------------
 -- 设置界面
 -------------------------------------
@@ -375,6 +391,16 @@ _HM_Force.PS.OnPanelActive = function(frame)
 			_HM_Force.nActionTotal = nil
 		end
 	end)
+	-- be wanted alert
+	ui:Append("WndCheckBox", { txt = _L["Alert when I am wanted publishing online"], checked = HM_Force.bAlertWanted })
+	:Pos(10, 344):Click(function(bChecked)
+		HM_Force.bAlertWanted = bChecked
+		if bChecked then
+			RegisterMsgMonitor(_HM_Force.OnMsgAnnounce, {"MSG_GM_ANNOUNCE"})
+		else
+			UnRegisterMsgMonitor(_HM_Force.OnMsgAnnounce, {"MSG_GM_ANNOUNCE"})
+		end
+	end)
 end
 
 -- conflict check
@@ -398,6 +424,9 @@ HM.RegisterEvent("SYNC_ROLE_DATA_END", function()
 	_HM_Force.OnRideHorse()
 	_HM_Force.BindQXBtn()
 	_HM_Force.ShowJWBuff()
+	if HM_Force.bAlertWanted then
+		RegisterMsgMonitor(_HM_Force.OnMsgAnnounce, {"MSG_GM_ANNOUNCE"})
+	end
 end)
 HM.RegisterEvent("PLAYER_STATE_UPDATE", function()
 	if arg0 == GetClientPlayer().dwID then

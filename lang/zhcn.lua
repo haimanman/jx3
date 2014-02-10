@@ -220,6 +220,7 @@ data = {
 	["Your debuff of type [%s] reached [%d]"] = "您身上的 [%s] debuff 达到 [%d] 个",
 	["Alert when my same type of debuff reached a certain number "] = "提醒自身同类型 debuff 达到一定数量",
 	["Show time description of OTActionBar"] = "显示自身读条动作的时间",
+	["Alert when I am wanted publishing online"] = "在线被悬赏时提醒自己",
 	-- HM_Guding.lua --
 	["I have put the GUDING, hurry to eat if you lack of mana. *la la la*"] = "法宝 [仙王蛊鼎] 已祭出，没蓝的抓紧了，用海鳗插件看得见还能自动吃~#玫瑰#玫瑰~~",
 	["HM_Guding"] = "海鳗蛊鼎",
