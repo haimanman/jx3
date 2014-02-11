@@ -93,7 +93,7 @@ _HM_Force.OnRideHorse = function()
 		local me = GetClientPlayer()
 		if me then
 			local mnt = me.GetKungfuMount()
-			if mnt and mnt.dwMountType == 1 then
+			if mnt and mnt.dwMountType == 10026 then
 				local nPage = GetUserPreferences(1390, "c")
 				if me.bOnHorse and nPage ~= 3 then
 					SelectMainActionBarPage(3)
@@ -305,6 +305,7 @@ _HM_Force.OnMsgAnnounce = function(szMsg)
         fW()
         HM.DelayCall(2000, fW)
 		HM.DelayCall(4000, fW)
+		_HM_Force.bWanted = true
     end
 end
 
@@ -437,6 +438,13 @@ HM.RegisterEvent("SYS_MSG", function()
 	if arg0 == "UI_OME_SKILL_CAST_LOG" then
 		if HM_Force.bSelfTaiji and arg1 == GetClientPlayer().dwID and HM_Force.tSelfQC[arg2] then
 		_HM_Force.OnPrepareQC(arg2)
+		end
+	end
+	-- 重伤后删除头顶效果
+	if arg0 == "UI_OME_DEATH_NOTIFY" then
+		if _HM_Force.bWanted and arg1 == GetClientPlayer().dwID then
+			_HM_Force.bWanted = nil
+			SceneObject_SetTitleEffect(TARGET.PLAYER, arg1, 0)
 		end
 	end
 end)
