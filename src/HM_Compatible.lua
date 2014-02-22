@@ -641,31 +641,3 @@ function MakeNameLink(szName, szFont)
 	return szLink
 end
 end
-
--- Get all buff
-function GetAllBuff(tar)
-	local aBuff = {}
-	local nCount = tar.GetBuffCount()
-	for i = 1, nCount, 1 do
-		local dwID, nLevel, bCanCancel, nEndFrame, nIndex, nStackNum, dwSkillSrcID, bValid = tar.GetBuff(i - 1)
-		if dwID then
-			table.insert(aBuff, {
-				dwID = dwID, nLevel = nLevel, bCanCancel = bCanCancel, nEndFrame = nEndFrame,
-				nIndex = nIndex, nStackNum = nStackNum, dwSkillSrcID = dwSkillSrcID, bValid = bValid,
-			})
-		end
-	end
-	return aBuff
-end
-
--- Traversal buff
--- fnAction(dwID, nLevel, bCanCancel, nEndFrame, nIndex, nStackNum, dwSkillSrcID, bValid)
-function WalkAllBuff(tar, fnAction)
-	local nCount = tar.GetBuffCount()
-	for i = 1, nCount, 1 do
-		local dwID, nLevel, bCanCancel, nEndFrame, nIndex, nStackNum, dwSkillSrcID, bValid = tar.GetBuff(i - 1)
-		if dwID then
-			pcall(fnAction, dwID, nLevel, bCanCancel, nEndFrame, nIndex, nStackNum, dwSkillSrcID, bValid)
-		end
-	end
-end

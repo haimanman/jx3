@@ -300,13 +300,13 @@ end)
 HM.BreatheCall("taoguan2", function()
 	if _HM_Taoguan.bEnable and _HM_Taoguan.nPoint >= HM_Taoguan.nUseZJ then
 		local bJ, bZ = true, HM_Taoguan.bNonZS == false
-		for _, v in ipairs(GetClientPlayer().GetBuffList()) do
-			if v.dwID == 1660 and v.nLevel == 3 then
+		HM.WalkAllBuff(function(dwID, nLevel)
+			if dwID == 1660 and nLevel == 3 then
 				bJ = false
-			elseif v.dwID == 1661 and v.nLevel == 3 then
+			elseif dwID == 1661 and nLevel == 3 then
 				bZ = false
 			end
-		end
+		end)
 		_HM_Taoguan.bHaveZJ = bJ == false and bZ == false
 		if bJ and not _HM_Taoguan.UseBagItem("寄忧谷", HM_Taoguan.bPauseNoZJ) and HM_Taoguan.bPauseNoZJ then
 			_HM_Taoguan.bEnable = false
@@ -314,10 +314,10 @@ HM.BreatheCall("taoguan2", function()
 			_HM_Taoguan.bEnable = false
 		end
 	elseif _HM_Taoguan.bEnable and _HM_Taoguan.nPoint >= HM_Taoguan.nUseJX then
-		if not HM_Force.HasBuff(1660) and not _HM_Taoguan.UseBagItem("如意香囊") then
+		if not HM.HasBuff(1660) and not _HM_Taoguan.UseBagItem("如意香囊") then
 			_HM_Taoguan.UseBagItem("幸运香囊")
 		end
-		if not HM_Force.HasBuff(1661) and not _HM_Taoguan.UseBagItem("如意锦囊") then
+		if not HM.HasBuff(1661) and not _HM_Taoguan.UseBagItem("如意锦囊") then
 			_HM_Taoguan.UseBagItem("幸运锦囊")
 		end
     end

@@ -440,15 +440,7 @@ end
 -- check is in camp fight map (BUFF£ºÙÈÆìÏ¢¹Ä/2105)
 _HM_Camp.IsInGFMap = function()
 	--do return true end
-	local me = GetClientPlayer()
-	if me then
-		local aBuff = me.GetBuffList() or {}
-		for _, v in ipairs(aBuff) do
-			if not v.bCanCancel and v.dwID == 2105 then
-				return true
-			end
-		end
-	end
+	return HM.HasBuff(2105, false)
 end
 
 -- get boss info

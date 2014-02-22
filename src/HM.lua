@@ -831,7 +831,7 @@ end
 
 -- (void) HM.RemoteRequest(string szUrl, func fnAction)		-- 发起远程 HTTP 请求
 -- szUrl		-- 请求的完整 URL（包含 http:// 或 https://）
--- fnAction 	-- 请求完成后的回调函数，回调原型：function(szTitle)
+-- fnAction 	-- 请求完成后的回调函数，回调原型：function(szTitle, szContent)
 HM.RemoteRequest = function(szUrl, fnAction)
 	local page = Station.Lookup("Normal/HM/Page_1")
 	if page then
@@ -1036,6 +1036,69 @@ HM.IsDps = function(tar)
 	tar = tar or GetClientPlayer()
 	local mnt = tar.GetKungfuMount()
 	return not mnt or (mnt.dwSkillID ~= 10080 and mnt.dwSkillID ~= 10028 and mnt.dwSkillID ~= 10176)
+end
+
+-- 根据名称或 ID 获取 判断 BUFF 是否存在
+-- (boolean) HM.HasBuff(dwBuffID, [bCanCancel[, KPlayer me]])
+-- (boolean) HM.HasBuff(szBuffName, [bCanCancel[, KPlayer me]])
+HM.HasBuff = function(dwBuffID, bCanCancel, me)
+	if not me and bCanCancel ~= nil and type(bCanCancel) ~= "boolean" then
+		me, bCanCancel = bCanCancel, me
+	end
+	me = me or GetClientPlayer()
+	if me then
+		local nCount = me.GetBuffCount()
+		for i = 1, nCount do
+			local _dwID, _nLevel, _bCanCancel = me.GetBuff(i - 1)
+			if bCanCancel == nil or bCanCancel == _bCanCancel then
+				if dwBuffID == _dwID
+					or (type(dwBuffID) == "string" and dwBuffID == HM.GetBuffName(_dwID, _nLevel))
+				then
+					return true
+				end
+			end
+		end
+	end
+	return false
+end
+
+-- 获取当前玩家或指定对象的全部 buff
+-- (array) HM.GetAllBuff([KObject])
+-- 返回值是有效 BUFF 组成的数组，索引兼容旧版的 KObject.GetBuffList
+HM.GetAllBuff = function(tar)
+	tar = tar or GetClientPlayer()
+	local aBuff = {}
+	local nCount = tar.GetBuffCount()
+	for i = 1, nCount, 1 do
+		local dwID, nLevel, bCanCancel, nEndFrame, nIndex, nStackNum, dwSkillSrcID, bValid = tar.GetBuff(i - 1)
+		if dwID then
+			table.insert(aBuff, {
+				dwID = dwID, nLevel = nLevel, bCanCancel = bCanCancel, nEndFrame = nEndFrame,
+				nIndex = nIndex, nStackNum = nStackNum, dwSkillSrcID = dwSkillSrcID, bValid = bValid,
+			})
+		end
+	end
+	return aBuff
+end
+
+-- Traversal buff
+-- fnAction(dwID, nLevel, bCanCancel, nEndFrame, nIndex, nStackNum, dwSkillSrcID, bValid)
+-- return false to break
+HM.WalkAllBuff = function(tar, fnAction)
+	if type(tar) == "function" then
+		fnAction = tar
+		tar = GetClientPlayer()
+	end
+	local nCount = tar.GetBuffCount()
+	for i = 1, nCount, 1 do
+		local dwID, nLevel, bCanCancel, nEndFrame, nIndex, nStackNum, dwSkillSrcID, bValid = tar.GetBuff(i - 1)
+		if dwID then
+			local res, ret = pcall(fnAction, dwID, nLevel, bCanCancel, nEndFrame, nIndex, nStackNum, dwSkillSrcID, bValid)
+			if res == true and ret == false then
+				break
+			end
+		end
+	end
 end
 
 -- HM.GetMe
@@ -2850,7 +2913,7 @@ HM.OnTitleChanged = function()
 	local szUrl, szTitle = this:GetLocationURL(), this:GetLocationName()
 	if szUrl ~= szTitle and _HM.tRequest[szUrl] then
 		local fnAction = _HM.tRequest[szUrl]
-		fnAction(szTitle)
+		fnAction(szTitle, this:GetDocument())
 		_HM.tRequest[szUrl] = nil
 	end
 end

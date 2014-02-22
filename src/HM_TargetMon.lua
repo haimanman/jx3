@@ -830,11 +830,11 @@ _HM_TargetMon.OnFrameBreathe = function()
 	else
 		local aBuff, tNo = nil, nil
 		if this.nIndex == 2 and tar then	-- target buff
-			aBuff = tar.GetBuffList() or {}
+			aBuff = HM.GetAllBuff(tar)
 			hBox.dwOwner = tar.dwID
 			tNo = HM_TargetMon.tNTBuffEx
 		elseif this.nIndex == 3 then -- and (not tar or tar.dwID ~= me.dwID or not HM_TargetMon.bTargetBuffEx) then
-			aBuff = me.GetBuffList() or {}
+			aBuff = HM.GetAllBuff(me)
 			hBox.dwOwner = me.dwID
 			tNo = HM_TargetMon.tNSBuffEx
 		end

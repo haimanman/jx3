@@ -293,7 +293,7 @@ _HM_RedName.AddMiniMapBreathe = function()
 				HM.UpdateMiniFlag(8, v, nF1, nF2)
 				if HM_RedName.bAlertOnce and _HM_RedName.bNeedAlert
 					and me.GetOTActionState() == 0 and v.szName ~= ""
-					and (not HM_Force or not HM_Force.HasBuff(4052, true))	-- 排除明教隐身中 (暗尘弥散)
+					and not HM.HasBuff(4052, true)	-- 排除明教隐身中 (暗尘弥散)
 				then
 					local nDis, tar = HM.GetDistance(v), GetTargetHandle(me.GetTarget())
 					if not tar or tar.nMoveState == MOVE_STATE.ON_DEATH or (not me.bFightState and HM.IsDps()) then

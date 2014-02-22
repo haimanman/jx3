@@ -305,73 +305,33 @@ end
 
 -- update buff time
 _HM_Target.UpdateBuffTime = function(hBuffList, hTextList)
-	local nCount = hBuffList:GetItemCount() - 1
-	--[[
-	if HM_Target.bSubDebuff and hBuffList:GetName() == "Handle_Debuff" then
-		local tBuffID, tRemove = {}, {}
-		for i = 0, nCount do
-			local hBox = hBuffList:Lookup(i)
-			if tBuffID[hBox.dwBuffID] or i >= 10 then
-				table.insert(tRemove, i)
-			else
-				tBuffID[hBox.dwBuffID] = true
-			end
-		end
-		local nRemove = table.getn(tRemove)
-		for i = nRemove, 1, -1 do
-			hBuffList:RemoveItem(tRemove[i])
-			if hTextList then
-				hTextList:RemoveItem(tRemove[i])
-			end
-		end
-		if nRemove > 0 then
-			hBuffList:FormatAllItemPos()
-			if hTextList then
-				hTextList:FormatAllItemPos()
-			end
-			nCount = nCount - nRemove
-		end
-	end
-	--]]
 	if not HM_Target.bNoSpark and hTextList then
 		return
 	end
-	for i = 0, nCount do
-        local hBox = hBuffList:Lookup(i)
-		local szTime, nFont, nLeft = _HM_Target.GetBuffTime(hBox.nEndFrame)
-		if not hBox.bShowTime2 and not hBox.bShowTime then
-			szTime = ""
+	for i = 0, 1 do
+		local hB, hT = hBuffList:Lookup(i), nil
+		if hTextList then
+			hT = hTextList:Lookup(i)
 		end
-		if nLeft > 0 and szTime ~= hBox.szTime then
-			hBox.szTime = szTime
-			if not hTextList then
-				hBox:SetOverTextFontScheme(1, 16)
-				hBox:SetOverTextPosition(1, 3)
-				hBox:SetOverText(1, szTime)
-			else
-				local hText = hTextList:Lookup(i)
-				hText:SetText(szTime)
-				hText:SetFontScheme(nFont)
+		for j = 0, hB:GetItemCount() - 1, 1 do
+			local hBox = hB:Lookup(j)
+			local szTime, nFont, nLeft = _HM_Target.GetBuffTime(hBox.nEndFrame)
+			if not hBox.bShowTime2 and not hBox.bShowTime then
+				szTime = ""
+			end
+			if nLeft > 0 and szTime ~= hBox.szTime then
+				hBox.szTime = szTime
+				if not hTextList then
+					hBox:SetOverTextFontScheme(1, 16)
+					hBox:SetOverTextPosition(1, 3)
+					hBox:SetOverText(1, szTime)
+				else
+					local hText = hT:Lookup(j)
+					hText:SetText(szTime)
+					hText:SetFontScheme(nFont)
+				end
 			end
 		end
-	end
-end
-
--- update target buff bg
-_HM_Target.UpdateBuffBg = function(frame, nDispel)
-	local img1, img2 = nil, nil
-	if frame.bIsEnemy then
-		img1 = frame:Lookup("", "Image_BuffBG")
-		img2 = frame:Lookup("", "Image_DebuffBG")
-	else
-		img1 = frame:Lookup("", "Image_DebuffBG")
-		img2 = frame:Lookup("", "Image_BuffBG")
-	end
-	if img1 and img2 then
-		local nH = HM_Target.nSizeBuff + 5
-		local nW = nH * nDispel
-		img1:SetSize(nW, nH)
-		img2:SetSize(0, nH)
 	end
 end
 
@@ -381,48 +341,62 @@ _HM_Target.UpdateBuffSize = function(frame, bTTarget)
 		return
 	end
 	local nSize = (bTTarget and HM_Target.nSizeTTBuff) or HM_Target.nSizeBuff
-	local nDispel = 0
 	if not frame.bAdjustInit then
 		_HM_Target.InitBuffPos(frame, nSize)
 	end
 	for _, v in ipairs({ "Buff", "Debuff" }) do
+		local nDispel = 0
 		local hBuff, hText = frame:Lookup("", "Handle_" .. v), frame:Lookup("", "Handle_Text" .. v)
-		for i = 0, hBuff:GetItemCount() - 1 do
-			local box = hBuff:Lookup(i)
-			if box.nW ~= nSize then
-				local nW, nH = box:GetSize()
-				nW = nSize + nW - box.nW
-				nH = nSize + nH - box.nH
-				box:SetSize(nW, nH)
-				if box.nCount > 1 then
-					box:SetOverTextPosition(0, box:GetOverTextPosition(0))
-				end
-				box.nW, box.nH = nSize, nSize
+		for i = 0, 1 do
+			local nW = nSize + (1 - i) * 5
+			local hB, hT = hBuff:Lookup(i), nil
+			if hB.boxW ~= nW then
+				hB.boxW, hB.boxH = nW, nW
+				frame:Lookup("", "Image_BuffBG"):SetSize(0, nW)
+				frame:Lookup("", "Image_DebuffBG"):SetSize(0, nW)
 			end
 			if hText then
-				local txt = hText:Lookup(i)
-				local nTW, _ = box:GetSize()
-				local _, nTH = txt:GetSize()
-				txt:SetSize(nTW, nTH)
+				hT = hText:Lookup(i)
+				hT.textW = nW
 			end
-			if HM_Target.bNoSpark then
-				box.bSparking = false
-				box.bShowTime2 = Table_BuffNeedShowTime(box.dwBuffID, box.nLevel)
-				box.bShowTime = false
+			for j = 0, hB:GetItemCount() - 1 do
+				local box = hB:Lookup(j)
+				if box:IsVisible() then
+					-- resize box
+					if box.nW ~= nW then
+						box:SetSize(nW, nW)
+						if box.nCount > 1 then
+							box:SetOverTextPosition(0, box:GetOverTextPosition(0))
+						end
+						box.nW = nW
+						-- adjust text
+						if hT then
+							local txt = hT:Lookup(j)
+							local _, nH = txt:GetSize()
+							txt:SetSize(nW, nH)
+						end
+					end
+					-- disable spark
+					if HM_Target.bNoSpark then
+						box.bSparking = false
+						box.bShowTime2 = Table_BuffNeedShowTime(box.dwBuffID, box.nLevel)
+						box.bShowTime = false
+					end
+					-- clear time
+					box.szTime = nil
+					-- count dispel
+					if i == 0 and not bTTarget 
+						and ((frame.bIsEnemy and v == "Buff") or (not frame.bIsEnemy and v == "Debuff"))
+					then
+						nDispel = nDispel + 1
+					end
+				end
 			end
-			box.szTime = nil
-			if box.bDispel then
-				nDispel = nDispel + 1
+			hB:FormatAllItemPos()
+			if hT then
+				hT:FormatAllItemPos()
 			end
 		end
-		hBuff:FormatAllItemPos()
-		if hText then
-			hText:FormatAllItemPos()
-		end
-	end
-	-- dispel bg
-	if nDispel > 0 then
-		_HM_Target.UpdateBuffBg(frame, nDispel)
 	end
 	frame.bBuffUpdate, frame.dwID2 = false, frame.dwID
 end
@@ -614,10 +588,16 @@ _HM_Target.OnBuffUpdate = function()
 			frame.bBuffUpdate = true
 			if v == "Target" and not arg1 and not arg7 then
 				local szType = (arg3 and "Buff") or "Debuff"
-				local hTextList = frame:Lookup("", "Handle_Text" .. szType)
-				local hText = hTextList.tItem["b" .. arg2]
-				if hText and hText:GetFontScheme() == 166 then
-					hText:SetFontScheme(163)
+				local hL = frame:Lookup("", "Handle_Text" .. szType)
+				for i = 0, 1 do
+					local hI = hL:Lookup(i)
+					if hI then
+						if hT then
+							Output(hT:GetText())
+							hT:SetFontScheme(163)
+							break
+						end
+					end
 				end
 			end
 		end
@@ -815,7 +795,7 @@ HM_TargetDir.GetState = function(tar, bBuff)
 		if HM_TargetMon and bBuff then
 			local nFrame = GetLogicFrameCount()
 			local szType, nType
-			local tAll = tar.GetBuffList() or {}
+			local tAll = HM.GetAllBuff(tar)
 			for _, v in ipairs(tAll) do
 				if v.nEndFrame > nFrame then
 					local _szType, _nType = HM_TargetMon.GetBuffExType(v.dwID, v.nLevel)
@@ -1072,7 +1052,7 @@ _HM_Target.PS.OnPanelActive = function(frame)
 		HM_Target.bNoSpark= bChecked
 	end)
 	ui:Append("WndCheckBox", "Check_SubDebuff", { x = 10, y = 84, checked = HM_Target.bSubDebuff })
-	:Text(_L["Simplify NPC debuff, hide redundant"]):Click(function(bChecked)
+	:Enable(false):Text(_L["Simplify NPC debuff, hide redundant"]):Click(function(bChecked)
 		HM_Target.bSubDebuff = bChecked
 	end)
 	-- line

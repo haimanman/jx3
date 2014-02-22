@@ -136,11 +136,8 @@ function HM_Guding.OnFrameBreathe()
 	-- color, alpha
 	local r, g, b = unpack(HM_Guding.color)
 	local a = 200
-	for _, v in ipairs(me.GetBuffList()) do
-		if v.dwID == 3448 and not v.bCanCancel then
-			a = 120
-			break
-		end
+	if HM.HasBuff(3448, false) then
+		a = 120
 	end
 	-- can use or not
 	local bCanUse = false

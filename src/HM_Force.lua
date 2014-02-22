@@ -50,17 +50,6 @@ _HM_Force.GetQCMenu = function()
 	return m0
 end
 
--- check buff by dwBuffID
-_HM_Force.HasBuff = function(dwBuffID, bCanCancel)
-	local tBuff = GetClientPlayer().GetBuffList() or {}
-	for _, v in ipairs(tBuff) do
-		if v.dwID == dwBuffID and (bCanCancel == nil or bCanCancel == v.bCanCancel) then
-			return true
-		end
-	end
-	return false
-end
-
 -- use non-target skill
 _HM_Force.OnUseEmptySkill = function(dwID)
 	local me = GetClientPlayer()
@@ -135,7 +124,7 @@ end
 -- check to prepare self qc
 _HM_Force.OnPrepareQC = function(dwID)
 	local me, qc = GetClientPlayer(), _HM_Force.tQC[dwID]
-	if HM_Force.bSelfTaiji2 or not _HM_Force.HasBuff(qc.dwBuffID, true) then
+	if HM_Force.bSelfTaiji2 or not HM.HasBuff(qc.dwBuffID, true) then
 		local tarType, tarID = me.GetTarget()
 		if tarID ~= 0 and tarID ~= me.dwID then -- and GetCharacterDistance(me.dwID, tarID) <= 1280 then
 			HM.SetInsTarget(TARGET.NO_TARGET, 0)
@@ -192,10 +181,12 @@ _HM_Force.BindQXBtn = function()
 			if HM_Force.bAutoDance then
 				HM.Sysmsg(_L["Enable auto sword dance"])
 			else
-				local aBuff = GetClientPlayer().GetBuffList()
-				for _, v in pairs(aBuff) do
-					if v.dwID == 409 then
-						GetClientPlayer().CancelBuff(v.nIndex)
+				local me = GetClientPlayer()
+				local nCount = me.GetBuffCount()
+				for i = 1, nCount do
+					local dwID, _, bCanCancel, _, nIndex = me.GetBuff(i - 1)
+					if dwID == 409 and bCanCancel then
+						me.CancelBuff(nIndex)
 						break
 					end
 				end
@@ -236,19 +227,19 @@ _HM_Force.OnBuffUpdate = function()
 		return
 	end
 	local t, t2 = {}, {}
-	for _, v in ipairs(GetClientPlayer().GetBuffList()) do
-		if not v.bCanCancel and not t2[v.dwID] then
-			local info = GetBuffInfo(v.dwID, v.nLevel, {})
+	HM.WalkAllBuff(GetClientPlayer(), function(dwID, nLevel, bCanCancel)
+		if not bCanCancel and not t2[dwID] then
+			local info = GetBuffInfo(dwID, nLevel, {})
 			if info and info.nDetachType > 2 then
 				if not t[info.nDetachType] then
 					t[info.nDetachType] = 1
 				else
 					t[info.nDetachType] = t[info.nDetachType] + 1
 				end
-				t2[v.dwID] = true
+				t2[dwID] = true
 			end
 		end
-	end
+	end)
 	for k, v in pairs(t) do
 		if v >= HM_Force.nDebuffNum then
 			_HM_Force.WarningDebuff(k, v)
@@ -499,7 +490,7 @@ HM.RegisterPanel(_L["School feature"], 327, nil, _HM_Force.PS)
 -- macro command
 AppendCommand(_L["JumpBack"], function() _HM_Force.OnUseEmptySkill(9007) end)
 AppendCommand(_L["SmallDodge"], function()
-	if _HM_Force.HasBuff(535) then	-- °ë²½µß
+	if HM.HasBuff(535) then	-- °ë²½µß
 		return
 	end
 	for _, v in ipairs({ 9004, 9005, 9006 }) do
@@ -511,4 +502,3 @@ end)
 
 -- init global caller
 HM_Force.OnUseEmptySkill = _HM_Force.OnUseEmptySkill
-HM_Force.HasBuff = _HM_Force.HasBuff
