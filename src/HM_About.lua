@@ -114,7 +114,7 @@ _HM_About.CheckUpdate = function(btn)
 	local nTime = GetCurrentTime()
 	local t = TimeToDate(nTime)
 	local szDate = t.year .. "-" .. t.month .. "-" .. t.day
-	local szUrl = _HM_About.szHost .. "update.php?now=" .. tostring(nTime) .. "&version=" .. szVer .. "&build=" .. HM.szBuildDate
+	local szUrl = _HM_About.szHost .. "update.php?version=" .. szVer
 	if btn then
 		szUrl = szUrl .. "&manual=yes"
 		btn:Text(_L["Checking..."]):Enable(false)
@@ -128,7 +128,7 @@ _HM_About.CheckUpdate = function(btn)
 			szTong = tostring(GetTongClient().ApplyGetTongName(me.dwTongID))
 		end
 		szUrl = szUrl .. "&server=&name=" .. me.szName .. "&tong=" .. szTong
-		szUrl = szUrl .. "&role=" .. me.nRoleType .. "&camp=" .. me.nCamp
+		szUrl = szUrl .. "&role=" .. me.nRoleType .. "&camp=" .. me.nCamp .. "&force=" .. me.dwForceID
 	end
 	HM.RemoteRequest(szUrl, function(szTitle)
 		if szTitle == "OK" then
