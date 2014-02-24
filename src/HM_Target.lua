@@ -352,8 +352,10 @@ _HM_Target.UpdateBuffSize = function(frame, bTTarget)
 			local hB, hT = hBuff:Lookup(i), nil
 			if hB.boxW ~= nW then
 				hB.boxW, hB.boxH = nW, nW
-				frame:Lookup("", "Image_BuffBG"):SetSize(0, nW)
-				frame:Lookup("", "Image_DebuffBG"):SetSize(0, nW)
+				if not bTTarget and i == 0 then
+					frame:Lookup("", "Image_BuffBG"):SetSize(0, nW)
+					frame:Lookup("", "Image_DebuffBG"):SetSize(0, nW)
+				end
 			end
 			if hText then
 				hT = hText:Lookup(i)
