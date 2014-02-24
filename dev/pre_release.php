@@ -89,7 +89,7 @@ for ($i = 0; $i < count($required); $i++)
 foreach ($files as $file)
 {
 	// remove HM_Taoguan.lua (unless 1.10-2.20)
-	$date = date('j') * 100 + intval(date('d'));
+	$date = date('n') * 100 + intval(date('j'));
 	if ($file === 'lab/HM_Taoguan.lua' && ($date < 110 || $date > 220))
 		continue;
 	if (in_array(basename($file), $required)) continue;
