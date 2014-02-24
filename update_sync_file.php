@@ -103,7 +103,10 @@ $modules = array(
 	'lab/HM_Love.lua' => '情缘功能，助您剑侠之路不再孤单',
 	'lab/HM_Taoguan.lua' => '新年活动智能砸年兽陶罐',
 );
-
+$date = date('n') * 100 + intval(date('j'));
+if ($date > 220 || $date < 110) {
+	unset($modules['lab/HM_Taoguan.lua']);
+}
 $version = trim(file_get_contents('VERSION'));
 $dword_ver = '0x0';
 if (preg_match('/^(\d+)\.(\d+)\.(\d+)(?:b(\d+))?$/', $version, $match))
