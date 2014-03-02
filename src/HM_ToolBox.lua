@@ -637,6 +637,22 @@ _HM_ToolBox.RepeatChatLine = function(hTime)
 	end
 end
 
+-- 聊天表情初始化
+_HM_ToolBox.InitFaceIcon = function()
+	if not _HM_ToolBox.tFacIcon then
+		local t = { image = {}, animate = {} }
+		for i = 1, g_tTable.FaceIcon:GetRowCount() do
+			local tLine = g_tTable.FaceIcon:GetRow(i)
+			if tLine.szType == "animate" then
+				t.animate[tLine.nFrame] = tLine.szCommand
+			else
+				t.image[tLine.nFrame] = tLine.szCommand
+			end
+		end
+		_HM_ToolBox.tFacIcon = t
+	end
+end
+
 -- 聊天复制功能
 _HM_ToolBox.CopyChatLine = function(hTime)
 	local edit = Station.Lookup("Lowest2/EditBox/Edit_Input")
@@ -646,6 +662,7 @@ _HM_ToolBox.CopyChatLine = function(hTime)
 	edit:ClearText()
 	local h, i, bBegin = hTime:GetParent(), hTime:GetIndex(), nil
 	-- loop
+	_HM_ToolBox.InitFaceIcon()
 	for i = i + 1, h:GetItemCount() - 1 do
 		local p = h:Lookup(i)
 		if p:GetType() == "Text" then
@@ -712,17 +729,17 @@ _HM_ToolBox.CopyChatLine = function(hTime)
 			end
 		elseif p:GetType() == "Image" then
 			local nFrame = p:GetFrame()
-			if not _HM_ToolBox.tFacIcon then
-				local t = {}
-				for i = 1, g_tTable.FaceIcon:GetRowCount() do
-					local tLine = g_tTable.FaceIcon:GetRow(i)
-					t[tLine.nFrame] = tLine.szCommand
-				end
-				_HM_ToolBox.tFacIcon = t
-			end
-			local szCmd = _HM_ToolBox.tFacIcon[nFrame]
+			local szCmd = _HM_ToolBox.tFacIcon.image[nFrame]
 			if szCmd then
 				edit:InsertObj(szCmd, { type = "text", text = szCmd })
+			end
+		elseif p:GetType() == "Animate" then
+			local nGroup = tonumber(p:GetName())
+			if nGroup then
+				local szCmd = _HM_ToolBox.tFacIcon.animate[nGroup]
+				if szCmd then
+					edit:InsertObj(szCmd, { type = "text", text = szCmd })
+				end
 			end
 		end
 	end
@@ -732,6 +749,8 @@ end
 -- 插入聊天内容时加入时间
 _HM_ToolBox.AppendChatWithTime = function(h, szMsg)
     local i = h:GetItemCount()
+	-- save animiate group into name
+	szMsg = string.gsub(szMsg, "group=(%d+) </a", "group=%1 name=\"%1\" </a")	
     h:_AppendItemFromString(szMsg)
 	-- insert time
 	local h2 = h:Lookup(i)
