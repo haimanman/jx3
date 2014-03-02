@@ -2,7 +2,7 @@
 <jx3:hm xmlns:jx3="http://haimanchajian.com">
   <name><![CDATA[海鳗、插件集]]></name>
   <desc><![CDATA[大量非常方便的 PVP 插件！ --== 海鳗鳗@步莲台 ==--]]></desc>
-  <version dword="0x2020c00">2.2.12</version>
+  <version dword="0x2020d01">2.2.13b1</version>
   <clientVersion dword="0x20101">2.1.1</clientVersion>
   <urlPrefix>http://jx3.hightman.cn/sync/HM/</urlPrefix>
   <info>
@@ -20,22 +20,22 @@
     <file size="24564" title="小地图红名标记、身边玩家统计及共享">src/HM_RedName.lua</file>
     <file size="7369" title="团队 ROLL 点娱乐、自动记录胜负">src/HM_Roll.lua</file>
     <file size="8299" title="可共享部位的快速脱换装助手、橙武必备">src/HM_Suit2.lua</file>
-    <file size="37297" title="目标增强、BUFF放大、方向指示及连接线">src/HM_Target.lua</file>
+    <file size="37345" title="目标增强、BUFF放大、方向指示及连接线">src/HM_Target.lua</file>
     <file size="8892" title="目标和焦点的脚底面向及圈圈指示">src/HM_TargetFace.lua</file>
     <file size="59803" title="多焦点目标、目标列表、定制筛选排序">src/HM_TargetList.lua</file>
     <file size="38363" title="目标技能CD监控、超大显示特殊BUFF">src/HM_TargetMon.lua</file>
     <file size="17069" title="团队列表保存与还原、团队快速标记">src/HM_Team.lua</file>
-    <file size="34648" title="自动修理卖物、自动确认、自动五行石和一键交易行">src/HM_ToolBox.lua</file>
-    <file size="67817" title="PVE 宏扩展，打怪更高效">lab/HM_Cast.lua</file>
+    <file size="35232" title="自动修理卖物、自动确认、自动五行石和一键交易行">src/HM_ToolBox.lua</file>
+    <file size="68180" title="PVE 宏扩展，打怪更高效">lab/HM_Cast.lua</file>
     <file size="30185" title="情缘功能，助您剑侠之路不再孤单">lab/HM_Love.lua</file>
   </info>
   <resource>
     <file size="22464">API.md</file>
-    <file size="1064">CHANGELOG.lab</file>
+    <file size="1126">CHANGELOG.lab</file>
     <file size="19630">CHANGELOG.txt</file>
     <file size="2874">LICENSE.txt</file>
     <file size="14067">MACRO.txt</file>
-    <file size="2199">README.md</file>
+    <file size="2201">README.md</file>
     <file size="16741">hero/female_cont_1.wav</file>
     <file size="19746">hero/female_cont_2.wav</file>
     <file size="15476">hero/female_normal_1.wav</file>
@@ -44,7 +44,7 @@
     <file size="15318">hero/male_cont_2.wav</file>
     <file size="8834">hero/male_normal_1.wav</file>
     <file size="18797">hero/male_normal_2.wav</file>
-    <file size="1084">info.ini</file>
+    <file size="1086">info.ini</file>
     <file size="10950">lab/HM_Taoguan.lua</file>
     <file size="432">lang/default.lua</file>
     <file size="49782">lang/zhcn.lua</file>
