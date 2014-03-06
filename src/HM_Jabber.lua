@@ -462,7 +462,7 @@ _HM_Jabber.GetEventMenu = function()
 	end
 	local tMessage, m0 = HM_Jabber.tMessage.event, {}
 	for k, v in ipairs(_HM_Jabber.tEventTalk) do
-		if not tMessage[k] then
+		if not tMessage[k] or tMessage[k].szMsg == "" then
 			tMessage[k] = { nChannel = 0 }
 			if k == 3 then
 				tMessage[k].nChannel = PLAYER_TALK_CHANNEL.TONG
@@ -491,6 +491,42 @@ HM_Jabber.IsInDuel = function()
 		return dwID == _HM_Jabber.dwDuelID
 	end
 	return false
+end
+
+-- register revive message
+_HM_Jabber.RegisterReviveTalk = function(dwSkillID)
+	local t = HM_Jabber.tMessage.skill
+	local szName = HM.GetSkillName(dwSkillID)
+	if not t[szName] then
+		t[szName] = {
+			[_L["Hit"]] = _L["$mb, hurry up and thank me."],				-- 成功救治
+			[_L["Prepare"]] = _L["$mb, $jn, picking up your dead body yet."],		-- 开始救治
+			[_L["Prepare broken"]] = _L["$mb, fraud dead, what a pity."]		-- 中止救治
+		}
+	end
+end
+
+-- init revive message (after loading)
+_HM_Jabber.InitReviveTalk = function()
+	local me = GetClientPlayer()
+	if not me then
+		return
+	end
+	local mnt = me.GetKungfuMount()
+	if mnt.dwMountType == 2 then			-- 万花
+		_HM_Jabber.RegisterReviveTalk(139)	-- 锋针
+	elseif mnt.dwMountType == 4 then	-- 七秀
+		_HM_Jabber.RegisterReviveTalk(551)	-- 心鼓弦
+		_HM_Jabber.RegisterReviveTalk(3003)	-- 妙舞神扬
+	elseif mnt.dwMountType == 9 then	-- 五毒
+		_HM_Jabber.RegisterReviveTalk(2229)	-- 涅槃重生
+	else	-- 其它职业不处理
+		return
+	end
+	-- 如果没开启喊话则强行开启
+	if HM_Jabber.nChannelSkill1 == 0 then
+		HM_Jabber.nChannelSkill1 = PLAYER_TALK_CHANNEL.RAID
+	end
 end
 
 ---------------------------------------------------------------------
@@ -704,6 +740,7 @@ _HM_Jabber.OnLoadingEnd = function()
 	else
 		_HM_Jabber.DoEventTalk(2)
 	end
+	_HM_Jabber.InitReviveTalk()
 end
 
 ---------------------------------------------------------------------
