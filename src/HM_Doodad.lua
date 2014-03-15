@@ -3,7 +3,7 @@
 --
 HM_Doodad = {
 	bLoot = true,				-- 自动拾取
-	bLootFight = false,		-- 战斗中拾取
+	bLootFight = true,		-- 战斗中拾取
 	bLootGray = false,		-- 拾取灰色
 	bLootWhite = true,		-- 拾取白色
 	bLootGreen = true,	-- 拾取绿色
