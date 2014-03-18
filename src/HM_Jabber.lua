@@ -503,6 +503,10 @@ _HM_Jabber.RegisterReviveTalk = function(dwSkillID)
 			[_L["Prepare"]] = _L["$mb, $jn, picking up your dead body yet."],		-- 开始救治
 			[_L["Prepare broken"]] = _L["$mb, fraud dead, what a pity."]		-- 中止救治
 		}
+		-- 如果没开启喊话则强行开启
+		if HM_Jabber.nChannelSkill1 == 0 then
+			HM_Jabber.nChannelSkill1 = PLAYER_TALK_CHANNEL.RAID
+		end
 	end
 end
 
@@ -520,12 +524,6 @@ _HM_Jabber.InitReviveTalk = function()
 		_HM_Jabber.RegisterReviveTalk(3003)	-- 妙舞神扬
 	elseif mnt.dwMountType == 9 then	-- 五毒
 		_HM_Jabber.RegisterReviveTalk(2229)	-- 涅槃重生
-	else	-- 其它职业不处理
-		return
-	end
-	-- 如果没开启喊话则强行开启
-	if HM_Jabber.nChannelSkill1 == 0 then
-		HM_Jabber.nChannelSkill1 = PLAYER_TALK_CHANNEL.RAID
 	end
 end
 
