@@ -210,6 +210,7 @@ data = {
 	["JumpBack"] = "后跳",
 	["SmallDodge"] = "小轻功",
 	["Auto swith actionbar page of horse states (for TC, bind to P.1/3)"] = "天策绑定马上/马下技能栏（固定为第1和第3页）",
+	["Replace horse in fighting"] = "战斗中换战马",
 	["Alert when pet disappear unexpectedly (for 5D)"] = "五毒宠物意外消失提醒（献祭、召唤除外）",
 	["Mark pet"] = "标记自己的宠物",
 	["Auto enter dance status (Click fan on player panel to switch)"] = "七秀自动剑舞（点击头像扇子可快速开关）",

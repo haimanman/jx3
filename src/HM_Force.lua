@@ -17,6 +17,7 @@ HM_Force = {
 	nDebuffNum = 3,			-- debuff 类型达到几个时警告
 	bActionTime = true,	-- 显示读条动作计时
 	bAlertWanted = true,	-- 在线被悬赏时提醒自己
+	bHorseReplace = true,	-- 战斗中智能替换战马
 }
 HM.RegisterCustomData("HM_Force")
 
@@ -300,6 +301,58 @@ _HM_Force.OnMsgAnnounce = function(szMsg)
     end
 end
 
+-- try to replace horse via UUID
+_HM_Force.tPlayHorse = {
+	[3278] = true,	-- 小毛驴
+	[5781] = true,	-- 银铃
+	[7722] = true,	-- 神机·木轮
+	[12160] = true,	-- 太白仙鹿
+	[13605] = true,	-- 太白仙鹿
+	[49667] = true,	-- 双峰驼·祥祥
+	[58147] = true,	-- 西山秘宝·虚位交椅
+	[58148] = true,	-- 西山秘宝·虚空交椅
+	[60358] = true,	-- 渡情
+}
+_HM_Force.ReplaceHorse = function()
+	-- is now a play horse
+	local me = GetClientPlayer()
+	local item = me.GetItem(INVENTORY_INDEX.EQUIP, EQUIPMENT_INVENTORY.HORSE)
+	-- find fastest horse to replace it
+	if not item or _HM_Force.tPlayHorse[item.nUiId] then
+		local dwBox, dwX, nSpeed
+		for i = 1, BigBagPanel_nCount do
+			local dwSize = me.GetBoxSize(i) or 0
+			for j = 0, dwSize - 1 do
+				local item = me.GetItem(i, j)
+				if item and not _HM_Force.tPlayHorse[item.nUiId]
+					and item.nGenre == ITEM_GENRE.EQUIPMENT and item.nSub == EQUIPMENT_SUB.HORSE
+				then
+					local _nSpeed = nil
+					OutputItemTip(UI_OBJECT_ITEM, i, j)
+					local hM = Station.Lookup("Topmost1/TipPanel_Normal", "Handle_Message")
+					for x = 0, hM:GetItemCount() - 1, 1 do
+						local hT = hM:Lookup(x)
+						if hT:GetType() == "Text" then
+							local szSpeed = string.match(hT:GetText(), "(%d+)%%$")
+							if szSpeed then
+								_nSpeed = tonumber(szSpeed)
+								break
+							end
+						end
+					end
+					HideTip(false)
+					if _nSpeed and not dwBox or _nSpeed > nSpeed then
+						dwBox, dwX, nSpeed = i, j, _nSpeed
+					end
+				end
+			end
+		end
+		if dwBox then
+			me.ExchangeItem(dwBox, dwX, INVENTORY_INDEX.EQUIP, EQUIPMENT_INVENTORY.HORSE)
+		end
+	end
+end
+
 -------------------------------------
 -- 设置界面
 -------------------------------------
@@ -346,6 +399,11 @@ _HM_Force.PS.OnPanelActive = function(frame)
 	ui:Append("WndCheckBox", "Check_XyzSelf", { txt = _L["Except own"], checked = not HM_Force.bAutoXyzSelf })
 	:Pos(nX + 10, 232):Enable(HM_Force.bAutoXyz):Click(function(bChecked)
 		HM_Force.bAutoXyzSelf = not bChecked
+	end)
+	-- replace horse
+	ui:Append("WndCheckBox", { txt = _L["Replace horse in fighting"], checked = HM_Force.bHorseReplace })
+	:Pos(nX + 10, 148):Click(function(bChecked)
+		HM_Force.bHorseReplace = bChecked
 	end)
 	-- mark pet
 	ui:Append("WndCheckBox", { txt = _L["Mark pet"], checked = HM_Force.bMarkPet })
@@ -423,17 +481,25 @@ end)
 HM.RegisterEvent("PLAYER_STATE_UPDATE", function()
 	if arg0 == GetClientPlayer().dwID then
 		_HM_Force.OnRideHorse()
+		if _HM_Force.bWanted then
+			SceneObject_SetTitleEffect(TARGET.PLAYER, arg0, 47)
+		end
 	end
 end)
 HM.RegisterEvent("SYS_MSG", function()
+	local me = GetClientPlayer()
 	if arg0 == "UI_OME_SKILL_CAST_LOG" then
-		if HM_Force.bSelfTaiji and arg1 == GetClientPlayer().dwID and HM_Force.tSelfQC[arg2] then
-		_HM_Force.OnPrepareQC(arg2)
+		if HM_Force.bSelfTaiji and arg1 == me.dwID and HM_Force.tSelfQC[arg2] then
+			_HM_Force.OnPrepareQC(arg2)
+		end
+		-- on prepare 任驰骋
+		if HM_Force.bHorseReplace and arg1 == me.dwID and arg2 == 433 and me.bFightState then
+			_HM_Force.ReplaceHorse()
 		end
 	end
 	-- 重伤后删除头顶效果
 	if arg0 == "UI_OME_DEATH_NOTIFY" then
-		if _HM_Force.bWanted and arg1 == GetClientPlayer().dwID then
+		if _HM_Force.bWanted and arg1 == me.dwID then
 			_HM_Force.bWanted = nil
 			SceneObject_SetTitleEffect(TARGET.PLAYER, arg1, 0)
 		end
