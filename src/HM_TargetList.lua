@@ -1603,6 +1603,7 @@ HM_TargetList.OnItemMouseWheel = function()
 		if scroll:IsVisible() then
 			local nStep = Station.GetMessageWheelDelta()
 			scroll:ScrollNext(nStep)
+			return true
 		end
 	end
 end
