@@ -490,6 +490,7 @@ data = {
 	["Right click can set shared equipments!"] = "右鍵點擊可設置共用裝備！",
 	["<On/Off equipments>"] = "<脫/穿裝備>\n",
 	["Right click can set unmount equipments!"] = "右鍵點擊可設置要脫的部位！",
+	["<Change to 3rd suit>"] = "<切換至第3套>\n",
 	["Switch 1/2 suit"] = "切換1/2套裝",
 	["Show suit switch button in player panel"] = "在頭像處顯示更換套裝按紐",
 	["Set shared equips"] = "設置共用套裝部位",

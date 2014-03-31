@@ -153,6 +153,9 @@ _HM_Suit2.OnMouseEnter = function(this)
 	elseif szName == "Btn_Umount" then
 		local szTip = GetFormatText(_L["<On/Off equipments>"], 101) .. GetFormatText(_L["Right click can set unmount equipments!"], 106)
 		OutputTip(szTip, 400, {nX, nY, nW, nH})
+	elseif szName == "Btn_Three" then
+		local szTip = GetFormatText(_L["<Change to 3rd suit>"], 101)
+		OutputTip(szTip, 400, {nX, nY, nW, nH})
 	end
 end
 
@@ -168,6 +171,8 @@ _HM_Suit2.OnLButtonClick = function(this)
 		_HM_Suit2.ChangeSuit()
 	elseif szName == "Btn_Umount" then
 		_HM_Suit2.UnmountEquip()
+	elseif szName == "Btn_Three" then
+		PlayerChangeSuit(3)
 	end
 end
 
@@ -189,21 +194,23 @@ _HM_Suit2.OnEnterGame = function()
 	end
 	local nW, _ = frame:GetSize()
 	local temp = Wnd.OpenWindow("interface\\HM\\ui\\HM_Suit2.ini")
-	for k, v in ipairs({"Btn_Change", "Btn_Umount"}) do
+	for k, v in ipairs({"Btn_Three", "Btn_Change", "Btn_Umount"}) do
 		local btn = temp:Lookup(v)
 		btn:ChangeRelation(frame, true, true)
 		btn:SetRelPos(nW - 27 * k, 15)
 		btn.OnMouseEnter = function() _HM_Suit2.OnMouseEnter(btn) end
 		btn.OnMouseLeave = function() _HM_Suit2.OnMouseLeave(btn) end
 		btn.OnLButtonClick = function() _HM_Suit2.OnLButtonClick(btn) end
-		btn.OnRButtonClick = function() _HM_Suit2.OnRButtonClick(btn) end
-		if not HM_Suit2["bShow" .. string.sub(v, 5)] then
-			btn:Hide()
-		end
-		if v == "Btn_Change" then
-			btn:Lookup("", "Text_Change"):SetText(_L["Chg"])
-		elseif v == "Btn_Umount" then
-			btn:Lookup("", "Text_Umount"):SetText(_L["Off"])
+		if v ~= "Btn_Three" then
+			btn.OnRButtonClick = function() _HM_Suit2.OnRButtonClick(btn) end
+			if not HM_Suit2["bShow" .. string.sub(v, 5)] then
+				btn:Hide()
+			end
+			if v == "Btn_Change" then
+				btn:Lookup("", "Text_Change"):SetText(_L["Chg"])
+			elseif v == "Btn_Umount" then
+				btn:Lookup("", "Text_Umount"):SetText(_L["Off"])
+			end
 		end
 	end
 	Wnd.CloseWindow(temp)
