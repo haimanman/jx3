@@ -908,10 +908,14 @@ end
 
 -- check list item
 _HM_TargetList.CheckListItem = function(tar, nMode)
-	if tar.szName == "" or (nMode <= 3 and _HM_TargetList.tFilterNpc[tar.szName]) then
+	local szName = tar.szName
+	if szName == "" and nMode <= 3 then
+		szName = Table_GetNpcTemplateName(tar.dwTemplateID)
+	end
+	if szName == "" or (nMode <= 3 and _HM_TargetList.tFilterNpc[szName]) then
 		return false
 	end
-	if nMode <= 3 and not tar.IsSelectable() then
+	if nMode <= 3 and not tar.IsSelectable() and not _HM_TargetList.bCustom then
 		return false
 	end
 	if not HM_TargetList.bListFocus and _HM_TargetList.IsFocus(tar.dwID) then
@@ -928,7 +932,7 @@ _HM_TargetList.CheckListItem = function(tar, nMode)
 	if _HM_TargetList.bCustom then
 		for k, v in pairs(HM_TargetList.tCustomName) do
 			if v then
-				if k == tar.szName then
+				if k == szName then
 					return true
 				end
 				bOK = false
@@ -982,6 +986,9 @@ _HM_TargetList.UpdateListItems = function(handle)
 			}
 			if nMode <= 3 then
 				item.dwEmployer = v.dwEmployer
+				if item.szName == "" then
+					item.szName = Table_GetNpcTemplateName(v.dwTemplateID)
+				end
 			end
 			item.nIndex = #aItem + 1
 			if bHP then
