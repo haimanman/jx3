@@ -8,7 +8,7 @@ $version_str = isset($_SERVER['argv'][2]) ? $_SERVER['argv'][2] : '';
 $name = 'HM, JX3 Plug-in';
 $desc = 'Large number of convenient PVP plugs! -- hmm@buliantai --';
 $pver = '1.0';
-$required = array('HM.lua', 'HM_Compatible.lua');
+$required = array('HM.lua', 'HM_Compatible.lua', 'HM_Json.lua');
 $tag_version = "\tdwVersion = ";
 $tag_build = "\tszBuildDate = \"";
 
