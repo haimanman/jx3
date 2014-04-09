@@ -2868,7 +2868,7 @@ HM.OnFrameBreathe = function()
 	if not _HM.nRequestExpire or _HM.nRequestExpire < nTime then
 		if _HM.nRequestExpire then
 			local r = table.remove(_HM.tRequest, 1)
-			if r then
+			if r and r.fnAction then
 				pcall(r.fnAction)
 			end
 			_HM.nRequestExpire = nil
@@ -2926,7 +2926,9 @@ HM.OnDocumentComplete = function()
 	local r = table.remove(_HM.tRequest, 1)
 	if r then
 		_HM.nRequestExpire = nil
-		pcall(r.fnAction, this:GetLocationName(), this:GetDocument())
+		if r.fnAction then
+			pcall(r.fnAction, this:GetLocationName(), this:GetDocument())
+		end
 	end
 end
 
