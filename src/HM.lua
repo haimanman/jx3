@@ -831,13 +831,9 @@ end
 
 -- (void) HM.RemoteRequest(string szUrl, func fnAction)		-- 发起远程 HTTP 请求
 -- szUrl		-- 请求的完整 URL（包含 http:// 或 https://）
--- fnAction 	-- 请求完成后的回调函数，回调原型：function(szTitle, szContent)
+-- fnAction 	-- 请求完成或超时后的回调函数，回调原型：function(szTitle, szContent)
 HM.RemoteRequest = function(szUrl, fnAction)
-	local page = Station.Lookup("Normal/HM/Page_1")
-	if page then
-		_HM.tRequest[szUrl] = fnAction
-		page:Navigate(szUrl)
-	end
+	table.insert(_HM.tRequest, { szUrl = szUrl, fnAction = fnAction })
 end
 
 -- (KObject) HM.GetTarget()														-- 取得当前目标操作对象
@@ -2868,6 +2864,23 @@ HM.OnFrameBreathe = function()
 	end
 	-- run player monitor
 	_HM.SetTempTarget()
+	-- run remote request (10s)
+	if not _HM.nRequestExpire or _HM.nRequestExpire < nTime then
+		if _HM.nRequestExpire then
+			local r = table.remove(_HM.tRequest, 1)
+			if r then
+				pcall(r.fnAction)
+			end
+			_HM.nRequestExpire = nil
+		end
+		if #_HM.tRequest > 0 then
+			local page = Station.Lookup("Normal/HM/Page_1")
+			if page then
+				page:Navigate(_HM.tRequest[1].szUrl)
+			end
+			_HM.nRequestExpire = GetTime() + 15000
+		end
+	end
 end
 
 -- key down
@@ -2908,13 +2921,12 @@ HM.OnScrollBarPosChanged = function()
     handle:SetItemStartRelPos(0, - nPos * 10)
 end
 
--- web page title changed
-HM.OnTitleChanged = function()
-	local szUrl, szTitle = this:GetLocationURL(), this:GetLocationName()
-	if szUrl ~= szTitle and _HM.tRequest[szUrl] then
-		local fnAction = _HM.tRequest[szUrl]
-		fnAction(szTitle, this:GetDocument())
-		_HM.tRequest[szUrl] = nil
+-- web page complete
+HM.OnDocumentComplete = function()
+	local r = table.remove(_HM.tRequest, 1)
+	if r then
+		_HM.nRequestExpire = nil
+		pcall(r.fnAction, this:GetLocationName(), this:GetDocument())
 	end
 end
 
