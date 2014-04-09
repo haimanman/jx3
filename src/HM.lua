@@ -1301,6 +1301,13 @@ HM.UrlEncode = function(szText)
 	return str
 end
 
+-- (string) HM.UrlDecode(string szText)	-- 解析 URL 编码
+HM.UrlDecode = function(szText)
+	local str = szText:gsub("%%(%x%x)", function(h) return string.char(tonumber(h, 16)) end)
+	str = str:gsub("+", " ")
+	return str
+end
+
 -- 根据技能 ID 及等级获取技能的名称及图标 ID（内置缓存处理）
 -- (string, number) HM.GetSkillName(number dwSkillID[, number dwLevel])
 HM.GetSkillName = function(dwSkillID, dwLevel)
@@ -1774,6 +1781,9 @@ function _HM.UI.Frm:ctor(szName, bEmpty)
 			end
 		end
 		self.wnd = frm:Lookup("Window_Main")
+		self.handle = self.wnd:Lookup("", "")
+	else
+		self.handle = frm:Lookup("", "")
 	end
 	self.self, self.type = frm, "WndFrame"
 end
