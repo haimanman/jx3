@@ -268,15 +268,23 @@ end
 _HM_Secret.AddTableRow = function(data)
 	local hI = _HM_Secret.handle:AppendItemFromIni(_HM_Secret.szIniFile, "Handle_Item")
 	hI.id = data.id
+	hI.new = data.new
 	hI:Lookup("Text_Time"):SetText(_HM_Secret.FormatTime(data.time_update))
 	hI:Lookup("Text_Content"):SetText(data.content)
-	if data.new then
+	if hI.new then
 		hI:Lookup("Text_Time"):SetFontScheme(40)
 		hI:Lookup("Text_Content"):SetFontScheme(40)
 	end
 	hI.OnItemMouseEnter = function() this:Lookup("Image_Light"):Show() end
 	hI.OnItemMouseLeave = function() this:Lookup("Image_Light"):Hide() end
-	hI.OnItemLButtonDown = function() _HM_Secret.ReadOne(this.id) end
+	hI.OnItemLButtonDown = function()
+		_HM_Secret.ReadOne(this.id)
+		if this.new then
+			this:Lookup("Text_Time"):SetFontScheme(41)
+			this:Lookup("Text_Content"):SetFontScheme(41)
+			this.new = false
+		end
+	end
 	hI:Show()
 end
 
