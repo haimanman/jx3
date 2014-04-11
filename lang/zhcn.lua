@@ -198,6 +198,7 @@ data = {
 	["Select item"] = "选择项目",
 	["Publish to talk channel"] = "发布到当前频道",
 	["Entertainment"] = "休闲娱乐助手",
+	["Recreation"] = "娱乐",
 	-- HM_Force.lua --
 	["Your pet [%s] disappeared!"] = "您的宠物 [%s] 消失了！",
 	["Enable auto sword dance"] = "自动剑舞已开启",

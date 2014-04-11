@@ -222,4 +222,4 @@ HM.RegisterEvent("TEAM_AUTHORITY_CHANGED", _HM_Roll.OnChangeLeader)
 RegisterMsgMonitor(_HM_Roll.MonitorRoll, {"MSG_SYS", "MSG_TEAM"})
 
 -- add to HM panel
-HM.RegisterPanel(_L["Roll lottery"], 287, _L["Others"], _HM_Roll.PS)
+HM.RegisterPanel(_L["Roll lottery"], 287, _L["Recreation"], _HM_Roll.PS)

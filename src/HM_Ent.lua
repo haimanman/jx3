@@ -162,4 +162,4 @@ end
 -- 注册事件、初始化
 ---------------------------------------------------------------------
 -- add to HM collector
-HM.RegisterPanel(_L["Entertainment"], 336, _L["Others"], _HM_Ent.PS)
+HM.RegisterPanel(_L["Entertainment"], 336, _L["Recreation"], _HM_Ent.PS)

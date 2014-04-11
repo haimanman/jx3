@@ -398,5 +398,5 @@ HM.RegisterEvent("LOADING_END", function()
 end)
 
 -- add to HM collector
-HM.RegisterPanel(_HM_Secret.szName, 2, "¿ª·¢", _HM_Secret.PS)
+HM.RegisterPanel(_HM_Secret.szName, 2, _L["Recreation"], _HM_Secret.PS)
 
