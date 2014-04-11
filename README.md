@@ -32,6 +32,7 @@
   * 娱乐聊天助手，发布个人数据，ROLL 点娱乐等
   * PVE 宏扩展，丰富的判断和扩展 [详细说明](http://haimanchajian.com/MACRO.txt)
   * 情缘剑侠3，设置好友为情缘，书写个性宣言。
+  * 秘密/Secret，来自身边好友的秘密！！
 
 
 wiki & 文档
