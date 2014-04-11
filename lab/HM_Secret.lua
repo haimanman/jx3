@@ -1,19 +1,14 @@
 --
 -- 海鳗插件：秘密/Secret（来自身边朋友的秘密，匿名空间……）
 --
-HM_Secret = {
-	bDisable = false,	-- 是否暂时禁用
-}
-HM.RegisterCustomData("HM_Secret")
+HM_Secret = {}
 
 ---------------------------------------------------------------------
 -- 本地函数和变量
 ---------------------------------------------------------------------
 _HM_Secret = {
 	szName = "秘密/Secret",
-	szIniFile = "interface\\HM_Dev\\HM_Secret.ini",
-	tRaw = {},			-- 原始文字
-	tReplace = {},	-- 替代方案  key => value：g_tStrings.xxx.xxx =??
+	szIniFile = "interface\\HM\\ui\\HM_Secret.ini",
 }
 
 -- format time
