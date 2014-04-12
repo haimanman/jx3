@@ -211,6 +211,8 @@ _HM_Suit2.OnEnterGame = function()
 			elseif v == "Btn_Umount" then
 				btn:Lookup("", "Text_Umount"):SetText(_L["Off"])
 			end
+		elseif not HM_Suit2.bShowChange then
+			btn:Hide()
 		end
 	end
 	Wnd.CloseWindow(temp)
@@ -230,8 +232,10 @@ _HM_Suit2.PS.OnPanelActive = function(frame)
 		HM_Suit2.bShowChange = bChecked
 		if bChecked then
 			Player_GetFrame():Lookup("Btn_Change"):Show()
+			Player_GetFrame():Lookup("Btn_Three"):Show()
 		else
 			Player_GetFrame():Lookup("Btn_Change"):Hide()
+			Player_GetFrame():Lookup("Btn_Three"):Hide()
 		end
 	end)
 	ui:Append("WndComboBox", { txt = _L["Set shared equips"], x = 12, y = 56 }):Menu(_HM_Suit2.GetShareMenu)
