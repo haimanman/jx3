@@ -45,6 +45,7 @@ _HM_Secret.RemoteCall = function(szAction, tParam, fnCallback)
 	for k, v in pairs(tParam) do
 		table.insert(t, k .. "=" .. HM.UrlEncode(tostring(v)))
 	end
+	table.insert(t, "_=" .. GetCurrentTime())
 	HM.RemoteRequest("http://jx3.hightman.cn/sr/" .. szAction .. ".php?" .. table.concat(t, "&"), function(szTitle, szContent)
 		if fnCallback then
 			local data, err = HM.JsonDecode(szContent)
