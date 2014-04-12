@@ -47,7 +47,7 @@ _HM_Secret.RemoteCall = function(szAction, tParam, fnCallback)
 	end
 	table.insert(t, "_=" .. GetCurrentTime())
 	HM.RemoteRequest("http://jx3.hightman.cn/sr/" .. szAction .. ".php?" .. table.concat(t, "&"), function(szTitle, szContent)
-		if fnCallback then
+		if fnCallback and szContent and szContent ~= "" then
 			local data, err = HM.JsonDecode(szContent)
 			if not data then
 				HM.Alert("½âÎö JSON Êý¾Ý´íÎó£º" .. tostring(err), fnCallback)
