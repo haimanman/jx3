@@ -50,7 +50,8 @@ _HM_Secret.RemoteCall = function(szAction, tParam, fnCallback)
 		if fnCallback and szContent and szContent ~= "" then
 			local data, err = HM.JsonDecode(szContent)
 			if not data then
-				HM.Alert("解析 JSON 数据错误：" .. tostring(err), fnCallback)
+				--HM.Alert("解析 JSON 数据错误：" .. tostring(err), fnCallback)
+				HM.Sysmsg("解析 JSON 数据错误：" .. tostring(err))
 			elseif type(data) == "table" and data.error then
 				HM.Alert("服务端出错：" .. HM.UrlDecode(data.error), fnCallback)
 			else
