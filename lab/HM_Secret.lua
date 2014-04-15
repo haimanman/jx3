@@ -1,7 +1,10 @@
 --
 -- 海鳗插件：秘密/Secret（来自身边朋友的秘密，匿名空间……）
 --
-HM_Secret = {}
+HM_Secret = {
+	bShowButton = true,
+}
+HM.RegisterCustomData("HM_Secret")
 
 ---------------------------------------------------------------------
 -- 本地函数和变量
@@ -168,6 +171,7 @@ _HM_Secret.ShowOne = function(data)
 	end
 	frm:Fetch("Btn_Comment"):Enable(data.forward == false):Toggle(true)
 	frm:Fetch("Btn_Laud"):Text("赞(" .. data.znum .. ")"):Enable(data.lauded == false):Toggle(true)
+	frm:Fetch("Btn_Hiss"):Text("嘘(" .. data.xnum .. ")"):Enable(data.hiss == false):Toggle(true)
 	-- show comments
 	local hnd =frm:Fetch("Handle_Comment")
 	hnd:Raw():Clear()
@@ -194,7 +198,7 @@ _HM_Secret.ReadOne = function(dwID)
 		frm:Append("Text", "Text_Content", { x = 0, y = 0, w = 680, h = 100, font = 27, font = 201, multi = true }):Color(255, 160, 255):Align(1, 1):Raw():SetCenterEachLine(true)
 		frm:Append("Text", "Text_Time", { x = 0, y = 100 })
 		frm:Append("WndEdit", "Edit_Comment", { x = 180, y = 100, w = 296, h = 25, limit = 60 })
-		frm:Append("WndButton", "Btn_Comment", { txt = "发表", x = 480, y = 100 }):Click(function()
+		frm:Append("WndButton", "Btn_Comment", { txt = "发表", x = 480, y = 100, w = 70, h = 26 }):Click(function()
 			local szContent = frm:Fetch("Edit_Comment"):Text()
 			if szContent == frm.ctip then
 				return
@@ -206,10 +210,22 @@ _HM_Secret.ReadOne = function(dwID)
 			end
 			_HM_Secret.RemoteCall("comment", { d = frm.id, o = frm.name, c = szContent, r = szRealName }, _HM_Secret.ShowOne)
 		end)
-		frm:Append("WndButton", "Btn_Laud", { txt = "赞 (100)", x = 580, y = 100 }):Click(function()
+		frm:Append("WndButton", "Btn_Laud", { txt = "赞(99)", x = 550, y = 100, w = 70, h = 26 }):Click(function()
 			_HM_Secret.RemoteCall("laud", { d = frm.id, o = frm.name }, function(data)
 				_HM_Secret.ShowOne(data)
 				_HM_Secret.PostNotify(frm.id, nil, true)
+			end)
+		end)
+		frm:Append("WndButton", "Btn_Hiss", { txt = "嘘(0)", x = 620, y = 100, w = 60, h = 26, font = 166 }):Click(function()
+			_HM_Secret.RemoteCall("hiss", { d = frm.id, o = frm.name }, function(data)
+				if type(data) == "table" then
+					-- refresh
+					_HM_Secret.ShowOne(data)
+				else
+					-- deleted
+					frm:Toggle(false)
+					_HM_Secret.LoadList()
+				end
 			end)
 		end)
 		-- comments: 25*8
@@ -341,6 +357,18 @@ _HM_Secret.PS.OnPanelActive = function(frame)
 	_HM_Secret.win = win
 	_HM_Secret.handle = win:Lookup("", "Handle_List")
 	_HM_Secret.loading = win:Lookup("", "Text_Loading")
+	-- add checkbox
+	ui:Append("WndCheckBox", { x = 206, y = 32, font = 47, txt = "在小地图显示未读通知", checked = HM_Secret.bShowButton }):Click(function(bChecked)
+		HM_Secret.bShowButton = bChecked
+		local btn = Station.Lookup("Normal/Minimap/Wnd_Minimap/Wnd_Over/Btn_Secret")
+		if btn then
+			if bChecked then
+				btn:Show()
+			else
+				btn:Hide()
+			end
+		end
+	end)
 	-- scroll
 	win:Lookup("Scroll_List").OnScrollBarPosChanged = function()
 		local nPos = this:GetScrollPos()
@@ -387,6 +415,11 @@ HM.RegisterEvent("LOADING_END", function()
 			this:Lookup("", ""):Hide()
 			HM.OpenPanel(_HM_Secret.szName)
 		end
+	end
+	if not HM_Secret.bShowButton then
+		return btn:Hide()
+	else
+		btn:Show()
 	end
 	-- get unread
 	local me = GetClientPlayer()
