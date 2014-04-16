@@ -890,6 +890,9 @@ end
 -- (string) HM.GetTargetName(userdata KNpc/KPlayer)
 HM.GetTargetName = function(tar)
 	local szName = tar.szName
+	if szName == "" and not IsPlayer(tar.dwID) then
+		szName = Table_GetNpcTemplateName(tar.dwTemplateID)
+	end
 	if tar.dwEmployer and tar.dwEmployer ~= 0 then
 		local emp = GetPlayer(tar.dwEmployer)
 		if not emp then
