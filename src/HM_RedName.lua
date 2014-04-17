@@ -413,6 +413,15 @@ _HM_RedName.AddMiddleBreathe = function()
 			hShare:AppendItemFromIni("UI/Config/Default/Balloon.ini", "Handle_Balloon", "Ball_" .. hShare:GetItemCount())
 			local ball = hShare:Lookup(hShare:GetItemCount() - 1)
 			ball.szName = k
+			ball:RegisterEvent(0x100)
+			ball.OnItemMouseEnter = function()
+				this:Lookup("Handle_Content"):Hide()
+				this:Lookup("Image_Bg1"):SetAlpha(50)
+			end
+			ball.OnItemMouseLeave = function()
+				this:Lookup("Handle_Content"):Show()
+				this:Lookup("Image_Bg1"):SetAlpha(255)
+			end
 			_HM_RedName.UpdateBalloon(ball, v)
 			-- point
 			if v.dwMapID then
