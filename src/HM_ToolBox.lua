@@ -711,12 +711,10 @@ _HM_ToolBox.CopyChatLine = function(hTime)
 						end
 					end
 					if bBegin == false then
-						for _, v in ipairs({g_tStrings.STR_TALK_HEAD_WHISPER, g_tStrings.STR_TALK_HEAD_SAY, g_tStrings.STR_TALK_HEAD_SAY1, g_tStrings.STR_TALK_HEAD_SAY2 }) do
-							local nB, nE = StringFindW(szText, v)
-							if nB then
-								szText, bBegin = string.sub(szText, nB + nE), true
-								edit:ClearText()
-							end
+						local nB, nE = StringFindW(szText, g_tStrings.STR_TALK_HEAD_SAY1)
+						if nE then
+							szText, bBegin = string.sub(szText, nE + 1), true
+							edit:ClearText()
 						end
 					end
 					if szText ~= "" and (table.getn(edit:GetTextStruct()) > 0 or szText ~= g_tStrings.STR_FACE) then
