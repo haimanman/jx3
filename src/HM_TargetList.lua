@@ -445,9 +445,9 @@ _HM_TargetList.UpdateFocusItem = function(h, tar)
 	-- update name, color
 	local hText = h:Lookup("Text_Name")
 	if hDis:IsVisible() then
-		hText:SetText(tar.szName)
+		hText:SetText(HM.GetTargetName(tar))
 	else
-		hText:SetText(hDis:GetText() .. _L["-"] .. tar.szName)
+		hText:SetText(hDis:GetText() .. _L["-"] .. HM.GetTargetName(tar))
 	end
 	hText:SetFontColor(_HM_TargetList.GetForceFontColor(tar, me.dwID, true))
 	-- update life
@@ -471,7 +471,7 @@ _HM_TargetList.UpdateFocusItem = function(h, tar)
 	if HM_TargetList.bFocusTarget2 then
 		local ttar = GetTargetHandle(tar.GetTarget())
 		if ttar then
-			szText = ttar.szName
+			szText = HM.GetTargetName(ttar)
 			hText.dwID = ttar.dwID
 		else
 			szText = ""
@@ -908,12 +908,12 @@ end
 
 -- check list item
 _HM_TargetList.CheckListItem = function(tar, nMode)
-	local szName = tar.szName
-	if szName == "" and nMode <= 3 then
-		szName = Table_GetNpcTemplateName(tar.dwTemplateID)
-	end
+	local szName = HM.GetTargetName(tar)
 	if szName == "" or (nMode <= 3 and _HM_TargetList.tFilterNpc[szName]) then
 		return false
+	end
+	if nMode <= 3 and tar.dwTemplateID >= 28001 and tar.dwTemplateID <= 36001 then
+		return true
 	end
 	if nMode <= 3 and not tar.IsSelectable() and not _HM_TargetList.bCustom then
 		return false
@@ -981,14 +981,11 @@ _HM_TargetList.UpdateListItems = function(handle)
 		if _HM_TargetList.CheckListItem(v, nMode) then
 			local item = {
 				dwID = v.dwID, nMoveState = v.nMoveState,
-				szName = v.szName, nLevel = v.nLevel,
+				szName = HM.GetTargetName(v), nLevel = v.nLevel,
 				dwForceID = v.dwForceID,
 			}
 			if nMode <= 3 then
 				item.dwEmployer = v.dwEmployer
-				if item.szName == "" then
-					item.szName = Table_GetNpcTemplateName(v.dwTemplateID)
-				end
 			end
 			item.nIndex = #aItem + 1
 			if bHP then

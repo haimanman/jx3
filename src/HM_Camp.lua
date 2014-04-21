@@ -70,7 +70,9 @@ _HM_Camp.IsCareNpc = function(v)
 			return true
 		end
 	end
-	if IsEnemy(GetClientPlayer().dwID, v.dwID)
+	-- 28001 - 30300, 31001 -36001
+	if (v.dwTemplateID < 28001 or v.dwTemplateID > 36001 or (v.dwTemplateID > 30300 and v.dwTemplateID < 31001))
+		and IsEnemy(GetClientPlayer().dwID, v.dwID) and v.IsSelectable()
 		and (HM_Camp.tBossList2[v.szName] or v.nMaxLife >= 200000000)
 	then
 		return true

@@ -729,6 +729,9 @@ _HM_ToolBox.CopyChatLine = function(hTime)
 			local nFrame = p:GetFrame()
 			local szCmd = _HM_ToolBox.tFacIcon.image[nFrame]
 			if szCmd then
+				if string.byte(szCmd, 2, 2) < 128 then
+					szCmd = string.sub(szCmd, 1, 1) .. string.sub(szCmd, 3)
+				end
 				edit:InsertObj(szCmd, { type = "text", text = szCmd })
 			end
 		elseif p:GetType() == "Animate" then
@@ -736,6 +739,9 @@ _HM_ToolBox.CopyChatLine = function(hTime)
 			if nGroup then
 				local szCmd = _HM_ToolBox.tFacIcon.animate[nGroup]
 				if szCmd then
+					if string.byte(szCmd, 2, 2) < 128 then
+						szCmd = string.sub(szCmd, 1, 1) .. string.sub(szCmd, 3)
+					end
 					edit:InsertObj(szCmd, { type = "text", text = szCmd })
 				end
 			end
