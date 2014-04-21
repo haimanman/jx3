@@ -6,7 +6,7 @@ HM_Battle = {
 	bFormArean = true,		-- 在竞技场自动交出阵眼
 	bAlarmJG2 = false,		-- 九宫自动报时
 	bMarkMap = true,		-- 战场地图方向标记
-	bArenaAward = true,	-- 下周可得名剑币估算
+	--bArenaAward = true,	-- 下周可得名剑币估算
 	bAutoBattle= true,		-- 自动进入战场
 	bAutoArena = true,		-- 自动进入竞技场
 }
@@ -336,7 +336,7 @@ _HM_Battle.PS.OnPanelActive = function(frame)
 	:Text(_L["Show the orientation of some battlefield maps (newbie necessary)"]):Click(function(bChecked)
 		HM_Battle.bMarkMap = bChecked
 	end)
-	ui:Append("WndCheckBox", { x = 10, y = 214, checked = HM_Battle.bArenaAward })
+	ui:Append("WndCheckBox", { x = 10, y = 214, checked = HM_Battle.bArenaAward, enable = false })
 	:Text(_L["Show next week currency in the arean panel"]):Click(function(bChecked)
 		HM_Battle.bArenaAward = bChecked
 	end)
@@ -364,9 +364,9 @@ end
 ---------------------------------------------------------------------
 HM.RegisterEvent("SYS_MSG", _HM_Battle.OnSysMsg)
 HM.RegisterEvent("LOADING_END", _HM_Battle.BeginJG)
-HM.RegisterEvent("SYNC_CORPS_LIST", _HM_Battle.OnSyncArenaList)
-HM.RegisterEvent("SYNC_CORPS_BASE_DATA", _HM_Battle.OnSyncArenaData)
-HM.RegisterEvent("SYNC_CORPS_MEMBER_DATA", _HM_Battle.OnSyncArenaData)
+--HM.RegisterEvent("SYNC_CORPS_LIST", _HM_Battle.OnSyncArenaList)
+--HM.RegisterEvent("SYNC_CORPS_BASE_DATA", _HM_Battle.OnSyncArenaData)
+--HM.RegisterEvent("SYNC_CORPS_MEMBER_DATA", _HM_Battle.OnSyncArenaData)
 HM.RegisterEvent("BATTLE_FIELD_NOTIFY", _HM_Battle.OnBattleNotify)
 HM.RegisterEvent("ARENA_NOTIFY", _HM_Battle.OnAreanNotify)
 
