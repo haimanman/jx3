@@ -91,7 +91,7 @@ _HM_Marker.Jihuo = function(tar)
 			if nKey and nKey > 0 then
 				szMsg = szMsg .. _L(" marked as [%s]", _HM_Marker.tMarkName[nKey])
 			end
-			szMsg = szMsg .. _L(" [%s], HP[%d%%] +_+", tar.szName, nHP)
+			szMsg = szMsg .. _L(" [%s], HP[%d%%] +_+", HM.GetTargetName(tar), nHP)
 			HM.Talk(nChannel, szMsg)
 		end
 	end
