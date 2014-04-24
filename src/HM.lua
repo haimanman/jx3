@@ -215,7 +215,7 @@ _HM.ParseFaceIcon = function(t)
 		_HM.tFaceIcon = {}
 		for i = 1, g_tTable.FaceIcon:GetRowCount() do
 			local tLine = g_tTable.FaceIcon:GetRow(i)
-			_HM.tFaceIcon[tLine.szCommand] = true
+			_HM.tFaceIcon[tLine.szCommand] = tLine.dwID
 		end
 	end
 	local t2 = {}
@@ -228,7 +228,7 @@ _HM.ParseFaceIcon = function(t)
 		else
 			local nOff, nLen = 1, string.len(v.text)
 			while nOff <= nLen do
-				local szFace = nil
+				local szFace, dwFaceID = nil, nil
 				local nPos = StringFindW(v.text, "#", nOff)
 				if not nPos then
 					nPos = nLen
@@ -237,7 +237,7 @@ _HM.ParseFaceIcon = function(t)
 						if i <= nLen then
 							local szTest = string.sub(v.text, nPos, i)
 							if _HM.tFaceIcon[szTest] then
-								szFace = szTest
+								szFace, dwFaceID = szTest, _HM.tFaceIcon[szTest]
 								nPos = nPos - 1
 								break
 							end
@@ -248,8 +248,8 @@ _HM.ParseFaceIcon = function(t)
 					table.insert(t2, { type = "text", text = string.sub(v.text, nOff, nPos) })
 					nOff = nPos + 1
 				end
-				if szFace then
-					table.insert(t2, { type = "text", text = szFace })
+				if szFace and dwFaceID then
+					table.insert(t2, { type = "emotion", text = szFace, id = dwFaceID })
 					nOff = nOff + string.len(szFace)
 				end
 			end

@@ -644,9 +644,9 @@ _HM_ToolBox.InitFaceIcon = function()
 		for i = 1, g_tTable.FaceIcon:GetRowCount() do
 			local tLine = g_tTable.FaceIcon:GetRow(i)
 			if tLine.szType == "animate" then
-				t.animate[tLine.nFrame] = tLine.szCommand
+				t.animate[tLine.nFrame] = { szCmd = tLine.szCommand, dwID = tLine.dwID }
 			else
-				t.image[tLine.nFrame] = tLine.szCommand
+				t.image[tLine.nFrame] = { szCmd = tLine.szCommand, dwID = tLine.dwID }
 			end
 		end
 		_HM_ToolBox.tFacIcon = t
@@ -727,22 +727,24 @@ _HM_ToolBox.CopyChatLine = function(hTime)
 			end
 		elseif p:GetType() == "Image" then
 			local nFrame = p:GetFrame()
-			local szCmd = _HM_ToolBox.tFacIcon.image[nFrame]
-			if szCmd then
+			local tEmotion = _HM_ToolBox.tFacIcon.image[nFrame]
+			if tEmotion then
+				local szCmd, dwFaceID = tEmotion.szCmd, tEmotion.dwID
 				if string.byte(szCmd, 2, 2) < 128 then
 					szCmd = string.sub(szCmd, 1, 1) .. string.sub(szCmd, 3)
 				end
-				edit:InsertObj(szCmd, { type = "text", text = szCmd })
+				edit:InsertObj(szCmd, { type = "emotion", text = szCmd, id = dwFaceID })
 			end
 		elseif p:GetType() == "Animate" then
 			local nGroup = tonumber(p:GetName())
 			if nGroup then
-				local szCmd = _HM_ToolBox.tFacIcon.animate[nGroup]
-				if szCmd then
+				local tEmotion = _HM_ToolBox.tFacIcon.animate[nGroup]
+				if tEmotion then
+					local szCmd, dwFaceID = tEmotion.szCmd, tEmotion.dwID
 					if string.byte(szCmd, 2, 2) < 128 then
 						szCmd = string.sub(szCmd, 1, 1) .. string.sub(szCmd, 3)
 					end
-					edit:InsertObj(szCmd, { type = "text", text = szCmd })
+					edit:InsertObj(szCmd, { type = "emotion", text = szCmd, id = dwFaceID })
 				end
 			end
 		end
