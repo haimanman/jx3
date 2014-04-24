@@ -801,7 +801,7 @@ HM.GetTargetName = function(tar)
 	if szName == "" and not IsPlayer(tar.dwID) then
 		szName = Table_GetNpcTemplateName(tar.dwTemplateID)
 	end
-	if tar.dwEmployer and tar.dwEmployer ~= 0 then
+	if tar.dwEmployer and tar.dwEmployer ~= 0 and szName == Table_GetNpcTemplateName(tar.dwTemplateID) then
 		local emp = GetPlayer(tar.dwEmployer)
 		if not emp then
 			szName =  g_tStrings.STR_SOME_BODY .. g_tStrings.STR_PET_SKILL_LOG .. tar.szName
