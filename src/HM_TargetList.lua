@@ -317,12 +317,14 @@ end
 -- get skill prepare
 _HM_TargetList.GetSkillPrepareState = function(tar)
 	local _, dwSkillID, dwLevel, fP = tar.GetSkillPrepareState()
+	--[[
 	if not dwSkillID and (not IsPlayer(tar.dwID) or tar.GetOTActionState() == 1) then
 		local dwType, dwID = GetClientPlayer().GetTarget()
 		HM.SetInsTarget(tar.dwID)
 		_, dwSkillID, dwLevel, fP = tar.GetSkillPrepareState()
 		HM.SetTarget(dwType, dwID)
 	end
+	--]]
 	if dwSkillID and dwSkillID ~= 0 then
 		local szSkill = HM.GetSkillName(dwSkillID, dwLevel)
 		return szSkill, fP
