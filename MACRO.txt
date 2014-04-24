@@ -156,7 +156,7 @@ detype           自身有指定类型的减益BUFF          detype:外攻 或 detype:外攻|阳
 --------------------------------------------------------------------------------
 dead/nodead      目标死亡/未死亡
 target           目标类型符合判断                  target:npc 或 target:player-ally 或 target:player|boss
-> target 的类型有：npc|player|boss|self|party|enemy|ally|neutrality
+> target 的类型有：npc|player|boss|self|party|enemy|ally|neutrality|male|female|man|woman|littleboy|littlegirl
 > 其中 self=自己，party=队友，enemy=红名，ally=绿名，neutrality=黄名
 > 可用 - 连接表示并且关系，用 | 连接表示或者关系
 --------------------------------------------------------------------------------
