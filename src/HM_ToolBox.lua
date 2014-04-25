@@ -653,6 +653,18 @@ _HM_ToolBox.InitFaceIcon = function()
 	end
 end
 
+-- 根据名称提取表情 ID
+_HM_ToolBox.FetchFaceID = function(szCmd)
+	for _, v in pairs(_HM_ToolBox.tFacIcon) do
+		for _, vv in pairs(v) do
+			if vv.szCmd == szCmd then
+				return vv.dwID
+			end
+		end
+	end
+	return nil
+end
+
 -- 聊天复制功能
 _HM_ToolBox.CopyChatLine = function(hTime)
 	local edit = Station.Lookup("Lowest2/EditBox/Edit_Input")
@@ -731,7 +743,11 @@ _HM_ToolBox.CopyChatLine = function(hTime)
 			if tEmotion then
 				local szCmd, dwFaceID = tEmotion.szCmd, tEmotion.dwID
 				if string.byte(szCmd, 2, 2) < 128 then
-					szCmd = string.sub(szCmd, 1, 1) .. string.sub(szCmd, 3)
+					local szCmd2 = string.sub(szCmd, 1, 1) .. string.sub(szCmd, 3)
+					local dwFaceID2 = _HM_ToolBox.FetchFaceID(szCmd2)
+					if dwFaceID2 then
+						szCmd, dwFaceID = szCmd2, dwFaceID2
+					end
 				end
 				edit:InsertObj(szCmd, { type = "emotion", text = szCmd, id = dwFaceID })
 			end
@@ -742,7 +758,11 @@ _HM_ToolBox.CopyChatLine = function(hTime)
 				if tEmotion then
 					local szCmd, dwFaceID = tEmotion.szCmd, tEmotion.dwID
 					if string.byte(szCmd, 2, 2) < 128 then
-						szCmd = string.sub(szCmd, 1, 1) .. string.sub(szCmd, 3)
+						local szCmd2 = string.sub(szCmd, 1, 1) .. string.sub(szCmd, 3)
+						local dwFaceID2 = _HM_ToolBox.FetchFaceID(szCmd2)
+						if dwFaceID2 then
+							szCmd, dwFaceID = szCmd2, dwFaceID2
+						end
 					end
 					edit:InsertObj(szCmd, { type = "emotion", text = szCmd, id = dwFaceID })
 				end
