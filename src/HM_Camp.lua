@@ -542,9 +542,11 @@ _HM_Camp.HookCampPanel = function()
 		img1:RegisterEvent(0x30)
 		img1.OnItemLButtonClick = _HM_Camp.ShowBossInfo
 		img1.OnItemRButtonClick = _HM_Camp.TalkBossInfo
+		img1.OnItemRefreshTip = function() end
 		img2:RegisterEvent(0x30)
 		img2.OnItemLButtonClick = _HM_Camp.ShowBossInfo
 		img2.OnItemRButtonClick = _HM_Camp.TalkBossInfo
+		img2.OnItemRefreshTip = function() end
 		frame.bEventAdded = true
 	end
 end
@@ -553,7 +555,7 @@ end
 _HM_Camp.OnNpcYell = function(szMsg)
 	local _, _, szBoss1, szBoss2 = string.find(szMsg, _L["Shout: (-) have been seriously injured (. -), Labor"])
 	if szBoss1 and szBoss2 then
-		_HM_Camp.tActiveBoss[szBoss1] = nil
+		_HM_Camp.tActiveBoss[szBoss1] = 0
 		_HM_Camp.tActiveBoss[szBoss2] = GetLogicFrameCount()
 	end
 end
