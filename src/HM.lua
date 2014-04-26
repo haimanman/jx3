@@ -665,7 +665,7 @@ end
 
 -- (void) HM.AddHotKey(string szName, string szTitle, func fnAction)	-- 增加系统快捷键
 HM.AddHotKey = function(szName, szTitle, fnAction)
-	if string.sub(1, 3) ~= "HM_" then
+	if string.sub(szName, 1, 3) ~= "HM_" then
 		szName = "HM_" .. szName
 	end
 	table.insert(_HM.tHotkey, { szName = szName, szTitle = szTitle, fnAction = fnAction })
@@ -673,7 +673,7 @@ end
 
 -- (string) HM.GetHotKey(string szName, boolean bBracket, boolean bShort)		-- 取得快捷键名称
 HM.GetHotKey = function(szName, bBracket, bShort)
-	if string.sub(1, 3) ~= "HM_" then
+	if string.sub(szName, 1, 3) ~= "HM_" then
 		szName = "HM_" .. szName
 	end
 	local nKey, bShift, bCtrl, bAlt = Hotkey.Get(szName)

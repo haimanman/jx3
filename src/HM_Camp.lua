@@ -648,6 +648,11 @@ HM.RegisterEvent("SYNC_ROLE_DATA_END", function()
 		_HM_Camp.HideGF(true, true)
 	end
 end)
+HM.RegisterEvent("ON_CAN_ENTER_MAP_NOTIFY", function()
+	if HM_Camp.bAutoCampQueue and (arg0 == 25 or arg0 == 27) then
+		HM.DoMessageBox("entermap")
+	end
+end)
 
 -- add to HM panel
 HM.RegisterPanel(_L["Camp helper"], 444, _L["Battle"], _HM_Camp.PS)
