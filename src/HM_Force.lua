@@ -312,6 +312,7 @@ _HM_Force.tPlayHorse = {
 	[58147] = true,	-- 西山秘宝·虚位交椅
 	[58148] = true,	-- 西山秘宝·虚空交椅
 	[60358] = true,	-- 渡情
+	[63440] = true,	-- 鸾
 }
 _HM_Force.ReplaceHorse = function()
 	-- is now a play horse
