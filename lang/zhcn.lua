@@ -558,6 +558,7 @@ data = {
 	["Remove from HM focus"] = "解除海鳗焦点",
 	["Add to HM foucs"] = "加入海鳗焦点",
 	["Lock as single focus"] = "锁定为独立焦点",
+	["Set as persist focus"] = "设为永久焦点",
 	["All NPC"] = "所有NPC",
 	["Ally NPC"] = "友好NPC",
 	["Enemy NPC"] = "敌对NPC",

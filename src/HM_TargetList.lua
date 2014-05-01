@@ -53,6 +53,7 @@ HM_TargetList = {
 	},		-- 自定义保存
 	----
 	bShowAcct = true,	-- 人数统计（敌、友、中）
+	tPersistFocus = {},	-- 永久焦点
 }
 HM.RegisterCustomData("HM_TargetList")
 
@@ -201,12 +202,34 @@ end
 _HM_TargetList.DelFocus = function(dwID)
 	for k, v in ipairs(_HM_TargetList.tFocus) do
 		if v == dwID then
+			if not IsPlayer(dwID) then
+				local npc = GetNpc(dwID)
+				if npc then
+					HM_TargetList.tPersistFocus[npc.szName] = nil
+				end
+			else
+				HM_TargetList.tPersistFocus[dwID] = nil
+			end
 			table.remove(_HM_TargetList.tFocus, k)
 			FireUIEvent("HM_DEL_FOCUS_TARGET", dwID)
 			break
 		end
 	end
 	_HM_TargetList.nFrameFocus = 0
+end
+
+-- set persist focus
+_HM_TargetList.SetPersistFocus = function(dwID)
+	_HM_TargetList.AddFocus(dwID)
+	_HM_TargetList.nFrameFocus = 0
+	if not IsPlayer(dwID) then
+		local npc = GetNpc(dwID)
+		if npc then
+			HM_TargetList.tPersistFocus[npc.szName] = true
+		end
+	else
+		HM_TargetList.tPersistFocus[dwID] = true
+	end
 end
 
 -- switch focus
@@ -284,6 +307,10 @@ _HM_TargetList.GetForceFontColor = function(tar, myID, bFocus)
 		return 0, 200, 72
 	elseif tar.nMoveState == MOVE_STATE.ON_DEATH then
 		return 160, 160, 160
+	end
+	-- special PLAYER for 城战
+	if tar.nNpc and tar.nNpc > 0 then
+		return 0, 255, 255
 	end
 	if not bFocus and HM_TargetList.bListWhite
 		and HM_TargetList.nListMode ~= 1 and HM_TargetList.nListMode ~= 4
@@ -598,6 +625,7 @@ _HM_TargetList.HookTargetMenu = function()
 	Target_AppendAddonMenu({ function(dwID)
 		return {
 			_HM_TargetList.GetFocusItemMenu(dwID),
+			{ szOption = _L["Set as persist focus"], fnAction = function() _HM_TargetList.SetPersistFocus(dwID) end },
 			{ szOption = _L["Lock as single focus"], fnAction = function() HM_SingleFocus.Lock(dwID) end }
 		}
 	end })
@@ -865,6 +893,10 @@ _HM_TargetList.ListItemCompare = function(a, b)
 	if not a or not b then
 		return true
 	end
+	-- up special PLAYER for 城战
+	if a.nNpc > 0 or b.nNpc > 0 then
+		return b.nNpc < a.nNpc
+	end
 	-- down death
 	if HM_TargetList.bDownDeath then
 		if a.nMoveState == MOVE_STATE.ON_DEATH and b.nMoveState ~= MOVE_STATE.ON_DEATH then
@@ -974,9 +1006,14 @@ _HM_TargetList.UpdateListItems = function(handle)
 	local bDis = HM_TargetList.tShowMode.bDistance or HM_TargetList.nSortType == 2 or (HM_TargetList.nSortType == 1 and HM_TargetList.bDownFar)
 	local bFace = HM_TargetList.nSortType == 1 and HM_TargetList.bDownFace
 	local aItem, me, nMode = {}, GetClientPlayer(), HM_TargetList.nListMode
+	local bXGF = false
 	if nMode <= 3 then
 		aList = HM.GetAllNpc()
 	else
+		local t = TimeToDate(GetCurrentTime())
+		if (t.weekday == 2 or t.weekday == 4) and t.hour >= 20 and t.hour < 22 then
+			bXGF = true
+		end
 		aList = HM.GetAllPlayer()
 	end
 	for _, v in ipairs(aList) do
@@ -985,9 +1022,26 @@ _HM_TargetList.UpdateListItems = function(handle)
 				dwID = v.dwID, nMoveState = v.nMoveState,
 				szName = HM.GetTargetName(v), nLevel = v.nLevel,
 				dwForceID = v.dwForceID,
+				nNpc = 0,
 			}
 			if nMode <= 3 then
 				item.dwEmployer = v.dwEmployer
+			elseif bXGF == true then
+				-- check 城战 BUFF：神机台-耐久=7816/ 无法移动=7360，神机车：摧城=7716，旗手：守卫据点=7561
+				for i = 0, v.GetBuffCount() - 1, 1 do
+					local dwBuffID = v.GetBuff(i)
+					if dwBuffID == 7561 then
+						item.nNpc = 4
+					elseif dwBuffID == 7816 then
+						item.nNpc = 3
+						break
+					elseif dwBuffID == 7716 then
+						item.nNpc = 2
+						break
+					elseif dwBuffID == 7360 then
+						item.nNpc = 1
+					end
+				end
 			end
 			item.nIndex = #aItem + 1
 			if bHP then
@@ -1309,6 +1363,7 @@ HM_TargetList.OnEvent = function(event)
 						hnd.OnItemRButtonDown = function()
 							local menu = {}
 							table.insert(menu, _HM_TargetList.GetFocusItemMenu(frm.dwID))
+							table.insert(menu, { szOption = _L["Set as persist focus"], fnAction = function() _HM_TargetList.SetPersistFocus(frm.dwID) end })
 							table.insert(menu, { szOption = _L["Lock as single focus"], fnAction = function() HM_SingleFocus.Lock(frm.dwID) end })
 							PopupMenu(menu)
 						end
@@ -1325,6 +1380,17 @@ HM_TargetList.OnEvent = function(event)
 			and (IsInArena() or IsInSameQWG(arg0))
 		then
 			_HM_TargetList.AddFocus(arg0)
+		end
+		-- persist focus
+		if not IsEmpty(HM_TargetList.tPersistFocus) then
+			if event == "PLAYER_ENTER_SCENE" and HM_TargetList.tPersistFocus[arg0] then
+				_HM_TargetList.AddFocus(arg0)
+			elseif event == "NPC_ENTER_SCENE" then
+				local npc = GetNpc(arg0)
+				if npc and HM_TargetList.tPersistFocus[npc.szName] then
+					_HM_TargetList.AddFocus(npc.dwID)
+				end
+			end
 		end
 		-- auto focus big boss
 		if HM_TargetList.bAutoBigBoss and HM_Camp and event == "NPC_ENTER_SCENE"
@@ -1524,8 +1590,9 @@ HM_TargetList.OnItemRButtonDown = function()
 		if _HM_TargetList.bInArena and _HM_TargetList.nBeginArena then
 			return HM.SetTarget(this.dwID)
 		end
-		local m0 = {}
-		table.insert(m0, _HM_TargetList.GetFocusItemMenu(this.dwID))
+		local m0, dwID = {}, this.dwID
+		table.insert(m0, _HM_TargetList.GetFocusItemMenu(dwID))
+		table.insert(m0, { szOption = _L["Set as persist focus"], fnAction = function() _HM_TargetList.SetPersistFocus(dwID) end })
 		if IsPlayer(this.dwID) then
 			local me, dwID, szName = GetClientPlayer(), this.dwID, this.szName
 			if me.IsInParty() and  InsertMarkMenu
