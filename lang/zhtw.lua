@@ -558,6 +558,7 @@ data = {
 	["Remove from HM focus"] = "解除海鰻焦點",
 	["Add to HM foucs"] = "加入海鰻焦點",
 	["Lock as single focus"] = "鎖定為獨立焦點",
+	["Set as persist focus"] = "設為永久焦點",
 	["All NPC"] = "所有NPC",
 	["Ally NPC"] = "友好NPC",
 	["Enemy NPC"] = "敵對NPC",
