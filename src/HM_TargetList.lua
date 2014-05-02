@@ -310,6 +310,9 @@ _HM_TargetList.GetForceFontColor = function(tar, myID, bFocus)
 	end
 	-- special PLAYER for ³ÇÕ½
 	if tar.nNpc and tar.nNpc > 0 then
+		if IsEnemy(myID, tar.dwID) then
+			return 255, 0, 255
+		end
 		return 0, 255, 255
 	end
 	if not bFocus and HM_TargetList.bListWhite
