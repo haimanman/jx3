@@ -555,7 +555,8 @@ end
 _HM_Camp.OnNpcYell = function(szMsg)
 	local _, _, szBoss1, szBoss2 = string.find(szMsg, _L["Shout: (-) have been seriously injured (. -), Labor"])
 	if szBoss1 and szBoss2 then
-		_HM_Camp.tActiveBoss[szBoss1] = 0
+		szBoss1 = string.gsub(szBoss1, "\".*\"", "")
+		_HM_Camp.tActiveBoss[szBoss1] = nil
 		_HM_Camp.tActiveBoss[szBoss2] = GetLogicFrameCount()
 	end
 end
