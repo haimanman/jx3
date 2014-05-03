@@ -1393,6 +1393,7 @@ HM.DoMessageBox = function(szName, i)
 			elseif frame.fnAction then
 				frame.fnAction(i)
 			end
+			frame.OnFrameDestroy = nil
 			CloseMessageBox(szName)
 		end
 	end
