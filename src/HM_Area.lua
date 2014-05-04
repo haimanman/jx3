@@ -530,7 +530,7 @@ function HM_Area.OnFrameBreathe()
 	for k, v in pairs(_HM_Area.tList) do
 		local tar = GetNpc(k)
 		local nLeft = v.nLeft + v.dwTime - nTime
-		if (nLeft < 0 and v.dwTime ~= 0) or (not tar and v.dwTime == 0) then
+		if not tar and (nLeft < 0 or v.dwTime == 0) then
 			_HM_Area.RemoveFromList(k)
 		else
 			if not tar or nCount >= HM_Area.nMaxNum

@@ -1389,9 +1389,17 @@ HM.DoMessageBox = function(szName, i)
 		local btn = frame:Lookup("Wnd_All/Btn_Option" .. i)
 		if btn and btn:IsEnabled() then
 			if btn.fnAction then
-				btn.fnAction(i)
+				if frame.args then
+					btn.fnAction(unpack(frame.args))
+				else
+					btn.fnAction()
+				end
 			elseif frame.fnAction then
-				frame.fnAction(i)
+				if frame.args then
+					frame.fnAction(i, unpack(frame.args))
+				else
+					frame.fnAction(i)
+				end
 			end
 			frame.OnFrameDestroy = nil
 			CloseMessageBox(szName)
