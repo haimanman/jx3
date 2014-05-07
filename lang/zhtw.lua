@@ -619,6 +619,7 @@ data = {
 	["Enter setting"] = "進入設置",
 	["2. Hotkey supported when mouse move over the npc/player of scene, "] = "2. 鼠標移到場景中的NPC/玩家身上，然后按快捷鍵可將其設為焦點",
 	["3. Press SHIFT and click target/targettarget/target list can add/remove focus"] = "3. Shift + 鼠標左擊目標、目標的目標、目標列表可快速將其設為焦點",
+	["4. Send 33 to around player can add as focus"] = "4. 密聊身邊玩家 33 可將其設置為焦點 ",
 	["Enable focus targetlist"] = "開啟焦點目標列表",
 	["Focus/TargetList"] = "焦點/目標列表",
 	["Set target as focus"] = "設置目標為焦點",
