@@ -1857,6 +1857,7 @@ _HM_TargetList.PS.OnPanelActive = function(frame)
 	ui:Append("WndButton", { txt = _L["Enter setting"], x = nX + 5, y = 180 }):AutoSize(8):Click(HM.SetHotKey)
 	ui:Append("Text", { x = 10, y = 206, txt = _L["2. Hotkey supported when mouse move over the npc/player of scene, "] })
 	ui:Append("Text", { x = 10, y = 234, txt = _L["3. Press SHIFT and click target/targettarget/target list can add/remove focus"] })
+	ui:Append("Text", { x = 10, y = 262, txt = _L["4. Send 33 to around player can add as focus"] })
 end
 
 -- player menu
