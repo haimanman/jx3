@@ -772,22 +772,31 @@ _HM_ToolBox.CopyChatLine = function(hTime)
 	Station.SetFocusWindow(edit)
 end
 
--- 插入聊天内容时加入时间
-_HM_ToolBox.AppendChatWithTime = function(h, szMsg)
-    local i = h:GetItemCount()
+-- 插入聊天内容的 HOOK （过滤、加入时间 ）
+_HM_ToolBox.AppendChatItem = function(h, szMsg)
+	local i = h:GetItemCount()
+	-- filter addon comm.
+	if StringFindW(szMsg, "eventlink") and StringFindW(szMsg, _L["Addon comm."]) then
+		return
+	end
 	-- save animiate group into name
-	szMsg = string.gsub(szMsg, "group=(%d+) </a", "group=%1 name=\"%1\" </a")	
-    h:_AppendItemFromString(szMsg)
-	-- insert time
-	local h2 = h:Lookup(i)
-	if h2 and h2:GetType() == "Text" then
-		local r, g, b = h2:GetFontColor()
-		if r == 255 and g == 255 and b == 0 then
-			return
+	if HM_ToolBox.bChatTime then
+		szMsg = string.gsub(szMsg, "group=(%d+) </a", "group=%1 name=\"%1\" </a")
+	end
+	-- normal append
+	h:_AppendItemFromString(szMsg)
+	-- add chat time
+	if HM_ToolBox.bChatTime then
+		local h2 = h:Lookup(i)
+		if h2 and h2:GetType() == "Text" then
+			local r, g, b = h2:GetFontColor()
+			if r == 255 and g == 255 and b == 0 then
+				return
+			end
+			local t =TimeToDate(GetCurrentTime())
+			local szTime = GetFormatText(string.format("[%02d:%02d.%02d]", t.hour, t.minute, t.second), 10, r, g, b, 515, "this.OnItemLButtonDown=function() HM_ToolBox.CopyChatLine(this) end\nthis.OnItemRButtonDown=function() HM_ToolBox.RepeatChatLine(this) end", "timelink")
+			h:InsertItemFromString(i, false, szTime)
 		end
-		local t =TimeToDate(GetCurrentTime())
-		local szTime = GetFormatText(string.format("[%02d:%02d.%02d]", t.hour, t.minute, t.second), 10, r, g, b, 515, "this.OnItemLButtonDown=function() HM_ToolBox.CopyChatLine(this) end\nthis.OnItemRButtonDown=function() HM_ToolBox.RepeatChatLine(this) end", "timelink")
-		h:InsertItemFromString(i, false, szTime)
 	end
 end
 
@@ -914,14 +923,8 @@ _HM_ToolBox.OnChatPanelInit = function()
 		local h = Station.Lookup("Lowest2/ChatPanel" .. i .. "/Wnd_Message", "Handle_Message")
 		local ttl = Station.Lookup("Lowest2/ChatPanel" .. i .. "/CheckBox_Title", "Text_TitleName")
 		if h and (not ttl or ttl:GetText() ~= g_tStrings.CHANNEL_MENTOR) then
-			if HM_ToolBox.bChatTime then
-				if not h._AppendItemFromString then
-					h._AppendItemFromString = h.AppendItemFromString
-				end
-				h.AppendItemFromString = _HM_ToolBox.AppendChatWithTime
-			elseif h._AppendItemFromString then
-				h.AppendItemFromString = h._AppendItemFromString
-			end
+			h._AppendItemFromString = h._AppendItemFromString or h.AppendItemFromString
+			h.AppendItemFromString = _HM_ToolBox.AppendChatItem
 		end
 	end
 end

@@ -460,7 +460,7 @@ end
 ---------------------------------------------------------------------
 -- 注册事件、初始化
 ---------------------------------------------------------------------
-HM.RegisterEvent("ON_BG_CHANNEL_MSG", _HM_Team.OnAskLeader)
+HM.RegisterEvent("ADDON_BG_TALK", _HM_Team.OnAskLeader)
 
 -- add to HM collector
 HM.RegisterPanel(_L["Team save/res"], 2147, _L["Battle"], _HM_Team.PS)

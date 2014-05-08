@@ -713,7 +713,7 @@ end
 ---------------------------------------------------------------------
 -- 注册事件、初始化
 ---------------------------------------------------------------------
-HM.RegisterEvent("ON_BG_CHANNEL_MSG", _HM_RedName.OnBgHear)
+HM.RegisterEvent("ADDON_BG_TALK", _HM_RedName.OnBgHear)
 HM.RegisterEvent("PLAYER_TALK", _HM_RedName.OnPlayerTalk)
 HM.BreatheCall("HM_RedName", _HM_RedName.OnBreathe)
 

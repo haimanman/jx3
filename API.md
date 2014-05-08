@@ -149,7 +149,7 @@
 	> 参数 *nChannel*  -- 聊天频道，PLAYER_TALK_CHANNLE.xxx，默认为近聊
 	> 参数 *...* -- 若干个字符串参数组成，可原样被接收到，此为通讯数据
 
-26. `(table) HM.BgHear([string szKey])` - 读取后台聊天数据，在 `ON_BG_CHANNEL_MSG`
+26. `(table) HM.BgHear([string szKey])` - 读取后台聊天数据，在 `ADDON_BG_TALK`
     事件处理函数中使用才有意义
 
 	> 可选 *szKey* -- 通讯类型，也就是 `HM.BgTalk` 的第一数据参数，若不匹配则忽略

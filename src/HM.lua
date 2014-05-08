@@ -17,7 +17,7 @@ local function _HM_GetLang()
 	end
 	setmetatable(t1, {
 		__index = function(t, k) return k end,
-		__call = function(t, k, ...) return string.format(t[k], ...) end,
+		__call = function(t, k, ...) return string.format(t[k] or k, ...) end,
 	})
 	return t1
 end
@@ -905,34 +905,34 @@ end
 -- nChannel			-- *可选* 聊天频道，PLAYER_TALK_CHANNLE.*，默认为近聊
 -- ...						-- 若干个字符串参数组成，可原样被接收
 HM.BgTalk = function(nChannel, ...)
-	local tSay = { { type = "text", text = "BG_CHANNEL_MSG" } }
+	local tSay = { { type = "text", text = _L["Addon comm."] } }
 	local tArg = { ... }
 	for _, v in ipairs(tArg) do
 		if v == nil then
 			break
 		end
-		table.insert(tSay, { type = "text", text = tostring(v) })
+		table.insert(tSay, { type = "eventlink", name = "", linkinfo = tostring(v) })
 	end
 	HM.Talk(nChannel, tSay, true)
 end
 
--- 读取后台聊天数据，在 ON_BG_CHANNEL_MSG 事件处理函数中使用才有意义
+-- 读取后台聊天数据，在 ADDON_BG_TALK 事件处理函数中使用才有意义
 -- (table) HM.BgHear([string szKey])
 -- szKey			-- 通讯类型，也就是 HM.BgTalk 的第一数据参数，若不匹配则忽略
 -- arg0: dwTalkerID, arg1: nChannel, arg2: bEcho, arg3: szName
 HM.BgHear = function(szKey)
 	local me = GetClientPlayer()
 	local tSay = me.GetTalkData()
-	if tSay and arg0 ~= me.dwID and tSay[1].text == "BG_CHANNEL_MSG" then
+	if tSay and arg0 ~= me.dwID and #tSay > 1 and tSay[1].text == _L["Addon comm."] and tSay[2].type == "eventlink" then
 		local tData, nOff = {}, 2
 		if szKey then
-			if tSay[nOff].text ~= szKey then
+			if tSay[nOff].linkinfo ~= szKey then
 				return nil
 			end
 			nOff = nOff + 1
 		end
 		for i = nOff, #tSay do
-			table.insert(tData, tSay[i].text)
+			table.insert(tData, tSay[i].linkinfo)
 		end
 		return tData
 	end
@@ -2899,6 +2899,13 @@ HM.RegisterEvent("CUSTOM_DATA_LOADED", function()
 			end
 		end
 		HM.nBuildDate = tonumber(_HM.szBuildDate)
+	end
+end)
+HM.RegisterEvent("PLAYER_TALK", function()
+	local me = GetClientPlayer()
+	local t = me.GetTalkData()
+	if t and arg0 ~= me.dwID and #t> 1 and t[1].text == _L["Addon comm."] and t[2].type == "eventlink" then
+		FireUIEvent("ADDON_BG_TALK", arg0, arg1, arg2, arg3)
 	end
 end)
 
