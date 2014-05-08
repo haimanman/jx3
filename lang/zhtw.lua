@@ -18,6 +18,7 @@ data = {
 	["The 1st arg for adding component must be a [WndXxx]"] = "添加窗體組件時第一參數必須是窗體 [WndXxx]",
 	["The 1st arg for adding item must be a [Handle]"] = "添加容器組件時第一參數必須是容器 [Handle]",
 	["Open HM setting panel"] = "開啟海鰻設置面板",
+	["Addon comm."] = "插件消息",
 	-- HM_About.lua --
 	["Simple, Utility, Focus on PVP"] = "簡單、實用、專注 PVP",
 	["This is an auxiliary PVP plug-in of JX3 game written by player named HMM, Follow the white list API, does not destroy the game balance."] = "這是玩家海鰻鰻開發的劍網三 PVP 輔助插件，遵循白名單，綠色和諧，不破壞游戲平衡。",
@@ -555,6 +556,7 @@ data = {
 	["Use old focused interface"] = "采用舊版焦點界面",
 	["Maximum focus num [%d]"] = "焦點最大個數 [%d]",
 	["<Shift-Click to add focus>"] = "<Shift-點擊目標設焦點>",
+	["Monitor focus prepare via set target"] = "通過切換目標監控焦點讀條",
 	["Remove from HM focus"] = "解除海鰻焦點",
 	["Add to HM foucs"] = "加入海鰻焦點",
 	["Lock as single focus"] = "鎖定為獨立焦點",
