@@ -556,6 +556,7 @@ data = {
 	["Use old focused interface"] = "采用旧版焦点界面",
 	["Maximum focus num [%d]"] = "焦点最大个数 [%d]",
 	["<Shift-Click to add focus>"] = "<Shift-点击目标设焦点>",
+	["Monitor focus prepare via set target"] = "通过切换目标监控焦点读条",
 	["Remove from HM focus"] = "解除海鳗焦点",
 	["Add to HM foucs"] = "加入海鳗焦点",
 	["Lock as single focus"] = "锁定为独立焦点",
