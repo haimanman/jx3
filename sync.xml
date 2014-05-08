@@ -2,7 +2,7 @@
 <jx3:hm xmlns:jx3="http://haimanchajian.com">
   <name><![CDATA[海鳗、插件集]]></name>
   <desc><![CDATA[大量非常方便的 PVP 插件！ --== 海鳗鳗@步莲台 ==--]]></desc>
-  <version dword="0x2030200">2.3.2</version>
+  <version dword="0x2030400">2.3.4</version>
   <clientVersion dword="0x20101">2.1.1</clientVersion>
   <urlPrefix>http://jx3.hightman.cn/sync/HM/</urlPrefix>
   <info>
@@ -13,25 +13,25 @@
     <file size="16182" title="自动拾取和过滤、自动采集助手">src/HM_Doodad.lua</file>
     <file size="6393" title="娱乐聊天、个人数据发布">src/HM_Ent.lua</file>
     <file size="18394" title="天策技能栏、纯阳气场/剑舞、一键小轻功">src/HM_Force.lua</file>
-    <file size="8932" title="醒目显示团队蛊鼎位置、条件触发自动吃鼎">src/HM_Guding.lua</file>
+    <file size="8924" title="醒目显示团队蛊鼎位置、条件触发自动吃鼎">src/HM_Guding.lua</file>
     <file size="31816" title="玩家斩杀喊话及统计、技能喊话、自动喊话">src/HM_Jabber.lua</file>
-    <file size="13754" title="目标锁定和选择、虎跑时锁定目标、只TAB玩家">src/HM_Locker.lua</file>
-    <file size="20067" title="团队标记快速选择、集火">src/HM_Marker.lua</file>
+    <file size="13889" title="目标锁定和选择、虎跑时锁定目标、只TAB玩家">src/HM_Locker.lua</file>
+    <file size="20063" title="团队标记快速选择、集火">src/HM_Marker.lua</file>
     <file size="4764" title="PVP斩杀音效、文字特效">src/HM_PVPSound2.lua</file>
-    <file size="24859" title="小地图红名标记、身边玩家统计及共享">src/HM_RedName.lua</file>
+    <file size="24855" title="小地图红名标记、身边玩家统计及共享">src/HM_RedName.lua</file>
     <file size="7373" title="团队 ROLL 点娱乐、自动记录胜负">src/HM_Roll.lua</file>
     <file size="8711" title="可共享部位的快速脱换装助手、橙武必备">src/HM_Suit2.lua</file>
     <file size="37345" title="目标增强、BUFF放大、方向指示及连接线">src/HM_Target.lua</file>
     <file size="8892" title="目标和焦点的脚底面向及圈圈指示">src/HM_TargetFace.lua</file>
-    <file size="62282" title="多焦点目标、目标列表、定制筛选排序">src/HM_TargetList.lua</file>
-    <file size="38519" title="目标技能CD监控、超大显示特殊BUFF">src/HM_TargetMon.lua</file>
-    <file size="17069" title="团队列表保存与还原、团队快速标记">src/HM_Team.lua</file>
-    <file size="36068" title="自动修理卖物、自动确认、自动五行石和一键交易行">src/HM_ToolBox.lua</file>
+    <file size="62626" title="多焦点目标、目标列表、定制筛选排序">src/HM_TargetList.lua</file>
+    <file size="38520" title="目标技能CD监控、超大显示特殊BUFF">src/HM_TargetMon.lua</file>
+    <file size="17065" title="团队列表保存与还原、团队快速标记">src/HM_Team.lua</file>
+    <file size="36124" title="自动修理卖物、自动确认、自动五行石和一键交易行">src/HM_ToolBox.lua</file>
     <file size="68659" title="PVE 宏扩展，打怪更高效">lab/HM_Cast.lua</file>
-    <file size="30647" title="情缘功能，助您剑侠之路不再孤单">lab/HM_Love.lua</file>
+    <file size="30643" title="情缘功能，助您剑侠之路不再孤单">lab/HM_Love.lua</file>
   </info>
   <resource>
-    <file size="22464">API.md</file>
+    <file size="22460">API.md</file>
     <file size="1231">CHANGELOG.lab</file>
     <file size="19630">CHANGELOG.txt</file>
     <file size="2874">LICENSE.txt</file>
@@ -49,10 +49,10 @@
     <file size="1159">info.ini</file>
     <file size="10950">lab/HM_Taoguan.lua</file>
     <file size="432">lang/default.lua</file>
-    <file size="50190">lang/zhcn.lua</file>
+    <file size="50388">lang/zhcn.lua</file>
     <file size="43785">lang/zhkr.lua</file>
-    <file size="56133">lang/zhtw.lua</file>
-    <file size="82411">src/HM.lua</file>
+    <file size="56358">lang/zhtw.lua</file>
+    <file size="82759">src/HM.lua</file>
     <file size="9905">src/HM_About.lua</file>
     <file size="17878">src/HM_Compatible.lua</file>
     <file size="14343">src/HM_Json.lua</file>
