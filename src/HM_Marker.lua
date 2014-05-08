@@ -578,7 +578,7 @@ end
 ---------------------------------------------------------------------
 -- 注册事件、初始化
 ---------------------------------------------------------------------
-HM.RegisterEvent("ON_BG_CHANNEL_MSG", _HM_Marker.OnBgTalk)
+HM.RegisterEvent("ADDON_BG_TALK", _HM_Marker.OnBgTalk)
 HM.RegisterEvent("CUSTOM_DATA_LOADED", function()
 	if arg0 == "Role" and HM_Marker.bShow then
 		_HM_Marker.OpenPanel()

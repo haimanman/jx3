@@ -18,6 +18,7 @@ data = {
 	["The 1st arg for adding component must be a [WndXxx]"] = "添加窗体组件时第一参数必须是窗体 [WndXxx]",
 	["The 1st arg for adding item must be a [Handle]"] = "添加容器组件时第一参数必须是容器 [Handle]",
 	["Open HM setting panel"] = "开启海鳗设置面板",
+	["Addon comm."] = "插件消息",
 	-- HM_About.lua --
 	["Simple, Utility, Focus on PVP"] = "简单、实用、专注 PVP",
 	["This is an auxiliary PVP plug-in of JX3 game written by player named HMM, Follow the white list API, does not destroy the game balance."] = "这是玩家海鳗鳗开发的剑网三 PVP 辅助插件，遵循白名单，绿色和谐，不破坏游戏平衡。",
