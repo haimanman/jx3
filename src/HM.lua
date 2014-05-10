@@ -2903,6 +2903,7 @@ HM.RegisterEvent("CUSTOM_DATA_LOADED", function()
 end)
 HM.RegisterEvent("PLAYER_TALK", function()
 	local me = GetClientPlayer()
+	if not me then return end
 	local t = me.GetTalkData()
 	if t and arg0 ~= me.dwID and #t> 1 and t[1].text == _L["Addon comm."] and t[2].type == "eventlink" then
 		FireUIEvent("ADDON_BG_TALK", arg0, arg1, arg2, arg3)
