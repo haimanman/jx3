@@ -117,6 +117,7 @@ _HM_Roll.MonitorRoll = function(szMsg, nFont, bRich, r, g, b, szType)
 		end
 	elseif StringFindW(szMsg, _L["point. (1-100)"]) then
 		local _, _, szName, szPoint = string.find(szMsg, _L["\"(.-) rolled (%d+) point."])
+		szName = string.gsub(szName, "\".*\"", "")
 		if szName == GetClientPlayer().szName then
 			if not _HM_Roll.nPoint then
 				_HM_Roll.nPoint = tonumber(szPoint)
