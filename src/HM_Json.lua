@@ -324,7 +324,7 @@ local function object_or_array(T)
 	local map = nil
 	table.sort(string_keys)
 	if #number_keys > 0 then
-		map = nil
+		map = {}
 		for key, val in pairs(T) do
 			map[key] = val
 		end
