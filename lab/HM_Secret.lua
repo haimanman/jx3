@@ -196,6 +196,10 @@ _HM_Secret.AppendRichText = function(h, szText, nFont, tColor)
 	if type(tColor) == "table" then
 		szDeco = szDeco .. " r=" .. tColor[1] .. " g=" .. tColor[2] .. " b=" .. tColor[3]
 	end
+	local nS = 20, 20
+	if Station.GetUIScale() < 0.8 then
+		nS = math.floor(Station.GetUIScale()  / 0.8 * 20)
+	end
 	for _, v in ipairs(t) do
 		if v.type == "text" then
 			szXml = szXml .. "<text>text=" .. EncodeComponentsString(v.text) .. szDeco .. " </text>"
@@ -204,9 +208,9 @@ _HM_Secret.AppendRichText = function(h, szText, nFont, tColor)
 			if not r then
 				szXml = szXml .. "<text>text=" .. EncodeComponentsString(v.text) ..  szDeco .. " </text>"
 			elseif r.szType == "animate" then
-				szXml = szXml .. "<animate>path=" .. EncodeComponentsString(r.szImageFile) .. " disablescale=1 group=" .. r.nFrame .. " w=20 h=20 </animate>"
+				szXml = szXml .. "<animate>path=" .. EncodeComponentsString(r.szImageFile) .. " disablescale=1 group=" .. r.nFrame .. " w=" .. nS .. " h=" .. nS .. " </animate>"
 			else
-				szXml = szXml .. "<image>path=" .. EncodeComponentsString(r.szImageFile) .. " disablescale=1 frame=" .. r.nFrame .. " </image>"
+				szXml = szXml .. "<image>path=" .. EncodeComponentsString(r.szImageFile) .. " disablescale=1 frame=" .. r.nFrame .. " w=" .. nS .. " h=" .. nS .. " </image>"
 			end
 		end
 	end
