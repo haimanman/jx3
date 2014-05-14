@@ -103,6 +103,21 @@ _HM_Secret.PostNew = function()
 		frm:Append("WndEdit", "Edit_Content", { x = 0, y = 28, limit = nMaxLen, w = 290, h = 140, multi = true }):Change(function(szText)
 			frm:Fetch("Text_Length"):Text(string.format(szFormatLen, string.len(szText), nMaxLen))
 		end)
+		-- add btn_face
+		local dummy = Wnd.OpenWindow(_HM_Secret.szIniFile, "HM_Secret_Dummy")
+		local btn = dummy:Lookup("Btn_Face")
+		btn:ChangeRelation(frm.wnd, true, true)
+		Wnd.CloseWindow(dummy)
+		btn:SetRelPos(270, 6)
+		btn:SetSize(20, 20)
+		btn:Show()
+		btn.OnLButtonClick = function()
+			local frame = Wnd.OpenWindow("EmotionPanel")
+			local _, nH = frame:GetSize()
+			local nX, nY = this:GetAbsPos()
+			frame:SetAbsPos(nX, nY - nH)
+			frame.bSecret = true
+		end
 		-- buttons
 		frm:Append("WndButton", "Btn_Submit", { txt = "发布", x = 45, y = 180 }):Click(function()
 			local szContent = frm:Fetch("Edit_Content"):Text()
@@ -128,13 +143,81 @@ _HM_Secret.PostNew = function()
 	if _HM_Secret.vFrame then
 		_HM_Secret.vFrame:Toggle(false)
 	end
+	Wnd.CloseWindow("EmotionPanel")
 	frm:Toggle(true)
 	frm:Fetch("Btn_Submit"):Enable(true)
 	Station.SetFocusWindow(frm:Fetch("Edit_Content"):Raw())
 end
 
--- post comment
-_HM_Secret.CommentOne = function(dwID)
+-- emotion hook
+HM.BreatheCall("HM_Secret_Emotion", function()
+	local frame = Station.Lookup("Normal/EmotionPanel")
+	if frame and frame.bSecret then
+		local hL = frame:Lookup("WndContainer_Page/Wnd_EM", "Handle_Image")
+		local hI = hL:Lookup(0)
+		if hI and hI.bFace and not hI.bSecret then
+			hI.bSecret = true
+			for i = 0, hL:GetItemCount() - 1, 1 do
+				local hI = hL:Lookup(i)
+				hI.OnItemLButtonClick = function()
+					if _HM_Secret.eFrame and Station.Lookup("Normal/HM_Secret_Post"):IsVisible() then
+						local edit = _HM_Secret.eFrame:Fetch("Edit_Content"):Raw()
+						edit:InsertText(this.szCmd)
+					elseif _HM_Secret.vFrame and Station.Lookup("Normal/HM_Secret_View"):IsVisible() and not _HM_Secret.vFrame.bForward then
+						local edit = _HM_Secret.vFrame:Fetch("Edit_Comment"):Raw()
+						if edit:GetText() == _HM_Secret.vFrame.ctip then
+							edit:SetText(this.szCmd)
+						else
+							edit:InsertText(this.szCmd)
+						end
+					else
+						Wnd.CloseWindow(this:GetRoot())
+					end
+				end
+			end
+		end
+	end
+end)
+
+-- set all child text node font
+_HM_Secret.SetChildrenFont = function(h, nFont)
+	for i = 0, h:GetItemCount() - 1, 1 do
+		local t = h:Lookup(i)
+		if t:GetType() == "Text" then
+			t:SetFontScheme(nFont)
+		end
+	end
+end
+
+-- append rich text to handle
+_HM_Secret.AppendRichText = function(h, szText, nFont, tColor)
+	local t = HM.ParseFaceIcon({{ type = "text", text = szText }})
+	local szXml, szDeco = "", " font=" .. (nFont or 41)
+	if type(tColor) == "table" then
+		szDeco = szDeco .. " r=" .. tColor[1] .. " g=" .. tColor[2] .. " b=" .. tColor[3]
+	end
+	for _, v in ipairs(t) do
+		if v.type == "text" then
+			szXml = szXml .. "<text>text=" .. EncodeComponentsString(v.text) .. szDeco .. " </text>"
+		elseif v.type == "emotion" then
+			local r = g_tTable.FaceIcon:GetRow(v.id + 1)
+			if not r then
+				szXml = szXml .. "<text>text=" .. EncodeComponentsString(v.text) ..  szDeco .. " </text>"
+			elseif r.szType == "animate" then
+				szXml = szXml .. "<animate>path=" .. EncodeComponentsString(r.szImageFile) .. " disablescale=1 group=" .. r.nFrame .. " w=20 h=20 </animate>"
+			else
+				szXml = szXml .. "<image>path=" .. EncodeComponentsString(r.szImageFile) .. " disablescale=1 frame=" .. r.nFrame .. " </image>"
+			end
+		end
+	end
+	h:AppendItemFromString(szXml)
+	h:FormatAllItemPos()
+end
+
+-- set rich text
+_HM_Secret.SetRichText = function(h, ...)
+	h:Clear()
+	_HM_Secret.AppendRichText(h, ...)
 end
 
 -- update comment scroll (nH = 31)
@@ -161,9 +244,15 @@ _HM_Secret.ShowOne = function(data)
 	if not data then
 		return
 	end
+	Wnd.CloseWindow("EmotionPanel")
 	local frm = _HM_Secret.vFrame
-	frm:Fetch("Text_Content"):Text(string.gsub(data.content, "[\r\n]", ""))
+	local hC = frm:Fetch("Handle_Content"):Raw()
+	_HM_Secret.SetRichText(hC, string.gsub(data.content, "[\r\n]", ""), 201, { 255, 160, 255 })
+	local nW, nH = hC:GetAllItemSize()
+	hC:SetRelPos((680 - nW) / 2, (100 - nH) / 2)
+	hC:GetParent():FormatAllItemPos()
 	frm:Fetch("Text_Time"):Text(_HM_Secret.FormatTime(data.time_post) .. "，" .. data.cnum .. "条评论"):Toggle(true)
+	frm.bForward = data.forward
 	if data.forward then
 		frm:Fetch("Edit_Comment"):Text("转发的秘密不可评论"):Enable(false):Toggle(true)
 	else
@@ -176,10 +265,11 @@ _HM_Secret.ShowOne = function(data)
 	local hnd =frm:Fetch("Handle_Comment")
 	hnd:Raw():Clear()
 	for _, v in ipairs(data.comments) do
-		local h = hnd:Append("Handle2", { w = 665, h = 25 })
-		local x = h:Append("Text", { x = 0, y = 0, font = 27 }):Text((v.owner or _L["<OUTER GUEST>"]) .. "："):Pos_()
-		x = h:Append("Text", { x = x, y = 0, txt = v.content }):Pos_()
-		h:Append("Text", { x = x + 10, y = 0, font = 108 }):Text(_HM_Secret.FormatTime(v.time_post)):Raw():SetFontScale(0.9)
+		local h = hnd:Append("Handle3", { w = 665, h = 25 }):Raw()
+		h:AppendItemFromString("<text>text=" .. EncodeComponentsString((v.owner or _L["<OUTER GUEST>"]) .. "：") .. " font=27 </text>")
+		_HM_Secret.AppendRichText(h, v.content, 162)
+		h:AppendItemFromString("<text>text=" .. EncodeComponentsString("  " .. _HM_Secret.FormatTime(v.time_post)) .. " font=108 </text>")
+		h:FormatAllItemPos()
 	end
 	hnd:Raw():FormatAllItemPos()
 	-- update coments scrollbar
@@ -195,9 +285,9 @@ _HM_Secret.ReadOne = function(dwID)
 		frm = HM.UI.CreateFrame("HM_Secret_View", { close = false, w = 770, h = 430, title = "阅读秘密", drag = true })
 		frm.name = me.szName .. "-" .. me.dwID
 		frm:Append("Image", { x = 0, y = 130, w = 680, h = 3 }):File("ui\\Image\\Minimap\\MapMark.UITex", 65)		
-		frm:Append("Text", "Text_Content", { x = 0, y = 0, w = 680, h = 100, font = 27, font = 201, multi = true }):Color(255, 160, 255):Align(1, 1):Raw():SetCenterEachLine(true)
+		frm:Append("Handle3", "Handle_Content", { x = 0, y = 0, w = 680, h = 100 })
 		frm:Append("Text", "Text_Time", { x = 0, y = 100 })
-		frm:Append("WndEdit", "Edit_Comment", { x = 180, y = 100, w = 296, h = 25, limit = 60 })
+		frm:Append("WndEdit", "Edit_Comment", { x = 160, y = 100, w = 296, h = 25, limit = 60 })
 		frm:Append("WndButton", "Btn_Comment", { txt = "发表", x = 480, y = 100, w = 70, h = 26 }):Click(function()
 			local szContent = frm:Fetch("Edit_Comment"):Text()
 			if szContent == frm.ctip then
@@ -228,9 +318,23 @@ _HM_Secret.ReadOne = function(dwID)
 				end
 			end)
 		end)
+		-- add btn_face
+		local dummy = Wnd.OpenWindow(_HM_Secret.szIniFile, "HM_Secret_Dummy")
+		local btn = dummy:Lookup("Btn_Face")
+		btn:ChangeRelation(frm.wnd, true, true)
+		Wnd.CloseWindow(dummy)
+		btn:SetRelPos(454, 100)
+		btn:SetSize(20, 25)
+		btn:Show()
+		btn.OnLButtonClick = function()
+			local frame = Wnd.OpenWindow("EmotionPanel")
+			local _, nH = frame:GetSize()
+			local nX, nY = this:GetAbsPos()
+			frame:SetAbsPos(nX, nY - nH)
+			frame.bSecret = true
+		end
 		-- comments: 25*8
-		frm.handle:AppendItemFromString("<handle>name=\"Handle_Comment\" handletype=3 pixelscroll=1 w=665 h=200 eventid=2048 </handle>")
-		frm:Fetch("Handle_Comment"):Pos(0, 140)
+		frm:Append("Handle3", "Handle_Comment", { x= 0, y = 140, w = 665, h = 200 }):Raw():RegisterEvent(2048)
 		local dummy = Wnd.OpenWindow(_HM_Secret.szIniFile, "HM_Secret_Dummy")
 		local scroll = dummy:Lookup("Wnd_Result/Scroll_List")
 		scroll:ChangeRelation(frm.wnd, true, true)
@@ -271,7 +375,9 @@ _HM_Secret.ReadOne = function(dwID)
 		_HM_Secret.eFrame:Toggle(false)
 	end
 	-- hide all things
-	frm:Fetch("Text_Content"):Text("Loading...")
+	frm:Fetch("Handle_Content"):Raw():Clear()
+	frm:Fetch("Handle_Content"):Append("Text", { txt = "Loading...", x = 20, y = 20 })
+	frm:Fetch("Handle_Content"):Raw():FormatAllItemPos()
 	frm:Fetch("Text_Time"):Toggle(false)
 	frm:Fetch("Edit_Comment"):Toggle(false)
 	frm:Fetch("Btn_Comment"):Toggle(false)
@@ -288,18 +394,18 @@ _HM_Secret.AddTableRow = function(data)
 	hI.id = data.id
 	hI.new = data.new
 	hI:Lookup("Text_Time"):SetText(_HM_Secret.FormatTime(data.time_update))
-	hI:Lookup("Text_Content"):SetText(data.content)
+	_HM_Secret.SetRichText(hI:Lookup("Handle_Content"), data.content)
 	if hI.new then
+		_HM_Secret.SetChildrenFont(hI:Lookup("Handle_Content"), 40)
 		hI:Lookup("Text_Time"):SetFontScheme(40)
-		hI:Lookup("Text_Content"):SetFontScheme(40)
 	end
 	hI.OnItemMouseEnter = function() this:Lookup("Image_Light"):Show() end
 	hI.OnItemMouseLeave = function() this:Lookup("Image_Light"):Hide() end
 	hI.OnItemLButtonDown = function()
 		_HM_Secret.ReadOne(this.id)
 		if this.new then
+			_HM_Secret.SetChildrenFont(this:Lookup("Handle_Content"), 41)
 			this:Lookup("Text_Time"):SetFontScheme(41)
-			this:Lookup("Text_Content"):SetFontScheme(41)
 			this.new = false
 		end
 	end
