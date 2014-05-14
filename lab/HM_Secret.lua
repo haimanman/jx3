@@ -167,6 +167,7 @@ HM.BreatheCall("HM_Secret_Emotion", function()
 						local edit = _HM_Secret.vFrame:Fetch("Edit_Comment"):Raw()
 						if edit:GetText() == _HM_Secret.vFrame.ctip then
 							edit:SetText(this.szCmd)
+							edit:SetFontScheme(162)
 						else
 							edit:InsertText(this.szCmd)
 						end
