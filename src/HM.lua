@@ -1214,9 +1214,7 @@ end
 
 -- (string) HM.UrlDecode(string szText)	-- 解析 URL 编码
 HM.UrlDecode = function(szText)
-	local str = szText:gsub("%%(%x%x)", function(h) return string.char(tonumber(h, 16)) end)
-	str = str:gsub("+", " ")
-	return str
+	return szText:gsub("+", " "):gsub("%%(%x%x)", function(h) return string.char(tonumber(h, 16)) end)
 end
 
 -- 根据技能 ID 及等级获取技能的名称及图标 ID（内置缓存处理）
@@ -2921,3 +2919,4 @@ end)
 
 -- Load skill extend data
 _HM.tSkillEx = LoadLUAData("interface\\HM\\hero\\skill_ex.dat") or {}
+HM.ParseFaceIcon = _HM.ParseFaceIcon
