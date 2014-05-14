@@ -187,6 +187,7 @@ _HM_Secret.SetChildrenFont = function(h, nFont)
 			t:SetFontScheme(nFont)
 		end
 	end
+	h:FormatAllItemPos()
 end
 
 -- append rich text to handle
@@ -398,9 +399,8 @@ _HM_Secret.AddTableRow = function(data)
 	hI.id = data.id
 	hI.new = data.new
 	hI:Lookup("Text_Time"):SetText(_HM_Secret.FormatTime(data.time_update))
-	_HM_Secret.SetRichText(hI:Lookup("Handle_Content"), data.content)
+	_HM_Secret.SetRichText(hI:Lookup("Handle_Content"), data.content, (hI.new and 40) or 41)
 	if hI.new then
-		_HM_Secret.SetChildrenFont(hI:Lookup("Handle_Content"), 40)
 		hI:Lookup("Text_Time"):SetFontScheme(40)
 	end
 	hI.OnItemMouseEnter = function() this:Lookup("Image_Light"):Show() end
