@@ -233,7 +233,7 @@ _HM.ParseFaceIcon = function(t)
 				if not nPos then
 					nPos = nLen
 				else
-					for i = nPos + 6, nPos + 2, -2 do
+					for i = nPos + 7, nPos + 2, -1 do
 						if i <= nLen then
 							local szTest = string.sub(v.text, nPos, i)
 							if _HM.tFaceIcon[szTest] then
@@ -943,6 +943,16 @@ HM.IsDps = function(tar)
 	tar = tar or GetClientPlayer()
 	local mnt = tar.GetKungfuMount()
 	return not mnt or (mnt.dwSkillID ~= 10080 and mnt.dwSkillID ~= 10028 and mnt.dwSkillID ~= 10176)
+end
+
+-- (boolean) HM.HasVipEmotion()		--  检查玩家是否有 VIP 表情库
+HM.HasVipEmotion = function()
+	if _HM.bVipEmotion == nil then
+		local frame = Wnd.OpenWindow("EmotionPanel")
+		_HM.bVipEmotion = frame and frame:Lookup("Wnd_Checks/CheckBox_EM1") ~= nil
+		Wnd.CloseWindow(frame)
+	end
+	return _HM.bVipEmotion
 end
 
 -- 根据名称或 ID 获取 判断 BUFF 是否存在
@@ -2889,6 +2899,7 @@ HM.RegisterEvent("NPC_ENTER_SCENE", function() _HM.aNpc[arg0] = true end)
 HM.RegisterEvent("NPC_LEAVE_SCENE", function() _HM.aNpc[arg0] = nil end)
 HM.RegisterEvent("DOODAD_ENTER_SCENE", function() _HM.aDoodad[arg0] = true end)
 HM.RegisterEvent("DOODAD_LEAVE_SCENE", function() _HM.aDoodad[arg0] = nil end)
+HM.RegisterEvent("ON_PLAYER_EMOTION_PACKAGE_UPDATE", function() _HM.bVipEmotion = nil end)
 HM.RegisterEvent("CUSTOM_DATA_LOADED", function()
 	if arg0 == "Role" then
 		for _, v in ipairs(_HM.tCustomUpdateCall) do

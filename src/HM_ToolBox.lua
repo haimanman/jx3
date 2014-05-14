@@ -737,34 +737,25 @@ _HM_ToolBox.CopyChatLine = function(hTime)
 					break
 				end
 			end
-		elseif p:GetType() == "Image" then
-			local nFrame = p:GetFrame()
-			local tEmotion = _HM_ToolBox.tFacIcon.image[nFrame]
+		elseif p:GetType() == "Image" or p:GetType() == "Animate" then
+			local tEmotion = nil
+			if p:GetType() == "Image" then
+				local nFrame = p:GetFrame()
+				tEmotion = _HM_ToolBox.tFacIcon.image[nFrame]
+			else
+				local nGroup = tonumber(p:GetName())
+				tEmotion = _HM_ToolBox.tFacIcon.animate[nGroup]
+			end
 			if tEmotion then
 				local szCmd, dwFaceID = tEmotion.szCmd, tEmotion.dwID
-				if string.byte(szCmd, 2, 2) < 128 then
-					local szCmd2 = string.sub(szCmd, 1, 1) .. string.sub(szCmd, 3)
-					local dwFaceID2 = _HM_ToolBox.FetchFaceID(szCmd2)
-					if dwFaceID2 then
-						szCmd, dwFaceID = szCmd2, dwFaceID2
-					end
+				if string.byte(szCmd, 2, 2) < 128 and not HM.HasVipEmotion() then
+					szCmd = string.sub(szCmd, 1, 1) .. string.sub(szCmd, 3)
+					dwFaceID = _HM_ToolBox.FetchFaceID(szCmd2)
 				end
-				edit:InsertObj(szCmd, { type = "emotion", text = szCmd, id = dwFaceID })
-			end
-		elseif p:GetType() == "Animate" then
-			local nGroup = tonumber(p:GetName())
-			if nGroup then
-				local tEmotion = _HM_ToolBox.tFacIcon.animate[nGroup]
-				if tEmotion then
-					local szCmd, dwFaceID = tEmotion.szCmd, tEmotion.dwID
-					if string.byte(szCmd, 2, 2) < 128 then
-						local szCmd2 = string.sub(szCmd, 1, 1) .. string.sub(szCmd, 3)
-						local dwFaceID2 = _HM_ToolBox.FetchFaceID(szCmd2)
-						if dwFaceID2 then
-							szCmd, dwFaceID = szCmd2, dwFaceID2
-						end
-					end
+				if dwFaceID then
 					edit:InsertObj(szCmd, { type = "emotion", text = szCmd, id = dwFaceID })
+				else
+					edit:InsertText(szCmd)
 				end
 			end
 		end
