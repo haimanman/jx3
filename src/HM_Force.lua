@@ -497,6 +497,27 @@ HM.RegisterEvent("SYS_MSG", function()
 		if HM_Force.bHorseReplace and arg1 == me.dwID and arg2 == 433 and me.bFightState then
 			_HM_Force.ReplaceHorse()
 		end
+		-- on prepare 骑乘
+		if arg1 == me.dwID and (arg2 == 53 or arg2 == 433 or arg2 == 4097 or arg2 == 4098) then
+			local it = me.GetItem(INVENTORY_INDEX.EQUIP, EQUIPMENT_INVENTORY.HORSE)
+			if it then
+				OutputItemTip(UI_OBJECT_ITEM, INVENTORY_INDEX.EQUIP, EQUIPMENT_INVENTORY.HORSE)
+				local hM = Station.Lookup("Topmost1/TipPanel_Normal", "Handle_Message")
+				for i = 0, hM:GetItemCount() - 1, 1 do
+					local hT = hM:Lookup(i)
+					if hT:GetType() == "Text" and hT:GetFontScheme() == 164 then
+						local szFullMeasure = HM.Trim(hT:GetText())
+						local tDisplay = g_tTable.RideSubDisplay:Search(it.nDetail)
+						if tDisplay and szFullMeasure ~= tDisplay.szFullMeasure3 then
+							OutputWarningMessage("MSG_WARNING_YELLOW", it.szName .. ": " .. szFullMeasure)
+							PlaySound(SOUND.UI_SOUND, g_sound.CloseAuction)
+						end
+						break
+					end
+				end
+				HideTip(false)
+			end
+		end
 	end
 	-- 重伤后删除头顶效果
 	if arg0 == "UI_OME_DEATH_NOTIFY" then
