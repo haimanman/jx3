@@ -508,7 +508,7 @@ end
 _HM_Doodad.PS.OnConflictCheck  = function()
 	if IsEmpty(HM_Doodad.tCustom) then
 		-- 粮草堆，散落的镖银，阵营首领战利品
-		for _, v in ipairs({ 3996, 3874, 4254, 4315 }) do
+		for _, v in ipairs({ 3996, 3874, 4255, 4315 }) do
 			HM_Doodad.tCustom[_d(v)] = true
 		end
 	end
