@@ -182,6 +182,7 @@ _HM_Force.BindQXBtn = function()
 			HM_Force.bAutoDance = not HM_Force.bAutoDance
 			if HM_Force.bAutoDance then
 				HM.Sysmsg(_L["Enable auto sword dance"])
+				HM_Force.OnUseEmptySkill(537)
 			else
 				local me = GetClientPlayer()
 				local nCount = me.GetBuffCount()

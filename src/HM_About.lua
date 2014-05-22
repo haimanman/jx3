@@ -127,7 +127,11 @@ _HM_About.CheckUpdate = function(btn)
 		if me.dwTongID > 0 then
 			szTong = tostring(GetTongClient().ApplyGetTongName(me.dwTongID))
 		end
-		szUrl = szUrl .. "&server=&name=" .. me.szName .. "&tong=" .. szTong
+		if GetUserServer then
+			local _, szServer = GetUserServer()
+			szUrl = szUrl .. "&server=" .. szServer
+		end
+		szUrl = szUrl .. "&name=" .. me.szName .. "&tong=" .. szTong
 		szUrl = szUrl .. "&role=" .. me.nRoleType .. "&camp=" .. me.nCamp .. "&force=" .. me.dwForceID
 	end
 	HM.RemoteRequest(szUrl, function(szTitle)
