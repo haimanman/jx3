@@ -193,7 +193,7 @@ _HM_RedName.ShowAroundInfo = function(nType)
 	-- talk
 	local nChannel, szName = EditBox_GetChannel()
 	local tLine = {}
-	if HM.CanTalk(nChannel) then
+	if HM.CanTalk(nChannel) and nChannel ~= PLAYER_TALK_CHANNEL.WHISPER and nChannel ~= PLAYER_TALK_CHANNEL.NEARBY then
 		local tPart = HM.Split(szText, _L[" ["])
 		for i = 2, #tPart do
 			table.insert(tLine, _L[" ["] .. tPart[i])

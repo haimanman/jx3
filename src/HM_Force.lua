@@ -9,6 +9,7 @@ HM_Force = {
 	bAlertPet = true,			-- 五毒宠物消失提醒
 	bMarkPet = true,			-- 五毒宠物标记
 	--bAutoDance = true,	-- 七秀自动剑舞
+	bFeedHorse = true,	-- 提示喂马
 	bAutoXyz = true,		-- 自动对目标执行范围指向技能
 	bAutoXyzSelf = true,	-- 自动对自己放
 	bShowJW = true,			-- 显示剑舞层数
@@ -391,9 +392,15 @@ _HM_Force.PS.OnPanelActive = function(frame)
 	:Pos(10, 176):Click(function(bChecked)
 		HM_Force.bAlertPet = bChecked
 	end)
+	--[[
 	ui:Append("WndCheckBox", { txt = _L["Auto enter dance status (Click fan on player panel to switch)"], checked = HM_Force.bAutoDance })
 	:Pos(10, 204):Enable(false):Click(function(bChecked)
 		HM_Force.bAutoDance = bChecked
+	end)
+	--]]
+	ui:Append("WndCheckBox", { txt = _L["Alert when horse is hungry"], checked = HM_Force.bFeedHorse })
+	:Pos(10, 204):Click(function(bChecked)
+		HM_Force.bFeedHorse = bChecked
 	end)
 	nX = ui:Append("WndCheckBox", { txt = _L["Cast area skill to current target directly"], checked = HM_Force.bAutoXyz })
 	:Pos(10, 232):Click(function(bChecked)
@@ -501,7 +508,7 @@ HM.RegisterEvent("SYS_MSG", function()
 			_HM_Force.ReplaceHorse()
 		end
 		-- on prepare 骑乘
-		if arg1 == me.dwID and (arg2 == 53 or arg2 == 433 or arg2 == 4097 or arg2 == 4098) then
+		if HM_Force.bFeedHorse and arg1 == me.dwID and (arg2 == 53 or arg2 == 433 or arg2 == 4097 or arg2 == 4098) then
 			local it = me.GetItem(INVENTORY_INDEX.EQUIP, EQUIPMENT_INVENTORY.HORSE)
 			if it then
 				OutputItemTip(UI_OBJECT_ITEM, INVENTORY_INDEX.EQUIP, EQUIPMENT_INVENTORY.HORSE)
