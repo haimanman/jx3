@@ -34,6 +34,7 @@ HM_ToolBox = {
 	bAnyDiamond = false,	-- 忽略五行石颜色，只考虑等级
 	bChatTime = true,		-- 聊天复制党
 	bNonwar = true,		-- 神行到非战乱地图
+	bWhisperAt = true,	-- 记录点名聊天
 	nBroadType = 0,
 	szBroadText = "Hi, nihao",
 }
@@ -161,6 +162,9 @@ _HM_ToolBox.SendBroadCast = function()
 		return
 	end
 	local dwMapID, szText, nType = me.GetScene().dwMapID, HM_ToolBox.szBroadText, HM_ToolBox.nBroadType
+	HM.BgTalk(PLAYER_TALK_CHANNEL.TONG, "HM_BROAD", nType, dwMapID, szText)
+	HM.Sysmsg(_L["[Guild BC] "] .. szText)
+	--[[
 	local aPlayer = tong.GetMemberList(false, "name", false, -1, -1)
 	for _, v in pairs(aPlayer) do
 		local info = tong.GetMemberInfo(v)
@@ -168,6 +172,7 @@ _HM_ToolBox.SendBroadCast = function()
 			HM.Talk(info.szName, _L["[Guild BC] "] .. szText)
 		end
 	end
+	--]]
 end
 
 -- 一键上架交易行
@@ -916,7 +921,46 @@ _HM_ToolBox.OnChatPanelInit = function()
 		if h and (not ttl or ttl:GetText() ~= g_tStrings.CHANNEL_MENTOR) then
 			h._AppendItemFromString = h._AppendItemFromString or h.AppendItemFromString
 			h.AppendItemFromString = _HM_ToolBox.AppendChatItem
+			if ttl and ttl:GetText() == g_tStrings.PRIVATE_TALK then
+				_HM_ToolBox.hWhisperMsg = h
+			end
 		end
+	end
+end
+
+-- 记录点名聊天到密聊：团队、世界、小队、阵营、地图、好友……等全部？
+_HM_ToolBox.OnRecordWhisperAt = function(szMsg)
+	local me, hM = GetClientPlayer(), _HM_ToolBox.hWhisperMsg
+	if not me or not HM_ToolBox.bWhisperAt or not hM then
+		return
+	end
+	for _, v in ipairs(me.GetTalkData() or {}) do
+		if v.type == "name" and v.name == me.szName then
+			hM:AppendItemFromString(szMsg)
+			hM:FormatAllItemPos()
+			local _, h = hM:GetSize()
+			local _, hA = hM:GetAllItemSize()
+			local scroll = hM:GetParent():GetParent():Lookup("Scroll_Msg")
+			scroll:SetStepCount((hA - h) / 10)
+			scroll:ScrollEnd()
+			return PlaySound(SOUND.UI_SOUND,g_sound.Whisper)
+		end
+	end
+end
+
+-- 后台广播（via 帮会频道）：nType, dwMapID, szText
+_HM_ToolBox.OnBgBroad = function()
+	local tData, szName = HM.BgHear("HM_BROAD"), arg3
+	if not tData or not tData[3] then
+		return
+	end
+	local me, dwMapID = GetClientPlayer(), tonumber(tData[2])
+	if tData[1] == "0" or (tData[1] == "1" and dwMapID ~= me.GetMapID()) or (tData[1] == "2" and dwMapID == me.GetMapID()) then
+		local szFont = GetMsgFontString("MSG_WHISPER")
+		local szMsg = "<text>text=" .. EncodeComponentsString("[" .. szName .. "]") .. szFont.." name=\"namelink\" eventid=515</text>"
+		szMsg = szMsg .. "<text>text=" .. EncodeComponentsString(g_tStrings.STR_TALK_HEAD_WHISPER .. _L["[Guild BC] "] .. tData[3] .. "\n") .. szFont .. "</text>"
+		OutputMessage("MSG_WHISPER", szMsg, true)
+		PlaySound(SOUND.UI_SOUND, g_sound.Whisper)
 	end
 end
 
@@ -993,6 +1037,11 @@ _HM_ToolBox.PS.OnPanelActive = function(frame)
 	:Click(function(bChecked)
 		HM_ToolBox.bNonwar = bChecked
 	end)
+	-- record @
+	ui:Append("WndCheckBox", { txt = _L["Record @message into whisper panel"], x = nX + 10, y = 268, checked = HM_ToolBox.bWhisperAt })
+	:Click(function(bChecked)
+		HM_ToolBox.bWhisperAt = bChecked
+	end)
 	-- tong broadcast
 	ui:Append("Text", { txt = _L["Group whisper oline (Guild perm required)"], x = 0, y = 268, font = 27 })
 	ui:Append("WndEdit", "Edit_Msg", { x = 10, y = 296, limit = 1024, multi = true, h = 50, w = 480, txt = HM_ToolBox.szBroadText })
@@ -1041,6 +1090,12 @@ HM.RegisterEvent("CHAT_PANEL_INIT", function()
 	_HM_ToolBox.PS.OnConflictCheck()
 	_HM_ToolBox.OnChatPanelInit()
 end)
+-- 记录点名聊天
+RegisterMsgMonitor(_HM_ToolBox.OnRecordWhisperAt, {
+	"MSG_NORMAL", "MSG_MAP", "MSG_BATTLE_FILED", "MSG_PARTY", "MSG_SCHOOL",
+	"MSG_GUILD", "MSG_WORLD", "MSG_CAMP", "MSG_TEAM", "MSG_FRIEND"
+})
+HM.RegisterEvent("ON_BG_CHANNEL_MSG", _HM_ToolBox.OnBgBroad)
 
 -- add to HM collector
 HM.RegisterPanel(_L["Misc toolbox"], 352, _L["Others"], _HM_ToolBox.PS)
