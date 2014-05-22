@@ -214,6 +214,7 @@ data = {
 	["Auto swith actionbar page of horse states (for TC, bind to P.1/3)"] = "天策綁定馬上/馬下技能欄（固定為第1和第3頁）",
 	["Replace horse in fighting"] = "戰斗中換戰馬",
 	["Alert when pet disappear unexpectedly (for 5D)"] = "五毒寵物意外消失提醒（獻祭、召喚除外）",
+	["Alert when horse is hungry"] = "坐騎飢餓上馬時發出提醒",
 	["Mark pet"] = "標記自己的寵物",
 	["Auto enter dance status (Click fan on player panel to switch)"] = "七秀自動劍舞（點擊頭像扇子可快速開關）",
 	["Cast area skill to current target directly"] = "直接對目標施展范圍指向技能（如六合、醉舞）",

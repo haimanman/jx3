@@ -1177,24 +1177,32 @@ end
 
 _HM_TargetList.ShowAcctInfo = function()
 	local nChannel, szName = EditBox_GetChannel()
-	if nChannel == PLAYER_TALK_CHANNEL.WHISPER then
-		nChannel = szName
-	end
 	local t, nCamp = _HM_TargetList.GetAcctInfo(), GetClientPlayer().nCamp
+	local tLine = {}
 	if t.Enemy.total > 0 then
 		local nCamp2 = (nCamp + nCamp) % 3
 		local szText = g_tStrings.STR_CAMP_TITLE[nCamp2] .. _L["Enemy"]
 		szText = szText .. _L(": Live(%d) Dead(%d) Total(%d)", t.Enemy.live, t.Enemy.dead, t.Enemy.total)
-		HM.Talk2(nChannel, szText)
+		table.insert(tLine, szText)
 	end
 	if t.Ally.total > 0 then
 		local szText = g_tStrings.STR_CAMP_TITLE[nCamp] .. _L["Ally"]
 		szText = szText .. _L(": Live(%d) Dead(%d) Total(%d)", t.Ally.live, t.Ally.dead, t.Ally.total)
-		HM.Talk2(nChannel, szText)
+		table.insert(tLine, szText)
 	end
 	if t.Neutral.total > 0 then
 		local szText = _L["Neutral"] .. _L(": Live(%d) Dead(%d) Total(%d)", t.Neutral.live, t.Neutral.dead, t.Neutral.total)
-		HM.Talk2(nChannel, szText)
+		table.insert(tLine, szText)
+	end
+	if not HM.CanTalk(nChannel) or nChannel == PLAYER_TALK_CHANNEL.WHISPER or nChannel == PLAYER_TALK_CHANNEL.NEARBY then
+		local szText = table.concat(tLine, "  ")
+		tLine = { szText }
+	end
+	if nChannel == PLAYER_TALK_CHANNEL.WHISPER then
+		nChannel = szName
+	end
+	for _, v in ipairs(tLine) do
+		HM.Talk2(nChannel, v)
 	end
 end
 
