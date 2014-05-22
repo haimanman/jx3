@@ -117,7 +117,7 @@ function HM_Guding.OnFrameCreate()
 	this:RegisterEvent("SYS_MSG")
 	this:RegisterEvent("DO_SKILL_CAST")
 	this:RegisterEvent("DOODAD_ENTER_SCENE")
-	this:RegisterEvent("ADDON_BG_TALK")
+	this:RegisterEvent("ON_BG_CHANNEL_MSG")
 end
 
 -- breathe
@@ -193,7 +193,7 @@ function HM_Guding.OnEvent(event)
 		_HM_Guding.OnSkillCast(arg0, arg1, arg2, event)
 	elseif event == "DOODAD_ENTER_SCENE" then
 		_HM_Guding.OnDoodadEnter()
-	elseif event == "ADDON_BG_TALK" then
+	elseif event == "ON_BG_CHANNEL_MSG" then
 		_HM_Guding.OnSkillNotify()
 	end
 end

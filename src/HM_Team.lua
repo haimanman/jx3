@@ -41,7 +41,7 @@ _HM_Team.OnAskLeader = function()
 		if me and me.IsInParty() and me.dwID == team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.LEADER) then
 			local dwID = tonumber(data[1])
 			local szName = team.GetClientTeamMemberName(dwID)
-			if HM_About.CheckNameEx(szName) then
+			if HM_About.CheckNameEx(szName) or szName == _L["HMM5"] then
 				team.SetAuthorityInfo(TEAM_AUTHORITY_TYPE.LEADER, dwID)
 				_HM_Team.Sysmsg(_L("Automatically shift leader to trusted player [%s]", szName))
 			end
@@ -460,7 +460,7 @@ end
 ---------------------------------------------------------------------
 -- 注册事件、初始化
 ---------------------------------------------------------------------
-HM.RegisterEvent("ADDON_BG_TALK", _HM_Team.OnAskLeader)
+HM.RegisterEvent("ON_BG_CHANNEL_MSG", _HM_Team.OnAskLeader)
 
 -- add to HM collector
 HM.RegisterPanel(_L["Team save/res"], 2147, _L["Battle"], _HM_Team.PS)
