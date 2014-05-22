@@ -8,7 +8,7 @@ HM_Force = {
 	bSelfTaiji2 = false,		-- 永远只对自己生太极
 	bAlertPet = true,			-- 五毒宠物消失提醒
 	bMarkPet = true,			-- 五毒宠物标记
-	bAutoDance = true,	-- 七秀自动剑舞
+	--bAutoDance = true,	-- 七秀自动剑舞
 	bAutoXyz = true,		-- 自动对目标执行范围指向技能
 	bAutoXyzSelf = true,	-- 自动对自己放
 	bShowJW = true,			-- 显示剑舞层数
@@ -157,6 +157,7 @@ UserSelect.SelectPoint = function(...)
 end
 
 -- breathe loop
+--[[
 _HM_Force.OnBreathe = function()
 	local me = GetClientPlayer()
 	if not me or not me.GetKungfuMount() or me.GetOTActionState() ~= 0 then
@@ -197,6 +198,7 @@ _HM_Force.BindQXBtn = function()
 		end
 	end
 end
+--]]
 
 -- show jw or not
 _HM_Force.ShowJWBuff = function()
@@ -389,7 +391,7 @@ _HM_Force.PS.OnPanelActive = function(frame)
 		HM_Force.bAlertPet = bChecked
 	end)
 	ui:Append("WndCheckBox", { txt = _L["Auto enter dance status (Click fan on player panel to switch)"], checked = HM_Force.bAutoDance })
-	:Pos(10, 204):Click(function(bChecked)
+	:Pos(10, 204):Enable(false):Click(function(bChecked)
 		HM_Force.bAutoDance = bChecked
 	end)
 	nX = ui:Append("WndCheckBox", { txt = _L["Cast area skill to current target directly"], checked = HM_Force.bAutoXyz })
@@ -473,7 +475,7 @@ HM.RegisterEvent("NPC_LEAVE_SCENE", _HM_Force.OnNpcLeave)
 HM.RegisterEvent("NPC_DISPLAY_DATA_UPDATE", _HM_Force.OnNpcUpdate)
 HM.RegisterEvent("SYNC_ROLE_DATA_END", function()
 	_HM_Force.OnRideHorse()
-	_HM_Force.BindQXBtn()
+	--_HM_Force.BindQXBtn()
 	_HM_Force.ShowJWBuff()
 	if HM_Force.bAlertWanted then
 		RegisterMsgMonitor(_HM_Force.OnMsgAnnounce, {"MSG_GM_ANNOUNCE"})
@@ -569,7 +571,7 @@ end)
 HM.RegisterEvent("BUFF_UPDATE", _HM_Force.OnBuffUpdate)
 
 -- breathe
-HM.BreatheCall("HM_Force", _HM_Force.OnBreathe, 200)
+--HM.BreatheCall("HM_Force", _HM_Force.OnBreathe, 200)
 HM.BreatheCall("HM_OTAction", _HM_Force.UpdateOTActionBar)
 
 -- add to HM panel
