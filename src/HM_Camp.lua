@@ -498,6 +498,9 @@ _HM_Camp.TalkBossInfo = function()
 	end
 	local nChannel, szName = EditBox_GetChannel()
 	local bTalk2, szTalk2 = HM.CanTalk(nChannel), ""
+	if nChannel == PLAYER_TALK_CHANNEL.WHISPER or nChannel == PLAYER_TALK_CHANNEL.NEARBY then
+		bTalk2 = false
+	end
 	if nChannel == PLAYER_TALK_CHANNEL.WHISPER then
 		nChannel = szName
 	end
