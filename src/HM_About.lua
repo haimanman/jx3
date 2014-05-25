@@ -225,7 +225,9 @@ _HM_About.PS.OnTaboxCheck = function(frame, nIndex, szTitle)
 	if me then szName = me.szName end
 	-- info
 	local nF = 0
-	if GetCurrentTime() < 1376409600 then
+	local t = TimeToDate(GetCurrentTime())
+	local nT = t.month * 100 + t.day
+	if nT > 720 and nT < 804 then
 		nF = 1
 	end
 	ui:Append("Image", { x = 0, y = 5, w = 532, h = 168 }):File("interface\\HM\\ui\\image.UITEX", nF):Click(function()
