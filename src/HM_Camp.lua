@@ -15,6 +15,7 @@ HM_Camp = {
 	bBossTime = false,			-- boss 刷新提醒
 	bBossTimeGF = true,		-- 攻防 BOSS 计时
 	bAutoCampQueue = true,	-- 攻防排队自动进
+	bForgetGoods = true,	-- 跑商忘记买货时提醒：城防物资/独山玉/湘莲/和田玉雕/紫砂/普洱，（100个以下）
 	tBossList = {
 		[_n(6219)--[[方超]]] = 5,
 		[_n(6222)--[[霸图]]] = 5,
@@ -577,6 +578,41 @@ _HM_Camp.OnLoadingEnd = function()
 end
 
 -------------------------------------
+-- 忘记购物买物资
+-------------------------------------
+_HM_Camp.tTradeGoods = {
+	[74528] = true,	-- 独山玉
+	[74529] = true,	-- 湘莲
+	[74530] = true,	-- 和田玉雕
+	[74531] = true,	-- 紫砂
+	[74532] = true,	-- 普洱
+	[150174] = true,	-- 城防物资
+}
+
+_HM_Camp.GetGoodsNum = function()
+	local me, nCount = GetClientPlayer(), 0
+	for i = 1, BigBagPanel_nCount do
+		for j = 0, me.GetBoxSize(i) - 1 do
+			local item = me.GetItem(i, j)
+			if item and _HM_Camp.tTradeGoods[item.nUiId] then
+				nCount = nCount + item.nStackNum
+			end
+		end
+	end
+	return nCount
+end
+
+_HM_Camp.OnNpcLeave = function()
+	if HM_Camp.bForgetGoods and HM.HasBuff(7732) then
+		local npc = GetNpc(arg0)
+		if npc and npc.szName == Table_GetNpcTemplateName(36039) and _HM_Camp.GetGoodsNum() < 100 then
+			OutputWarningMessage("MSG_WARNING_RED", _L["Please buy full goods for trade quest"])
+			PlaySound(SOUND.UI_SOUND, g_sound.CloseAuction)
+		end
+	end
+end
+
+-------------------------------------
 -- 设置界面
 -------------------------------------
 _HM_Camp.PS = {}
@@ -619,6 +655,10 @@ _HM_Camp.PS.OnPanelActive = function(frame)
 	:Text(_L["Auto enter map when over of the queue"]):Click(function(bChecked)
 		HM_Camp.bAutoCampQueue = bChecked
 	end)
+	ui:Append("WndCheckBox", { x = 0, y = 324, checked = HM_Camp.bForgetGoods })
+	:Text(_L["Alert when forget buy goods for trade quest"]):Click(function(bChecked)
+		HM_Camp.bForgetGoods = bChecked
+	end)
 end
 
 -- player menu
@@ -635,6 +675,7 @@ end
 HM.RegisterEvent("SYS_MSG", _HM_Camp.OnSysMsg)
 HM.RegisterEvent("LOADING_END", _HM_Camp.OnLoadingEnd)
 HM.RegisterEvent("NPC_ENTER_SCENE", _HM_Camp.OnNpcEnter)
+HM.RegisterEvent("NPC_LEAVE_SCENE", _HM_Camp.OnNpcLeave)
 HM.RegisterEvent("PARTY_ADD_MEMBER", function()
 	if HM_Camp.bPartyAlert then
 		local dwMapID = GetClientPlayer().GetScene().dwMapID
