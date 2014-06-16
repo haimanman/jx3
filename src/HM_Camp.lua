@@ -606,7 +606,7 @@ _HM_Camp.OnNpcLeave = function()
 	if HM_Camp.bForgetGoods and HM.HasBuff(7732) then
 		local npc = GetNpc(arg0)
 		if npc and npc.szName == Table_GetNpcTemplateName(36039) and _HM_Camp.GetGoodsNum() < 100 then
-			OutputWarningMessage("MSG_WARNING_RED", _L["Please buy full goods for trade quest"])
+			OutputWarningMessage("MSG_WARNING_GREEN", _L["Please buy full goods for trade quest"])
 			PlaySound(SOUND.UI_SOUND, g_sound.CloseAuction)
 		end
 	end

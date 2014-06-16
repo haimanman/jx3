@@ -53,7 +53,7 @@ end
 
 -- check jihuo target
 _HM_Marker.CanBeJihuo = function(tar, bNoEx)
-	if not tar or tar.nMoveState == MOVE_STATE.ON_DEATH then
+	if not tar or (tar.nMoveState == MOVE_STATE.ON_DEATH and IsEnemy(GetClientPlayer().dwID, tar.dwID)) then
 		return false
 	elseif not bNoEx and HM_About.CheckTarEx(tar, true) then
 		return false
@@ -275,7 +275,9 @@ _HM_Marker.UpdateMarker = function(nIndex, tar)
 	if tar.nCurrentLife and tar.nMaxLife > 0 then
 		local dwHP = math.min(1, tar.nCurrentLife / tar.nMaxLife)
 		marker.hp:SetText(string.format("%d%%", dwHP * 100))
-		if dwHP > 0.66 then
+		if tar.nMoveState == MOVE_STATE.ON_DEATH then
+			marker.hp:SetFontColor(128, 128, 128)
+		elseif dwHP > 0.66 then
 			marker.hp:SetFontColor(255, 255, 255)
 		elseif dwHP > 0.33 then
 			marker.hp:SetFontColor(255, 128, 0)
