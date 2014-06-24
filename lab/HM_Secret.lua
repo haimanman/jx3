@@ -56,7 +56,8 @@ _HM_Secret.RemoteCall = function(szAction, tParam, fnCallback)
 				--HM.Alert("解析 JSON 数据错误：" .. tostring(err), fnCallback)
 				HM.Sysmsg("解析 JSON 数据错误：" .. tostring(err))
 			elseif type(data) == "table" and data.error then
-				HM.Alert("服务端出错：" .. HM.UrlDecode(data.error), fnCallback)
+				--HM.Alert("服务端出错：" .. HM.UrlDecode(data.error), fnCallback)
+				HM.Sysmsg("插件服务端出错：" .. HM.UrlDecode(data.error))
 			else
 				_HM_Secret.TableDecode(data)
 				pcall(fnCallback, data)
@@ -539,7 +540,7 @@ HM.RegisterEvent("LOADING_END", function()
 	end
 	_HM_Secret.RemoteCall("unread", { o = me.szName .. "-" .. me.dwID }, function(nNum)
 		local h = btn:Lookup("", "")
-		if nNum == 0 then
+		if not nNum or nNum == 0 then
 			h:Hide()
 		else
 			if nNum > 9 then
