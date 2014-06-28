@@ -84,7 +84,7 @@ sort($files2);
 $files = array_merge($files1, $files2);
 for ($i = 0; $i < count($required); $i++)
 {
-	$info .= "lua_{$i}=interface\\HM\\src\\{$required[$i]}\r\n";
+	$info .= "lua_{$i}=src\\{$required[$i]}\r\n";
 }
 foreach ($files as $file)
 {
@@ -94,7 +94,7 @@ foreach ($files as $file)
 		continue;
 	if (in_array(basename($file), $required)) continue;
 	$file = str_replace('/', '\\', $file);
-	$info .= "lua_{$i}=interface\\HM\\$file\r\n";
+	$info .= "lua_{$i}=$file\r\n";
 	$i++;
 }
 file_put_contents('info.ini', $info);
