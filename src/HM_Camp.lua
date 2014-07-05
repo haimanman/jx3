@@ -192,6 +192,10 @@ _HM_Camp.HideGF = function(bEnable, bNoSave)
 			Wnd.OpenWindow("CombatTextWnd")
 		end
 	end
+	-- skip auto hide HM things
+	if bNoSave == true then
+		return
+	end
 	-- restore
 	if HM_Area then
 		if not HM_Camp.tHideExclude[9] then
