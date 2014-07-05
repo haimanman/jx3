@@ -152,6 +152,8 @@ _HM_Doodad.TryAdd = function(dwID, bDelay)
 			then
 				data = { craft = true }
 			end
+		elseif d.dwTemplateID == 3713 or d.dwTemplateID == 3714 then
+			data = { craft = true }
 		elseif HM_Doodad.tCraft[d.szName] or (HM_Doodad.bCustom and HM_Doodad.tCustom[d.szName]) then
 			data = { craft = true }
 		elseif d.HaveQuest(me.dwID) then
@@ -236,7 +238,11 @@ _HM_Doodad.OnUpdateHeadName = function()
 			if not tar or (v.quest and not tar.HaveQuest(GetClientPlayer().dwID)) then
 				_HM_Doodad.Remove(k)
 			else
-				sha:AppendDoodadID(tar.dwID, r, g, b, 255, 128, 40, tar.szName, 0, 1)
+				local szName = tar.szName
+				if tar.dwTemplateID == 3713 or tar.dwTemplateID == 3714 then
+					szName = Table_GetNpcTemplateName(1622)
+				end
+				sha:AppendDoodadID(tar.dwID, r, g, b, 255, 128, 40, szName, 0, 1)
 			end
 		end
 	end
