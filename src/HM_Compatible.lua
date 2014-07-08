@@ -42,6 +42,10 @@ GLOBAL_HEAD_TITLE = GLOBAL_HEAD_TITLE or 2
 GLOBAL_HEAD_NAME = GLOBAL_HEAD_NAME or 3
 BigBagPanel_nCount = 6
 
+--帮会仓库界面虚拟一个背包位置
+INVENTORY_GUILD_BANK = INVENTORY_GUILD_BANK or INVENTORY_INDEX.TOTAL + 1
+INVENTORY_GUILD_PAGE_SIZE = INVENTORY_GUILD_PAGE_SIZE or 100
+
 -- middle map
 if not CloseWorldMap then
 function CloseWorldMap(bDisableSound)
