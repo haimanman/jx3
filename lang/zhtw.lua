@@ -767,6 +767,7 @@ data = {
 	["Show time and support copy in chat panel"] = "在聊天欄顯示時間支持復制",
 	["Allow fly to non-war maps"] = "允許神行到非戰亂地圖",
 	["Record @message into whisper panel"] = "記錄被點名的聊天到密聊專欄",
+	["Sort"] = "整理",
 	-- src/HM_Marker.lua --
 	[" feet"] = " 尺",
 	-- src/HM_TargetFace.lua --
