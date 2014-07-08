@@ -482,6 +482,151 @@ _HM_ToolBox.BindStackButton = function()
 			btn2:SetRelPos(nX + btn1:GetSize(), nY)
 		end
 	end
+	-- guild bank
+	local btn1 = Station.Lookup("Normal/GuildBankPanel/Btn_Refresh")
+	local btn2 = Station.Lookup("Normal/GuildBankPanel/Btn_Sort2")
+	if btn1 and not btn2 then
+		local x, y = btn1:GetRelPos()
+		local w, h = btn1:GetSize()
+		btn2 = HM.UI("Normal/GuildBankPanel"):Append("WndButton", "Btn_Sort2", { txt = _L["Sort"], w = w, h = h }):Raw()
+		btn2:SetRelPos(x - btn1:GetSize(), y)
+		btn2.OnLButtonClick = _HM_ToolBox.SortGuildBank
+	end
+end
+
+-- 帮会仓库整理
+_HM_ToolBox.SortGuildBank = function()
+	local frame = Station.Lookup("Normal/GuildBankPanel")
+	if not frame then
+		return
+	end
+	local nPage = frame.nPage or 0
+	local dwBagBox, dwBagX = HM.GetFreeBagBox()
+	if not dwBagBox then
+		return OutputMessage("MSG_ANNOUNCE_RED", g_tStrings.GUILD_BANK_ERROR_BAG_IS_FULL)
+	end
+	-- compare func
+	local aGenre = {
+		[ITEM_GENRE.TASK_ITEM] = 1, 
+		[ITEM_GENRE.EQUIPMENT] = 2, 
+		[ITEM_GENRE.BOOK] = 3, 
+		[ITEM_GENRE.POTION] = 4, 
+		[ITEM_GENRE.MATERIAL] = 5
+	}
+	local aSub = {
+		[EQUIPMENT_SUB.HORSE] = 1, 
+		[EQUIPMENT_SUB.PACKAGE] = 2, 
+		[EQUIPMENT_SUB.MELEE_WEAPON] = 3, 
+		[EQUIPMENT_SUB.RANGE_WEAPON] = 4, 
+	}
+	local fnCompare = function(A, B)
+		local a, b = A.item, B.item
+		local gA, gB = aGenre[a.nGenre] or (100 + a.nGenre), aGenre[b.nGenre] or (100 + b.nGenre)
+		if gA == gB then
+			if b.nUiId == a.nUiId and b.bCanStack then
+				return a.nStackNum > b.nStackNum
+			elseif a.nGender == ITEM_GENRE.EQUIPMENT then
+				local sA, sB = aSub[a.nSub] or (100 + a.nSub), aSub[b.nSub] or (100 + b.nSub)
+				if sA == sB then
+					if b.nSub == EQUIPMENT_SUB.MELEE_WEAPON or b.nSub == EQUIPMENT_SUB.RANGE_WEAPON then
+						if a.nDetail < b.nDetail then
+							return true
+						end
+					elseif b.nSub == EQUIPMENT_SUB.PACKAGE then
+						if a.nCurrentDurability > b.nCurrentDurability then
+							return true
+						elseif a.nCurrentDurability < b.nCurrentDurability then
+							return false
+						end
+					end
+				end
+			end
+			return a.nQuality > b.nQuality or (a.nQuality == b.nQuality and (a.dwTabType < b.dwTabType or (a.dwTabType == b.dwTabType and a.dwIndex < b.dwIndex)))
+		else
+			return gA < gB
+		end
+	end
+	-- load bank items
+	local me, aItem = GetClientPlayer(), {}
+	for i = 1, INVENTORY_GUILD_PAGE_SIZE do
+		local dwX = nPage * INVENTORY_GUILD_PAGE_SIZE + i - 1
+		local item = GetPlayerItem(me, INVENTORY_GUILD_BANK, dwX)
+		if item then
+			table.insert(aItem, { item = item, dwX = dwX })
+		end
+	end
+	if #aItem == 0 then
+		return
+	elseif #aItem > 1 then
+		table.sort(aItem, fnCompare)
+	end
+	-- exchange them
+	local aIndex, nDst, dwBagX2, bTrigger = {}, 1, nil, false
+	for k, v in ipairs(aItem) do
+		aIndex[v.dwX] = k
+	end
+	local fnLoop = function()
+		bTrigger = true
+		if dwBagX2 then	-- restore from bagbox
+			OnExchangeItem(dwBagBox, dwBagX, INVENTORY_GUILD_BANK, dwBagX2)
+			dwBagX2 = nil
+			return
+		end
+		while nDst <= #aItem do
+			local dwX = nPage * INVENTORY_GUILD_PAGE_SIZE + nDst - 1
+			local dwX2 = aItem[nDst].dwX
+			if dwX ~= dwX2 then
+				local nSrc, bChange = aIndex[dwX], true
+				if nSrc then
+					local item1 = aItem[nDst].item
+					local item2 = aItem[nSrc].item
+					if item1.nUiId == item2.nUiId and item1.bCanStack then
+						if item1.nStackNum ~= item2.nStackNum then	-- exchange via bagbox
+							OnExchangeItem(INVENTORY_GUILD_BANK, dwX, dwBagBox, dwBagX)
+							dwBagX2 = dwX2
+						end
+						bChange = false
+					end
+					aItem[nSrc].dwX = dwX2
+					aIndex[dwX2] = nSrc
+				end
+				if bChange then
+					OnExchangeItem(INVENTORY_GUILD_BANK, dwX2, INVENTORY_GUILD_BANK, dwX)
+					break
+				elseif dwBagX2 then
+					break
+				end
+			end
+			nDst = nDst + 1
+		end
+		if nDst >= #aItem then
+			local btn = Station.Lookup("Normal/GuildBankPanel/Btn_Sort2")
+			if btn then
+				btn:Enable(1)
+			end
+			HM.RegisterEvent("TONG_EVENT_NOTIFY.sort", nil)
+			HM.RegisterEvent("UPDATE_TONG_REPERTORY_PAGE.sort", nil)
+		else
+			nDst = nDst + 1
+		end
+	end
+	frame:Lookup("Btn_Sort2"):Enable(0)
+	HM.RegisterEvent("UPDATE_TONG_REPERTORY_PAGE.sort", fnLoop)
+	HM.RegisterEvent("TONG_EVENT_NOTIFY.sort", function()
+		-- TONG_EVENT_CODE.TAKE_REPERTORY_ITEM_PERMISSION_DENY_ERROR
+		if arg0 == 61 then
+			nDst = #aItem + 1
+			fnLoop()
+		end
+	end)
+	HM.DelayCall(1000, function()
+		if not bTrigger then
+			nDst = #aItem + 1
+			fnLoop()
+		end
+	end)
+	fnLoop()
+	bTrigger = false
 end
 
 -- 非战乱地图数据（相对于副本：战宝军械库位置 id = 160）
@@ -853,9 +998,6 @@ _HM_ToolBox.OnShopUpdateItem = function()
 end
 
 _HM_ToolBox.OnAutoConfirm = function()
-	--if HM_Camp and HM_Camp.bAutoCampQueue then
-	--	HM.DoMessageBox("CanJoinGongFangMapTip")
-	--end
 	if HM_ToolBox.bIgnoreSell then
 		HM.DoMessageBox("SellItemSure")
 	end
