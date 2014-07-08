@@ -659,7 +659,7 @@ _HM_Camp.PS.OnPanelActive = function(frame)
 	:Text(_L["Auto enter map when over of the queue"]):Click(function(bChecked)
 		HM_Camp.bAutoCampQueue = bChecked
 	end)
-	ui:Append("WndCheckBox", { x = 0, y = 324, checked = HM_Camp.bForgetGoods })
+	ui:Append("WndCheckBox", { x = 10, y = 324, checked = HM_Camp.bForgetGoods })
 	:Text(_L["Alert when forget buy goods for trade quest"]):Click(function(bChecked)
 		HM_Camp.bForgetGoods = bChecked
 	end)
