@@ -41,9 +41,9 @@ sync:
 #	$(PHP) dev/upload_github.php
 	$(MAKE) sync-page
 
-lang/zhtw.lua: lang/zhcn.lua
-	big2gb -r < lang/zhcn.lua | sed 's#zhcn#zhtw#' > tmp.lang
-	$(PHP) -r 'echo mb_convert_encoding(file_get_contents("tmp.lang"), "utf8", "big5");' > lang/zhtw.lua
+lang/zhtw.jx3dat: lang/zhcn.jx3dat
+	big2gb -r < lang/zhcn.jx3dat | sed 's#zhcn#zhtw#' > tmp.lang
+	$(PHP) -r 'echo mb_convert_encoding(file_get_contents("tmp.lang"), "utf8", "big5");' > lang/zhtw.jx3dat
 	rm -f tmp.lang
 
 dist-zip:
@@ -57,7 +57,7 @@ dist-zip:
 src-bak:
 	zip -rq9 dist/HM-`cat VERSION`-src.zip * -x dist/*.zip
 
-archive: lang/zhtw.lua
+archive: lang/zhtw.jx3dat
 	git ci -a -m "Release "`cat VERSION`
 	git tag `cat VERSION`
 	$(MAKE) dist-zip
