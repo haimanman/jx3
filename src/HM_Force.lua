@@ -53,6 +53,7 @@ _HM_Force.GetQCMenu = function()
 end
 
 -- use non-target skill
+--[[
 _HM_Force.OnUseEmptySkill = function(dwID)
 	local me = GetClientPlayer()
 	if me and HM.CanUseSkill(dwID) then
@@ -65,6 +66,7 @@ _HM_Force.OnUseEmptySkill = function(dwID)
 		return true
 	end
 end
+--]]
 
 -- update pet mark
 _HM_Force.UpdatePetMark = function(bMark)
@@ -381,9 +383,9 @@ _HM_Force.PS.OnPanelActive = function(frame)
 	local nX = ui:Append("WndComboBox", "Combo_QC", { txt = _L["Select gas skill"], w = 150, h = 25 })
 	:Pos(nX + 10, 56):Enable(HM_Force.bSelfTaiji):Menu(_HM_Force.GetQCMenu)
 	-- other
-	ui:Append("Text", { txt = _L["Others"], x = 0, y = 92, font = 27 })
-	nX = ui:Append("Text", { txt = _L["Commands to jump back, small dodge: "], x = 12, y = 120 }):Pos_()
-	ui:Append("Text", { txt = "/" .. _L["JumpBack"] .. "   /" .. _L["SmallDodge"], x = nX, y = 120, font = 57 })
+	ui:Append("Text", { txt = _L["Others"], x = 0, y = 120, font = 27 })
+	--nX = ui:Append("Text", { txt = _L["Commands to jump back, small dodge: "], x = 12, y = 120 }):Pos_()
+	--ui:Append("Text", { txt = "/" .. _L["JumpBack"] .. "   /" .. _L["SmallDodge"], x = nX, y = 120, font = 57 })
 	ui:Append("WndCheckBox", { txt = _L["Auto swith actionbar page of horse states (for TC, bind to P.1/3)"], checked = HM_Force.bHorsePage })
 	:Pos(10, 148):Click(function(bChecked)
 		HM_Force.bHorsePage = bChecked
@@ -586,6 +588,7 @@ HM.BreatheCall("HM_OTAction", _HM_Force.UpdateOTActionBar)
 HM.RegisterPanel(_L["School feature"], 327, nil, _HM_Force.PS)
 
 -- macro command
+--[[
 AppendCommand(_L["JumpBack"], function() _HM_Force.OnUseEmptySkill(9007) end)
 AppendCommand(_L["SmallDodge"], function()
 	if HM.HasBuff(535) then	-- °ë²½µß
@@ -600,3 +603,4 @@ end)
 
 -- init global caller
 HM_Force.OnUseEmptySkill = _HM_Force.OnUseEmptySkill
+--]]
