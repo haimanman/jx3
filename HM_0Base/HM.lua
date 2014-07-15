@@ -8,8 +8,8 @@
 ---------------------------------------------------------------------
 local function _HM_GetLang()
 	local _, _, szLang = GetVersion()
-	local t0 = LoadLUAData("interface\\HM\\lang\\default.jx3dat") or {}
-	local t1 = LoadLUAData("interface\\HM\\lang\\" .. szLang .. ".jx3dat") or {}
+	local t0 = LoadLUAData("interface\\HM\\HM_0Base\\lang\\default.jx3dat") or {}
+	local t1 = LoadLUAData("interface\\HM\\HM_0Base\\lang\\" .. szLang .. ".jx3dat") or {}
 	for k, v in pairs(t0) do
 		if not t1[k] then
 			t1[k] = v
@@ -798,15 +798,17 @@ end
 -- (string) HM.GetTargetName(userdata KNpc/KPlayer)
 HM.GetTargetName = function(tar)
 	local szName = tar.szName
-	if szName == "" and not IsPlayer(tar.dwID) then
-		szName = Table_GetNpcTemplateName(tar.dwTemplateID)
-	end
-	if tar.dwEmployer and tar.dwEmployer ~= 0 and szName == Table_GetNpcTemplateName(tar.dwTemplateID) then
-		local emp = GetPlayer(tar.dwEmployer)
-		if not emp then
-			szName =  g_tStrings.STR_SOME_BODY .. g_tStrings.STR_PET_SKILL_LOG .. tar.szName
-		else
-			szName = emp.szName .. g_tStrings.STR_PET_SKILL_LOG .. tar.szName
+	if not IsPlayer(tar.dwID) then
+		if szName == "" then
+			szName = Table_GetNpcTemplateName(tar.dwTemplateID)
+		end
+		if tar.dwEmployer and tar.dwEmployer ~= 0 and szName == Table_GetNpcTemplateName(tar.dwTemplateID) then
+			local emp = GetPlayer(tar.dwEmployer)
+			if not emp then
+				szName =  g_tStrings.STR_SOME_BODY .. g_tStrings.STR_PET_SKILL_LOG .. tar.szName
+			else
+				szName = emp.szName .. g_tStrings.STR_PET_SKILL_LOG .. tar.szName
+			end
 		end
 	end
 	return szName

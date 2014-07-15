@@ -6,7 +6,7 @@ echo "begin to " . ($reverse ? "replace _L() code to raw chinese\n" : "replace c
 echo "  loading lang data ... ";
 
 // load replace data
-$lines = @file('lang/zhcn.jx3dat');
+$lines = @file('HM_0Base/lang/zhcn.jx3dat');
 if (!$lines)
 {
 	echo "failed to load zhcn.jx3dat\n";
@@ -39,7 +39,7 @@ echo " OK, " . count($replace2) . " strings\n";
 // 
 
 // replace all lua files
-$files = array_merge(glob("src/*.lua"), glob("lab/*.lua"));
+$files = glob("HM_*/*.lua");
 foreach ($files as $file)
 {
 	echo "  replacing $file ...\n";

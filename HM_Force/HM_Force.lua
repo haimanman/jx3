@@ -19,6 +19,7 @@ HM_Force = {
 	bActionTime = true,	-- 显示读条动作计时
 	bAlertWanted = true,	-- 在线被悬赏时提醒自己
 	bHorseReplace = true,	-- 战斗中智能替换战马
+	bEngBar = false,	-- 显示职业能量条
 }
 HM.RegisterCustomData("HM_Force")
 
@@ -383,9 +384,14 @@ _HM_Force.PS.OnPanelActive = function(frame)
 	local nX = ui:Append("WndComboBox", "Combo_QC", { txt = _L["Select gas skill"], w = 150, h = 25 })
 	:Pos(nX + 10, 56):Enable(HM_Force.bSelfTaiji):Menu(_HM_Force.GetQCMenu)
 	-- other
-	ui:Append("Text", { txt = _L["Others"], x = 0, y = 120, font = 27 })
+	ui:Append("Text", { txt = _L["Others"], x = 0, y = 92, font = 27 })
 	--nX = ui:Append("Text", { txt = _L["Commands to jump back, small dodge: "], x = 12, y = 120 }):Pos_()
 	--ui:Append("Text", { txt = "/" .. _L["JumpBack"] .. "   /" .. _L["SmallDodge"], x = nX, y = 120, font = 57 })
+	ui:Append("WndCheckBox", { txt = _L["Show draggable energy bar"], checked = HM_Force.bEngBar })
+	:Pos(10, 120):Click(function(bChecked)
+		HM_Force.bEngBar = bChecked
+		HM_EngBar.Switch(bChecked)
+	end)
 	ui:Append("WndCheckBox", { txt = _L["Auto swith actionbar page of horse states (for TC, bind to P.1/3)"], checked = HM_Force.bHorsePage })
 	:Pos(10, 148):Click(function(bChecked)
 		HM_Force.bHorsePage = bChecked
@@ -490,6 +496,7 @@ HM.RegisterEvent("SYNC_ROLE_DATA_END", function()
 	if HM_Force.bAlertWanted then
 		RegisterMsgMonitor(_HM_Force.OnMsgAnnounce, {"MSG_GM_ANNOUNCE"})
 	end
+	HM_EngBar.Switch(HM_Force.bEngBar)
 end)
 HM.RegisterEvent("PLAYER_STATE_UPDATE", function()
 	if arg0 == GetClientPlayer().dwID then
