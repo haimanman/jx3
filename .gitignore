@@ -1,6 +1,4 @@
 # ignore list
 dist
 VERSION
-lab/HM_Cast.lua
-lab/HM_Love.lua
 
