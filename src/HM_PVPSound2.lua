@@ -12,7 +12,7 @@ HM.RegisterCustomData("HM_PVPSound2")
 --[[
 local _, dwID = GetClientPlayer().GetTarget()
 --FireUIEvent("KILL_PLAYER_HIGHEST_TITLE", GetClientPlayer().dwID)
-FireUIEvent("SYS_MSG", "UI_OME_DEATH_NOTIFY",  dwID, 0, _L["HMM1"])
+FireUIEvent("SYS_MSG", "UI_OME_DEATH_NOTIFY",  dwID, 0, GetClientPlayer().szName)
 --]]
 
 ---------------------------------------------------------------------
@@ -20,7 +20,7 @@ FireUIEvent("SYS_MSG", "UI_OME_DEATH_NOTIFY",  dwID, 0, _L["HMM1"])
 ---------------------------------------------------------------------
 local _HM_PVPSound2 = {
 	nLastFrame = 0,
-	szSoundPath = "interface\\HM\\hero\\",
+	szSoundPath = "interface\\HM\\asset\\kill\\",
 	tNormal = {
 		-- male
 		[1] = {

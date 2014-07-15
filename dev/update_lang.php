@@ -3,7 +3,7 @@
 $lang = isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : 'zhcn';
 
 // load exists languages
-$lines = @file('lang/' . $lang . '.lua');
+$lines = @file('lang/' . $lang . '.jx3dat');
 if (!$lines)
 {
 	echo "Bad Lang: $lang\n";
