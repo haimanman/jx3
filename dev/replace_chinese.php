@@ -6,10 +6,10 @@ echo "begin to " . ($reverse ? "replace _L() code to raw chinese\n" : "replace c
 echo "  loading lang data ... ";
 
 // load replace data
-$lines = @file('lang/zhcn.lua');
+$lines = @file('lang/zhcn.jx3dat');
 if (!$lines)
 {
-	echo "failed to load zhcn.lua\n";
+	echo "failed to load zhcn.jx3dat\n";
 	exit(0);
 }
 $replace1 = $replace2 = array();

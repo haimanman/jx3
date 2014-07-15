@@ -63,7 +63,7 @@ _HM.OpenPanel = function(bDisableSound)
 		if HM_About and HM_About.bPlayOpen
 			and (not _HM.nPlayOpen or (GetLogicFrameCount() - _HM.nPlayOpen) > 57600)
 		then
-			PlaySound(SOUND.UI_SOUND, "interface\\HM\\ui\\opening.wav")
+			PlaySound(SOUND.UI_SOUND, "interface\\HM\\asset\\opening.wav")
 			_HM.nPlayOpen = GetLogicFrameCount()
 		else
 			PlaySound(SOUND.UI_SOUND, g_sound.OpenFrame)
@@ -1696,9 +1696,9 @@ _HM.UI.Frm = class(_HM.UI.Base)
 
 -- constructor
 function _HM.UI.Frm:ctor(szName, bEmpty)
-	local frm, szIniFile = nil, "interface\\HM\\ui\\WndFrame.ini"
+	local frm, szIniFile = nil, "interface\\HM\\asset\\ui\\WndFrame.ini"
 	if bEmpty then
-		szIniFile = "interface\\HM\\ui\\WndFrameEmpty.ini"
+		szIniFile = "interface\\HM\\asset\\ui\\WndFrameEmpty.ini"
 	end
 	if type(szName) == "string" then
 		frm = Station.Lookup("Normal/" .. szName)
@@ -1834,7 +1834,7 @@ function _HM.UI.Wnd:ctor(pFrame, szType, szName)
 		wnd, szType = pFrame, pFrame:GetType()
 	else
 		-- append from ini file
-		local szFile = "interface\\HM\\ui\\" .. szType .. ".ini"
+		local szFile = "interface\\HM\\asset\\ui\\" .. szType .. ".ini"
 		local frame = Wnd.OpenWindow(szFile, "HM_Virtual")
 		if not frame then
 			return HM.Sysmsg(_L("Unable to open ini file [%s]", szFile))
@@ -2254,7 +2254,7 @@ function _HM.UI.Item:ctor(pHandle, szType, szName)
 			if hnd then hnd:SetName(szName) end
 		else
 			-- append from ini
-			hnd = pHandle:AppendItemFromIni("interface\\HM\\ui\\HandleItems.ini","Handle_" .. szType, szName)
+			hnd = pHandle:AppendItemFromIni("interface\\HM\\asset\\ui\\HandleItems.ini","Handle_" .. szType, szName)
 		end
 		if not hnd then
 			return HM.Sysmsg(_L("Unable to append handle item [%s]", szType))
@@ -2571,7 +2571,7 @@ HM.UI = {}
 setmetatable(HM.UI, { __call = function(me, ...) return me.Fetch(...) end, __metatable = true })
 
 -- 开启一个空的对话窗体界面，并返回 HM.UI 封装对象
--- (class) HM.UI.OpenFrame([string szName, ]table tArg)
+-- (class) HM.UI.CreateFrame([string szName, ]table tArg)
 -- szName		-- *可选* 名称，若省略则自动编序号
 -- tArg {			-- *可选* 初始化配置参数，自动调用相应的封装方法，所有属性均可选
 --		w, h,			-- 宽和高，成对出现用于指定大小，注意宽度会自动被就近调节为：770/380/234，高度最小 200
@@ -2933,5 +2933,5 @@ HM.AppendPlayerMenu(function()
 end)
 
 -- Load skill extend data
-_HM.tSkillEx = LoadLUAData("interface\\HM\\hero\\skill_ex.dat") or {}
+_HM.tSkillEx = LoadLUAData("interface\\HM\\asset\\skill_ex.jx3dat") or {}
 HM.ParseFaceIcon = _HM.ParseFaceIcon
