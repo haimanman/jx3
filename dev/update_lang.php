@@ -3,7 +3,7 @@
 $lang = isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : 'zhcn';
 
 // load exists languages
-$lines = @file('lang/' . $lang . '.jx3dat');
+$lines = @file('HM_0Base/lang/' . $lang . '.jx3dat');
 if (!$lines)
 {
 	echo "Bad Lang: $lang\n";
@@ -35,7 +35,7 @@ foreach ($lines as $no => $line)
 }
 
 // load new data from lua files
-$files = array_merge(glob("src/*.lua"), glob("lab/*.lua"));
+$files = glob("HM_*/*.lua");
 foreach ($files as $file)
 {
 	$body = file_get_contents($file);
