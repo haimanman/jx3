@@ -23,18 +23,20 @@ HM_ToolBox = {
 	},
 	bBuyMore = true,		-- 买得更多
 	-- 自动确认
-	bIgnoreSell = true,		-- 卖蓝色装备免确认
+	--bIgnoreSell = true,		-- 卖蓝色装备免确认
 	--bIgnoreRaid = false,	-- 自动团队确认
 	bDurability = true,			-- 显示装备耐久度
-	bIgnoreTrade = false,	-- 自动交易确认 TradingInvite
-	bIgnoreHorse = false,	-- 自动双骑确认  OnInviteFollow
+	--bIgnoreTrade = false,	-- 自动交易确认 TradingInvite
+	--bIgnoreHorse = false,	-- 自动双骑确认  OnInviteFollow
 	bShiftAuction = true,	-- 按 shift 一键寄卖
 	bAutoStack = true,	-- 一键堆叠（背包+仓库）
 	bAutoDiamond = true,	-- 五行石精炼完成后自动再摆上次材料
 	bAnyDiamond = false,	-- 忽略五行石颜色，只考虑等级
 	bChatTime = true,		-- 聊天复制党
-	bNonwar = true,		-- 神行到非战乱地图
+	--bNonwar = true,		-- 神行到非战乱地图
 	bWhisperAt = true,	-- 记录点名聊天
+	bSplitter = true,	-- 分组拆分
+	bGuildBankSort = true,	-- 帮会仓库排序
 	nBroadType = 0,
 	szBroadText = "Hi, nihao",
 }
@@ -485,7 +487,11 @@ _HM_ToolBox.BindStackButton = function()
 	-- guild bank
 	local btn1 = Station.Lookup("Normal/GuildBankPanel/Btn_Refresh")
 	local btn2 = Station.Lookup("Normal/GuildBankPanel/Btn_Sort2")
-	if btn1 and not btn2 then
+	if not HM_ToolBox.bGuildBankSort then
+		if btn2 then
+			btn2:Destroy()
+		end
+	elseif btn1 and not btn2 then
 		local x, y = btn1:GetRelPos()
 		local w, h = btn1:GetSize()
 		btn2 = HM.UI("Normal/GuildBankPanel"):Append("WndButton", "Btn_Sort2", { txt = _L["Sort"], w = w, h = h }):Raw()
@@ -1124,19 +1130,19 @@ _HM_ToolBox.PS.OnPanelActive = function(frame)
 	:Click(function(bChecked)
 		HM_ToolBox.bBuyMore = bChecked
 	end)
-	-- auto confirm
-	ui:Append("Text", { txt = _L["Auto feature"], x = 0, y = 92, font = 27 })
+	--[[
 	nX = ui:Append("WndCheckBox", { txt = _L["Auto confirm for selling blue level item"], x = 10, y = 120, checked = HM_ToolBox.bIgnoreSell })
 	:Click(function(bChecked)
 		HM_ToolBox.bIgnoreSell = bChecked
 	end):Pos_()
-	--ui:Append("WndCheckBox", { txt = _L["Auto confirm for team ready"], x = nX + 10, y = 120, checked = HM_ToolBox.bIgnoreRaid })
-	--:Enable(false):Click(function(bChecked)
-	--	HM_ToolBox.bIgnoreRaid = bChecked
-	--end)
-	ui:Append("WndCheckBox", { txt = _L["Enable stack items by button"], x = nX + 10, y = 120, checked = HM_ToolBox.bAutoStack })
+	ui:Append("WndCheckBox", { txt = _L["Auto confirm for team ready"], x = nX + 10, y = 120, checked = HM_ToolBox.bIgnoreRaid })
+	:Enable(false):Click(function(bChecked)
+		HM_ToolBox.bIgnoreRaid = bChecked
+	end)
+	-- fly to non-war map
+	ui:Append("WndCheckBox", { txt = _L["Allow fly to non-war maps"], x = nX + 10, y = 232, checked = HM_ToolBox.bNonwar })
 	:Click(function(bChecked)
-		HM_ToolBox.bAutoStack = bChecked
+		HM_ToolBox.bNonwar = bChecked
 	end)
 	ui:Append("WndCheckBox", { txt = _L["Auto confirm for trade request"], x = 10, y = 148, checked = HM_ToolBox.bIgnoreTrade })
 	:Click(function(bChecked)
@@ -1146,45 +1152,59 @@ _HM_ToolBox.PS.OnPanelActive = function(frame)
 	:Click(function(bChecked)
 		HM_ToolBox.bIgnoreHorse = bChecked
 	end)
-	-- show equip durability
-	ui:Append("WndCheckBox", { txt = _L["Display equipment durability"], x = 10, y = 176, checked = HM_ToolBox.bDurability })
-	:Click(function(bChecked)
-		HM_ToolBox.bDurability = bChecked
-		_HM_ToolBox.UpdateDurability()
-	end)
+	--]]
+	-- auto confirm
+	ui:Append("Text", { txt = _L["Auto feature"], x = 0, y = 92, font = 27 })
 	-- shift-auction
-	ui:Append("WndCheckBox", { txt = _L["Press SHIFT fast auction sell"], x = nX + 10, y = 176, checked = HM_ToolBox.bShiftAuction })
+	ui:Append("WndCheckBox", { txt = _L["Press SHIFT fast auction sell"], x = 10, y = 120, checked = HM_ToolBox.bShiftAuction })
 	:Click(function(bChecked)
 		HM_ToolBox.bShiftAuction = bChecked
 	end)
+	-- auto stack
+	ui:Append("WndCheckBox", { txt = _L["Enable stack items by button"], x = nX + 10, y = 120, checked = HM_ToolBox.bAutoStack })
+	:Click(function(bChecked)
+		HM_ToolBox.bAutoStack = bChecked
+	end)
 	-- put diamond
-	ui:Append("WndCheckBox", { txt = _L["Produce diamond as last formula"], x = 10, y = 204, checked = HM_ToolBox.bAutoDiamond, font = 57 })
+	ui:Append("WndCheckBox", { txt = _L["Produce diamond as last formula"], x = 10, y = 148, checked = HM_ToolBox.bAutoDiamond, font = 57 })
 	:Click(function(bChecked)
 		HM_ToolBox.bAutoDiamond = bChecked
 		_HM_ToolBox.dFormula = nil
 		ui:Fetch("Check_Any"):Enable(bChecked)
 	end)
-	ui:Append("WndCheckBox", "Check_Any", { txt = _L["Only consider diamond level"], x = nX + 10, y = 204, checked = HM_ToolBox.bAnyDiamond, enable = HM_ToolBox.bAutoDiamond })
+	ui:Append("WndCheckBox", "Check_Any", { txt = _L["Only consider diamond level"], x = nX + 10, y = 148, checked = HM_ToolBox.bAnyDiamond, enable = HM_ToolBox.bAutoDiamond })
 	:Click(function(bChecked)
 		HM_ToolBox.bAnyDiamond = bChecked
 	end)
+	-- split item
+	ui:Append("WndCheckBox", { txt = _L["Enable to split bag item into groups"], x = 10, y = 176, checked = HM_ToolBox.bSplitter })
+	:Click(function(bChecked)
+		HM_ToolBox.bSplitter = bChecked
+		HM_Splitter.Switch(bChecked)
+	end)
+	-- guild bank sort
+	ui:Append("WndCheckBox", { txt = _L["Enable to guild bank item sort"], x = nX + 10, y = 176, checked = HM_ToolBox.bGuildBankSort })
+	:Click(function(bChecked)
+		HM_ToolBox.bGuildBankSort = bChecked
+	end)
 	-- chat copy
-	ui:Append("WndCheckBox", { txt = _L["Show time and support copy in chat panel"], x = 10, y = 232, checked = HM_ToolBox.bChatTime })
+	ui:Append("WndCheckBox", { txt = _L["Show time and support copy in chat panel"], x = 10, y = 204, checked = HM_ToolBox.bChatTime })
 	:Click(function(bChecked)
 		HM_ToolBox.bChatTime = bChecked
 		_HM_ToolBox.OnChatPanelInit()
 	end)
-	-- fly to non-war map
-	ui:Append("WndCheckBox", { txt = _L["Allow fly to non-war maps"], x = nX + 10, y = 232, checked = HM_ToolBox.bNonwar })
-	:Click(function(bChecked)
-		HM_ToolBox.bNonwar = bChecked
-	end)
-	-- record @
-	ui:Append("WndCheckBox", { txt = _L["Record @message into whisper panel"], x = nX + 10, y = 268, checked = HM_ToolBox.bWhisperAt })
+	-- record
+	ui:Append("WndCheckBox", { txt = _L["Record @message into whisper panel"], x = nX + 10, y = 204, checked = HM_ToolBox.bWhisperAt })
 	:Click(function(bChecked)
 		HM_ToolBox.bWhisperAt = bChecked
 	end)
-	-- ["Enable to split bag item into groups"]
+	-- show equip durability
+	ui:Append("WndCheckBox", { txt = _L["Display equipment durability"], x = 10, y = 232, checked = HM_ToolBox.bDurability })
+	:Click(function(bChecked)
+		HM_ToolBox.bDurability = bChecked
+		_HM_ToolBox.UpdateDurability()
+	end)
+	-- 
 	-- tong broadcast
 	ui:Append("Text", { txt = _L["Group whisper oline (Guild perm required)"], x = 0, y = 268, font = 27 })
 	ui:Append("WndEdit", "Edit_Msg", { x = 10, y = 296, limit = 1024, multi = true, h = 50, w = 480, txt = HM_ToolBox.szBroadText })
@@ -1232,6 +1252,9 @@ end)
 HM.RegisterEvent("CHAT_PANEL_INIT", function()
 	_HM_ToolBox.PS.OnConflictCheck()
 	_HM_ToolBox.OnChatPanelInit()
+end)
+HM.RegisterEvent("FIRST_LOADING_END", function()
+	HM_Splitter.Switch(HM_ToolBox.bSplitter)
 end)
 -- 记录点名聊天
 RegisterMsgMonitor(_HM_ToolBox.OnRecordWhisperAt, {
