@@ -5,10 +5,8 @@
 HM_Locker = {
 	bLockLeave = true,	-- 锁定脱离再回归视线的目标
 	bLockFight = true,	-- 战斗中点地面不丢目标
-	bLockTiger = true,	-- 虎跑时锁定目标
 	bWhisperSel = true,	-- 密聊快速选择，密聊：11 速度选择此人（若在身边）
 	tSearchTarget = { OnlyPlayer = false, OnlyNearDis = true, MidAxisFirst = false, Weakness = false },
-	bLockScoff = true,	-- 自动还原目标
 }
 HM.RegisterCustomData("HM_Locker")
 
@@ -80,37 +78,6 @@ _HM_Locker.CheckLockFight = function(dwCurID, dwLastID)
 				return true
 			end
 		end
-	end
-end
-
--- check lock tiger run
-_HM_Locker.CheckLockTiger = function(dwCurID, dwLastID)
-	local nFrame = GetLogicFrameCount() - _HM_Locker.nTigerFrame
-	if nFrame >= 0 and nFrame< 16 then
-		local tar = HM.GetTarget(dwLastID)
-		if tar and HM.GetDistance(tar) < 15 then
-			--_HM_Locker.Sysmsg(_L["Keep attack target in HUPAO loops"])
-			_HM_Locker.Debug("keep attack taret in hupao loops")
-			return true
-		end
-	end
-end
-
--- check lock scoff
-_HM_Locker.CheckLockScoff = function(dwCurID, dwLastID)
-	local nFrame = GetLogicFrameCount() - _HM_Locker.nScoffFrame
-	if HM_Locker.bLockScoff and nFrame >= 0 and nFrame < 16 and _HM_Locker.dwScoffer == dwCurID then
-		_HM_Locker.Debug("ignore changing target for scoff skill hit")
-		return true
-	end
-end
-
--- check lock scoff2
-_HM_Locker.CheckLockScoff2 = function(dwCurID, dwLastID)
-	local nFrame = GetLogicFrameCount() - _HM_Locker.nScoffFrame2
-	if HM_Locker.bLockScoff and nFrame >= 0 and nFrame < 16 and _HM_Locker.dwScoffer2 == dwCurID then
-		_HM_Locker.Debug("ignore changing target for scoff buff")
-		return true
 	end
 end
 
@@ -190,17 +157,6 @@ _HM_Locker.OnEnter = function()
 	end
 end
 
--- cast tigger switch
-_HM_Locker.OnSkillCast = function()
-	if HM_Locker.bLockTiger and arg0 == GetClientPlayer().dwID then
-		if arg1 == 1592 then
-			_HM_Locker.nTigerFrame = GetLogicFrameCount()
-		elseif arg1 == 1589 then
-			_HM_Locker.Sysmsg(_L["Keep attack target in HUPAO loops"])
-		end
-	end
-end
-
 -- player talk to quick select target
 -- arg0：dwTalkerID，arg1：nChannel，arg2：bEcho，arg3：szName
 _HM_Locker.OnPlayerTalk = function()
@@ -224,59 +180,8 @@ _HM_Locker.OnPlayerTalk = function()
 	end
 end
 
--- buff update：
--- arg0：dwPlayerID，arg1：bDelete，arg2：nIndex，arg3：bCanCancel
--- arg4：dwBuffID，arg5：nStackNum，arg6：nEndFrame，arg7：？update all?
--- arg8：nLevel，arg9：dwSkillSrcID
--- 512=定军，761=众佛，1488=执迷，1729=风吹荷，2503=蟾躁，
--- 2707=归去来棍，4059=极乐，4198=慈悲，4147=朝圣，4486=极乐
--- 5645=强制，5753=贪魔体
-_HM_Locker.OnBuffUpdate = function()
-	local me = GetClientPlayer()
-	if arg0 == me.dwID and not arg1 and
-		(arg4 == 512 or arg4 == 761 or arg4 == 1488 or arg4 == 1729 or arg4 == 2503
-			or arg4 == 5645 or arg4 == 5753
-			or arg4 == 2707 or arg4 == 4059 or arg4 == 4198 or arg4 == 4147 or arg4 == 4486)
-	then
-		local _, tarID = me.GetTarget()
-		_HM_Locker.Debug("get scoff buff [" .. HM.GetBuffName(arg4) .. "#" .. arg4 .. "]")
-		if tarID == arg9 then
-			_HM_Locker.SetPrevTarget()
-		end
-		_HM_Locker.dwScoffer2 = arg9
-		_HM_Locker.nScoffFrame2 = GetLogicFrameCount()
-	end
-end
-
--- cast tigger switch --
--- 1665=风吹荷，402=定军，234=万佛朝宗，236=摩诃无量，
--- 2476=蟾躁，2589=归去来棍，3982=慈悲愿，3985=朝圣言，3971=极乐引
--- 6719=贪魔体，5692=沧月，5919=摩诃/执迷不返，5976=镇魔极道，5990=知我罪我
--- 6009=极乐普渡，6518=守如山嘲讽，6719=伐魔忏罪
-_HM_Locker.OnSkillHit = function(dwCaster, dwTarget, dwID, dwLevel)
-	if HM_Locker.bLockScoff and dwTarget == GetClientPlayer().dwID then
-		if dwID == 234 or dwID == 236 or dwID == 402 or dwID == 1665
-			or dwID == 6719 or dwID == 5692 or dwID == 5919 or dwID == 5976 or dwID == 5990
-			or dwID == 6009 or dwID == 6518 or dwID == 6719
-			or dwID == 2476 or dwID == 2589 or dwID == 3982 or dwID == 3985 or dwID == 3971
-		then
-			local _, tarID = GetClientPlayer().GetTarget()
-			_HM_Locker.Debug("be hit scoff skill [" .. HM.GetSkillName(dwID) .. "#" .. dwID .. "]")
-			if tarID == dwCaster then
-				-- FIXME：JJC 可能会因为检测读条导致目标切换不正常
-				_HM_Locker.SetPrevTarget()
-			end
-			_HM_Locker.dwScoffer = dwCaster
-			_HM_Locker.nScoffFrame = GetLogicFrameCount()
-		end
-	end
-end
-
 -- register locker
 _HM_Locker.AddLocker(_HM_Locker.CheckLockFight)
-_HM_Locker.AddLocker(_HM_Locker.CheckLockTiger)
-_HM_Locker.AddLocker(_HM_Locker.CheckLockScoff)
-_HM_Locker.AddLocker(_HM_Locker.CheckLockScoff2)
 
 -------------------------------------
 -- 设置界面
@@ -302,43 +207,33 @@ _HM_Locker.PS.OnPanelActive = function(frame)
 	:Text(_L["Keep current attack/heal target in fighting when click ground"]):Click(function(bChecked)
 		HM_Locker.bLockFight = bChecked
 	end)
-	ui:Append("WndCheckBox", { x = 10, y = 84, checked = HM_Locker.bLockTiger })
-	:Text(_L["Lock attack target when use HUPAO skill"]):Click(function(bChecked)
-		HM_Locker.bLockTiger = bChecked
-	end)
 	-- tab enhance
 	local bNew, tOption = not SearchTarget_IsOldVerion(), HM_Locker.tSearchTarget
-	ui:Append("Text", { txt = _L["TAB enhancement (must enable new target policy)"], x = 0, y = 120, font = 27 })
-	_HM_Locker.OnlyPlayerBox = ui:Append("WndCheckBox", { x = 10, y = 148, enable = bNew, checked = tOption.OnlyPlayer })
+	ui:Append("Text", { txt = _L["TAB enhancement (must enable new target policy)"], x = 0, y = 92, font = 27 })
+	_HM_Locker.OnlyPlayerBox = ui:Append("WndCheckBox", { x = 10, y = 120, enable = bNew, checked = tOption.OnlyPlayer })
 	nX = _HM_Locker.OnlyPlayerBox:Text(_L["Player only (not NPC, "]):Click(_HM_Locker.SearchOnlyPlayer):Pos_()
-	nX = ui:Append("Text", { x = nX, y = 148, txt = _L["Hotkey"] }):Click(HM.SetHotKey):Pos_()
-	ui:Append("Text", { x = nX , y = 148, txt = HM.GetHotKey("OnlyPlayer") .._L[") "] })
-	nX = ui:Append("WndRadioBox", { x = 10, y = 176, checked = tOption.Weakness, group = "tab" })
+	nX = ui:Append("Text", { x = nX, y = 120, txt = _L["Hotkey"] }):Click(HM.SetHotKey):Pos_()
+	ui:Append("Text", { x = nX , y = 120, txt = HM.GetHotKey("OnlyPlayer") .._L[") "] })
+	nX = ui:Append("WndRadioBox", { x = 10, y = 148, checked = tOption.Weakness, group = "tab" })
 	:Text(_L["Priority less HP"]):Enable(bNew):Click(function(bChecked)
 		tOption.Weakness = bChecked
 		_HM_Locker.UpdateSearchTarget()
 	end):Pos_()
-	nX = ui:Append("WndRadioBox", { x = nX + 20, y = 176, checked = tOption.OnlyNearDis, group = "tab" })
+	nX = ui:Append("WndRadioBox", { x = nX + 20, y = 148, checked = tOption.OnlyNearDis, group = "tab" })
 	:Text(_L["Priority closer"]):Enable(bNew):Click(function(bChecked)
 		tOption.OnlyNearDis = bChecked
 		_HM_Locker.UpdateSearchTarget()
 	end):Pos_()
-	nX = ui:Append("WndRadioBox", { x = nX + 20, y = 176, checked = tOption.MidAxisFirst, group = "tab" })
+	nX = ui:Append("WndRadioBox", { x = nX + 20, y = 148, checked = tOption.MidAxisFirst, group = "tab" })
 	:Text(_L["Priority less face angle"]):Enable(bNew):Click(function(bChecked)
 		tOption.MidAxisFirst = bChecked
 		_HM_Locker.UpdateSearchTarget()
 	end):Pos_()
 	-- whisper select
-	ui:Append("Text", { txt = _L["Select target by whisper"], x = 0, y = 212, font = 27 })
-	ui:Append("WndCheckBox", { x = 10, y = 240, checked = HM_Locker.bWhisperSel })
+	ui:Append("Text", { txt = _L["Select target by whisper"], x = 0, y = 184, font = 27 })
+	ui:Append("WndCheckBox", { x = 10, y = 212, checked = HM_Locker.bWhisperSel })
 	:Text(_L["Select as target when you send 11 to around player"]):Click(function(bChecked)
 		HM_Locker.bWhisperSel = bChecked
-	end)
-	-- scoff
-	ui:Append("Text", { txt = _L["Restore target"], x = 0, y = 276, font = 27 })
-	nX = ui:Append("WndCheckBox", { x = 10, y = 304, checked = HM_Locker.bLockScoff })
-	:Text(_L["Auto restore target (hit by some special skills)"]):Click(function(bChecked)
-		HM_Locker.bLockScoff = bChecked
 	end)
 end
 
@@ -360,19 +255,13 @@ HM.RegisterEvent("NPC_LEAVE_SCENE", _HM_Locker.OnLeave)
 HM.RegisterEvent("PLAYER_LEAVE_SCENE", _HM_Locker.OnLeave)
 HM.RegisterEvent("NPC_ENTER_SCENE", _HM_Locker.OnEnter)
 HM.RegisterEvent("PLAYER_ENTER_SCENE", _HM_Locker.OnEnter)
-HM.RegisterEvent("DO_SKILL_CAST", _HM_Locker.OnSkillCast)
 HM.RegisterEvent("PLAYER_TALK", _HM_Locker.OnPlayerTalk)
---HM.RegisterEvent("BUFF_UPDATE", _HM_Locker.OnBuffUpdate)
-HM.RegisterEvent("SYS_MSG", function()
-	if arg0 == "UI_OME_SKILL_HIT_LOG" and arg3 == SKILL_EFFECT_TYPE.SKILL then
-		_HM_Locker.OnSkillHit(arg1, arg2, arg4, arg5)
-	elseif arg0 == "UI_OME_SKILL_EFFECT_LOG" and arg4 == SKILL_EFFECT_TYPE.SKILL then
-		_HM_Locker.OnSkillHit(arg1, arg2, arg5, arg6)
-	end
-end)
 
 -- add to HM panel
 HM.RegisterPanel(_L["Lock/Select"], 3353, _L["Target"], _HM_Locker.PS)
 
 -- hotkey
 HM.AddHotKey("OnlyPlayer", _L["TAB player only"],  _HM_Locker.SearchOnlyPlayer)
+
+-- public api
+HM_Locker.AddLocker = _HM_Locker.AddLocker
