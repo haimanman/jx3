@@ -610,8 +610,12 @@ _HM_Camp.OnNpcLeave = function()
 	if HM_Camp.bForgetGoods and HM.HasBuff(7732) then
 		local npc = GetNpc(arg0)
 		if npc and npc.szName == Table_GetNpcTemplateName(36039) and _HM_Camp.GetGoodsNum() < 100 then
-			OutputWarningMessage("MSG_WARNING_GREEN", _L["Please buy full goods for trade quest"])
-			PlaySound(SOUND.UI_SOUND, g_sound.CloseAuction)
+			local fnW = function()
+				OutputWarningMessage("MSG_WARNING_GREEN", _L["Please buy full goods for trade quest"])
+				PlaySound(SOUND.UI_SOUND, g_sound.CloseAuction)
+			end
+			fnW()
+			HM.DelayCall(2000, fW)
 		end
 	end
 end
@@ -714,6 +718,15 @@ HM.AddHotKey("TargetGF", _L["Auto camp target"],  _HM_Camp.TargetGF)
 HM.AddHotKey("HideGF", _L["Super shield"],  _HM_Camp.HideGF)
 AppendCommand(_L["CampTarget"], _HM_Camp.TargetGF)
 AppendCommand(_L["CampShield"], function() _HM_Camp.HideGF() end)
+
+-- tracebutton menu
+TraceButton_AppendAddonMenu({ function()
+	return {{
+		szOption = _L["Super shield"], bCheck = true,
+		bChecked = HM_Camp.bHideEnable,
+		fnAction =  _HM_Camp.HideGF
+	}}
+end })
 
 -- breathe
 HM.BreatheCall("HM_Camp", _HM_Camp.OnBreathe)
