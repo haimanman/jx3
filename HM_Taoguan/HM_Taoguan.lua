@@ -334,7 +334,7 @@ HM.RegisterEvent("HELP_EVENT", function()
 	end
 end)
 AppendCommand(_HM_Taoguan.szName, _HM_Taoguan.Switch)
+HM.AddHotKey("Taoguan", "开/关砸年兽陶罐", _HM_Taoguan.Switch)
 
 -- add to HM collector
 HM.RegisterPanel(_HM_Taoguan.szName .. "助手", 119, _L["Others"], _HM_Taoguan.PS)
-
