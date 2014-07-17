@@ -1184,6 +1184,7 @@ _HM_ToolBox.PS.OnPanelActive = function(frame)
 	:Click(function(bChecked)
 		HM_ToolBox.bWhisperAt = bChecked
 	end)
+	-- ["Enable to split bag item into groups"]
 	-- tong broadcast
 	ui:Append("Text", { txt = _L["Group whisper oline (Guild perm required)"], x = 0, y = 268, font = 27 })
 	ui:Append("WndEdit", "Edit_Msg", { x = 10, y = 296, limit = 1024, multi = true, h = 50, w = 480, txt = HM_ToolBox.szBroadText })
