@@ -673,7 +673,7 @@ end
 _HM_Camp.PS.OnPlayerMenu = function()
 	return {
 		szOption = _L["Enable super shield"] .. HM.GetHotKey("HideGF", true),
-		bCheck = true, bChecked = HM_Camp.bHideEnable, fnAction = _HM_Camp.HideGF
+		bCheck = true, bChecked = HM_Camp.bHideEnable, fnAction = function() _HM_Camp.HideGF() end
 	}
 end
 
@@ -724,7 +724,7 @@ TraceButton_AppendAddonMenu({ function()
 	return {{
 		szOption = _L["Super shield"], bCheck = true,
 		bChecked = HM_Camp.bHideEnable,
-		fnAction =  _HM_Camp.HideGF
+		fnAction = function() _HM_Camp.HideGF() end
 	}}
 end })
 

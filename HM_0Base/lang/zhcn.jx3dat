@@ -636,6 +636,7 @@ data = {
 	["HM Focus, TargetList"] = "海鳗焦点、目标列表",
 	["Arean ongoing: "] = "竞技场进行中：",
 	["Display the latest focus alone"] = "独立显示最新焦点",
+	["Show buff/cd of single focus"] = "显示独立焦点 BUFF/CD",
 	["List: live/total num"] = "列表：活人/总数",
 	["Click to show nearby player statistics"] = "点击可发布列表人数统计",
 	["HM, focus alone"] = "海鳗独立焦点",

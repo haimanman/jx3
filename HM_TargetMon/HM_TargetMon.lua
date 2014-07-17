@@ -1078,3 +1078,5 @@ HM.RegisterPanel(_L["Target BUFF/CD"], 332, _L["Target"], _HM_TargetMon.PS)
 HM_TargetMon.GetBuffExType = _HM_TargetMon.GetBuffExType
 HM_TargetMon.GetBuffExList = _HM_TargetMon.GetBuffExList
 HM_TargetMon.UpdateFrames = _HM_TargetMon.UpdateFrames
+HM_TargetMon.GetLeftTime  = _HM_TargetMon.GetLeftTime
+HM_TargetMon.GetPlayerCD = function(dwPlayer) return _HM_TargetMon.tCD[dwPlayer] or {} end

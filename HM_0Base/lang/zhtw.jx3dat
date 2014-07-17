@@ -636,6 +636,7 @@ data = {
 	["HM Focus, TargetList"] = "海鰻焦點、目標列表",
 	["Arean ongoing: "] = "競技場進行中：",
 	["Display the latest focus alone"] = "獨立顯示最新焦點",
+	["Show buff/cd of single focus"] = "顯示獨立焦點 BUFF/CD",
 	["List: live/total num"] = "列表：活人/總數",
 	["Click to show nearby player statistics"] = "點擊可發布列表人數統計",
 	["HM, focus alone"] = "海鰻獨立焦點",
