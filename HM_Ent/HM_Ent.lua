@@ -3,7 +3,7 @@
 --
 
 HM_Ent = {
-	bAutoChat = false,	-- 直接发布聊天
+	bAutoChat = true,	-- 直接发布聊天
 }
 HM.RegisterCustomData("HM_Ent")
 
