@@ -25,7 +25,7 @@ clean-check:
 
 sync-page:
 	git co gh-pages
-	git co master -- LICENSE.txt MACRO.txt
+	git co master -- LICENSE.txt
 	$(PHP) update_version.php
 	$(PHP) update_sync_file.php
 	git ci -a -m "Update gh-pages to "`cat VERSION`
@@ -40,7 +40,6 @@ lang: HM_0Base/lang/zhtw.jx3dat
 
 sync:
 	git push --tags
-#	$(PHP) dev/upload_github.php
 	$(MAKE) sync-page
 
 HM_0Base/lang/zhtw.jx3dat: HM_0Base/lang/zhcn.jx3dat
@@ -50,10 +49,7 @@ HM_0Base/lang/zhtw.jx3dat: HM_0Base/lang/zhcn.jx3dat
 
 dist-zip:
 	git archive --prefix HM/ HEAD | tar -x
-	cp -f src/HM.lua HM/src/HM.lua
-	cp -f info.ini HM/info.ini
-	luac -s -o HM/lab/HM_Cast.lua lab/HM_Cast.lua
-	luac -s -o HM/lab/HM_Love.lua lab/HM_Love.lua
+	cp -f HM_0Base/HM.lua HM/HM_0Base/HM.lua
 	zip -qrm9 dist/HM-`cat VERSION`.zip HM
 
 src-bak:
@@ -73,12 +69,12 @@ hotfix: clean-check
 	ssh jx3.hm unzip -qq -o -d $(JX3_HM_DIR)/sync $(JX3_HM_DIR)/down/HM-`cat VERSION`.zip
 
 alpha: clean-check
-	$(PHP) dev/pre_release.php alpha
+	$(PHP) dev/pre_release.php alpha $(VERSION)
 	$(MAKE) dist-zip
 	git reset --hard HEAD
 
 beta: clean-check
-	$(PHP) dev/pre_release.php beta
+	$(PHP) dev/pre_release.php beta $(VERSION)
 	$(MAKE) archive
 	$(MAKE) sync
 
