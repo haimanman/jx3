@@ -424,9 +424,14 @@ end
 -- init panel
 _HM_Team.PS.OnPanelActive = function(frame)
 	local ui, nX, nY = HM.UI(frame), 0, 0
-	--_HM_Team.PS.OnMarkerActive(frame)
-	--_, nY = ui:CPos_()
-	--nY = nY + 18
+	_HM_Team.PS.OnMarkerActive(frame)
+	_, nY = ui:CPos_()
+	nY = nY + 24
+	-- marker/select
+	nX = ui:Append("WndCheckBox", { txt = _L["Show marked select panel"], checked = HM_Marker.bShow, x = 10, y = nY }):Click(HM_Marker.SwitchPanel):Pos_()
+	nX = ui:Append("WndButton", { txt = _L["Check plug"], x = nX + 10, y = nY }):Click(HM_Marker.Check):Pos_()
+	ui:Append("Text", { txt = _L[" (Check teammates whether to install the plug-in)"], x = nX, y = nY, font = 161 })
+	nY = nY + 36
 	-- team save/restore
 	ui:Append("Text", { txt = _L["Save/Restore team"], x = 0, y = nY, font = 27 })
 	nX = ui:Append("WndButton", { x = 10, y = nY + 30 })
@@ -452,6 +457,7 @@ end
 -- player menu
 _HM_Team.PS.OnPlayerMenu = function()
 	return {
+		{ szOption = _L["Show marked select panel"], bCheck = true, bChecked = HM_Marker.bShow, fnAction = HM_Marker.SwitchPanel },
 		{ szOption = _L["Save/Restore team"] .. HM.GetHotKey("TeamSave", true), fnAction = _HM_Team.Apply },
 		{ szOption = _L["Quickly mark players"] .. HM.GetHotKey("TeamMark", true), fnAction = _HM_Team.Mark },
 	}
@@ -463,7 +469,7 @@ end
 HM.RegisterEvent("ON_BG_CHANNEL_MSG", _HM_Team.OnAskLeader)
 
 -- add to HM collector
-HM.RegisterPanel(_L["Team save/res"], 2147, _L["Battle"], _HM_Team.PS)
+HM.RegisterPanel(_L["Team save/marker"], 2147, nil, _HM_Team.PS)
 
 -- hotkey
 HM.AddHotKey("TeamSave", _L["Save/Restore team"],  _HM_Team.Apply)
