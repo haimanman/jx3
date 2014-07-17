@@ -28,7 +28,8 @@ _HM_Splitter.DoSplit = function(frame)
 				if not me.GetItem(i, j) then
 					me.ExchangeItem(box.dwBox, box.dwX, i, j, nNum)
 					box.nStackNum = box.nStackNum - nNum
-					if box.nStackNum <= nNum then
+					nGroup = nGroup - 1
+					if box.nStackNum <= nNum or nGroup == 0 then
 						return
 					end
 				end
