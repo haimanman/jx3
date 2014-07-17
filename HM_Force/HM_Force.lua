@@ -156,10 +156,10 @@ end
 
 -- on wanted msg
 _HM_Force.OnMsgAnnounce = function(szMsg)
-    local _, _, sM, sN = string.find(szMsg, "现有人愿付(%d+)金，对(.-)进行悬赏")
+    local _, _, sM, sN = string.find(szMsg, _L["Now somebody pay (%d+) gold to buy life of (.-)"])
 	if sM and sN == GetClientPlayer().szName then
 		local fW = function()
-			OutputWarningMessage("MSG_WARNING_RED", "恭喜你被悬赏 [" .. sM .. "]，肥水自己喝啊！！")
+			OutputWarningMessage("MSG_WARNING_RED", _L("Congratulations, you offered a reward [%s] gold!", sM))
 			PlaySound(SOUND.UI_SOUND, g_sound.CloseAuction)
         end
         SceneObject_SetTitleEffect(TARGET.PLAYER, GetClientPlayer().dwID, 47)
