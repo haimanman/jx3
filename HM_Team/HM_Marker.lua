@@ -22,7 +22,7 @@ local _HM_Marker = {
 }
 
 -- super jihuo trigger
-_HM_Marker.TriggerEx = { [_L["HMM1"]] = true, [_L["HMM2"]] = true, [_L["HMM3"]] = true, [_L["HMM4"]] = true, [_L["HMM5"]] = true, }
+_HM_Marker.TriggerEx = { [_L["HMM1"]] = true, [_L["HMM5"]] = true, }
 
 -- sysmsg
 _HM_Marker.Sysmsg = function(szMsg)
