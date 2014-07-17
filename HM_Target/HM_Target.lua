@@ -25,7 +25,6 @@ HM_Target = {
 	nSizeBuff = 35,					-- 目标 BUFF 新尺寸
 	nSizeTTBuff = 30,				-- 目标的目标 BUFF 大小
 	bNoSpark = true,				-- 取消 BUFF 闪烁
-	bSubDebuff = false,			-- 屏蔽相同的 DEBUFF
 }
 HM.RegisterCustomData("HM_Target")
 
@@ -1021,7 +1020,6 @@ _HM_Target.PS.OnPanelActive = function(frame)
 		ui:Fetch("Combo_Size1"):Enable(bChecked)
 		ui:Fetch("Combo_Size2"):Enable(bChecked)
 		ui:Fetch("Check_Spark"):Enable(bChecked)
-		ui:Fetch("Check_SubDebuff"):Enable(bChecked)
 		_HM_Target.RefreshBuff()
 	end):Pos_()
 	nX = ui:Append("WndComboBox", "Combo_Size1", { x = nX, y = 56, w = 60, h = 25 })
@@ -1049,52 +1047,48 @@ _HM_Target.PS.OnPanelActive = function(frame)
 		end
 		return m0
 	end):Pos_()
-	ui:Append("WndCheckBox", "Check_Spark", { x = nX + 5, y = 56, checked = HM_Target.bNoSpark })
+	ui:Append("WndCheckBox", "Check_Spark", { x = nX2 + 5, y = 56, checked = HM_Target.bNoSpark })
 	:Text(_L["Disable sparking"]):Click(function(bChecked)
 		HM_Target.bNoSpark= bChecked
 	end)
-	ui:Append("WndCheckBox", "Check_SubDebuff", { x = 10, y = 84, checked = HM_Target.bSubDebuff })
-	:Enable(false):Text(_L["Simplify NPC debuff, hide redundant"]):Click(function(bChecked)
-		HM_Target.bSubDebuff = bChecked
-	end)
 	-- line
-	ui:Append("Text", { txt = _L["Target connect line"], x = 0, y = 120, font = 27 })
-	nX = ui:Append("WndCheckBox", { x = 10, y = 148, checked = HM_Target.bConnect })
+	ui:Append("Text", { txt = _L["Target connect line"], x = 0, y = 92, font = 27 })
+	nX = ui:Append("WndCheckBox", { x = 10, y = 120, checked = HM_Target.bConnect })
 	:Text(_L["Draw line from target to you"]):Click(function(bChecked)
 		HM_Target.bConnect = bChecked
 		_HM_Target.OnUpdateConnLine()
 		ui:Fetch("Combo_Conn"):Enable(bChecked)
 		ui:Fetch("Check_Foot"):Enable(bChecked)
 	end):Pos_()
-	ui:Append("WndCheckBox", { x = nX + 20, y = 148, checked = HM_Target.bTTConnect })
+	ui:Append("WndCheckBox", { x = nX + 20, y = 120, checked = HM_Target.bTTConnect })
 	:Text(_L["Draw line from target to target target"]):Click(function(bChecked)
 		HM_Target.bTTConnect = bChecked
 		_HM_Target.OnUpdateConnLine()
 	end)
-	ui:Append("WndComboBox", "Combo_Conn", { x = 14, y = 178, txt = _L["Line setting"] })
+	ui:Append("WndComboBox", "Combo_Conn", { x = 14, y = 150, txt = _L["Line setting"] })
 	:Menu(_HM_Target.GetConnMenu)
-	ui:Append("WndCheckBox", "Check_Foot", { x = nX + 20, y = 178, checked = HM_Target.bConnFoot })
+	ui:Append("WndCheckBox", "Check_Foot", { x = nX + 20, y = 150, checked = HM_Target.bConnFoot })
 	:Text(_L["Show line on foot"]):Click(function(bChecked)
 		HM_Target.bConnFoot = bChecked
 		_HM_Target.OnUpdateConnLine()
 	end)
 	-- action bar
-	ui:Append("Text", { txt = _L["Prepared skill enhancement"], x = 0, y = 214, font = 27 })
-	ui:Append("WndCheckBox", { x = 10, y = 242, checked = HM_Target.bEnableChannel })
+	ui:Append("Text", { txt = _L["Prepared skill enhancement"], x = 0, y = 186, font = 27 })
+	ui:Append("WndCheckBox", { x = 10, y = 214, checked = HM_Target.bEnableChannel })
 	:Text(_L["Show channel skill of target/target target"]):Click(function(bChecked)
 		HM_Target.bEnableChannel = bChecked
 	end)
-	ui:Append("WndCheckBox", { x = 10, y = 270, checked = HM_Target.bEnableBreak })
+	ui:Append("WndCheckBox", { x = 10, y = 242, checked = HM_Target.bEnableBreak })
 	:Text(_L["Show non-broken as gray text"]):Click(function(bChecked)
 		HM_Target.bEnableBreak = bChecked
 	end)
-	ui:Append("WndCheckBox", { x = nX + 30, y = 270, checked = HM_Target.bAdjustBar })
+	ui:Append("WndCheckBox", { x = nX + 30, y = 242, checked = HM_Target.bAdjustBar })
 	:Text(_L["Adjust preparing bar to above of buff"]):Click(function(bChecked)
 		HM_Target.bAdjustBar = bChecked
 	end)
 	-- target dir
-	ui:Append("Text", { txt = _L["Target direction (adjust position by SHIFT-U)"], x = 0, y = 306, font = 27 })
-	nX = ui:Append("WndCheckBox", { x = 10, y = 334, checked = HM_Target.bDirection })
+	ui:Append("Text", { txt = _L["Target direction (adjust position by SHIFT-U)"], x = 0, y = 284, font = 27 })
+	nX = ui:Append("WndCheckBox", { x = 10, y = 312, checked = HM_Target.bDirection })
 	:Text(_L["Show direction"]):Click(function(bChecked)
 		HM_Target.bDirection = bChecked
 		ui:Fetch("Check_DirDist"):Enable(bChecked)
@@ -1103,19 +1097,19 @@ _HM_Target.PS.OnPanelActive = function(frame)
 		ui:Fetch("Check_DirLarge"):Enable(bChecked)
 		_HM_Target.UpdateDir()
 	end):Pos_()
-	nX = ui:Append("WndCheckBox", "Check_DirText", { x = nX + 10, y = 334, checked = HM_Target.bDirText })
+	nX = ui:Append("WndCheckBox", "Check_DirText", { x = nX + 10, y = 312, checked = HM_Target.bDirText })
 	:Text(_L["Status"]):Enable(HM_Target.bDirection):Click(function(bChecked)
 		HM_Target.bDirText = bChecked
 	end):Pos_()
-	nX = ui:Append("WndCheckBox", "Check_DirDist", { x = nX + 10, y = 334, checked = HM_Target.bDirDist })
+	nX = ui:Append("WndCheckBox", "Check_DirDist", { x = nX + 10, y = 312, checked = HM_Target.bDirDist })
 	:Text(_L["Distance"]):Enable(HM_Target.bDirection):Click(function(bChecked)
 		HM_Target.bDirDist = bChecked
 	end):Pos_()
-	nX = ui:Append("WndCheckBox", "Check_DirBuff", { x = nX + 10, y = 334, checked = HM_Target.bDirBuff })
+	nX = ui:Append("WndCheckBox", "Check_DirBuff", { x = nX + 10, y = 312, checked = HM_Target.bDirBuff })
 	:Text("BUFF"):Enable(HM_Target.bDirection and HM_TargetMon ~= nil):Click(function(bChecked)
 		HM_Target.bDirBuff = bChecked
 	end):Pos_()
-	ui:Append("WndCheckBox", "Check_DirLarge", { x = nX + 10, y = 334, checked = HM_Target.bDirLarge })
+	ui:Append("WndCheckBox", "Check_DirLarge", { x = nX + 10, y = 312, checked = HM_Target.bDirLarge })
 	:Text(_L["Larger icon"]):Enable(HM_Target.bDirection):Click(function(bChecked)
 		HM_Target.bDirLarge = bChecked
 		HM_TargetDir.AdjustSize()
