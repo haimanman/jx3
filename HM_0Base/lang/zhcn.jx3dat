@@ -771,6 +771,10 @@ data = {
 	["Allow fly to non-war maps"] = "允许神行到非战乱地图",
 	["Record @message into whisper panel"] = "记录被点名的聊天到密聊专栏",
 	["Sort"] = "整理",
+	["Enable to split bag item into groups"] = "启用分组拆分背包物品",
+	-- src/HM_Splitter.lua --
+	["Group num: "] = "拆分组数：",
+	["Stack num: "] = "每组个数：",
 	-- src/HM_Marker.lua --
 	[" feet"] = " 尺",
 	-- src/HM_TargetFace.lua --
