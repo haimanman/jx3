@@ -716,8 +716,6 @@ HM.RegisterPanel(_L["Camp helper"], 444, _L["Battle"], _HM_Camp.PS)
 -- hotkey
 HM.AddHotKey("TargetGF", _L["Auto camp target"],  _HM_Camp.TargetGF)
 HM.AddHotKey("HideGF", _L["Super shield"],  _HM_Camp.HideGF)
-AppendCommand(_L["CampTarget"], _HM_Camp.TargetGF)
-AppendCommand(_L["CampShield"], function() _HM_Camp.HideGF() end)
 
 -- tracebutton menu
 TraceButton_AppendAddonMenu({ function()

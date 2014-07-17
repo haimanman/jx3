@@ -31,7 +31,6 @@ end
 -------------------------------------
 -- 特殊名字处理
 -------------------------------------
-
 -- Base Url
 _HM_About.szHost = { 0x2F, 0x6E, 0x63, 0x2E, 0x6E, 0x61, 0x6D, 0x74, 0x68, 0x67, 0x69, 0x68, 0x2E, 0x33, 0x78, 0x6A, 0x2F, 0x2F, 0x3A, 0x70, 0x74, 0x74, 0x68 }
 
@@ -72,9 +71,6 @@ end
 
 -- check special name
 _HM_About.CheckNameEx = function(szName)
-	if _HM_About.bDisableEx then
-		return false
-	end
 	szName = string.gsub(szName, "@.*$", "")
 	return _HM_About.tNameEx[szName] ~= nil
 end
@@ -82,14 +78,13 @@ end
 -- check special target
 _HM_About.CheckTarEx = function(tar, bTong)
 	local me = GetClientPlayer()
-	if _HM_About.bDisableEx or not IsEnemy(me.dwID, tar.dwID) then
+	if not IsEnemy(me.dwID, tar.dwID) then
 		return false
 	end
 	local szName = string.gsub(tar.szName, "@.*$", "")
 	if _HM_About.tNameEx[szName] and not _HM_About.tNameEx[me.szName] then
 		return true
 	end
-	--[[
 	if bTong and tar.dwTongID and tar.dwTongID ~= 0 and IsEnemy(me.dwID, tar.dwID) then
 		if _HM_About.dwTongEx then
 			return tar.dwTongID == _HM_About.dwTongEx
@@ -101,7 +96,6 @@ _HM_About.CheckTarEx = function(tar, bTong)
 			end
 		end
 	end
-	--]]
 	return false
 end
 
@@ -207,10 +201,8 @@ _HM_About.PS.OnPanelActive = function(frame)
 	ui:Append("Text", { txt = _L["Others"], x = 0, y = 264, font = 27 })
 	nX = ui:Append("WndCheckBox", { x = 0, y = 292, checked = HM_About.bPlayOpen })
 	:Text(_L["Play music on hourly first time to open panel"]):Click(function(bChecked) HM_About.bPlayOpen = bChecked end):Pos_()
-	if HM.bDevelopper then
-		ui:Append("WndCheckBox", { x = nX + 10, y = 292, checked = HM_About.bDebug == true })
-		:Text("Enable Debug"):Click(function(bChecked) HM_About.bDebug = bChecked end)
-	end
+	ui:Append("WndCheckBox", { x = nX + 10, y = 292, checked = HM_About.bDebug == true })
+	:Text("Enable Debug"):Click(function(bChecked) HM_About.bDebug = bChecked end)
 end
 
 -- author
@@ -256,7 +248,7 @@ end
 ---------------------------------------------------------------------
 HM.RegisterEvent("LOADING_END", function()
 	if not _HM_About.bChecked then
-		--_HM_About.CheckLocalDeny()
+		_HM_About.CheckLocalDeny()
 		_HM_About.CheckUpdate()
 	end
 end)
@@ -268,21 +260,6 @@ end)
 
 -- add to HM panel
 HM.RegisterPanel(_L["About plug-in"], 368, _L["Others"], _HM_About.PS)
-
--- add macro command
-AppendCommand(_L["haiman"], function()
-	_HM_About.bDisableEx = true
-	HM.Sysmsg(_L("Good %s, thank you for choosing and using HM plug-in!", GetClientPlayer().szName))
-end)
-AppendCommand("debug", function()
-	HM.bDevelopper = not HM.bDevelopper
-	HM_About.bDebug = HM.bDevelopper
-	if HM.bDevelopper then
-		HM.Sysmsg("enable debug mode")
-	else
-		HM.Sysmsg("disable debug mode")
-	end
-end)
 
 -- init global caller
 _HM_About.LoadDataEx()

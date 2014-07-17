@@ -25,13 +25,6 @@ if not ARENA_NOTIFY_TYPE then
 	}
 end
 
-if not D3DPT then
-	D3DPT = {
-		TRIANGLESTRIP = 5,
-		TRIANGLEFAN = 6,
-	}
-end
-
 GLOBAL_HEAD_CLIENTPLAYER = GLOBAL_HEAD_CLIENTPLAYER or 0
 GLOBAL_HEAD_OTHERPLAYER = GLOBAL_HEAD_OTHERPLAYER or 1
 GLOBAL_HEAD_NPC = GLOBAL_HEAD_NPC or 2
@@ -640,8 +633,8 @@ end
 
 if not MakeNameLink then
 function MakeNameLink(szName, szFont)
-	local szLink = "<text>text="..EncodeComponentsString(szName)..
-	szFont.." name=\"namelink\" eventid=515</text>"
+	local szLink = "<text>text=" .. EncodeComponentsString(szName) ..
+	szFont .. " name=\"namelink\" eventid=515</text>"
 	return szLink
 end
 end
