@@ -1655,6 +1655,13 @@ HM_TargetList.OnItemRButtonDown = function()
 		-- single focus
 		local dwID = this.dwID
 		table.insert(m0, { szOption = _L["Lock as single focus"], fnAction = function() HM_SingleFocus.Lock(dwID) end })
+		if this.alone then
+			table.insert(m0, { bDevide = true })
+			table.insert(m0, { szOption = _L["Display the latest focus alone"], bCheck = true,
+				bChecked = HM_SingleFocus.bEnable2,
+				fnAction = function(d, b) HM_SingleFocus.Switch(b) end
+			})
+		end
 		PopupMenu(m0)
 	end
 end
@@ -1684,7 +1691,7 @@ end
 -- 独立焦点窗口 （asked by 海尕尕）
 ---------------------------------------------------------------------
 HM_SingleFocus = {
-	bEnable2 = false,	-- 是否开启
+	bEnable2 = true,	-- 是否开启
 	bShowBuffCD = true,	-- 是否显示独立焦点的 BUFF/CD
 	tAnchor = {},		-- 窗体位置
 }
