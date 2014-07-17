@@ -12,7 +12,7 @@ HM.RegisterCustomData("HM_KillEffect")
 --[[
 local _, dwID = GetClientPlayer().GetTarget()
 --FireUIEvent("KILL_PLAYER_HIGHEST_TITLE", GetClientPlayer().dwID)
-FireUIEvent("SYS_MSG", "UI_OME_DEATH_NOTIFY",  dwID, 0, GetClientPlayer().szName)
+FireUIEvent("SYS_MSG", "UI_OME_DEATH_NOTIFY",  GetClientPlayer().dwID, 0, GetClientPlayer().szName)
 --]]
 
 ---------------------------------------------------------------------
@@ -20,7 +20,7 @@ FireUIEvent("SYS_MSG", "UI_OME_DEATH_NOTIFY",  dwID, 0, GetClientPlayer().szName
 ---------------------------------------------------------------------
 local _HM_KillEffect = {
 	nLastFrame = 0,
-	szSoundPath = "interface\\HM\\HM_KillEffect\\sound\\",
+	szSoundPath = "interface\\HM\\HM_Battle\\sound\\",
 	tNormal = {
 		-- male
 		[1] = {
@@ -123,34 +123,6 @@ _HM_KillEffect.OnDeathNotify = function(dwID, szKiller)
 	end
 end
 
--------------------------------------
--- 设置界面
--------------------------------------
-_HM_KillEffect.PS = {}
-
--- init panel
-_HM_KillEffect.PS.OnPanelActive = function(frame)
-	local ui, nX = HM.UI(frame), 0
-	ui:Append("Text", { txt = _L["PVP kill effect"], font = 27 })
-	ui:Append("WndCheckBox", { txt = _L["Play sound after killing"], x = 10, y = 28, checked = HM_KillEffect.bSound })
-	:Click(function(bChecked)
-		HM_KillEffect.bSound = bChecked
-	end)
-	ui:Append("WndCheckBox", { txt = _L["Show red text after killing"], x = 10, y = 56, checked = HM_KillEffect.bText })
-	:Click(function(bChecked)
-		HM_KillEffect.bText = bChecked
-	end)
-end
-
--- check conflict
-_HM_KillEffect.PS.OnConflictCheck = function()
-	-- copatiable with single version
-	if HM_PVPSound then
-		HM_PVPSound.bSound = false
-		HM_PVPSound.bText = false
-	end
-end
-
 ---------------------------------------------------------------------
 -- 注册事件、初始化
 ---------------------------------------------------------------------
@@ -160,6 +132,3 @@ HM.RegisterEvent("SYS_MSG", function()
 		_HM_KillEffect.OnDeathNotify(arg1, arg3)
 	end
 end)
-
--- add to HM panel
-HM.RegisterPanel(_L["PVP kill effect"], 2573, _L["Battle"], _HM_KillEffect.PS)

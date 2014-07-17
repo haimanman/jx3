@@ -221,6 +221,16 @@ _HM_Battle.PS.OnPanelActive = function(frame)
 	:Text(_L["Show the orientation of some battlefield maps (newbie necessary)"]):Click(function(bChecked)
 		HM_Battle.bMarkMap = bChecked
 	end)
+	-- kill effect
+	ui:Append("Text", { txt = _L["PVP kill effect"], x = 0, y = 222, font = 27 })
+	ui:Append("WndCheckBox", { txt = _L["Play sound after killing"], x = 10, y = 250, checked = HM_KillEffect.bSound })
+	:Click(function(bChecked)
+		HM_KillEffect.bSound = bChecked
+	end)
+	ui:Append("WndCheckBox", { txt = _L["Show red text after killing"], x = 10, y = 278, checked = HM_KillEffect.bText })
+	:Click(function(bChecked)
+		HM_KillEffect.bText = bChecked
+	end)
 end
 
 -- check conflict
@@ -239,7 +249,7 @@ HM.RegisterEvent("BATTLE_FIELD_NOTIFY", _HM_Battle.OnBattleNotify)
 HM.RegisterEvent("ARENA_NOTIFY", _HM_Battle.OnAreanNotify)
 
 -- add to HM panel
-HM.RegisterPanel(_L["Battle/Arean"], 1540, _L["Battle"], _HM_Battle.PS)
+HM.RegisterPanel(_L["Battle/Arean"], 1540, nil, _HM_Battle.PS)
 
 -- hotkey
 HM.AddHotKey("AlarmJG", _L["JIUGONG chest timer"],  _HM_Battle.AlarmJG)
