@@ -5,13 +5,7 @@
 HM_Marker = {
 	bShow = true,				-- 显示标记选择器
 	bJihuo	= true,				-- 开启集火功能
-	nIgnoreHP = 20,			-- 血量低于此百分比忽略集火 xx%
-	nIgnoreDis = 20,			-- 超过此距离忽略集火 xx尺
-	bIgnoreIAction = true,	-- 自己在读条时忽略集火
-	bIgnoreTAction = true,-- 当前目标在读条时忽略集火
-	bJihuoSound = true,	-- 播放转集火声音
-	bJihuoSay = true,		-- 播放集火聊天发言
-	bIgnoreSay = false,		-- 忽略集火时在自动发言
+	bJihuoSay = true,			-- 播放集火聊天发言
 	tAnchor = {},
 }
 HM.RegisterCustomData("HM_Marker")
@@ -24,7 +18,7 @@ local _HM_Marker = {
 	tMarkName = { _L["Cloud"], _L["Sword"], _L["Ax"], _L["Hook"], _L["Drum"], _L["Shear"], _L["Stick"], _L["Jade"], _L["Dart"], _L["Fan"] },
 	szJihuoTip = _L["Focus fire to player"],
 	szJinaiTip = _L["Focus healing to player"],
-	szIniFile = "interface\\HM\\HM_Marker\\HM_Marker.ini",
+	szIniFile = "interface\\HM\\HM_Team\\HM_Marker.ini",
 }
 
 -- super jihuo trigger
@@ -52,10 +46,10 @@ _HM_Marker.CanJihuo = function()
 end
 
 -- check jihuo target
-_HM_Marker.CanBeJihuo = function(tar, bNoEx)
+_HM_Marker.CanBeJihuo = function(tar)
 	if not tar or (tar.nMoveState == MOVE_STATE.ON_DEATH and IsEnemy(GetClientPlayer().dwID, tar.dwID)) then
 		return false
-	elseif not bNoEx and HM_About.CheckTarEx(tar, true) then
+	elseif HM_About.CheckTarEx(tar, true) then
 		return false
 	end
 	return true
@@ -75,7 +69,6 @@ _HM_Marker.Jihuo = function(tar)
 		if _HM_Marker.bJihuoGuild then
 			nChannel = PLAYER_TALK_CHANNEL.TONG
 		end
-		HM.BgTalk(nChannel, "HM_MARKER_JIHUO", tar.dwID, bJihuo)
 		-- talk msg
 		if HM_Marker.bJihuoSay then
 			local szMsg = _HM_Marker.szJihuoTip
@@ -101,7 +94,7 @@ end
 _HM_Marker.Check = function()
 	local me, team = GetClientPlayer(), GetClientTeam()
 	if me.IsInParty() and (me.dwID == team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.LEADER)
-		or HM_About.CheckNameEx(me.szName))
+		or HM_About.CheckNameEx(me.szName) or me.szName == _L["HMM5"])
 	then
 		HM.BgTalk(PLAYER_TALK_CHANNEL.RAID, "HM_MARKER_CHECK")
 		_HM_Marker.Sysmsg(_L["Checking command sent, please see talk channel"])
@@ -115,60 +108,7 @@ _HM_Marker.OnBgTalk = function()
 	local data = HM.BgHear()
 	if not data or not data[1] then return end
 	if data[1] == "HM_MARKER_CHECK" then
-		-- check plugin
-		HM.Talk(PLAYER_TALK_CHANNEL.RAID, _L["I have installed HM focus fire plug-in v"] .. HM.GetVersion())
-	elseif data[1] == "HM_MARKER_JIHUO" and HM_Marker.bJihuo then
-		-- check jihuo target
-		local tar2 = HM.GetTarget(tonumber(data[2]))
-		if not tar2 or tar2.nMoveState == MOVE_STATE.ON_DEATH then
-			return
-		end
-		-- check jihuo
-		local me, szJihuoType = GetClientPlayer(), _L["attack"]
-		if data[3] == "true" then
-			if not HM.IsDps(me) or not IsEnemy(me.dwID, tar2.dwID) then
-				return
-			end
-		else
-			if HM.IsDps(me) or IsEnemy(me.dwID, tar2.dwID) then
-				return
-			end
-			szJihuoType = _L["heal"]
-		end
-		-- ignore tar
-		local szIgnore, tar = nil, GetTargetHandle(me.GetTarget())
-		if tar then
-			if tar2.dwID == tar.dwID then
-				return
-			end
-			local nHP = math.ceil(100 * tar.nCurrentLife / tar.nMaxLife)
-			if nHP < HM_Marker.nIgnoreHP then
-				szIgnore = _L["target HP"] .. nHP .. "%<" .. HM_Marker.nIgnoreHP .. "%"
-			elseif HM_Marker.bIgnoreTAction and IsPlayer(tar.dwID) and tar.GetOTActionState() ~= 0 then
-				szIgnore = _L["target PREPARING"]
-			end
-		end
-		-- ignore dis
-		if not szIgnore then
-			local nDis = HM.GetDistance(tar2)
-			if nDis > HM_Marker.nIgnoreDis then
-				szIgnore = _L["focused target distance"] .. string.format("%.1f", nDis) .. ">" .. HM_Marker.nIgnoreDis .._L["feet"]
-			end
-		end
-		-- ignore action
-		if not szIgnore and HM_Marker.bIgnoreIAction and me.GetOTActionState() ~= 0 then
-			szIgnore = _L["I am preparing skill"]
-		end
-		-- result
-		if not szIgnore then
-			HM.SetTarget(tar2.dwID)
-			OutputWarningMessage("MSG_WARNING_RED", _L("Turn to %s target [%s]", szJihuoType, tar2.szName))
-			if HM_Marker.bJihuoSound then
-				PlaySound(SOUND.UI_SOUND, g_sound.CloseAuction)
-			end
-		elseif HM_Marker.bIgnoreSay then
-			HM.Talk(PLAYER_TALK_CHANNEL.RAID, _L("Ignore %s target [%s] %s -_-", szJihuoType, tar2.szName, szIgnore))
-		end
+		HM.Talk(PLAYER_TALK_CHANNEL.RAID, _L["I have installed HM marker plug-in v"] .. HM.GetVersion())
 	end
 end
 
@@ -396,14 +336,14 @@ HM_Marker.OnFrameBreathe = function()
 	local _, tarID = me.GetTarget()
 	if tarID ~= 0 and not tPartyMark[tarID] then
 		local tar = HM.GetTarget(tarID)
-		if _HM_Marker.CanBeJihuo(tar, true) then
+		if _HM_Marker.CanBeJihuo(tar) then
 			_HM_Marker.UpdateAvatar(_HM_Marker.marker[10], tar)
 			_HM_Marker.UpdateMarker(10, tar)
 		end
 	end
 	for dwID, nIndex in pairs(tPartyMark) do
 		local tar = HM.GetTarget(dwID)
-		if _HM_Marker.CanBeJihuo(tar, true) then
+		if _HM_Marker.CanBeJihuo(tar) then
 			_HM_Marker.UpdateAvatar(_HM_Marker.marker[nIndex - 1], tar)
 			_HM_Marker.UpdateMarker(nIndex - 1, tar)
 			bShowTip = false
@@ -516,67 +456,6 @@ HM_Marker.OnEvent = function(event)
 	end
 end
 
--------------------------------------
--- 设置界面
--------------------------------------
-_HM_Marker.PS = {}
-
--- init panel
-_HM_Marker.PS.OnPanelActive = function(frame)
-	local ui, nX, nY = HM.UI(frame), 0, 0
-	-- quick mark from team
-	if HM_Team then
-		HM_Team.OnMarkerActive(frame)
-		_, nY = ui:CPos_()
-		nY = nY + 18
-	end
-	-- jihuo button
-	ui:Append("Text", { txt = _L["Focus fire(heal) target"], x = 0, y = nY, font = 27 })
-	nX = ui:Append("WndButton", { x = 10, y = nY + 30 })
-	:Text(_L["attack"] .. HM.GetHotKey("Jihuo_10", true, true)):Click(_HM_Marker.Jihuo):Pos_()
-	nX = ui:Append("WndButton", { x = nX, y = nY + 30 })
-	:Text(_L["Switch panel"]):Click(_HM_Marker.SwitchPanel):Pos_()
-	nX = ui:Append("WndButton", { x = nX + 10, y = nY + 30 })
-	:Text(_L["Check plug"]):Click(_HM_Marker.Check):Pos_()
-	ui:Append("Text", { txt = _L[" (Check teammates whether to install the plug-in)"], x = nX, y = nY + 30, font = 161 })
-	-- jihuo setting
-	ui:Append("Text", { txt = _L["Foucs fire(heal) options"], x = 0, y = nY + 64, font = 27 })
-	nX = ui:Append("WndCheckBox", { x = 10, y = nY + 92, checked = HM_Marker.bJihuo })
-	:Text(_L["Enable focus fire"]):Click(function(bChecked)
-		HM_Marker.bJihuo = bChecked
-		ui:Fetch("Check_Say"):Enable(bChecked)
-		ui:Fetch("Check_Sound"):Enable(bChecked)
-		ui:Fetch("Check_Guild"):Enable(bChecked)
-		ui:Fetch("Check_Ignore"):Enable(bChecked)
-	end):Pos_()
-	ui:Append("Text", { txt = _L[" (leader/marker double click the marked icon)"], x = nX , y = nY + 92, font = 161 })
-	nX = ui:Append("WndCheckBox", "Check_Say", { x = 10, y = nY + 120, checked = HM_Marker.bJihuoSay })
-	:Text(_L["Show focused description in team channel"]):Enable(HM_Marker.bJihuo):Click(function(bChecked) HM_Marker.bJihuoSay = bChecked end):Pos_()
-	ui:Append("WndCheckBox", "Check_Guild", { x = nX + 10, y = nY + 120, checked = _HM_Marker.bJihuoGuild })
-	:Text(_L["Use guild channel"]):Enable(HM_Marker.bJihuo):Click(function(bChecked) _HM_Marker.bJihuoGuild = bChecked end)
-	nX = ui:Append("WndCheckBox", "Check_Sound", { x = 10, y = nY + 148, checked = HM_Marker.bJihuoSound })
-	:Text(_L["Play sound when turn to focused target"]):Enable(HM_Marker.bJihuo):Click(function(bChecked) HM_Marker.bJihuoSound = bChecked end):Pos_()
-	ui:Append("WndCheckBox", "Check_Ignore", { x = nX + 10, y = nY + 148, checked = HM_Marker.bIgnoreSay })
-	:Text(_L["Show ignore reason"]):Enable(HM_Marker.bJihuo):Click(function(bChecked) HM_Marker.bIgnoreSay = bChecked end)
-	-- ignore options
-	ui:Append("Text", { txt = _L["Ignore focus"], x = 0, y = nY + 184, font = 27 })
-	nX = ui:Append("WndCheckBox", { x = 10, y = nY + 212, checked = HM_Marker.bIgnoreIAction })
-	:Text(_L["Ignore when I am preparing skill"]):Click(function(bChecked) HM_Marker.bIgnoreIAction = bChecked end):Pos_()
-	ui:Append("WndCheckBox", { x = nX + 10, y = nY + 212, checked = HM_Marker.bIgnoreTAction })
-	:Text(_L["Ignore when target preparing"]):Click(function(bChecked) HM_Marker.bIgnoreTAction = bChecked end)
-	nX = ui:Append("Text", { txt = _L["Ignore when my target HP less than"], x = 13, y = nY + 240 }):Pos_()
-	ui:Append("WndTrackBar", { txt = "%", x = nX + 5, y = nY + 244 })
-	:Range(0, 100, 50):Value(HM_Marker.nIgnoreHP):Change(function(nVal) HM_Marker.nIgnoreHP = nVal end)
-	nX = ui:Append("Text", { txt = _L["Ignore when focused target too far"], x = 13, y = nY + 268 }):Pos_()
-	ui:Append("WndTrackBar", { txt = _L[" feet"], x = nX + 5, y = nY + 272 })
-	:Range(4, 34, 30):Value(HM_Marker.nIgnoreDis):Change(function(nVal) HM_Marker.nIgnoreDis = nVal end)
-end
-
--- player menu
-_HM_Marker.PS.OnPlayerMenu = function()
-	return { szOption = _L["Show marked select panel"], bCheck = true, bChecked = HM_Marker.bShow, fnAction = _HM_Marker.SwitchPanel }
-end
-
 ---------------------------------------------------------------------
 -- 注册事件、初始化
 ---------------------------------------------------------------------
@@ -587,16 +466,11 @@ HM.RegisterEvent("CUSTOM_DATA_LOADED", function()
 	end
 end)
 
--- add to HM panel
-HM.RegisterPanel(_L["Team mark/focus"], 1457, nil, { OnPanelActive = _HM_Marker.PS.OnPanelActive })
-HM.RegisterPanel(_L["Team mark/focus"], 1457, _L["Battle"], _HM_Marker.PS)
-
 -- hotkey
-HM.AddHotKey("Jihuo_10", _L["Focus the target"],  _HM_Marker.Jihuo)
 for k, v in ipairs(_HM_Marker.tMarkName) do
-	HM.AddHotKey("Jihuo_" .. (k - 1), _L("Select/Focus [%s]", v), function()
+	HM.AddHotKey("Jihuo_" .. (k - 1), _L("Select mark [%s]", v), function()
 		this = _HM_Marker.marker[k - 1]
-		HM_Marker.OnItemLButtonDBClick()
+		HM_Marker.OnItemLButtonDown()
 	end)
 end
 
@@ -610,5 +484,7 @@ TraceButton_AppendAddonMenu({ function()
 end })
 
 -- public api
+HM_Marker.SwitchPanel = _HM_Marker.SwitchPanel
 HM_Marker.Jihuo = _HM_Marker.Jihuo
 HM_Marker.CanJihuo = _HM_Marker.CanJihuo
+HM_Marker.Check = _HM_Marker.Check
