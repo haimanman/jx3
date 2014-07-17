@@ -14,7 +14,7 @@ HM_Doodad = {
 	bQuest = true,				-- 自动采集任务物品
 	bShowName = true,	-- 显示物品名称
 	bMiniFlag = true,		-- 显示小地图标记
-	bInteract = true,			-- 自动采集
+	--bInteract = true,			-- 自动采集
 	tCraft = {},						-- 草药、矿石列表
 	bCustom = true,			-- 启用自定义
 	tCustom = {},				-- 自定义列表
@@ -250,6 +250,7 @@ _HM_Doodad.OnUpdateHeadName = function()
 end
 
 -- auto interact
+--[[
 _HM_Doodad.OnAutoDoodad = function()
 	local me = GetClientPlayer()
 	-- auto interact
@@ -284,6 +285,7 @@ _HM_Doodad.OnAutoDoodad = function()
 		end
 	end
 end
+--]]
 
 -- open doodad (loot)
 _HM_Doodad.OnOpenDoodad = function(dwID)
@@ -442,14 +444,16 @@ _HM_Doodad.PS.OnPanelActive = function(frame)
 			_HM_Doodad.Reload()
 		end)
 	end):Pos_()
-	ui:Append("WndCheckBox", { txt = _L["Display minimap flag"], x = nX1 + 40, y = 92, checked = HM_Doodad.bMiniFlag })
+	nX = ui:Append("WndCheckBox", { txt = _L["Display minimap flag"], x = nX1 + 40, y = 92, checked = HM_Doodad.bMiniFlag })
 	:Click(function(bChecked)
 		HM_Doodad.bMiniFlag = bChecked
-	end)
+	end):Pos_()
+	--[[
 	nX = ui:Append("WndCheckBox", { txt = _L["Auto interact"], x = nX2 + 20, y = 92, checked = HM_Doodad.bInteract })
 	:Click(function(bChecked)
 		HM_Doodad.bInteract = bChecked
 	end):Pos_()
+	--]]
 	ui:Append("WndCheckBox", { txt = _L["Quest items"], x = nX + 10, y = 92, checked = HM_Doodad.bQuest })
 	:Click(function(bChecked)
 		HM_Doodad.bQuest = bChecked
@@ -540,7 +544,7 @@ HM.RegisterEvent("QUEST_ACCEPTED", function()
 		_HM_Doodad.Reload()
 	end
 end)
-HM.BreatheCall("AutoDoodad", _HM_Doodad.OnAutoDoodad)
+--HM.BreatheCall("AutoDoodad", _HM_Doodad.OnAutoDoodad)
 HM.BreatheCall("UpdateMiniFlag", _HM_Doodad.OnUpdateMiniFlag, 500)
 
 -- add to HM collector
