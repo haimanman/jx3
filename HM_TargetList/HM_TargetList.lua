@@ -117,6 +117,10 @@ _HM_TargetList.GetFocusMenu = function()
 		{ szOption = _L["Display the latest focus alone"],
 			bCheck = true, bChecked = HM_SingleFocus.bEnable2,
 			fnAction = function(d, b) HM_SingleFocus.Switch(b) end
+		}, 	{ szOption = _L["Show buff/cd of single focus"],
+			bCheck = true, bChecked = HM_SingleFocus.bShowBuffCD,
+			fnDisable = function() return not HM_TargetMon end,
+			fnAction = function() HM_SingleFocus.bShowBuffCD = not HM_SingleFocus.bShowBuffCD end
 		}, { szOption = _L["Show move state/buff"],
 			bCheck = true, bChecked = HM_TargetList.bFocusState,
 			fnDisable = function() return not HM_TargetList.bShowFocus end,
@@ -1706,9 +1710,11 @@ end
 ---------------------------------------------------------------------
 HM_SingleFocus = {
 	bEnable2 = false,	-- 是否开启
+	bShowBuffCD = true,	-- 是否显示独立焦点的 BUFF/CD
 	tAnchor = {},		-- 窗体位置
 }
 RegisterCustomData("HM_SingleFocus.bEnable2")
+RegisterCustomData("HM_SingleFocus.ShowBuffCD")
 RegisterCustomData("HM_SingleFocus.tAnchor")
 
 -- update size/pos
@@ -1720,6 +1726,18 @@ HM_SingleFocus.UpdateAnchor = function(frame)
 		frame:SetPoint("CENTER", 0, 0, "CENTER", -200, -70)
 	end
 	frame:CorrectPos()
+end
+
+-- get cached box
+HM_SingleFocus.GetListBox = function(hList, nS)
+	local nCount = hList:GetItemCount()
+	if hList.nIndex < nCount then
+		nCount = hList.nIndex
+	else
+		hList:AppendItemFromString("<box>w=" .. nS .. " h=" .. nS .. " postype=7 </box>")
+	end
+	hList.nIndex = nCount + 1
+	return hList:Lookup(nCount)
 end
 
 -- attach callback
@@ -1737,8 +1755,13 @@ HM_SingleFocus.OnFrameCreate = function()
 	this.focus = _HM_TargetList.NewFocusItem(handle, 0)
 	this.focus.alone = true
 	this.focus:SetRelPos(0, 0)
-	handle:SetSize(this.focus:GetSize())
-	this:SetSize(this.focus:GetSize())
+	this.focus:Show()
+	local w, h = this.focus:GetSize()
+	local nS = 30	
+	handle:AppendItemFromString("<handle>name=\"Handle_Buff\" handletype=3 x=0 y=" .. h .." w=" .. w .. " h=" .. nS .. " </handle>")
+	handle:AppendItemFromString("<handle>name=\"Handle_CD\" handletype=3 x=0 y=" .. (h + nS + 2) .. " w=" .. w .. "h=" .. nS .. " </handle>")
+	handle:SetSize(w, h + nS + nS + 2)
+	this:SetSize(w, h + nS + nS + 2)
 	handle:FormatAllItemPos()
 	-- fetch first focus
 	for _, v in ipairs(_HM_TargetList.tFocus) do
@@ -1765,19 +1788,83 @@ HM_SingleFocus.OnFrameBreathe = function()
 		return
 	end
 	if not this.focus.dwID then
-		return this.focus:Hide()
+		return this:Hide()
 	end
 	local nFrame = GetLogicFrameCount()
 	if not this.nFrame or (nFrame - this.nFrame) > 1 then
 		local tar = HM.GetTarget(this.focus.dwID)
 		if not tar then
 			this.nFrame = nFrame + 8
-			this.focus:Hide()
+			this:Hide()
 		else
+			-- update focus
 			this.nFrame = nFrame
 			_HM_TargetList.UpdateFocusItem(this.focus, tar)
 			this.focus.szName = tar.szName
-			this.focus:Show()
+			if HM_TargetMon and HM_SingleFocus.bShowBuffCD and HM_TargetMon.GetBuffExList then
+				-- update focus buff
+				local hList = this:Lookup("", "Handle_Buff")
+				local _, nS = hList:GetSize()
+				local mBuff = HM_TargetMon.GetBuffExList(HM.GetAllBuff(tar))
+				hList.nIndex = 0
+				for _, v in ipairs(mBuff) do
+					local szTime, nFont = HM_TargetMon.GetLeftTime(v.buff.nEndFrame, true)
+					local box = HM_SingleFocus.GetListBox(hList, nS)					
+					box:SetObject(UI_OBJECT_NOT_NEED_KNOWN, v.buff.dwID)
+					box:SetObjectIcon(Table_GetBuffIconID(v.buff.dwID, v.buff.nLevel))
+					if v.buff.nStackNum > 1 then
+						box:SetOverTextFontScheme(0, 15)
+						box:SetOverText(0, v.buff.nStackNum)
+					else
+						box:SetOverText(0, "")
+					end
+					box:SetOverTextPosition(1, 3)
+					box:SetOverText(1, szTime)
+					box:SetOverTextFontScheme(1, nFont)
+					box:Show()
+				end
+				if hList.nIndex == 0 then
+					hList:Hide()
+				else
+					for i = hList:GetItemCount() - 1, hList.nIndex, -1 do
+						hList:Lookup(i):Hide()
+					end
+					hList:FormatAllItemPos()
+					hList:Show()
+				end
+				-- update focus cd
+				local nFrame = GetLogicFrameCount()
+				local hList = this:Lookup("", "Handle_CD")
+				local mCD = HM_TargetMon.GetPlayerCD(tar.dwID)
+				hList.nIndex = 0
+				for _, v in ipairs(mCD) do
+					if v.nEnd > nFrame then
+						local szTime, nFont = HM_TargetMon.GetLeftTime(v.nEnd)
+						local box = HM_SingleFocus.GetListBox(hList, nS)
+						box:SetObject(UI_OBJECT_SKILL, v.dwSkillID, v.dwLevel)
+						box:SetObjectIcon(v.dwIconID)
+						box:SetOverText(1, szTime)
+						box:SetOverTextPosition(1, 3)
+						box:SetOverTextFontScheme(1, nFont)
+						box:SetObjectCoolDown(1)
+						box:SetCoolDownPercentage(1 - (v.nEnd - nFrame) / v.nTotal)
+						box:Show()
+					end
+				end
+				if hList.nIndex == 0 then
+					hList:Hide()
+				else
+					for i = hList:GetItemCount() - 1, hList.nIndex, -1 do
+						hList:Lookup(i):Hide()
+					end
+					hList:FormatAllItemPos()
+					hList:Show()
+				end
+			else
+				this:Lookup("", "Handle_Buff"):Hide()
+				this:Lookup("", "Handle_CD"):Hide()
+			end
+			this:Show()
 		end
 	end
 end
