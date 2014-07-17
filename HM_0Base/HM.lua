@@ -15,6 +15,12 @@ local function _HM_GetLang()
 			t1[k] = v
 		end
 	end
+	t1.__import = function(szPath)
+		local t2 = LoadLUAData(szPath .. "\\" .. szLang .. ".jx3dat") or {}
+		for k, v in pairs(t2) do
+			t1[k] = v
+		end
+	end
 	setmetatable(t1, {
 		__index = function(t, k) return k end,
 		__call = function(t, k, ...) return string.format(t[k] or k, ...) end,
@@ -1444,6 +1450,12 @@ HM.GetFreeBagBox = function()
 			end
 		end
 	end
+end
+
+-- 导入语言包（目录下必须存在相应的 ***.jx3dat）
+-- (void) HM.ImportLang(string szPath)
+HM.ImportLang = function(szPath)
+	_L.__import(szPath)
 end
 
 ---------------------------------------------------------------------
