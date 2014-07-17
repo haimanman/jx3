@@ -36,7 +36,6 @@ foreach ($lines as $line)
 }
 echo " OK, " . count($replace2) . " strings\n";
 
-// 
 
 // replace all lua files
 $files = glob("HM_*/*.lua");
