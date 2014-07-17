@@ -294,8 +294,14 @@ _HM_Camp.EditBoss = function(szName, dwMin)
 	end
 	-- title
 	if not szName then
+		local tar = HM.GetTarget()
+		if tar then
+			szName = tar.szName
+		else
+			szName = ""
+		end
 		frm:Title(_L["Add BOSS refresh time"])
-		frm:Fetch("Edit_Name"):Text(""):Enable(true)
+		frm:Fetch("Edit_Name"):Text(szName):Enable(true)
 		frm:Fetch("Edit_Time"):Text(""):Enable(true)
 	else
 		frm:Title(_L["Edit BOSS refresh time"])
@@ -346,9 +352,8 @@ end
 -- boss death
 _HM_Camp.OnSysMsg = function()
 	if HM_Camp.bBossTime and arg0 == "UI_OME_DEATH_NOTIFY" then
-		local npc = GetNpc(arg1)
-		if npc and HM_Camp.tBossList[npc.szName] then
-			local me = GetClientPlayer()
+		local npc, me = GetNpc(arg1), GetClientPlayer()
+		if npc and HM_Camp.tBossList[npc.szName] and IsEnemy(me.dwID, npc.dwID) then
 			_HM_Camp.tDeadBoss[npc.szName] = {
 				tFrame = _HM_Camp.GetBossTime(math.floor(HM_Camp.tBossList[npc.szName] * 960)),
 				dwMapID = me.GetScene().dwMapID,
@@ -365,7 +370,7 @@ _HM_Camp.OnNpcEnter = function()
 	-- boss alert
 	if HM_Camp.bBossTime and not IsEmpty(_HM_Camp.tDeadBoss) then
 		local npc = GetNpc(arg0)
-		if npc and _HM_Camp.tDeadBoss[npc.szName] then
+		if npc and _HM_Camp.tDeadBoss[npc.szName] and IsEnemy(GetClientPlayer().dwID, npc.dwID) then
 			-- tips
 			local dwID, szName = npc.dwID, npc.szName
 			HM.DelayCall(2500, function()
@@ -711,7 +716,7 @@ HM.RegisterEvent("ON_CAN_ENTER_MAP_NOTIFY", function()
 end)
 
 -- add to HM panel
-HM.RegisterPanel(_L["Camp helper"], 444, _L["Battle"], _HM_Camp.PS)
+HM.RegisterPanel(_L["Camp helper"], 444, nil, _HM_Camp.PS)
 
 -- hotkey
 HM.AddHotKey("TargetGF", _L["Auto camp target"],  _HM_Camp.TargetGF)
