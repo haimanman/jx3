@@ -39,19 +39,7 @@ HM_TargetList = {
 	tCustomName = {},		-- 自定义名称
 	tCustomTong = {},		-- 自定义帮会
 	tCustomForce = {},		-- 自定义门派
-	tCustomSave = {
-		[_L["DH1"]] = {
-				tCustomTong = {},
-				tCustomForce = {},
-				tCustomTong = {
-					[_L["DH2"]] = true,
-					[_L["DH3"]] = true,
-					[_L["DH4"]] = true,
-					[_L["DH5"]] = true,
-					[_L["DH6"]] = true,
-				},
-		},
-	},		-- 自定义保存
+	tCustomSave = {},		-- 自定义保存
 	----
 	bShowAcct = true,	-- 人数统计（敌、友、中）
 	tPersistFocus = {},	-- 永久焦点
@@ -61,21 +49,6 @@ HM.RegisterCustomData("HM_TargetList")
 -- 暂不记录的选项
 HM_TargetList.bShowFocus = true
 HM_TargetList.bShowList = true
-
--- update custom
---[==[
-local tDH8G = HM_TargetList.tCustomSave[_L["DH1"]].tCustomTong
-HM.RegisterCustomUpdater(function()
-	HM_TargetList.tCustomName = {}
-	HM_TargetList.tCustomForce = {}
-	HM_TargetList.tCustomTong = tDH8G
-	HM_TargetList.tCustomSave[_L["DH1"]] = {
-		tCustomTong = {},
-		tCustomForce = {},
-		tCustomTong = tDH8G,
-	}
-end, 20121123)
-]==]
 
 ---------------------------------------------------------------------
 -- 本地函数和变量
@@ -182,7 +155,7 @@ _HM_TargetList.IsFocus = function(dwID)
 end
 
 -- add focus
-_HM_TargetList.AddFocus = function(dwID)
+_HM_TargetList.AddFocus = function(dwID, bAuto)
 	if _HM_TargetList.IsFocus(dwID) then
 		return
 	end
@@ -210,7 +183,9 @@ _HM_TargetList.AddFocus = function(dwID)
 		HM_TargetList.bShowFocus = true
 		_HM_TargetList.UpdateSize(true)
 	end
-	FireUIEvent("HM_ADD_FOCUS_TARGET", dwID, false)
+	if not bAuto then
+		FireUIEvent("HM_ADD_FOCUS_TARGET", dwID, false)
+	end
 end
 
 -- del focus
@@ -1403,7 +1378,7 @@ HM_TargetList.OnEvent = function(event)
 			and not _HM_TargetList.IsFocus(arg0) and IsEnemy(GetClientPlayer().dwID, arg0)
 			and (IsInArena() or IsInSameQWG(arg0))
 		then
-			_HM_TargetList.AddFocus(arg0)
+			_HM_TargetList.AddFocus(arg0, true)
 		end
 		-- persist focus
 		if not IsEmpty(HM_TargetList.tPersistFocus) then
@@ -1412,7 +1387,7 @@ HM_TargetList.OnEvent = function(event)
 			elseif event == "NPC_ENTER_SCENE" then
 				local npc = GetNpc(arg0)
 				if npc and HM_TargetList.tPersistFocus[npc.szName] then
-					_HM_TargetList.AddFocus(npc.dwID)
+					_HM_TargetList.AddFocus(npc.dwID, true)
 				end
 			end
 		end
@@ -1420,7 +1395,7 @@ HM_TargetList.OnEvent = function(event)
 		if HM_TargetList.bAutoBigBoss and HM_Camp and event == "NPC_ENTER_SCENE"
 			and not _HM_TargetList.IsFocus(arg0) and HM_Camp.IsCareNpc(GetNpc(arg0))
 		then
-			_HM_TargetList.AddFocus(arg0)
+			_HM_TargetList.AddFocus(arg0, true)
 		end
 		-- force flush
 		if HM_TargetList.bShowFocus and _HM_TargetList.IsFocus(arg0) then
