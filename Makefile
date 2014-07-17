@@ -52,6 +52,12 @@ dist-zip:
 	cp -f HM_0Base/HM.lua HM/HM_0Base/HM.lua
 	zip -qrm9 dist/HM-`cat VERSION`.zip HM
 
+dist-zip2:
+	git archive --prefix HM/ HEAD | tar -x
+	cp -f HM_0Base/HM.lua HM/HM_0Base/HM.lua
+	sh -c 'fs=`find HM/ -name "*.lua"`; for f in $$fs; do luac -s -o $$f $$f; done'
+	zip -qrm9 dist/HM-`cat VERSION`.zip HM
+
 src-bak:
 	zip -rq9 dist/HM-`cat VERSION`-src.zip * -x dist/*.zip
 
@@ -61,16 +67,9 @@ archive: HM_0Base/lang/zhtw.jx3dat
 	$(MAKE) dist-zip
 	$(MAKE) src-bak
 
-hotfix: clean-check
-	$(MAKE) dist-zip
-	$(MAKE) src-bak
-	scp dist/HM-`cat VERSION`.zip jx3.hm:$(JX3_HM_DIR)/down
-	ssh jx3.hm rm -rf -d $(JX3_HM_DIR)/sync/HM
-	ssh jx3.hm unzip -qq -o -d $(JX3_HM_DIR)/sync $(JX3_HM_DIR)/down/HM-`cat VERSION`.zip
-
 alpha: clean-check
 	$(PHP) dev/pre_release.php alpha $(VERSION)
-	$(MAKE) dist-zip
+	$(MAKE) dist-zip2
 	git reset --hard HEAD
 
 beta: clean-check
