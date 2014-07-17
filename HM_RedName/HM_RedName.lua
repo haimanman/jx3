@@ -8,7 +8,7 @@ HM_RedName = {
 	bSettar = false,
 	bDeathMini = false,
 	bUseGreen = false,
-	bAcctUser = false,
+	bAcctUser = true,
 }
 HM.RegisterCustomData("HM_RedName")
 
@@ -692,17 +692,22 @@ _HM_RedName.PS.OnPanelActive = function(frame)
 		end
 	end)
 	-- share
+	--[[
 	_HM_RedName.ComboShare = ui:Append("WndComboBox",  { x = 14, y = 208 }):Menu(_HM_RedName.GetShareMenu)
 	_HM_RedName.UpdateShareCount()
 	nX = _HM_RedName.ComboShare:Pos_()
+	--]]
+	nX = 0
 	nX = ui:Append("WndButton", { x = nX + 10, y = 208, txt = _L["View map"] }):Click(OpenMiddleMap):Pos_()
 	nX = ui:Append("WndButton", { x = nX + 5, y = 208, txt = _L["Publish stats"] }):Click(_HM_RedName.ShowAroundInfo):Pos_()
 	ui:Append("Text", { x = nX + 5, y = 208, txt = _L["Set hotkeys"] }):Click(HM.SetHotKey)
 	-- tips
+	--[[
 	ui:Append("Text", { txt = _L["Tips"], x = 0, y = 244, font = 27 })
 	ui:Append("Text", { txt = _L["1. Share connection require other side installed this plug-in"], x = 10, y = 272 })
 	ui:Append("Text", { txt = _L["2. Press M to view shared information in middle map"], x = 10, y = 297 })
 	ui:Append("Text", { txt = _L["3. Team leader can build connection with member witouth confirmation"], x = 10, y = 322 })
+	--]]
 end
 
 -- player menu
