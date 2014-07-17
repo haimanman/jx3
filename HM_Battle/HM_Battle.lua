@@ -6,9 +6,6 @@ HM_Battle = {
 	bFormArean = true,		-- 在竞技场自动交出阵眼
 	bAlarmJG2 = false,		-- 九宫自动报时
 	bMarkMap = true,		-- 战场地图方向标记
-	--bArenaAward = true,	-- 下周可得名剑币估算
-	bAutoBattle= true,		-- 自动进入战场
-	bAutoArena = true,		-- 自动进入竞技场
 }
 HM.RegisterCustomData("HM_Battle")
 
@@ -24,7 +21,7 @@ local _HM_Battle = {
 _HM_Battle.ShowMap = MiddleMap.ShowMap
 MiddleMap.ShowMap = function(frame, dwMapID, nIndex)
     _HM_Battle.ShowMap(frame, dwMapID, nIndex)
-    local dwMapID, hTotal = MiddleMap.dwMapID, frame:Lookup("", "")
+    local hTotal = frame:Lookup("", "")
     local ui = HM.UI(hTotal, "Handle_MapEx")
     if HM_Battle.bMarkMap and (dwMapID == 48 or dwMapID == 50 or dwMapID == 135) and not ui then
         ui = HM.UI.Append(hTotal, "Handle2", "Handle_MapEx", { x = 0, y = 0 })
@@ -156,106 +153,8 @@ _HM_Battle.MonitorJG = function(szMsg)
 end
 
 -------------------------------------
--- 下周可得名剑币估算（暂不可用）
--------------------------------------
--- calc arean point
-_HM_Battle.CountArenaAward = function(tData)
-	local nAward = -1
-	for k, v in pairs(tData) do
-		local nTeamCount, nPlayerCount = tData[k]["dwCorpsCount"], tData[k]["dwPersonCount"]
-		local nTeamLv, nPlayerLv = tData[k]["nCorpsLevel"], tData[k]["nPersonLevel"]
-		local nPoint = 0
-		if nTeamCount >= 10 and (nPlayerCount / nTeamCount) >= 0.3 then
-			local nRaceLevel, fS = nPlayerLv, 1
-			if (nTeamLv - nPlayerLv) <= 200 then
-				nRaceLevel = nTeamLv
-			end
-			if k == 0 then
-				fS = 0.8
-			elseif k == 1 then
-				fS = 0.9
-			end
-			if nRaceLevel < 800 then
-				nPoint = fS * 4 * (650 * nRaceLevel + 2337500) / 10000
-			elseif nRaceLevel < 3100 then
-				nPoint = fS * 4 * (1238400 * (nRaceLevel - 1900) / ((nRaceLevel - 1900) ^ 2 + 1440000) + 800)
-			else
-				nPoint = fS * 4 * (195 * nRaceLevel + 12555500) / 10000
-			end
-			nPoint = math.floor(nPoint)
-		end
-		if nPoint > nAward then
-			nAward = nPoint
-		end
-	end
-	return nAward
-end
-
--- show next week count
-_HM_Battle.ShowNextArenaAward = function()
-	local frame = Station.Lookup("Normal/ArenaCorpsPanel")
-	if frame and frame:IsVisible() then
-		local tData = _HM_Battle.tCorpsData or {}
-		local nPoint = _HM_Battle.CountArenaAward(tData)
-		local hText = frame:Lookup("", "Text_Currency")
-		local szText = _L["Next week = "] .. nPoint
-		local me = GetClientPlayer()
-		if _HM_Battle.dwAreanID == me.dwID then
-			szText = FormatString(g_tStrings.STR_AREAN_AWARD, me.nArenaAward) .. " (" .. szText .. ")"
-		end
-		hText:SetText(szText)
-		hText:Show()
-	end
-end
-
--------------------------------------
 -- 事件处理
 -------------------------------------
--- open arena panel
-_HM_Battle.OnSyncArenaList = function()
-	if HM_Battle.bArenaAward and GetCorpsInfo then
-		local dwAreanID, nCorps = arg0, 0
-		local tar = GetPlayer(dwAreanID)
-		if tar then
-			for i = 0, 2, 1 do
-				if GetCorpsID(i, dwAreanID) ~= 0 then
-					nCorps = nCorps + 1
-				end
-			end
-			_HM_Battle.szAreaName = string.gsub(tar.szName, "@.*$", "")
-			_HM_Battle.dwAreanID, _HM_Battle.nCorps, _HM_Battle.tCorpsData = dwAreanID, nCorps, {}
-		end
-	end
-end
-
--- sync arena data
-_HM_Battle.OnSyncArenaData = function()
-	local dwCorpsID, nCorpsType, dwPeekPlayerID, bRank = arg0, arg1, arg2, arg3
-	if bRank == 1 or dwPeekPlayerID ~= _HM_Battle.dwAreanID or _HM_Battle.tCorpsData[nCorpsType] ~= nil then
-		return
-	end
-	local tMemberInfo = GetCorpsMemberInfo(dwCorpsID, false)
-	if not tMemberInfo then
-		SyncCorpsMemberData(dwCorpsID, false, _HM_Battle.dwAreanID)
-	else
-		local tData, tCorpsInfo = {}, GetCorpsInfo(dwCorpsID, false)
-		tData.dwCorpsCount = tCorpsInfo.dwWeekTotalCount
-		tData.nCorpsLevel = tCorpsInfo.nCorpsLevel
-		for i = 1, tCorpsInfo.nMemberCount do
-			if string.gsub(tMemberInfo[i].szPlayerName, "@.*$", "") == _HM_Battle.szAreaName  then
-				tData.dwPersonCount = tMemberInfo[i].dwWeekTotalCount
-				tData.nPersonLevel = tMemberInfo[i].nGrowupLevel
-				break
-			end
-		end
-		_HM_Battle.tCorpsData[nCorpsType] = tData
-		_HM_Battle.nCorps = _HM_Battle.nCorps - 1
-		if _HM_Battle.nCorps <= 0 then
-			_HM_Battle.ShowNextArenaAward()
-		end
-	end
-end
-
 -- check formdation
 _HM_Battle.OnShiftForm = function()
 	local me, team = GetClientPlayer(), GetClientTeam()
@@ -293,20 +192,6 @@ _HM_Battle.OnSysMsg = function()
 	end
 end
 
--- join battle
-_HM_Battle.OnBattleNotify = function()
-	if HM_Battle.bAutoBattle and arg0 == BATTLE_FIELD_NOTIFY_TYPE.JOIN_BATTLE_FIELD then
-		DoAcceptJoinBattleField(arg5, arg3, arg4, arg6, arg7)
-	end
-end
-
--- join arena
-_HM_Battle.OnAreanNotify = function()
-	if HM_Battle.bAutoArena and arg0 == ARENA_NOTIFY_TYPE.LOG_IN_ARENA_MAP then
-		DoAcceptJoinArena(arg1, arg7, arg5, arg6, arg8, arg9, arg2)
-	end
-end
-
 -------------------------------------
 -- 设置界面
 -------------------------------------
@@ -336,20 +221,6 @@ _HM_Battle.PS.OnPanelActive = function(frame)
 	:Text(_L["Show the orientation of some battlefield maps (newbie necessary)"]):Click(function(bChecked)
 		HM_Battle.bMarkMap = bChecked
 	end)
-	ui:Append("WndCheckBox", { x = 10, y = 214, checked = HM_Battle.bArenaAward, enable = false })
-	:Text(_L["Show next week currency in the arean panel"]):Click(function(bChecked)
-		HM_Battle.bArenaAward = bChecked
-	end)
-	-- extra options (auto enter)
-	ui:Append("Text", { txt = _L["Auto confirm"], x = 0, y = 250, font = 27 })
-	ui:Append("WndCheckBox", { txt = _L["Auto enter battlefield (need not click, prevent desertion)"], x = 10, y = 278, checked = HM_Battle.bAutoBattle })
-	:Click(function(bChecked)
-		HM_Battle.bAutoBattle = bChecked
-	end)
-	ui:Append("WndCheckBox", { txt = _L["Auto enter arean (same as above)"], x = 10, y = 306, checked = HM_Battle.bAutoArena })
-	:Click(function(bChecked)
-		HM_Battle.bAutoArena = bChecked
-	end)
 end
 
 -- check conflict
@@ -364,9 +235,6 @@ end
 ---------------------------------------------------------------------
 HM.RegisterEvent("SYS_MSG", _HM_Battle.OnSysMsg)
 HM.RegisterEvent("LOADING_END", _HM_Battle.BeginJG)
---HM.RegisterEvent("SYNC_CORPS_LIST", _HM_Battle.OnSyncArenaList)
---HM.RegisterEvent("SYNC_CORPS_BASE_DATA", _HM_Battle.OnSyncArenaData)
---HM.RegisterEvent("SYNC_CORPS_MEMBER_DATA", _HM_Battle.OnSyncArenaData)
 HM.RegisterEvent("BATTLE_FIELD_NOTIFY", _HM_Battle.OnBattleNotify)
 HM.RegisterEvent("ARENA_NOTIFY", _HM_Battle.OnAreanNotify)
 
