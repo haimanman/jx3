@@ -191,6 +191,13 @@ _HM_TargetList.AddFocus = function(dwID)
 				break
 			end
 		end
+		-- protected focus people
+		if nRemove == 1 then
+			local dwFirst = _HM_TargetList.tFocus[1]
+			if HM_TargetList.tPersistFocus[dwFirst] then
+				nRemove = nRemove + 1
+			end
+		end
 		table.remove(_HM_TargetList.tFocus, nRemove)
 	end
 	table.insert(_HM_TargetList.tFocus, dwID)
@@ -1810,7 +1817,7 @@ HM_SingleFocus.Switch = function(bEnable)
 			Wnd.CloseWindow(frame)
 		end
 	elseif not frame then
-		Wnd.OpenWindow("interface\\HM\\HM_TargetList\\HM_TargetMon.ini", "HM_SingleFocus")
+		Wnd.OpenWindow("interface\\HM\\HM_TargetList\\HM_SingleFocus.ini", "HM_SingleFocus")
 	end
 end
 

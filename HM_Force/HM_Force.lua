@@ -14,7 +14,7 @@ HM_Force = {
 	bAutoXyzSelf = true,	-- 自动对自己放
 	bShowJW = true,			-- 显示剑舞层数
 	tSelfQC = { [358] = true },	-- 默认只开生太极
-	bWarningDebuff = true,	-- 警告  debuff 类型
+	bWarningDebuff = false,	-- 警告  debuff 类型
 	nDebuffNum = 3,			-- debuff 类型达到几个时警告
 	bActionTime = true,	-- 显示读条动作计时
 	bAlertWanted = true,	-- 在线被悬赏时提醒自己
