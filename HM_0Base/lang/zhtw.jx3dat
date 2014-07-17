@@ -227,18 +227,18 @@ data = {
 	["Alert when my same type of debuff reached a certain number "] = "提醒自身同類型 debuff 達到一定數量",
 	["Show time description of OTActionBar"] = "顯示自身讀條動作的時間",
 	["Alert when I am wanted publishing online"] = "在線被懸賞時提醒自己",
-	["Show draggable energy bar"] = "顯示可拖動的職業能量條",
+	["Show draggable energy bar"] = "顯示可拖動的職業能量條（氣點/禪那/劍氣/神機值/日月能）",
 	-- HM_EngBar.lua --
 	["HM, energy bar"] = "海鰻職業能量條",
 	-- HM_Guding.lua --
 	["I have put the GUDING, hurry to eat if you lack of mana. *la la la*"] = "法寶 [仙王蠱鼎] 已祭出，沒藍的抓緊了，用海鰻插件看得見還能自動吃~#玫瑰#玫瑰~~",
 	["HM_Guding"] = "海鰻蠱鼎",
 	["Auto use GUDING"] = "自動吃一下蠱鼎",
-	["Display GUDING of teammate, change color"] = "顯示團隊里的仙王蠱鼎，設置顏色",
+	["Display GUDING of teammate, change color"] = "突出顯示團隊里的仙王蠱鼎，設置顏色",
 	["Auto use GUDING in some condition (only when standing)"] = "血藍不足時自動吃鼎（必須在附近站立）",
 	["While MP less than"] = "當藍量不足",
 	["While HP less than"] = "當血量不足",
-	["Auto talk in team channel after puting GUDING"] = "擺鼎后自動喊話提醒隊友來吃",
+	["Auto talk in team channel after puting GUDING"] = "喊話提醒隊友來吃",
 	["Talk message"] = "喊話內容",
 	["5D GUDING"] = "五毒蠱鼎助手",
 	-- HM_Jabber.lua --

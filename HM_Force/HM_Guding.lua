@@ -1,12 +1,9 @@
 --
--- 海鳗插件：五毒仙王蛊鼎显示、自动吃
+-- 海鳗插件：五毒仙王蛊鼎显示
 --
 
 HM_Guding = {
 	bEnable = true,			-- 总开关
-	bAutoUse = true,		-- 路过时自动吃
-	nAutoMp = 80,			-- 自动吃的 MP 百分比
-	nAutoHp = 80,			-- 自动吃的 HP 百分比
 	bAutoSay = true,			-- 摆鼎后自动说话
 	szSay = _L["I have put the GUDING, hurry to eat if you lack of mana. *la la la*"],
 	color = { 255, 0, 128 },	-- 名称颜色，默认绿色
@@ -21,7 +18,7 @@ local _HM_Guding = {
 	nMaxTime = 60000, -- 存在的最大时间，单位毫秒
 	dwSkillID = 2234,
 	dwTemplateID = 2418,
-	szIniFile = "interface\\HM\\HM_Guding\\HM_Guding.ini",
+	szIniFile = "interface\\HM\\HM_Force\\HM_Guding.ini",
 	tList = {},					-- 显示记录 (#ID => nTime)
 	tCast = {},				-- 技能释放记录
 	nFrame = 0,			-- 上次自动吃鼎、绘制帧次
@@ -139,15 +136,6 @@ function HM_Guding.OnFrameBreathe()
 	if HM.HasBuff(3448, false) then
 		a = 120
 	end
-	-- can use or not
-	local bCanUse = false
-	if HM_Guding.bAutoUse and a > 199
-		and not me.bOnHorse and me.nMoveState == MOVE_STATE.ON_STAND and me.GetOTActionState() == 0
-		and ((me.nCurrentMana / me.nMaxMana) <= (HM_Guding.nAutoMp / 100)
-			or (me.nCurrentLife / me.nMaxLife) <= (HM_Guding.nAutoHp / 100))
-	then
-		bCanUse = true
-	end
 	-- shadow text
 	sha:SetTriangleFan(GEOMETRY_TYPE.TEXT)
 	sha:ClearTriangleFanPoint()
@@ -168,12 +156,6 @@ function HM_Guding.OnFrameBreathe()
 					szText = tar.szName .. szText
 				end
 				sha:AppendDoodadID(tar.dwID, r, g, b, a, 192, 199, szText, 0, 1)
-				--  check to use
-				if bCanUse and HM.GetDistance(tar) < 6 then
-					bCanUse = false
-					InteractDoodad(tar.dwID)
-					_HM_Guding.Sysmsg(_L["Auto use GUDING"])
-				end
 			end
 		end
 	end
@@ -198,60 +180,14 @@ function HM_Guding.OnEvent(event)
 	end
 end
 
--------------------------------------
--- 设置界面
--------------------------------------
-_HM_Guding.PS = {}
-
--- init panel
-_HM_Guding.PS.OnPanelActive = function(frame)
-	local ui = HM.UI(frame)
-	ui:Append("Text", { txt = _L["Options"], font = 27 })
-	local nX = ui:Append("WndCheckBox", { txt = _L["Display GUDING of teammate, change color"], checked = HM_Guding.bEnable })
-	:Pos(10, 28):Click(function(bChecked)
-		HM_Guding.bEnable = bChecked
-		ui:Fetch("Check_Use"):Enable(bChecked)
-		ui:Fetch("Check_Say"):Enable(bChecked)
-		ui:Fetch("Track_MP"):Enable(bChecked)
-		ui:Fetch("Track_HP"):Enable(bChecked)
-	end):Pos_()
-	nX = ui:Append("Shadow", "Shadow_Color", { x = nX + 2, y = 32, w = 18, h = 18 })
-	:Color(unpack(HM_Guding.color)):Click(function()
-		OpenColorTablePanel(function(r, g, b)
-			ui:Fetch("Shadow_Color"):Color(r, g, b)
-			HM_Guding.color = { r, g, b }
-		end)
-	end):Pos_()
-	ui:Append("WndCheckBox", "Check_Use", { txt = _L["Auto use GUDING in some condition (only when standing)"], checked = HM_Guding.bAutoUse })
-	:Pos(10, 56):Enable(HM_Guding.bEnable):Click(function(bChecked)
-		HM_Guding.bAutoUse = bChecked
-		ui:Fetch("Track_MP"):Enable(bChecked)
-		ui:Fetch("Track_HP"):Enable(bChecked)
-	end)
-	nX = ui:Append("Text", { txt = _L["While MP less than"], x = 38, y = 84 }):Pos_()
-	ui:Append("WndTrackBar", "Track_MP", { x = nX, y = 88, enable = HM_Guding.bAutoUse })
-	:Range(0, 100, 50):Value(HM_Guding.nAutoMp):Change(function(nVal) HM_Guding.nAutoMp = nVal end)
-	nX = ui:Append("Text", { txt = _L["While HP less than"], x = 38, y = 112 }):Pos_()
-	ui:Append("WndTrackBar", "Track_HP", { x = nX, y = 116, enable = HM_Guding.bAutoUse })
-	:Range(0, 100, 50):Value(HM_Guding.nAutoHp):Change(function(nVal) HM_Guding.nAutoHp = nVal end)
-	ui:Append("WndCheckBox", "Check_Say", { txt = _L["Auto talk in team channel after puting GUDING"], checked = HM_Guding.bAutoSay })
-	:Pos(10, 140):Enable(HM_Guding.bEnable):Click(function(bChecked)
-		HM_Guding.bAutoSay = bChecked
-		ui:Fetch("Edit_Say"):Enable(bChecked)
-	end)
-	ui:Append("Text", { txt = _L["Talk message"], font = 27, x = 0, y = 176 })
-	ui:Append("WndEdit", "Edit_Say", { x = 14, y = 204, multi = true, limit = 512, w = 430, h = 60 })
-	:Text(HM_Guding.szSay):Enable(HM_Guding.bAutoSay):Change(function(szText)
-		HM_Guding.szSay = szText
-	end)
+-- get doodad list
+function HM_Guding.GetDoodadList()
+	return _HM_Guding.tList
 end
 
 ---------------------------------------------------------------------
 -- 注册事件、初始化
 ---------------------------------------------------------------------
--- add to HM panel
-HM.RegisterPanel(_L["5D GUDING"], 2747, nil, _HM_Guding.PS)
-
 -- open hidden window
 local frame = Station.Lookup("Lowest/HM_Guding")
 if frame then Wnd.CloseWindow(frame) end
