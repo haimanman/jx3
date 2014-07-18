@@ -265,3 +265,4 @@ HM.AddHotKey("OnlyPlayer", _L["TAB player only"],  _HM_Locker.SearchOnlyPlayer)
 
 -- public api
 HM_Locker.AddLocker = _HM_Locker.AddLocker
+HM_Locker.SetPrevTarget = _HM_Locker.SetPrevTarget
