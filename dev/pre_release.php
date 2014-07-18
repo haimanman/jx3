@@ -9,7 +9,7 @@ $tag_version = "\tdwVersion = ";
 $tag_build = "\tszBuildDate = \"";
 
 // --- GET BRANCH ---
-$branch = 'master';
+$branch = '';
 $lines = array();
 @exec('git br', $lines);
 foreach ($lines as $line) {
@@ -20,6 +20,9 @@ foreach ($lines as $line) {
 }
 if (($pos = strrpos($branch, '_')) !== false) {
 	$branch = substr($branch, $pos + 1);
+}
+if ($branch == 'master' || ($version_str != '' && $type = 'stable')) {
+	$branch = '';
 }
 
 // --- UPDATE HM.lua ---
@@ -75,15 +78,21 @@ if (($pos1 = strpos($body, $tag_build)))
 	$pos1 = $pos1 + strlen($tag_build);
 	$pos2 = strpos($body, '"', $pos1);
 	date_default_timezone_set('Asia/Shanghai');
-	$body = substr_replace($body, date('Ymd') . ($branch == 'master' ? '' : '-' . $branch), $pos1, $pos2 - $pos1);
+	$body = substr_replace($body, date('Ymd') . ($branch == '' ? '' : '-' . $branch), $pos1, $pos2 - $pos1);
 }
 file_put_contents('HM_0Base/HM.lua', $body);
-$version_str .= $branch == 'master' ? '' : '-' . $branch;
+$version_str .= $branch == '' ? '' : '-' . $branch;
 echo " $version_str\n";
 
 // --- UPDATE VERSION file ---
 echo "creating new VERSION ...\n";
 file_put_contents('VERSION', $version_str);
+
+// --- UPDATE Package.ini ---
+echo "update package.ini ...\n";
+$package_str = file_get_contents('package.ini');
+$package_str = preg_replace('/v[^\s]+/', 'v' . $version_str, $package_str);
+file_put_contents('package.ini', $package_str);
 
 // --- UPDATE README.md ---
 if ($type !== 'alpha')
