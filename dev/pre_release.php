@@ -21,7 +21,7 @@ foreach ($lines as $line) {
 if (($pos = strrpos($branch, '_')) !== false) {
 	$branch = substr($branch, $pos + 1);
 }
-if ($branch == 'master' || ($version_str != '' && $type = 'stable')) {
+if ($branch == 'master' || ($version_str != '' && $type == 'stable')) {
 	$branch = '';
 }
 
