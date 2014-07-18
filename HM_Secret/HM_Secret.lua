@@ -453,11 +453,14 @@ _HM_Secret.PS = {}
 _HM_Secret.PS.OnPanelActive = function(frame)
 	local ui, nX = HM.UI(frame), 0
 	-- buttons
-	nX = ui:Append("WndButton", { x = 0, y = 0, txt = "刷新列表" }):Click(_HM_Secret.LoadList):Pos_()
-	nX = ui:Append("WndButton", { x = nX, y = 0, txt = "发布秘密" }):Click(_HM_Secret.PostNew):Pos_()
+	--nX = ui:Append("WndButton", { x = 0, y = 0, txt = "刷新列表" }):Click(_HM_Secret.LoadList):Pos_()
+	--nX = ui:Append("WndButton", { x = nX, y = 0, txt = "发布秘密" }):Click(_HM_Secret.PostNew):Pos_()
 	-- Tips
 	ui:Append("Text", { x = nX + 10, y = 0, txt = "这不是树洞，秘密就来自你身边的朋友。", font = 27 })
 	ui:Append("Text", { x = 0, y = 378, txt = "小提示：包括插件作者在内任何人都无法知道秘密的来源，请放心发布。", font = 47 })
+	-- tips
+	ui:Append("Text", { x = 10, y = 28, txt = "秘密/Secret 功能正在改版，敬请期待……", font = 207 })
+	do return end
 	-- table frame
 	local fx = Wnd.OpenWindow(_HM_Secret.szIniFile, "HM_Secret")
 	local win = fx:Lookup("Wnd_Result")
@@ -513,6 +516,7 @@ end
 -- 注册事件、初始化
 ---------------------------------------------------------------------
 HM.RegisterEvent("LOADING_END", function()
+	do return end
 	-- attach button
 	local win = Station.Lookup("Normal/Minimap/Wnd_Minimap/Wnd_Over")
 	local btn = win:Lookup("Btn_Secret")
