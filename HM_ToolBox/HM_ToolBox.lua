@@ -400,7 +400,8 @@ _HM_ToolBox.DoBoxStack = function(i, tList)
 	for j = 0, me.GetBoxSize(i) - 1 do
 		local item = me.GetItem(i, j)
 		if item and item.bCanStack and item.nStackNum < item.nMaxStackNum then
-			local szKey = tostring(item.nUiId) .. tostring(item.bBind)
+			--local szKey = tostring(item.nUiId) .. tostring(item.bBind)
+			local szKey = tostring(item.dwTabType) .. "_" .. tostring(item.dwIndex)
 			local t = tList[szKey]
 			if not t then
 				tList[szKey] = { nLeft = item.nMaxStackNum - item.nStackNum, dwBox = i, dwX = j }
@@ -484,20 +485,87 @@ _HM_ToolBox.BindStackButton = function()
 			btn2:SetRelPos(nX + btn1:GetSize(), nY)
 		end
 	end
-	-- guild bank
+	-- guild bank sort/stack
 	local btn1 = Station.Lookup("Normal/GuildBankPanel/Btn_Refresh")
 	local btn2 = Station.Lookup("Normal/GuildBankPanel/Btn_Sort2")
+	local btn3 = Station.Lookup("Normal/GuildBankPanel/Btn_Stack2")
 	if not HM_ToolBox.bGuildBankSort then
 		if btn2 then
 			btn2:Destroy()
 		end
-	elseif btn1 and not btn2 then
-		local x, y = btn1:GetRelPos()
-		local w, h = btn1:GetSize()
-		btn2 = HM.UI("Normal/GuildBankPanel"):Append("WndButton", "Btn_Sort2", { txt = _L["Sort"], w = w, h = h }):Raw()
-		btn2:SetRelPos(x - btn1:GetSize(), y)
-		btn2.OnLButtonClick = _HM_ToolBox.SortGuildBank
+		if btn3 then
+			btn3:Destroy()
+		end
+	elseif btn1 then
+		if not btn2 then
+			local x, y = btn1:GetRelPos()
+			local w, h = btn1:GetSize()
+			btn2 = HM.UI("Normal/GuildBankPanel"):Append("WndButton", "Btn_Sort2", { txt = _L["Sort"], w = w, h = h }):Raw()
+			btn2:SetRelPos(x - btn1:GetSize(), y)
+			btn2.OnLButtonClick = _HM_ToolBox.SortGuildBank
+		end
+		if not btn3 then
+			local x, y = btn2:GetRelPos()
+			local w, h = btn2:GetSize()
+			btn3 = HM.UI("Normal/GuildBankPanel"):Append("WndButton", "Btn_Stack2", { txt = _L["Stack"], w = w, h = h }):Raw()
+			btn3:SetRelPos(x - btn2:GetSize(), y)
+			btn3.OnLButtonClick = _HM_ToolBox.StackGuildBank
+		end
 	end
+end
+
+-- °ï»á²Ö¿â¶Ñµþ
+_HM_ToolBox.StackGuildBank = function()
+	local frame = Station.Lookup("Normal/GuildBankPanel")
+	if not frame then
+		return
+	end
+	local nPage = frame.nPage or 0
+	local bTrigger
+	local fnFinish = function()
+		local btn = Station.Lookup("Normal/GuildBankPanel/Btn_Stack2")
+		if btn then
+			btn:Enable(1)
+			Station.Lookup("Normal/GuildBankPanel/Btn_Sort2"):Enable(1)
+		end
+		HM.RegisterEvent("TONG_EVENT_NOTIFY.stack", nil)
+		HM.RegisterEvent("UPDATE_TONG_REPERTORY_PAGE.stack", nil)
+	end
+	local fnLoop = function()
+		local me, tList = GetClientPlayer(), {}
+		bTrigger = true
+		for i = 1, INVENTORY_GUILD_PAGE_SIZE do
+			local dwX = nPage * INVENTORY_GUILD_PAGE_SIZE + i - 1
+			local item = GetPlayerItem(me, INVENTORY_GUILD_BANK, dwX)
+			if item and item.bCanStack and item.nStackNum < item.nMaxStackNum then
+				local szKey = tostring(item.dwTabType) .. "_" .. tostring(item.dwIndex)
+				local dwX2 = tList[szKey]
+				if not dwX2 then
+					tList[szKey] = dwX
+				else
+					OnExchangeItem(INVENTORY_GUILD_BANK, dwX, INVENTORY_GUILD_BANK, dwX2)
+					return
+				end
+			end
+		end
+		fnFinish()
+	end
+	frame:Lookup("Btn_Stack2"):Enable(0)
+	frame:Lookup("Btn_Sort2"):Enable(0)
+	HM.RegisterEvent("UPDATE_TONG_REPERTORY_PAGE.stack", fnLoop)
+	HM.RegisterEvent("TONG_EVENT_NOTIFY.stack", function()
+		-- TONG_EVENT_CODE.TAKE_REPERTORY_ITEM_PERMISSION_DENY_ERROR
+		if arg0 == 61 then
+			fnFinish()
+		end
+	end)
+	HM.DelayCall(1000, function()
+		if not bTrigger then
+			fnFinish()
+		end
+	end)
+	fnLoop()
+	bTrigger = false
 end
 
 -- °ï»á²Ö¿âÕûÀí
@@ -605,10 +673,12 @@ _HM_ToolBox.SortGuildBank = function()
 			end
 			nDst = nDst + 1
 		end
+		-- finish
 		if nDst >= #aItem then
 			local btn = Station.Lookup("Normal/GuildBankPanel/Btn_Sort2")
 			if btn then
 				btn:Enable(1)
+				Station.Lookup("Normal/GuildBankPanel/Btn_Stack2"):Enable(1)
 			end
 			HM.RegisterEvent("TONG_EVENT_NOTIFY.sort", nil)
 			HM.RegisterEvent("UPDATE_TONG_REPERTORY_PAGE.sort", nil)
@@ -617,6 +687,7 @@ _HM_ToolBox.SortGuildBank = function()
 		end
 	end
 	frame:Lookup("Btn_Sort2"):Enable(0)
+	frame:Lookup("Btn_Stack2"):Enable(0)
 	HM.RegisterEvent("UPDATE_TONG_REPERTORY_PAGE.sort", fnLoop)
 	HM.RegisterEvent("TONG_EVENT_NOTIFY.sort", function()
 		-- TONG_EVENT_CODE.TAKE_REPERTORY_ITEM_PERMISSION_DENY_ERROR
@@ -1183,7 +1254,7 @@ _HM_ToolBox.PS.OnPanelActive = function(frame)
 		HM_Splitter.Switch(bChecked)
 	end)
 	-- guild bank sort
-	ui:Append("WndCheckBox", { txt = _L["Enable to guild bank item sort"], x = nX + 10, y = 176, checked = HM_ToolBox.bGuildBankSort })
+	ui:Append("WndCheckBox", { txt = _L["Enable to guild bank item sort/stack"], x = nX + 10, y = 176, checked = HM_ToolBox.bGuildBankSort })
 	:Click(function(bChecked)
 		HM_ToolBox.bGuildBankSort = bChecked
 	end)
