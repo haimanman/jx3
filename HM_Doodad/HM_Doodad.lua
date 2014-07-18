@@ -14,7 +14,7 @@ HM_Doodad = {
 	bQuest = true,				-- 自动采集任务物品
 	bShowName = true,	-- 显示物品名称
 	bMiniFlag = true,		-- 显示小地图标记
-	--bInteract = true,			-- 自动采集
+	bInteract = true,			-- 自动采集
 	tCraft = {},						-- 草药、矿石列表
 	bCustom = true,			-- 启用自定义
 	tCustom = {},				-- 自定义列表
@@ -250,7 +250,6 @@ _HM_Doodad.OnUpdateHeadName = function()
 end
 
 -- auto interact
---[[
 _HM_Doodad.OnAutoDoodad = function()
 	local me = GetClientPlayer()
 	-- auto interact
@@ -285,7 +284,6 @@ _HM_Doodad.OnAutoDoodad = function()
 		end
 	end
 end
---]]
 
 -- open doodad (loot)
 _HM_Doodad.OnOpenDoodad = function(dwID)
@@ -549,3 +547,4 @@ HM.BreatheCall("UpdateMiniFlag", _HM_Doodad.OnUpdateMiniFlag, 500)
 
 -- add to HM collector
 HM.RegisterPanel(_L["Doodad helper"], 90, _L["Others"], _HM_Doodad.PS)
+HM_Doodad.OnAutoDoodad = _HM_Doodad.OnAutoDoodad
