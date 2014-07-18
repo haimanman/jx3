@@ -333,7 +333,6 @@ HM.RegisterEvent("HELP_EVENT", function()
 		_HM_Taoguan.dwDoodadID = 0
 	end
 end)
-AppendCommand(_HM_Taoguan.szName, _HM_Taoguan.Switch)
 HM.AddHotKey("Taoguan", "ø™/πÿ‘“ƒÍ ﬁÃ’πﬁ", _HM_Taoguan.Switch)
 
 -- add to HM collector

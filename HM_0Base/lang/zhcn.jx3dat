@@ -712,7 +712,7 @@ data = {
 	["Record @message into whisper panel"] = "记录被点名的聊天到密聊专栏",
 	["Sort"] = "整理",
 	["Enable to split bag item into groups"] = "启用分组拆分背包物品",
-	["Enable to guild bank item sort"] = "启用帮会仓库物品整理",
+	["Enable to guild bank item sort/stack"] = "启用帮会仓库物品整理/堆叠",
 	-- src/HM_Splitter.lua --
 	["Group num: "] = "拆分组数：",
 	["Stack num: "] = "每组个数：",
