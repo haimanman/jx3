@@ -233,7 +233,7 @@ _HM_EngBar.Update = function(frame)
 	if _HM_EngBar.szShow == "Handle_ChunYang" or _HM_EngBar.szShow == "Handle_ShaoLin" or _HM_EngBar.szShow == "Handle_QiXiu" then
 		_HM_EngBar.UpdateAccumulateValue(frame)
 	elseif _HM_EngBar.szShow == "Handle_TangMen" then
-		_HM_EngBar.UpdateTangmen(frame)
+		_HM_EngBar.UpdateTangMen(frame)
 		_HM_EngBar.UpdateBomb(frame)
 	elseif _HM_EngBar.szShow == "Handle_CangJian" then
 		_HM_EngBar.UpdateCangJian(frame)
@@ -352,7 +352,7 @@ HM_EngBar.OnEvent = function(event)
 end
 
 HM_EngBar.OnFrameBreathe = function()
-	if _HM_EngBar.szShow == "Handle_TangMen" and _HM_EngBar.nBombTime < (GetTime() - 1000) then
+	if _HM_EngBar.szShow == "Handle_TangMen" and _HM_EngBar.nBombTime and _HM_EngBar.nBombTime < (GetTime() - 1000) then
 		_HM_EngBar.UpdateBomb(this)
 	end
 end
