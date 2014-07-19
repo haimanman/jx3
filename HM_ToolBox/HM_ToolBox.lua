@@ -22,18 +22,12 @@ HM_ToolBox = {
 		[_i(70471)--[[银叶子·试练之地]]] = true,
 	},
 	bBuyMore = true,		-- 买得更多
-	-- 自动确认
-	--bIgnoreSell = true,		-- 卖蓝色装备免确认
-	--bIgnoreRaid = false,	-- 自动团队确认
 	bDurability = true,			-- 显示装备耐久度
-	--bIgnoreTrade = false,	-- 自动交易确认 TradingInvite
-	--bIgnoreHorse = false,	-- 自动双骑确认  OnInviteFollow
 	bShiftAuction = true,	-- 按 shift 一键寄卖
 	bAutoStack = true,	-- 一键堆叠（背包+仓库）
 	bAutoDiamond = true,	-- 五行石精炼完成后自动再摆上次材料
 	bAnyDiamond = false,	-- 忽略五行石颜色，只考虑等级
 	bChatTime = true,		-- 聊天复制党
-	--bNonwar = true,		-- 神行到非战乱地图
 	bWhisperAt = true,	-- 记录点名聊天
 	bSplitter = true,	-- 分组拆分
 	bGuildBankSort = true,	-- 帮会仓库排序
@@ -48,9 +42,7 @@ HM_ToolBox.bIgnoreRaid = false
 ---------------------------------------------------------------------
 -- 本地函数和变量
 ---------------------------------------------------------------------
-local _HM_ToolBox = {
-	nRaidID = 0,
-}
+local _HM_ToolBox = {}
 
 -- 获取自动售卖设置菜单
 _HM_ToolBox.GetSellMenu = function()
@@ -706,68 +698,6 @@ _HM_ToolBox.SortGuildBank = function()
 	bTrigger = false
 end
 
--- 非战乱地图数据（相对于副本：战宝军械库位置 id = 160）
-_HM_ToolBox.tNonwarData = {
-	{ id = 15, x = -180, y = 14 }, -- 长安
-	{ id = 8, x = 40, y = -50 }, -- 洛阳
-	{ id = 11, x = 30, y = -140 }, -- 天策
-	{ id = 12, x = -30, y = 140 }, -- 枫华
-	{ id = 26, x = -70, y = 110}, -- 荻花宫
-	{ id = 32, x = 80, y = -60 },	-- 小战宝
-}
-
--- 加入非战乱地图的神行按钮
-_HM_ToolBox.BindNonwarButton = function()
-	local h = Station.Lookup("Topmost1/WorldMap/Wnd_All", "Handle_CopyBtn")
-	if not h then return end
-	if HM_ToolBox.bNonwar and not h.bNonwared then
-		local me = GetClientPlayer()
-		if not me then return end
-		for i = 0, h:GetItemCount() - 1 do
-			local m = h:Lookup(i)
-			if m and m.mapid == 160 then
-				local _w, _ = m:GetSize()
-				local fS = m.w / _w
-				for _, v in ipairs(_HM_ToolBox.tNonwarData) do
-					local bOpen = me.GetMapVisitFlag(v.id)
-					local szFile, nFrame = "ui/Image/MiddleMap/MapWindow.UITex", 41
-					if bOpen then
-						nFrame = 98
-					end
-					h:AppendItemFromString("<image>name=\"nonwar_" .. v.id .. "\" path="..EncodeComponentsString(szFile).." frame="..nFrame.." eventid=341</image>")
-					local img = h:Lookup(h:GetItemCount() - 1)
-					img.bEnable = bOpen
-					img.bSelect = bOpen and v.id ~= 26 and v.id ~= 32
-					img.x = m.x + v.x
-					img.y = m.y + v.y
-					img.w, img.h = m.w, m.h
-					img.id, img.mapid = v.id, v.id
-					img.middlemapindex = 0
-					img.name = Table_GetMapName(v.mapid)
-					img.city = img.name
-					img.button = m.button
-					img.copy = true
-					img:SetSize(img.w / fS, img.h / fS)
-					img:SetRelPos(img.x / fS - (img.w / fS / 2), img.y / fS - (img.h / fS / 2))
-				end
-				h:FormatAllItemPos()
-				break
-			end
-		end
-		h.bNonwared = true
-	end
-	if not HM_ToolBox.bNonwar and h.bNonwared then
-		for _, v in ipairs(_HM_ToolBox.tNonwarData) do
-			local img = h:Lookup("nonwar_" .. v.id)
-			if img then
-				h:RemoveItem(img)
-			end
-		end
-		h:FormatAllItemPos()
-		h.bNonwared = nil
-	end
-end
-
 -- 装备所在的 box 列表
 _HM_ToolBox.tEquipBox = {
 	["Wnd_Equit"] = {
@@ -1075,18 +1005,6 @@ _HM_ToolBox.OnShopUpdateItem = function()
 end
 
 _HM_ToolBox.OnAutoConfirm = function()
-	if HM_ToolBox.bIgnoreSell then
-		HM.DoMessageBox("SellItemSure")
-	end
-	if HM_ToolBox.bIgnoreRaid then
-		HM.DoMessageBox("ReadyConfirm" .. _HM_ToolBox.nRaidID)
-	end
-	if HM_ToolBox.bIgnoreTrade then
-		HM.DoMessageBox("TradingInvite")
-	end
-	if HM_ToolBox.bIgnoreHorse then
-		HM.DoMessageBox("OnInviteFollow")
-	end
 	if HM_ToolBox.bAutoDiamond then
 		local szName = "ProduceDiamondSure"
 		local frame = Station.Lookup("Topmost2/MB_" .. szName) or Station.Lookup("Topmost/MB_" .. szName)
@@ -1097,7 +1015,6 @@ _HM_ToolBox.OnAutoConfirm = function()
 		HM.DoMessageBox(szName)
 	end
 	_HM_ToolBox.BindStackButton()
-	_HM_ToolBox.BindNonwarButton()
 end
 
 -- 自动摆五行石材料
@@ -1201,29 +1118,6 @@ _HM_ToolBox.PS.OnPanelActive = function(frame)
 	:Click(function(bChecked)
 		HM_ToolBox.bBuyMore = bChecked
 	end)
-	--[[
-	nX = ui:Append("WndCheckBox", { txt = _L["Auto confirm for selling blue level item"], x = 10, y = 120, checked = HM_ToolBox.bIgnoreSell })
-	:Click(function(bChecked)
-		HM_ToolBox.bIgnoreSell = bChecked
-	end):Pos_()
-	ui:Append("WndCheckBox", { txt = _L["Auto confirm for team ready"], x = nX + 10, y = 120, checked = HM_ToolBox.bIgnoreRaid })
-	:Enable(false):Click(function(bChecked)
-		HM_ToolBox.bIgnoreRaid = bChecked
-	end)
-	-- fly to non-war map
-	ui:Append("WndCheckBox", { txt = _L["Allow fly to non-war maps"], x = nX + 10, y = 232, checked = HM_ToolBox.bNonwar })
-	:Click(function(bChecked)
-		HM_ToolBox.bNonwar = bChecked
-	end)
-	ui:Append("WndCheckBox", { txt = _L["Auto confirm for trade request"], x = 10, y = 148, checked = HM_ToolBox.bIgnoreTrade })
-	:Click(function(bChecked)
-		HM_ToolBox.bIgnoreTrade = bChecked
-	end)
-	ui:Append("WndCheckBox", { txt = _L["Auto confirm for ridding horse"], x = nX + 10, y = 148, checked = HM_ToolBox.bIgnoreHorse })
-	:Click(function(bChecked)
-		HM_ToolBox.bIgnoreHorse = bChecked
-	end)
-	--]]
 	-- auto confirm
 	ui:Append("Text", { txt = _L["Auto feature"], x = 0, y = 92, font = 27 })
 	-- shift-auction
@@ -1303,9 +1197,6 @@ end
 ---------------------------------------------------------------------
 -- 注册事件、初始化
 ---------------------------------------------------------------------
-HM.RegisterEvent("RIAD_READY_CONFIRM_RECEIVE_QUESTION", function()
-	_HM_ToolBox.nRaidID = arg0
-end)
 HM.RegisterEvent("DIAMON_UPDATE", _HM_ToolBox.OnDiamondUpdate)
 HM.RegisterEvent("SHOP_OPENSHOP", _HM_ToolBox.OnOpenShop)
 HM.RegisterEvent("SHOP_UPDATEITEM", _HM_ToolBox.OnShopUpdateItem)
