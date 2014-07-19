@@ -134,6 +134,7 @@ _HM_About.CheckUpdate = function(btn)
 				HM.Alert(_L["Already up to date!"])
 			end
 		elseif btn or HM_About.nSkipAlert <= 0 then
+			--[[
 			HM.Confirm(_L("The new HM version: %s, Goto download page?", szTitle), function()
 				OpenInternetExplorer(_HM_About.szHost .. "down/", true)
 			end, function()
@@ -141,6 +142,7 @@ _HM_About.CheckUpdate = function(btn)
 					HM_About.nSkipAlert = 7
 				end
 			end)
+			--]]
 		end
 		if btn then
 			btn:Text(_L["Check update"]):Enable(true)
