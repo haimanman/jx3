@@ -239,9 +239,9 @@ _HM_About.PS.OnTaboxCheck = function(frame, nIndex, szTitle)
 	nX = ui:Append("Text", { txt = _L["<About plug-in>"], x = nX + 10, y = 305, font = 27 }):Click(function()
 		HM.OpenPanel(_L["About plug-in"])
 	end):Pos_()
-	nX = ui:Append("Text", { txt = _L["<Latest version>"], x = nX + 10, y = 305, font = 27 }):Click(function()
-		OpenInternetExplorer(_HM_About.szHost .. "down/")
-	end):Pos_()
+	--nX = ui:Append("Text", { txt = _L["<Latest version>"], x = nX + 10, y = 305, font = 27 }):Click(function()
+	--	OpenInternetExplorer(_HM_About.szHost .. "down/")
+	--end):Pos_()
 	nX = ui:Append("Text", { txt = _L["<Set hotkeys>"], x = nX + 10, y = 305, font = 27 }):Click(HM.SetHotKey):Pos_()
 end
 
