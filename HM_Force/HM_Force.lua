@@ -182,6 +182,7 @@ _HM_Force.tPlayHorse = {
 	[58148] = true,	-- 西山秘宝·虚空交椅
 	[60358] = true,	-- 渡情
 	[63440] = true,	-- 鸾
+	[90491] = true,	-- 咫尺天涯
 }
 _HM_Force.ReplaceHorse = function()
 	-- is now a play horse
@@ -396,6 +397,12 @@ HM.RegisterEvent("SYS_MSG", function()
 		if _HM_Force.bHasWanted and arg1 == me.dwID then
 			_HM_Force.bHasWanted = nil
 			SceneObject_SetTitleEffect(TARGET.PLAYER, arg1, 0)
+		end
+	end
+	-- 技能释放失败，再次检查坐骑
+	if arg0 == "UI_OME_SKILL_RESPOND" and arg1 == SKILL_RESULT_CODE.FAILED and HM_Force.bHorseReplace then
+		if me.bFightState and me.GetKungfuMount().dwSkillID == 10026 then
+			_HM_Force.ReplaceHorse()
 		end
 	end
 end)
