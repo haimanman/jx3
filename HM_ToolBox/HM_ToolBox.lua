@@ -932,7 +932,7 @@ _HM_ToolBox.AppendChatItem = function(h, szMsg)
 		szMsg = string.gsub(szMsg, "group=(%d+) </a", "group=%1 name=\"%1\" </a")
 	end
 	-- normal append
-	h:_AppendItemFromString(szMsg)
+	h:__AppendItemFromString(szMsg)
 	-- add chat time
 	if HM_ToolBox.bChatTime then
 		local h2 = h:Lookup(i)
@@ -966,6 +966,11 @@ end
 
 _HM_ToolBox.OnShopUpdateItem = function()
 	if not HM_ToolBox.bBuyMore then
+		return
+	end
+	-- 排除未解锁用户
+	local btn = Station.Lookup("Normal1/TopMenu/WndContainer_List/Wnd_Lock/Btn_Lock")
+	if btn and btn:IsVisible() then
 		return
 	end
 	-- 由于 ShopPanel 的事件后注册，因此需要延迟一帧调用
@@ -1055,7 +1060,7 @@ _HM_ToolBox.OnChatPanelInit = function()
 		local h = Station.Lookup("Lowest2/ChatPanel" .. i .. "/Wnd_Message", "Handle_Message")
 		local ttl = Station.Lookup("Lowest2/ChatPanel" .. i .. "/CheckBox_Title", "Text_TitleName")
 		if h and (not ttl or ttl:GetText() ~= g_tStrings.CHANNEL_MENTOR) then
-			h._AppendItemFromString = h._AppendItemFromString or h.AppendItemFromString
+			h.__AppendItemFromString = h.__AppendItemFromString or h.AppendItemFromString
 			h.AppendItemFromString = _HM_ToolBox.AppendChatItem
 			if ttl and ttl:GetText() == g_tStrings.PRIVATE_TALK then
 				_HM_ToolBox.hWhisperMsg = h
@@ -1156,7 +1161,6 @@ _HM_ToolBox.PS.OnPanelActive = function(frame)
 	ui:Append("WndCheckBox", { txt = _L["Show time and support copy in chat panel"], x = 10, y = 204, checked = HM_ToolBox.bChatTime })
 	:Click(function(bChecked)
 		HM_ToolBox.bChatTime = bChecked
-		_HM_ToolBox.OnChatPanelInit()
 	end)
 	-- record
 	ui:Append("WndCheckBox", { txt = _L["Record @message into whisper panel"], x = nX + 10, y = 204, checked = HM_ToolBox.bWhisperAt })
