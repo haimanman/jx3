@@ -1188,9 +1188,8 @@ end
 
 -- conflict
 _HM_ToolBox.PS.OnConflictCheck = function()
-	if Chat and HM_ToolBox.bChatTime then
-		Chat.bTime = false
-		Chat.bCopy = false
+	if MY_Chat and HM_ToolBox.bChatTime then
+		MY_Chat.bChatTime = false
 	end
 end
 
