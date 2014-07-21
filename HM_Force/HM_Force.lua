@@ -42,12 +42,12 @@ _HM_Force.OnRideHorse = function()
 		local me = GetClientPlayer()
 		if me then
 			local mnt = me.GetKungfuMount()
-			if mnt and mnt.dwSkillID == 10026 then
+			if mnt and (mnt.dwSkillID == 10026 or mnt.dwSkillID == 10062) then
 				local nPage = GetUserPreferences(1390, "c")
-				if me.bOnHorse and nPage ~= 3 then
-					SelectMainActionBarPage(3)
-				elseif not me.bOnHorse and nPage ~= 1 then
-					SelectMainActionBarPage(1)
+				if me.bOnHorse and nPage < 3 then
+					SelectMainActionBarPage(nPage + 2)
+				elseif not me.bOnHorse and nPage > 2 then
+					SelectMainActionBarPage(nPage - 2)
 				end
 			end
 		end
