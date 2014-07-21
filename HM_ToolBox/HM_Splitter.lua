@@ -56,7 +56,7 @@ _HM_Splitter.ShowSplit = function(box)
 	box2.dwBox, box2.dwX, box2.nStackNum = box.dwBox, box.dwX, item.nStackNum
 	frame:Show()
 	frame:BringToTop()
-	Station.SetFocusWindow(frame:Lookup("Edit_Group"))
+	Station.SetFocusWindow(frame:Lookup("Edit_Num"))
 end
 
 -- 获得鼠标滑过的背包格子
