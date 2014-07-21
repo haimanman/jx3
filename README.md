@@ -7,12 +7,12 @@
 下载
 -----
 
-  * 最新版本：[HM-2.4.2.zip](http://jx3.hightman.cn/down/)
+  * 最新版本：直接在游戏人物选择界面通过[插件管理]下载。
   * 官方网站：<http://haimanchajian.com>
-  * 历史版本：<http://jx3.hightman.cn/down/>
   * 更新日志：<https://github.com/haimanman/jx3/commits/master>
   * 建议&BUG报告：<https://github.com/haimanman/jx3/issues>
   * 用户交流`YY`群： _6685583_
+  * 海鳗鳗微博：<http://weibo.com/haimanman>
 
 
 主要功能

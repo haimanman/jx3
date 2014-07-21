@@ -2,4 +2,7 @@
 dist
 VERSION
 lab
+*/manifest.dat
+*/manifest.key
+*/publisher.key
 
