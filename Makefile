@@ -40,7 +40,7 @@ lang: HM_0Base/lang/zhtw.jx3dat
 
 sync:
 	git push --tags
-	$(MAKE) sync-page
+	#$(MAKE) sync-page
 
 HM_0Base/lang/zhtw.jx3dat: HM_0Base/lang/zhcn.jx3dat
 	big2gb -r < HM_0Base/lang/zhcn.jx3dat | sed 's#zhcn#zhtw#' > tmp.lang
