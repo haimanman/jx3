@@ -77,7 +77,7 @@ beta: clean-check
 	$(MAKE) archive
 	$(MAKE) sync
 
-stable: master-check clean-check
+stable: clean-check
 	$(PHP) dev/pre_release.php stable $(VERSION)
 	$(MAKE) archive
 	$(MAKE) sync
