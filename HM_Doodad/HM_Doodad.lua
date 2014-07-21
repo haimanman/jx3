@@ -14,7 +14,7 @@ HM_Doodad = {
 	bQuest = true,				-- 自动采集任务物品
 	bShowName = true,	-- 显示物品名称
 	bMiniFlag = true,		-- 显示小地图标记
-	bInteract = true,			-- 自动采集
+	--bInteract = true,			-- 自动采集
 	tCraft = {},						-- 草药、矿石列表
 	bCustom = true,			-- 启用自定义
 	tCustom = {},				-- 自定义列表
@@ -542,7 +542,7 @@ HM.RegisterEvent("QUEST_ACCEPTED", function()
 		_HM_Doodad.Reload()
 	end
 end)
---HM.BreatheCall("AutoDoodad", _HM_Doodad.OnAutoDoodad)
+HM.BreatheCall("AutoDoodad", _HM_Doodad.OnAutoDoodad)
 HM.BreatheCall("UpdateMiniFlag", _HM_Doodad.OnUpdateMiniFlag, 500)
 
 -- add to HM collector
