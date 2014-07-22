@@ -25,6 +25,7 @@ local _HM_Locker = {
 	dwScoffer = 0,
 	nScoffFrame2 = 0,	-- 嘲讽 BUFF 帧次
 	dwScoffer2 = 0,	-- 嘲讽 BUFF 源
+	nLastCancel = 0,	-- 上次取消目标的时间 
 }
 
 -- sysmsg
@@ -63,16 +64,22 @@ _HM_Locker.CheckLockFight = function(dwCurID, dwLastID)
 		local nFrame = GetLogicFrameCount()
 		if HM.IsDps(me) then
 			if IsEnemy(me.dwID, dwLastID) then
-				if nFrame < _HM_Locker.nLastSys or (nFrame - _HM_Locker.nLastSys) > 12 then
+				if (nFrame - _HM_Locker.nLastCancel) < 9 then
+					return false
+				elseif nFrame < _HM_Locker.nLastSys or (nFrame - _HM_Locker.nLastSys) > 12 then
 					_HM_Locker.nLastSys = nFrame
+					_HM_Locker.nLastCancel = nFrame
 					_HM_Locker.Sysmsg(_L["Keep attack target in fighting"])
 				end
 				return true
 			end
 		else
 			if not IsEnemy(me.dwID, dwLastID) then
-				if nFrame < _HM_Locker.nLastSys or (nFrame - _HM_Locker.nLastSys) > 12 then
+				if (nFrame - _HM_Locker.nLastCancel) < 9 then
+					return false
+				elseif nFrame < _HM_Locker.nLastSys or (nFrame - _HM_Locker.nLastSys) > 12 then
 					_HM_Locker.nLastSys = nFrame
+					_HM_Locker.nLastCancel = nFrame
 					_HM_Locker.Sysmsg(_L["Keep heal target in fighting"])
 				end
 				return true
