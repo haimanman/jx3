@@ -25,7 +25,7 @@ HM_ToolBox = {
 	bDurability = true,			-- 显示装备耐久度
 	bShiftAuction = true,	-- 按 shift 一键寄卖
 	bAutoStack = true,	-- 一键堆叠（背包+仓库）
-	bAutoDiamond = true,	-- 五行石精炼完成后自动再摆上次材料
+	bAutoDiamond2 = false,	-- 五行石精炼完成后自动再摆上次材料
 	bAnyDiamond = false,	-- 忽略五行石颜色，只考虑等级
 	bChatTime = true,		-- 聊天复制党
 	bWhisperAt = true,	-- 记录点名聊天
@@ -1010,7 +1010,7 @@ _HM_ToolBox.OnShopUpdateItem = function()
 end
 
 _HM_ToolBox.OnAutoConfirm = function()
-	if HM_ToolBox.bAutoDiamond then
+	if HM_ToolBox.bAutoDiamond2 then
 		local szName = "ProduceDiamondSure"
 		local frame = Station.Lookup("Topmost2/MB_" .. szName) or Station.Lookup("Topmost/MB_" .. szName)
 		if frame then
@@ -1024,7 +1024,7 @@ end
 
 -- 自动摆五行石材料
 _HM_ToolBox.OnDiamondUpdate = function()
-	if not HM_ToolBox.bAutoDiamond or not _HM_ToolBox.dFormula or arg0 ~= 1 then
+	if not HM_ToolBox.bAutoDiamond2 or not _HM_ToolBox.dFormula or arg0 ~= 1 then
 		return
 	end
 	local box = Station.Lookup("Normal/FEProducePanel", "Box_FE")
@@ -1136,13 +1136,13 @@ _HM_ToolBox.PS.OnPanelActive = function(frame)
 		HM_ToolBox.bAutoStack = bChecked
 	end)
 	-- put diamond
-	ui:Append("WndCheckBox", { txt = _L["Produce diamond as last formula"], x = 10, y = 148, checked = HM_ToolBox.bAutoDiamond, font = 57 })
+	ui:Append("WndCheckBox", { txt = _L["Produce diamond as last formula"], x = 10, y = 148, checked = HM_ToolBox.bAutoDiamond2, font = 57 })
 	:Click(function(bChecked)
-		HM_ToolBox.bAutoDiamond = bChecked
+		HM_ToolBox.bAutoDiamond2 = bChecked
 		_HM_ToolBox.dFormula = nil
 		ui:Fetch("Check_Any"):Enable(bChecked)
 	end)
-	ui:Append("WndCheckBox", "Check_Any", { txt = _L["Only consider diamond level"], x = nX + 10, y = 148, checked = HM_ToolBox.bAnyDiamond, enable = HM_ToolBox.bAutoDiamond })
+	ui:Append("WndCheckBox", "Check_Any", { txt = _L["Only consider diamond level"], x = nX + 10, y = 148, checked = HM_ToolBox.bAnyDiamond, enable = HM_ToolBox.bAutoDiamond2 })
 	:Click(function(bChecked)
 		HM_ToolBox.bAnyDiamond = bChecked
 	end)
