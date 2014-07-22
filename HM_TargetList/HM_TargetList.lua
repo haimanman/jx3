@@ -195,7 +195,8 @@ _HM_TargetList.DelFocus = function(dwID)
 			if not IsPlayer(dwID) then
 				local npc = GetNpc(dwID)
 				if npc then
-					HM_TargetList.tPersistFocus[npc.szName] = nil
+					local szName = HM.GetTargetName(npc)
+					HM_TargetList.tPersistFocus[szName] = nil
 				end
 			else
 				HM_TargetList.tPersistFocus[dwID] = nil
