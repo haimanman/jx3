@@ -151,7 +151,7 @@ _HM_Force.UpdateOTActionBar = function()
 	if not _HM_Force.bActionDec then
 		nFrame = nTotal - nFrame
 	end
-	hText:SetText(szText .. string.format(" (%.2g/%.2g)", nFrame / 16, nTotal / 16))
+	hText:SetText(szText .. string.format(" (%.2f/%.2f)", nFrame / 16, nTotal / 16))
 end
 
 -- on wanted msg
