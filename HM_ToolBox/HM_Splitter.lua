@@ -49,11 +49,14 @@ _HM_Splitter.ShowSplit = function(box)
 	if not item then
 		return
 	end
+	local x, y = box:GetAbsPos()
+	local w, h = box:GetSize()
 	local box2 = frame:Lookup("", "Box_Item")
 	box2:SetObject(box:GetObject())
 	box2:SetObjectIcon(box:GetObjectIcon())
 	box2:SetOverText(0, box:GetOverText(0))
 	box2.dwBox, box2.dwX, box2.nStackNum = box.dwBox, box.dwX, item.nStackNum
+	frame:CorrectPos(x, y, w, h, ALW.CENTER)
 	frame:Show()
 	frame:BringToTop()
 	Station.SetFocusWindow(frame:Lookup("Edit_Num"))
@@ -108,6 +111,7 @@ _HM_Splitter.OnBagBoxMouseLeave = function(box)
 	box:SetObjectMouseOver(0)
 	box.OnItemLButtonClick = box._OnItemLButtonClick
 	box.OnItemMouseLeave = box._OnItemMouseLeave
+	box.OnItemLButtonDrag = box._OnItemLButtonDrag
 	if UserSelect.IsSelectItem() then
 		UserSelect.SatisfySelectItem(-1, -1, true)
 		return
@@ -145,8 +149,10 @@ HM_Splitter.OnFrameBreathe = function()
 			box.bSplitHooked = true
 			box._OnItemLButtonClick = box.OnItemLButtonClick
 			box._OnItemMouseLeave = box.OnItemMouseLeave
+			box._OnItemLButtonDrag = box.OnItemLButtonDrag
 			box.OnItemLButtonClick = _HM_Splitter.OnBagBoxLButtonClick
 			box.OnItemMouseLeave = _HM_Splitter.OnBagBoxMouseLeave
+			box.OnItemLButtonDrag = _HM_Splitter.OnBagBoxLButtonClick
 			this.box = box
 		end
 	elseif this.box and this.box.bSplitHooked then
