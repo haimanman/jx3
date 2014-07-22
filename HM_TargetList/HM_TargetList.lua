@@ -215,7 +215,10 @@ _HM_TargetList.SetPersistFocus = function(dwID)
 	if not IsPlayer(dwID) then
 		local npc = GetNpc(dwID)
 		if npc then
-			HM_TargetList.tPersistFocus[npc.szName] = true
+			local szName = HM.GetTargetName(npc)
+			if szName ~= "" then
+				HM_TargetList.tPersistFocus[szName] = true
+			end
 		end
 	else
 		HM_TargetList.tPersistFocus[dwID] = true
@@ -1389,8 +1392,11 @@ HM_TargetList.OnEvent = function(event)
 				_HM_TargetList.AddFocus(arg0)
 			elseif event == "NPC_ENTER_SCENE" then
 				local npc = GetNpc(arg0)
-				if npc and HM_TargetList.tPersistFocus[npc.szName] then
-					_HM_TargetList.AddFocus(npc.dwID, true)
+				if npc then
+					local szName = HM.GetTargetName(npc)
+					if HM_TargetList.tPersistFocus[szName] then
+						_HM_TargetList.AddFocus(npc.dwID, true)
+					end
 				end
 			end
 		end
