@@ -19,6 +19,7 @@ HM_Doodad = {
 	bCustom = true,			-- 启用自定义
 	tCustom = {},				-- 自定义列表
 	tNameColor = { 196, 64, 255 },	-- 头顶名称颜色
+	bShowAll2 = false,
 }
 HM.RegisterCustomData("HM_Doodad")
 
@@ -162,6 +163,8 @@ _HM_Doodad.TryAdd = function(dwID, bDelay)
 			end
 		elseif d.dwTemplateID == 4733 or d.dwTemplateID == 4734 and HM_Doodad.bQuest then
 			data = { craft = true }
+		elseif HM_Doodad.bShowAll2 and d.nKind ~= DOODAD_KIND.QUEST and d.IsSelectable() then
+			data = { other = true }
 		end
 		if data then
 			_HM_Doodad.tDoodad[dwID] = data
@@ -263,7 +266,7 @@ _HM_Doodad.OnAutoDoodad = function()
 	end
 	for k, v in pairs(_HM_Doodad.tDoodad) do
 		local d, bKeep, bIntr = GetDoodad(k), false, false
-		if not d or not d.CanDialog(me) then
+		if not d or not d.CanDialog(me) or v.other then
 			-- 若存在却不能对话只简单保留
 			bKeep = d ~= nil
 		elseif v.loot then		-- 尸体只摸一次
@@ -448,17 +451,16 @@ _HM_Doodad.PS.OnPanelActive = function(frame)
 	:Click(function(bChecked)
 		HM_Doodad.bMiniFlag = bChecked
 	end):Pos_()
-	--[[
-	nX = ui:Append("WndCheckBox", { txt = _L["Auto interact"], x = nX2 + 20, y = 92, checked = HM_Doodad.bInteract })
-	:Click(function(bChecked)
-		HM_Doodad.bInteract = bChecked
-	end):Pos_()
-	--]]
-	ui:Append("WndCheckBox", { txt = _L["Quest items"], x = nX + 10, y = 92, checked = HM_Doodad.bQuest })
+	nX = ui:Append("WndCheckBox", { txt = _L["Quest items"], x = nX2 + 20, y = 92, checked = HM_Doodad.bQuest })
 	:Click(function(bChecked)
 		HM_Doodad.bQuest = bChecked
 		_HM_Doodad.Reload()
-	end)
+	end):Pos_()
+	nX = ui:Append("WndCheckBox", { txt = _L["All other"], x = nX + 10, y = 92, checked = HM_Doodad.bShowAll2 })
+	:Click(function(bChecked)
+		HM_Doodad.bShowAll2 = bChecked
+		_HM_Doodad.Reload()
+	end):Pos_()
 	-- craft
 	nX = 10
 	local nY = 124
