@@ -296,6 +296,7 @@ data = {
 	["Import"] = "导入聊天框",
 	["Import successfully, but modify content will lead to link broken"] = "导入成功，直接修改内容会导致链接失效",
 	["Start yelling"] = "开始喊话",
+	["Stop when team full"] = "队满停喊",
 	["Skill/Kill jabber"] = "技能/击杀喊话",
 	-- HM_Locker.lua --
 	["HM_Locker"] = "海鳗锁定",
