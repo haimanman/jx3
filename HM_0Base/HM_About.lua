@@ -224,7 +224,7 @@ _HM_About.PS.OnTaboxCheck = function(frame, nIndex, szTitle)
 	if nT > 720 and nT < 804 then
 		nF = 1
 	end
-	ui:Append("Image", { x = 0, y = 5, w = 532, h = 168 }):File("interface\\HM\\HM_0Base\\image.UITEX", nF):Click(function()
+	ui:Append("Image", { x = 0, y = 5, w = 532, h = 168 }):File(HM.GetCustomFile("image.UITEX", "interface\\HM\\HM_0Base\\image.UITEX"), nF):Click(function()
 		if nF == 1 and HM_Love then
 			HM.OpenPanel(HM_Love.szTitle)
 		end
@@ -234,7 +234,7 @@ _HM_About.PS.OnTaboxCheck = function(frame, nIndex, szTitle)
 	ui:Append("Text", { txt = _L["YY-group: 6685583"], x = 10, y = 280, font = 27 })
 	-- buttons
 	local nX = ui:Append("Text", { txt = _L["<Opening music>"], x = 10, y = 305, font = 27 }):Click(function()
-		PlaySound(SOUND.UI_SOUND, "interface\\HM\\HM_0Base\\opening.wav")
+		PlaySound(SOUND.UI_SOUND, HM.GetCustomFile("opening.wav", "interface\\HM\\HM_0Base\\opening.wav"))
 	end):Pos_()
 	nX = ui:Append("Text", { txt = _L["<About plug-in>"], x = nX + 10, y = 305, font = 27 }):Click(function()
 		HM.OpenPanel(_L["About plug-in"])

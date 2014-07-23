@@ -46,6 +46,7 @@ local _HM_KillEffect = {
 		},
 	},
 }
+_HM_KillEffect.szSoundPath = HM.GetCustomFile("sound\\", _HM_KillEffect.szSoundPath)
 
 -- 获取斩杀的文字、音效文件
 _HM_KillEffect.GetKillEffect = function()

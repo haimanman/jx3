@@ -37,7 +37,7 @@ local _HM = {
 	szBuildDate = "20140721",
 	szTitle = _L["HM, JX3 Plug-in Collection"],
 	szShort = _L["HM Plug"],
-	szIniFile = "interface\\HM\\HM_0Base\\HM.ini",
+	szIniFile = _L["@hm_ini@"],
 	tClass = { _L["General"], _L["Target"], _L["Battle"] },
 	tItem = { {}, {}, {} },
 	tMenu = {},
@@ -69,7 +69,7 @@ _HM.OpenPanel = function(bDisableSound)
 		if HM_About and HM_About.bPlayOpen
 			and (not _HM.nPlayOpen or (GetLogicFrameCount() - _HM.nPlayOpen) > 57600)
 		then
-			PlaySound(SOUND.UI_SOUND, "interface\\HM\\HM_0Base\\opening.wav")
+			PlaySound(SOUND.UI_SOUND, HM.GetCustomFile("opening.wav", "interface\\HM\\HM_0Base\\opening.wav"))
 			_HM.nPlayOpen = GetLogicFrameCount()
 		else
 			PlaySound(SOUND.UI_SOUND, g_sound.OpenFrame)
@@ -1456,6 +1456,16 @@ end
 -- (void) HM.ImportLang(string szPath)
 HM.ImportLang = function(szPath)
 	_L.__import(szPath)
+end
+
+-- 获取自定义资源文件
+-- (string) HM.GetCustomFile(szName)
+HM.GetCustomFile = function(szName, szDefault)
+	local szPath = "interface\\HM\\custom\\" .. szName
+	if IsFileExist(szPath) then
+		return szPath
+	end
+	return szDefault
 end
 
 ---------------------------------------------------------------------
