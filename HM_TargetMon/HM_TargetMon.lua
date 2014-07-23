@@ -831,11 +831,12 @@ _HM_TargetMon.OnFrameBreathe = function()
 			end
 		end
 	else
-		local aBuff, tNo = nil, nil
+		local aBuff, tNo, bMine = nil, nil, false
 		if this.nIndex == 2 and tar then	-- target buff
 			aBuff = HM.GetAllBuff(tar)
 			hBox.dwOwner = tar.dwID
 			tNo = HM_TargetMon.tNTBuffEx
+			bMine = not IsPlayer(tar.dwID)
 		elseif this.nIndex == 3 then -- and (not tar or tar.dwID ~= me.dwID or not HM_TargetMon.bTargetBuffEx) then
 			aBuff = HM.GetAllBuff(me)
 			hBox.dwOwner = me.dwID
@@ -845,12 +846,14 @@ _HM_TargetMon.OnFrameBreathe = function()
 			local mBuff = _HM_TargetMon.GetBuffExList(aBuff, tNo)
 			hBox.nIndex = 0
 			if #mBuff > 0 then
-				bHide = false
 				for _, v in ipairs(mBuff) do
-					local box, txt = _HM_TargetMon.GetBoxText(hBox, hText)
-					_HM_TargetMon.UpdateBuffBox(v.buff, box, txt, v.szType)
+					if not bMine or v.buff.dwSkillSrcID == me.dwID then
+						local box, txt = _HM_TargetMon.GetBoxText(hBox, hText)
+						_HM_TargetMon.UpdateBuffBox(v.buff, box, txt, v.szType)
+					end
 				end
 			end
+			bHide = hBox.nIndex == 0
 		end
 	end
 	if bHide then
