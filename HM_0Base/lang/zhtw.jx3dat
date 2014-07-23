@@ -578,7 +578,9 @@ data = {
 	["List: live/total num"] = "列表：活人/總數",
 	["Click to show nearby player statistics"] = "點擊可發布列表人數統計",
 	["HM, focus alone"] = "海鰻獨立焦點",
-	["Battle begin."] = nil,
+	["Battle begin."] = "爭奪開始。",
+	["Auto focus specified NPC"] = "自動焦點指定 NPC",
+	["One per line"] = "每行一個",
 	-- HM_TargetMon.lua --
 	["Call pet"] = "召喚寵物",
 	["Invincible"] = "無敵",

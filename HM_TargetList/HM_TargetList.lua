@@ -117,6 +117,7 @@ _HM_TargetList.GetFocusMenu = function()
 					_HM_TargetList.nFrameFocus = 0
 				end
 			end
+		}, { szOption = _L["Auto focus specified NPC"], fnAction = function() HM.OpenPanel(_L["Focus/TargetList"]) end
 		}, { szOption = _L("Maximum focus num [%d]", HM_TargetList.nMaxFocus),
 			fnDisable = function() return not HM_TargetList.bShowFocus end,
 			{ szOption = "1", bCheck = true, bMCheck = true, UserData = 1, bChecked = n == 1 , fnAction = _HM_TargetList.AdjustMaxFocus },
@@ -1922,6 +1923,17 @@ _HM_TargetList.PS.OnPanelDeactive = function(frame)
 	_HM_TargetList.ui = nil
 end
 
+-- persist npc text
+_HM_TargetList.GetPersistNpcText = function()
+	local tName = {}
+	for k, _ in pairs(HM_TargetList.tPersistFocus) do
+		if type(k) == "string" then
+			table.insert(tName, k)
+		end
+	end
+	return table.concat(tName, "\n")
+end
+
 -- init panel
 _HM_TargetList.PS.OnPanelActive = function(frame)
 	local ui, nX = HM.UI(frame), 0
@@ -1948,12 +1960,37 @@ _HM_TargetList.PS.OnPanelActive = function(frame)
 	nX = ui:Append("WndComboBox", { x = 10, y = 114, txt = _L["Foucs setting"] }):Menu(_HM_TargetList.GetFocusMenu):Pos_()
 	ui:Append("WndComboBox", { x = nX + 20, y = 114, txt = _L["List setting"] }):Menu(_HM_TargetList.GetListMenu)
 	_HM_TargetList.ui = ui
-	ui:Append("Text", { x = 0, y = 150, txt = _L["Tips"], font = 27 })
-	nX = ui:Append("Text", { x = 10, y = 178, txt = _L["1. Support to set/select focus by hotkey, "] }):Pos_()
-	ui:Append("WndButton", { txt = _L["Enter setting"], x = nX + 5, y = 180 }):AutoSize(8):Click(HM.SetHotKey)
-	ui:Append("Text", { x = 10, y = 206, txt = _L["2. Hotkey supported when mouse move over the npc/player of scene, "] })
-	ui:Append("Text", { x = 10, y = 234, txt = _L["3. Press SHIFT and click target/targettarget/target list can add/remove focus"] })
-	ui:Append("Text", { x = 10, y = 262, txt = _L["4. Send 33 to around player can add as focus"] })
+	ui:Append("Text", { x = 0, y = 150, txt = _L["Auto focus specified NPC"] .. _L["("] .. _L["One per line"] .. _L[") "], font = 27 })
+	nX = ui:Append("WndEdit", "Edit_Npc", { x = 15, y = 178, limit = 4096, h = 60, w = 380, multi = true })
+	:Text(_HM_TargetList.GetPersistNpcText()):Enable(HM_TargetList.bShowFocus)
+	:Change(function(szText)
+		local t = {}
+		for _, v in ipairs(HM.Split(szText, "\n")) do
+			v = HM.Trim(v)
+			if v ~= "" then
+				t[v] = true
+			end
+		end
+		for _, v in pairs(HM.GetAllNpc()) do
+			local szName = HM.GetTargetName(v)
+			if t[szName] then
+				_HM_TargetList.AddFocus(v.dwID, true)
+			end
+		end
+		for k, _ in pairs(HM_TargetList.tPersistFocus) do
+			if type(k) == "number" then
+				t[k] = true
+			end
+		end
+		HM_TargetList.tPersistFocus = t
+	end):Pos_()
+	ui:Append("Text", { x = 0, y = 250, txt = _L["Tips"], font = 27 })
+	nX = ui:Append("Text", { x = 10, y = 278, txt = _L["1. Support to set/select focus by hotkey, "] }):Pos_()
+	ui:Append("WndButton", { txt = _L["Enter setting"], x = nX + 5, y = 280 }):AutoSize(8):Click(HM.SetHotKey)
+	ui:Append("Text", { x = 10, y = 306, txt = _L["2. Hotkey supported when mouse move over the npc/player of scene, "] })
+	ui:Append("Text", { x = 10, y = 334, txt = _L["3. Press SHIFT and click target/targettarget/target list can add/remove focus"] })
+	ui:Append("Text", { x = 10, y = 362, txt = _L["4. Send 33 to around player can add as focus"] })
+	--]]
 end
 
 -- player menu
