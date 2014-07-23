@@ -59,6 +59,7 @@ _HM_Splitter.ShowSplit = function(box)
 	frame:CorrectPos(x, y, w, h, ALW.CENTER)
 	frame:Show()
 	frame:BringToTop()
+	frame:Lookup("Edit_Num"):SelectAll()
 	Station.SetFocusWindow(frame:Lookup("Edit_Num"))
 end
 
@@ -181,7 +182,7 @@ HM_Splitter.OnEditChanged = function()
 	if not box.nStackNum then
 		return
 	elseif szName == "Edit_Num" then
-		local nNum = tonumber(this:GetText())
+		local nNum = tonumber(this:GetText()) or 1
 		local nNum2 = nNum
 		if nNum < 1 then
 			nNum = 1
@@ -191,14 +192,14 @@ HM_Splitter.OnEditChanged = function()
 		if nNum ~= nNum2 then
 			this:SetText(tostring(nNum))
 		end
-		local nGroup = tonumber(this:GetRoot():Lookup("Edit_Group"):GetText())
+		local nGroup = tonumber(this:GetRoot():Lookup("Edit_Group"):GetText()) or 1
 		if nNum * nGroup > box.nStackNum then
 			nGroup = math.floor(box.nStackNum / nNum)
 			this:GetRoot():Lookup("Edit_Group"):SetText(tostring(nGroup))
 		end
 	elseif szName == "Edit_Group" then
-		local nNum = tonumber(this:GetRoot():Lookup("Edit_Num"):GetText())
-		local nGroup = tonumber(this:GetText())
+		local nNum = tonumber(this:GetRoot():Lookup("Edit_Num"):GetText()) or 1
+		local nGroup = tonumber(this:GetText()) or 1
 		if nNum * nGroup > box.nStackNum then
 			nGroup = math.floor(box.nStackNum / nNum)
 			this:SetText(tostring(nGroup))
