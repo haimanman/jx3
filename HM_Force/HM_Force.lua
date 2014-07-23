@@ -417,7 +417,6 @@ end)
 HM.RegisterEvent("OT_ACTION_PROGRESS_BREAK", function()
 	if arg0 == GetClientPlayer().dwID then
 		_HM_Force.nActionTotal = nil
-		_HM_Force.RestoreTarget()
 	end
 end)
 HM.RegisterEvent("OT_ACTION_PROGRESS_UPDATE", function()
