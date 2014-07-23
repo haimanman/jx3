@@ -34,8 +34,9 @@ local _HM_Jabber = {
 	tTongKill = {},			-- 帮会击杀次数
 	nAutoTime = 30,		-- 隔几秒自动喊一次，默认 30 秒
 	tAutoChannel = {
-		[PLAYER_TALK_CHANNEL.NEARBY] = true,
+		[PLAYER_TALK_CHANNEL.TONG] = true,
 	},	-- 自动喊话的频道选择（多选）
+	bStopFull = false,		-- 组满不喊
 }
 
 -- talk channels
@@ -831,12 +832,17 @@ _HM_Jabber.PS.OnPanelActive = function(frame)
 		ui:Fetch("Edit_Auto"):Text(_HM_Jabber.GetAutoText(), true)
 		HM.Sysmsg(_L["Import successfully, but modify content will lead to link broken"])
 	end):Pos_()
-	ui:Append("WndCheckBox", "Check_Auto", { txt = _L["Start yelling"], x = nX + 10, y = 282, checked = _HM_Jabber.bAuto })
+	nX = ui:Append("WndCheckBox", "Check_Auto", { txt = _L["Start yelling"], x = nX + 10, y = 282, checked = _HM_Jabber.bAuto })
 	:Click(function(bChecked)
 		_HM_Jabber.bAuto = bChecked
+		ui:Fetch("Check_Stop"):Enable(bChecked)
 		if bChecked then
 			HM.BreatheCall("HM_Jabber_Auto", function()
 				local szText = HM_Jabber.tMessage.auto
+				local team = GetClientTeam()
+				if _HM_Jabber.bStopFull and team.GetTeamSize() == team.nGroupNum * 5 then
+					return
+				end
 				if szText and szText ~= "" then
 					for k, v in pairs(_HM_Jabber.tAutoChannel) do
 						if v == true then
@@ -848,6 +854,10 @@ _HM_Jabber.PS.OnPanelActive = function(frame)
 		else
 			HM.BreatheCall("HM_Jabber_Auto", nil)
 		end
+	end):Pos_()
+	ui:Append("WndCheckBox", "Check_Stop", { txt = _L["Stop when team full"], x = nX + 10, y = 282, checked = _HM_Jabber.bStopFull })
+	:Enable(_HM_Jabber.bAuto):Click(function(bChecked)
+		_HM_Jabber.bStopFull = bChecked
 	end)
 	local nLimit = 128
 	if HM_About.CheckNameEx(GetClientPlayer().szName) then
