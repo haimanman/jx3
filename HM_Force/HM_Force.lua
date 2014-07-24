@@ -347,6 +347,12 @@ end
 HM.RegisterEvent("NPC_ENTER_SCENE", _HM_Force.OnNpcEnter)
 HM.RegisterEvent("NPC_LEAVE_SCENE", _HM_Force.OnNpcLeave)
 HM.RegisterEvent("NPC_DISPLAY_DATA_UPDATE", _HM_Force.OnNpcUpdate)
+HM.RegisterEvent("LOADING_END", 	function()
+	local buff = Table_GetBuff(374, 1)
+	if buff then
+		buff.bShowTime = 1
+	end
+end)
 HM.RegisterEvent("SYNC_ROLE_DATA_END", function()
 	_HM_Force.OnRideHorse()
 	if HM_Force.bAlertWanted then
