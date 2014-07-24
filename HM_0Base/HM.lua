@@ -961,7 +961,15 @@ end
 HM.HasVipEmotion = function()
 	if _HM.bVipEmotion == nil then
 		local frame = Wnd.OpenWindow("EmotionPanel")
-		_HM.bVipEmotion = frame and frame:Lookup("Wnd_Checks/CheckBox_EM1") ~= nil
+		_HM.bVipEmotion = false
+		if frame then
+			for i = 1, 5 do
+				if frame:Lookup("Wnd_Checks/CheckBox_EM" .. i) ~= nil then
+					_HM.bVipEmotion = true
+					break
+				end
+			end
+		end
 		Wnd.CloseWindow(frame)
 	end
 	return _HM.bVipEmotion
