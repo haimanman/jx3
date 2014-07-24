@@ -794,32 +794,63 @@ _HM_ToolBox.RepeatChatLine = function(hTime)
 	end
 end
 
--- 聊天表情初始化
+-- 聊天表情初始化 (frame, group)
 _HM_ToolBox.InitFaceIcon = function()
-	if not _HM_ToolBox.tFacIcon then
-		local t = { image = {}, animate = {} }
-		for i = 1, g_tTable.FaceIcon:GetRowCount() do
-			local tLine = g_tTable.FaceIcon:GetRow(i)
-			if tLine.szType == "animate" then
-				t.animate[tLine.nFrame] = { szCmd = tLine.szCommand, dwID = tLine.dwID }
-			else
-				t.image[tLine.nFrame] = { szCmd = tLine.szCommand, dwID = tLine.dwID }
-			end
+	-- frame = image, group = animate
+	local t = { frame = {}, group = {} }
+	for i = 1, g_tTable.FaceIcon:GetRowCount() do
+		local tLine = g_tTable.FaceIcon:GetRow(i)
+		local tEmotion = { dwID = tLine.dwID, szCmd = tLine.szCommand, szImageFile = string.lower(tLine.szImageFile) }
+		local nFrame = tLine.nFrame
+		local tt = (tLine.szType == "animate" and t.group) or t.frame
+		if not tt[nFrame] then
+			tt[nFrame] = tEmotion
+		else
+			table.insert(tt[nFrame],  tEmotion)
 		end
-		_HM_ToolBox.tFacIcon = t
 	end
+	_HM_ToolBox.tFacIcon = t
 end
 
--- 根据名称提取表情 ID
-_HM_ToolBox.FetchFaceID = function(szCmd)
+-- 根据路径、类型、帧次获取表情 ID
+_HM_ToolBox.GetEmotionID = function(szFile, szType, nFrame)
+	local t = _HM_ToolBox.tFacIcon[szType]
+	if t and t[nFrame] then
+		local tt = t[nFrame]
+		szFile = string.lower(string.gsub(string.gsub(szFile, "/", "\\"), "\\\\", "\\"))
+		if tt.szImageFile == szFile then
+			return tt.dwID
+		end
+		for _, v in ipairs(tt) do
+			if v.szImageFile == szFile then
+				return v.dwID
+			end
+		end
+	end
+	return nil
+end
+
+-- 根据表情指令获取 ID
+_HM_ToolBox.EmotionCommandToID = function(szCmd)
 	for _, v in pairs(_HM_ToolBox.tFacIcon) do
 		for _, vv in pairs(v) do
 			if vv.szCmd == szCmd then
 				return vv.dwID
 			end
+			for _, vvv in ipairs(vv) do
+				if vvv.szCmd == szCmd then
+					return vvv.dwID
+				end
+			end
 		end
 	end
 	return nil
+end
+
+-- 根据 ID 获取表情指令
+_HM_ToolBox.GetEmotionCommand = function(dwID)
+	local tLine = g_tTable.FaceIcon:GetRow(dwID + 1)
+	return tLine and tLine.szCommand
 end
 
 -- 聊天复制功能
@@ -831,7 +862,6 @@ _HM_ToolBox.CopyChatLine = function(hTime)
 	edit:ClearText()
 	local h, i, bBegin = hTime:GetParent(), hTime:GetIndex(), nil
 	-- loop
-	_HM_ToolBox.InitFaceIcon()
 	for i = i + 1, h:GetItemCount() - 1 do
 		local p = h:Lookup(i)
 		if p:GetType() == "Text" then
@@ -895,24 +925,19 @@ _HM_ToolBox.CopyChatLine = function(hTime)
 				end
 			end
 		elseif p:GetType() == "Image" or p:GetType() == "Animate" then
-			local tEmotion = nil
-			if p:GetType() == "Image" then
-				local nFrame = p:GetFrame()
-				tEmotion = _HM_ToolBox.tFacIcon.image[nFrame]
-			else
-				local nGroup = tonumber(p:GetName())
-				tEmotion = _HM_ToolBox.tFacIcon.animate[nGroup]
-			end
-			if tEmotion then
-				local szCmd, dwFaceID = tEmotion.szCmd, tEmotion.dwID
-				if string.byte(szCmd, 2, 2) < 128 and not HM.HasVipEmotion() then
-					szCmd = string.sub(szCmd, 1, 1) .. string.sub(szCmd, 3)
-					dwFaceID = _HM_ToolBox.FetchFaceID(szCmd2)
-				end
-				if dwFaceID then
-					edit:InsertObj(szCmd, { type = "emotion", text = szCmd, id = dwFaceID })
-				else
-					edit:InsertText(szCmd)
+			local dwFaceID = tonumber(p:GetName())
+			if dwFaceID then
+				local szCmd = _HM_ToolBox.GetEmotionCommand(dwFaceID)
+				if szCmd then
+					if string.byte(szCmd, 2, 2) < 128 and not HM.HasVipEmotion() then
+						szCmd = string.sub(szCmd, 1, 1) .. string.sub(szCmd, 3)
+						dwFaceID = _HM_ToolBox.EmotionCommandToID(szCmd)
+					end
+					if dwFaceID then
+						edit:InsertObj(szCmd, { type = "emotion", text = szCmd, id = dwFaceID })
+					else
+						edit:InsertText(szCmd)
+					end
 				end
 			end
 		end
@@ -927,9 +952,14 @@ _HM_ToolBox.AppendChatItem = function(h, szMsg)
 	if StringFindW(szMsg, "eventlink") and StringFindW(szMsg, _L["Addon comm."]) then
 		return
 	end
-	-- save animiate group into name
-	if HM_ToolBox.bChatTime then
-		szMsg = string.gsub(szMsg, "group=(%d+) </a", "group=%1 name=\"%1\" </a")
+	-- save emotion id into name
+	if HM_ToolBox.bChatTime and string.find(szMsg, "path=\"", 1, 1) then
+		szMsg = string.gsub(szMsg, "path=\"(.-)\"%s+disablescale=1%s+(%w+)=(%d+)", function(szFile, szType, nFrame)
+			local dwEmotion = _HM_ToolBox.GetEmotionID(szFile, szType, tonumber(nFrame))
+			if dwEmotion then
+				return "path=\"" .. szFile .. "\" disablescale=1 " .. szType .. "=" .. nFrame .. " name=\"" .. dwEmotion .. "\""
+			end
+		end)
 	end
 	-- normal append
 	h:__AppendItemFromString(szMsg)
@@ -1219,6 +1249,8 @@ HM.RegisterEvent("CHAT_PANEL_INIT", function()
 	_HM_ToolBox.OnChatPanelInit()
 end)
 HM.RegisterEvent("FIRST_LOADING_END", function()
+	_HM_ToolBox.InitFaceIcon()
+		HM_ToolBox.tFacIcon = _HM_ToolBox.tFacIcon
 	HM_Splitter.Switch(HM_ToolBox.bSplitter)
 end)
 -- 记录点名聊天
