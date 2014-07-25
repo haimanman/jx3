@@ -303,6 +303,7 @@ HM_EngBar.OnFrameCreate = function()
 	this:RegisterEvent("ON_ENTER_CUSTOM_UI_MODE")
 	this:RegisterEvent("ON_LEAVE_CUSTOM_UI_MODE")
 	this:RegisterEvent("UI_SCALED")
+	this:RegisterEvent("LOADING_END")
 	UpdateCustomModeWindow(this, _L["HM, energy bar"])
 	_HM_EngBar.UpdateAnchor(this)
 	_HM_EngBar.CopyHandle(this)
@@ -348,6 +349,8 @@ HM_EngBar.OnEvent = function(event)
 		elseif _HM_EngBar.szShow == "Handle_MingJiao" then
 			_HM_EngBar.UpdateMingJiao(this)
 		end
+	elseif event == "LOADING_END" then
+		_HM_EngBar.Update(this)
 	end
 end
 
