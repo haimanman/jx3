@@ -1252,7 +1252,6 @@ HM.RegisterEvent("CHAT_PANEL_INIT", function()
 end)
 HM.RegisterEvent("FIRST_LOADING_END", function()
 	_HM_ToolBox.InitFaceIcon()
-		HM_ToolBox.tFacIcon = _HM_ToolBox.tFacIcon
 	HM_Splitter.Switch(HM_ToolBox.bSplitter)
 end)
 -- 记录点名聊天
