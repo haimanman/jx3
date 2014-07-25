@@ -958,21 +958,17 @@ HM.IsDps = function(tar)
 end
 
 -- (boolean) HM.HasVipEmotion()		--  检查玩家是否有 VIP 表情库
-HM.HasVipEmotion = function()
-	if _HM.bVipEmotion == nil then
+HM.HasVipEmotion = function(nPage)
+	if not _HM.tVipEmotion then
+		_HM.tVipEmotion = {}
+	end
+	nPage = nPage or 1
+	if _HM.tVipEmotion[nPage] == nil then
 		local frame = Wnd.OpenWindow("EmotionPanel")
-		_HM.bVipEmotion = false
-		if frame then
-			for i = 1, 5 do
-				if frame:Lookup("Wnd_Checks/CheckBox_EM" .. i) ~= nil then
-					_HM.bVipEmotion = true
-					break
-				end
-			end
-		end
+		_HM.tVipEmotion[nPage] = frame and frame:Lookup("Wnd_Checks/CheckBox_EM" .. nPage) ~= nil
 		Wnd.CloseWindow(frame)
 	end
-	return _HM.bVipEmotion
+	return _HM.tVipEmotion[nPage]
 end
 
 -- 根据名称或 ID 获取 判断 BUFF 是否存在
