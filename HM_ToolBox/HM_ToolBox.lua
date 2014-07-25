@@ -812,7 +812,7 @@ _HM_ToolBox.InitFaceIcon = function()
 	_HM_ToolBox.tFacIcon = t
 end
 
--- 根据路径、类型、帧次获取表情 ID
+-- 根据路径、类型、帧次获取表情 ID、页面
 _HM_ToolBox.GetEmotionID = function(szFile, szType, nFrame)
 	local t = _HM_ToolBox.tFacIcon[szType]
 	if t and t[nFrame] then
@@ -847,10 +847,12 @@ _HM_ToolBox.EmotionCommandToID = function(szCmd)
 	return nil
 end
 
--- 根据 ID 获取表情指令
+-- 根据 ID 获取表情指令, 分页
 _HM_ToolBox.GetEmotionCommand = function(dwID)
 	local tLine = g_tTable.FaceIcon:GetRow(dwID + 1)
-	return tLine and tLine.szCommand
+	if tLine then
+		return tLine.szCommand, tLine.dwPageID
+	end
 end
 
 -- 聊天复制功能
@@ -927,10 +929,10 @@ _HM_ToolBox.CopyChatLine = function(hTime)
 		elseif p:GetType() == "Image" or p:GetType() == "Animate" then
 			local dwFaceID = tonumber(p:GetName())
 			if dwFaceID then
-				local szCmd = _HM_ToolBox.GetEmotionCommand(dwFaceID)
+				local szCmd, dwPage = _HM_ToolBox.GetEmotionCommand(dwFaceID)
 				if szCmd then
-					if string.byte(szCmd, 2, 2) < 128 and not HM.HasVipEmotion() then
-						szCmd = string.sub(szCmd, 1, 1) .. string.sub(szCmd, 3)
+					if dwPage > 0 and not HM.HasVipEmotion(dwPage) then
+						szCmd = string.gsub(szCmd, "[a-z]", "")
 						dwFaceID = _HM_ToolBox.EmotionCommandToID(szCmd)
 					end
 					if dwFaceID then
