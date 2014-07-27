@@ -172,7 +172,7 @@ _HM_TargetList.AddFocus = function(dwID, bAuto)
 		-- protected focus people
 		if nRemove == 1 then
 			local dwFirst = _HM_TargetList.tFocus[1]
-			if HM_TargetList.tPersistFocus[dwFirst] then
+			if HM_TargetList.tPersistFocus[dwFirst] and GetPlayer(dwFirst) then
 				nRemove = nRemove + 1
 			end
 		end
