@@ -706,8 +706,8 @@ HM.RegisterEvent("PARTY_UPDATE_MEMBER_INFO", function()
 end)
 HM.RegisterEvent("SYNC_ROLE_DATA_END", function()
 	if HM_Camp.bHideEnable then
-		_HM_Camp.HideGF(false)
-		--_HM_Camp.HideGF(true, true)
+		_HM_Camp.HideGF(_HM_Camp.bEnter == true, _HM_Camp.bEnter == true)
+		_HM_Camp.bEnter = true
 	end
 end)
 HM.RegisterEvent("ON_CAN_ENTER_MAP_NOTIFY", function()
