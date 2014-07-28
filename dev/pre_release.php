@@ -47,8 +47,8 @@ if (($pos1 = strpos($body, $tag_version)))
 		}
 		else
 		{
-			if (($min & 1) == 1)
-				$version += 0x100;
+			//if (($min & 1) == 1)
+				//$version += 0x100;
 		}
 	}
 	else
