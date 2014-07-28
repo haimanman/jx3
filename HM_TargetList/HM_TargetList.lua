@@ -125,6 +125,7 @@ _HM_TargetList.GetFocusMenu = function()
 			{ szOption = "3", bCheck = true, bMCheck = true, UserData = 3, bChecked = n == 3 , fnAction = _HM_TargetList.AdjustMaxFocus },
 			{ szOption = "4", bCheck = true, bMCheck = true, UserData = 4, bChecked = n == 4 , fnAction = _HM_TargetList.AdjustMaxFocus },
 			{ szOption = "5", bCheck = true, bMCheck = true, UserData = 5, bChecked = n == 5 , fnAction = _HM_TargetList.AdjustMaxFocus },
+			{ szOption = "10", bCheck = true, bMCheck = true, UserData = 10, bChecked = n == 10 , fnAction = _HM_TargetList.AdjustMaxFocus },
 		}, { szOption = _L["<Shift-Click to add focus>"],
 			bCheck = true, bChecked = HM_TargetList.bAltFocus,
 			fnAction = function(d, b) HM_TargetList.bAltFocus = b end,
@@ -161,7 +162,7 @@ _HM_TargetList.AddFocus = function(dwID, bAuto)
 		return
 	end
 	if #_HM_TargetList.tFocus >= HM_TargetList.nMaxFocus then
-		local nRemove = 1
+		local nRemove = 0
 		for k, v in ipairs(_HM_TargetList.tFocus) do
 			local h = HM.GetTarget(v)
 			if not h then
@@ -170,10 +171,12 @@ _HM_TargetList.AddFocus = function(dwID, bAuto)
 			end
 		end
 		-- protected focus people
-		if nRemove == 1 then
+		if nRemove == 0 then
 			local dwFirst = _HM_TargetList.tFocus[1]
-			if HM_TargetList.tPersistFocus[dwFirst] and GetPlayer(dwFirst) then
-				nRemove = nRemove + 1
+			if bAuto and HM_TargetList.tPersistFocus[dwFirst] then
+				nRemove = 2
+			else
+				nRemove = 1
 			end
 		end
 		table.remove(_HM_TargetList.tFocus, nRemove)
