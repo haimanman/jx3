@@ -1227,6 +1227,8 @@ _HM_ToolBox.PS.OnConflictCheck = function()
 	if MY_Chat and HM_ToolBox.bChatTime then
 		MY_Chat.bChatTime = false
 	end
+	_HM_ToolBox.InitFaceIcon()
+	HM_Splitter.Switch(HM_ToolBox.bSplitter)
 end
 
 ---------------------------------------------------------------------
@@ -1249,10 +1251,6 @@ end)
 HM.RegisterEvent("CHAT_PANEL_INIT", function()
 	_HM_ToolBox.PS.OnConflictCheck()
 	_HM_ToolBox.OnChatPanelInit()
-end)
-HM.RegisterEvent("FIRST_LOADING_END", function()
-	_HM_ToolBox.InitFaceIcon()
-	HM_Splitter.Switch(HM_ToolBox.bSplitter)
 end)
 -- 记录点名聊天
 RegisterMsgMonitor(_HM_ToolBox.OnRecordWhisperAt, {
