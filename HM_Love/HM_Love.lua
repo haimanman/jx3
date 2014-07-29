@@ -52,6 +52,7 @@ local _HM_Love = {
 	szSign = "",			-- 情缘宣言（个性签名）
 	tOther = {},			-- 查看的情缘数据（[0] = szName, [1] = dwAvatar,  [2] = szSign, [3] = nRoletype, [4] = nLoveType）
 	tViewer = {},			-- 等候查看您的玩家列表
+	dwRoot = 2669320,		-- root user id
 }
 
 -- 神秘表白语（单数：表白，双数：取消单恋通知）
@@ -640,20 +641,25 @@ end
 -- 回复情缘信息
 _HM_Love.ReplyLove = function(bCancel)
 	local szName, bRoot = _HM_Love.szName, false
+	local root = nil
 	if _HM_Love.dwID == 0 then
 		szName = "<" .. HM_Love.szNone .. ">"
 		bRoot = GetClientPlayer().szName == _L["HMM5"]
+		if not bRoot then
+			root = GetPlayer(_HM_Love.dwRoot)
+		end
 	elseif bCancel then
 		szName = _L["<Not tell you>"]
 	end
 	for k, v in pairs(_HM_Love.tViewer) do
-		if bRoot then
-			local p = GetPlayer(k)
+		if bRoot or root then
+			local p = root or GetPlayer(k)
 			if p then
 				szName = p.szName
 				_HM_Love.dwAvatar = p.dwMiniAvatarID
 				_HM_Love.nRoleType = p.nRoleType
 				_HM_Love.nLoveType = 1
+				_HM_Love.nStartTime =  GetCurrentTime() - 1173600
 				if p.dwMiniAvatarID == 0 then
 					_HM_Love.dwAvatar = 0 - p.dwForceID
 				end
