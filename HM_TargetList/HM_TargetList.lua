@@ -173,7 +173,7 @@ _HM_TargetList.AddFocus = function(dwID, bAuto)
 		-- protected focus people
 		if nRemove == 0 then
 			local dwFirst = _HM_TargetList.tFocus[1]
-			if bAuto and HM_TargetList.tPersistFocus[dwFirst] then
+			if bAuto and not IsInArena() and HM_TargetList.tPersistFocus[dwFirst] then
 				nRemove = 2
 			else
 				nRemove = 1
@@ -371,7 +371,7 @@ _HM_TargetList.UpdateFocusMana = function(h, tar)
 	end
 	if szSkill then
 		hImg:SetPercentage(fP)
-		hImg:SetFrame(86)
+		hImg:SetFrame((h.bOld and 86) or 216)
 		hImg:Show()
 		hText:SetText(szSkill)
 		hText:SetFontScheme(18)
@@ -401,6 +401,17 @@ _HM_TargetList.UpdateFocusMana = function(h, tar)
 			else
 				nCur, nMax, nFrame = tar.nCurrentMoonEnergy, tar.nMaxMoonEnergy, 84
 			end
+		end
+	end
+	if not h.bOld then
+		if nFrame == 42 then	-- blue
+			nFrame = 213
+		elseif nFrame == 86 then	-- sun
+			nFrame = 216
+		elseif nFrame == 87 then	-- green energy/rage
+			nFrame = 214
+		elseif nFrame == 84 then
+			nFrame = 220
 		end
 	end
 	if nMax > 0 then
@@ -487,7 +498,11 @@ _HM_TargetList.UpdateFocusItem = function(h, tar)
 			szHp = string.format("%.1f", fP * 100)
 		end
 		hImg:SetPercentage(fP)
-		hText:SetText(_HM_TargetList.GetSimpleNum(tar.nMaxLife) .. "(" .. szHp .. "%)")
+		local szText = _HM_TargetList.GetSimpleNum(tar.nMaxLife)
+		if not h.bOld or hText.bIn then
+			szText = szText .. "(" .. szHp .. "%)"
+		end
+		hText:SetText(szText)
 	else
 		hImg:Hide()
 		hText:SetText("")
@@ -559,10 +574,12 @@ end
 -- create focus item
 _HM_TargetList.NewFocusItem = function(handle, dwID)
 	local h
-	if HM_TargetList.bFocusOld then
-		h = handle:AppendItemFromIni(_HM_TargetList.szIniFile2, "Handle_Focuser", "Focus_" .. dwID)
-	else
+	if HM_TargetList.bFocusOld or dwID == 0 then
 		h = handle:AppendItemFromIni(_HM_TargetList.szIniFile, "Handle_Focuser", "Focus_" .. dwID)
+		h.bOld = true
+	else
+		h = handle:AppendItemFromIni(_HM_TargetList.szIniFile2, "Handle_Focuser", "Focus_" .. dwID)
+		h.bOld = false
 	end
 	local box = h:Lookup("Box_State")
 	box:SetOverTextFontScheme(0, 15)
@@ -1525,6 +1542,7 @@ HM_TargetList.OnItemMouseEnter = function()
 	if szName == "Image_PlayerBg" or szName == "Text_Mana" then
 		local hMana = this:GetParent():Lookup("Text_Mana")
 		if hMana then
+			this:GetParent():Lookup("Text_Life").bIn = true
 			hMana.bIn = true
 			hMana:Show()
 			this = hMana:GetParent()
@@ -1558,6 +1576,7 @@ HM_TargetList.OnItemMouseLeave = function()
 	if szName == "Image_PlayerBg" or szName == "Text_Mana" then
 		local hMana = this:GetParent():Lookup("Text_Mana")
 		if hMana then
+			this:GetParent():Lookup("Text_Life").bIn = false
 			hMana.bIn = false
 			hMana:Hide()
 			this = hMana:GetParent()
