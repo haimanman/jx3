@@ -22,9 +22,9 @@ _HM_Splitter.DoSplit = function(frame)
 	if box.nStackNum <= nNum then
 		return
 	end
-	for i = 1, BigBagPanel_nCount, 1 do
+	for i = BigBagPanel_nCount, 1, -1 do
 		if me.GetBoxFreeRoomSize(i) > 0 then
-			for j = 0, me.GetBoxSize(i) - 1 do
+			for j = me.GetBoxSize(i) - 1, 0, -1 do
 				if not me.GetItem(i, j) then
 					me.ExchangeItem(box.dwBox, box.dwX, i, j, nNum)
 					box.nStackNum = box.nStackNum - nNum
