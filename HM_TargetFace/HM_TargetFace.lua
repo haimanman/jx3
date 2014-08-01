@@ -54,7 +54,7 @@ _HM_TargetFace.DrawShape = function(tar, sha, nDegree, nRadius, nAlpha, col)
 		local sX_, sZ_ = Scene_PlaneGameWorldPosToScene(tar.nX + math.cos(dwRad1) * nRadius, tar.nY + math.sin(dwRad1) * nRadius)
 		sha:AppendCharacterID(tar.dwID, false, col[1], col[2], col[3], nAlpha2, { sX_ - sX, 0, sZ_ - sZ })
 		dwRad1 = dwRad1 + math.pi / 16
-	until dwRad1 > dwRad2
+	until dwRad1 >= dwRad2
 end
 
 -------------------------------------
