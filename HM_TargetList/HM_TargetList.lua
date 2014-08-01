@@ -11,7 +11,7 @@ HM_TargetList = {
 	--bShowFocus = true,	-- 显示焦点目标
 	bFocusState = true,		-- 显示焦点状态/BUFF
 	bFocusTarget2 = false,	-- 显示焦点的目标
-	bFocusOld = false,		-- 使用旧版焦点界面
+	bFocusOld2 = true,		-- 使用旧版焦点界面
 	bAltFocus = true,		-- 启用 Shift-点击设焦点
 	bMonPrepare = false,	-- 通过切目标监控读条
 	----
@@ -108,10 +108,10 @@ _HM_TargetList.GetFocusMenu = function()
 		}, { szOption = _L["Auto focus big/camp boss"], bCheck = true, bChecked = HM_TargetList.bAutoBigBoss,
 			fnDisable = function() return not HM_TargetList.bShowFocus and HM_Camp end,
 			fnAction = function() HM_TargetList.bAutoBigBoss = not HM_TargetList.bAutoBigBoss end
-		}, { szOption = _L["Use old focused interface"], bCheck = true, bChecked = HM_TargetList.bFocusOld,
+		}, { szOption = _L["Use old focused interface"], bCheck = true, bChecked = HM_TargetList.bFocusOld2,
 			fnDisable = function() return not HM_TargetList.bShowFocus end,
 			fnAction = function()
-				HM_TargetList.bFocusOld = not HM_TargetList.bFocusOld
+				HM_TargetList.bFocusOld2 = not HM_TargetList.bFocusOld2
 				if _HM_TargetList.frame then
 					_HM_TargetList.frame:Lookup("Wnd_Focus"):Lookup("", "Handle_Focus"):Clear()
 					_HM_TargetList.nFrameFocus = 0
@@ -445,9 +445,9 @@ _HM_TargetList.UpdateFocusItem = function(h, tar)
 	-- update camp image
 	hImg, nIconFrame = h:Lookup("Image_Camp"), nil
 	if tar.nCamp == CAMP.EVIL then
-		nIconFrame = 5
+		nIconFrame = (tar.bCampFlag and 116) or 5
 	elseif tar.nCamp == CAMP.GOOD then
-		nIconFrame = 7
+		nIconFrame = (tar.bCampFlag and 117) or 7
 	else
 		hImg:Hide()
 	end
@@ -501,6 +501,8 @@ _HM_TargetList.UpdateFocusItem = function(h, tar)
 		local szText = _HM_TargetList.GetSimpleNum(tar.nMaxLife)
 		if not h.bOld or hText.bIn then
 			szText = szText .. "(" .. szHp .. "%)"
+		elseif (GetLogicFrameCount() % 32) >= 16 then
+			szText = szHp .. "%"
 		end
 		hText:SetText(szText)
 	else
@@ -574,7 +576,7 @@ end
 -- create focus item
 _HM_TargetList.NewFocusItem = function(handle, dwID)
 	local h
-	if HM_TargetList.bFocusOld or dwID == 0 then
+	if HM_TargetList.bFocusOld2 or dwID == 0 then
 		h = handle:AppendItemFromIni(_HM_TargetList.szIniFile, "Handle_Focuser", "Focus_" .. dwID)
 		h.bOld = true
 	else
@@ -633,6 +635,10 @@ _HM_TargetList.UpdateFocusItems = function(handle)
 		h.dwID, h.szName = v.dwID, v.szName
 		h:Show()
 		_HM_TargetList.UpdateFocusItem(h, v)
+	end
+	-- clear hover
+	if handle:GetItemCount() == 0 then
+		handle:GetParent():Lookup("Image_FOver"):Hide()
 	end
 end
 
@@ -2026,10 +2032,12 @@ end
 ---------------------------------------------------------------------
 -- 注册事件、初始化
 ---------------------------------------------------------------------
-HM.RegisterEvent("PLAYER_ENTER_GAME", function()
-	_HM_TargetList.Switch(HM_TargetList.bShow)
-	_HM_TargetList.HookTargetMenu()
-	HM_SingleFocus.Switch(HM_SingleFocus.bEnable2)
+HM.RegisterEvent("CUSTOM_DATA_LOADED", function()
+	if arg0 == "Role" then
+		_HM_TargetList.Switch(HM_TargetList.bShow)
+		_HM_TargetList.HookTargetMenu()
+		HM_SingleFocus.Switch(HM_SingleFocus.bEnable2)
+	end
 end)
 HM.RegisterEvent("LOADING_END", function()
 	_HM_TargetList.bInArena = IsInArena()
