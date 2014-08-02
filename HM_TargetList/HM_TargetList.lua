@@ -498,11 +498,13 @@ _HM_TargetList.UpdateFocusItem = function(h, tar)
 			szHp = string.format("%.1f", fP * 100)
 		end
 		hImg:SetPercentage(fP)
-		local szText = _HM_TargetList.GetSimpleNum(tar.nMaxLife)
+		local szText
 		if not h.bOld or hText.bIn then
-			szText = szText .. "(" .. szHp .. "%)"
+			szText = _HM_TargetList.GetSimpleNum(tar.nMaxLife) .. "(" .. szHp .. "%)"
 		elseif (GetLogicFrameCount() % 32) >= 16 then
 			szText = szHp .. "%"
+		else
+			szText = _HM_TargetList.GetSimpleNum(tar.nCurrentLife)
 		end
 		hText:SetText(szText)
 	else
