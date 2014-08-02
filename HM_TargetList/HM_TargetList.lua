@@ -1174,22 +1174,25 @@ end
 _HM_TargetList.GetAcctInfo = function()
 	local aList, me = HM.GetAllPlayer(), GetClientPlayer()
 	local tAcct  = {
-		Enemy  = { live = 0, dead = 0, total = 0 },
-		Ally  = { live = 0, dead = 0, total = 0 },
-		Neutral = { live = 0, dead = 0, total = 0 },
+		Evil  = { live = 0, dead = 0, total = 0, red = 0 },
+		Good  = { live = 0, dead = 0, total = 0, red = 0 },
+		Neutral = { live = 0, dead = 0, total = 0, red = 0 },
 	}
 	for _, v in ipairs(aList) do
 		local t = tAcct.Neutral
-		if IsEnemy(me.dwID, v.dwID) then
-			t = tAcct.Enemy
-		elseif IsAlly(me.dwID, v.dwID) or me.dwID == v.dwID then
-			t = tAcct.Ally
+		if v.nCamp == CAMP.GOOD then
+			t = tAcct.Good
+		elseif v.nCamp == CAMP.EVIL then
+			t = tAcct.Evil
 		end
 		t.total = t.total + 1
 		if v.nMoveState == MOVE_STATE.ON_DEATH then
 			t.dead = t.dead + 1
 		else
 			t.live = t.live + 1
+		end
+		if IsEnemy(me.dwID, v.dwID) then
+			t.red = t.red + 1
 		end
 	end
 	return tAcct
@@ -1199,19 +1202,16 @@ _HM_TargetList.ShowAcctInfo = function()
 	local nChannel, szName = EditBox_GetChannel()
 	local t, nCamp = _HM_TargetList.GetAcctInfo(), GetClientPlayer().nCamp
 	local tLine = {}
-	if t.Enemy.total > 0 then
-		local nCamp2 = (nCamp + nCamp) % 3
-		local szText = g_tStrings.STR_CAMP_TITLE[nCamp2] .. _L["Enemy"]
-		szText = szText .. _L(": Live(%d) Dead(%d) Total(%d)", t.Enemy.live, t.Enemy.dead, t.Enemy.total)
+	if t.Evil.total > 0 then
+		local szText = g_tStrings.STR_CAMP_TITLE[CAMP.EVIL] .. _L(": Live(%d) Dead(%d) Total(%d) Enemy(%d)", t.Evil.live, t.Evil.dead, t.Evil.total, t.Evil.red)
 		table.insert(tLine, szText)
 	end
-	if t.Ally.total > 0 then
-		local szText = g_tStrings.STR_CAMP_TITLE[nCamp] .. _L["Ally"]
-		szText = szText .. _L(": Live(%d) Dead(%d) Total(%d)", t.Ally.live, t.Ally.dead, t.Ally.total)
+	if t.Good.total > 0 then
+		local szText = g_tStrings.STR_CAMP_TITLE[CAMP.GOOD] .. _L(": Live(%d) Dead(%d) Total(%d) Enemy(%d)", t.Good.live, t.Good.dead, t.Good.total, t.Good.red)
 		table.insert(tLine, szText)
 	end
 	if t.Neutral.total > 0 then
-		local szText = _L["Neutral"] .. _L(": Live(%d) Dead(%d) Total(%d)", t.Neutral.live, t.Neutral.dead, t.Neutral.total)
+		local szText = g_tStrings.STR_CAMP_TITLE[CAMP.NEUTRAL] .. _L(": Live(%d) Dead(%d) Total(%d) Enemy(%d)", t.Neutral.live, t.Neutral.dead, t.Neutral.total, t.Neutral.red)
 		table.insert(tLine, szText)
 	end
 	if not HM.CanTalk(nChannel) or nChannel == PLAYER_TALK_CHANNEL.WHISPER or nChannel == PLAYER_TALK_CHANNEL.NEARBY then
@@ -1229,18 +1229,24 @@ end
 _HM_TargetList.UpdateAcctInfo = function()
 	local h = _HM_TargetList.frame:Lookup("Wnd_Account", "")
 	local t = _HM_TargetList.GetAcctInfo()
-	if t.Enemy.total > 0 then
-		h:Lookup("Text_Enemy"):SetText(_L["Enemy"] .. _L(": Live(%d) Dead(%d) Total(%d)", t.Enemy.live, t.Enemy.dead, t.Enemy.total))
+	local nCamp = GetClientPlayer().nCamp
+	-- eneny
+	local k = (nCamp ~= CAMP.GOOD and "Good") or "Evil"
+	if t[k].total > 0 then
+		h:Lookup("Text_Enemy"):SetText(_L[k] .. _L(": Live(%d) Dead(%d) Total(%d) Enemy(%d)", t[k].live, t[k].dead, t[k].total, t[k].red))
 	else
 		h:Lookup("Text_Enemy"):SetText("")
 	end
-	if t.Ally.total > 0 then
-		h:Lookup("Text_Ally"):SetText(_L["Ally"] .. _L(": Live(%d) Dead(%d) Total(%d)", t.Ally.live, t.Ally.dead, t.Ally.total))
+	-- ally
+	local k = (nCamp == CAMP.GOOD and "Good") or "Evil"
+	if t[k].total > 0 then
+		h:Lookup("Text_Ally"):SetText(_L[k] .. _L(": Live(%d) Dead(%d) Total(%d) Enemy(%d)", t[k].live, t[k].dead, t[k].total, t[k].red))
 	else
 		h:Lookup("Text_Ally"):SetText("")
 	end
+	-- neutral
 	if t.Neutral.total > 0 then
-		h:Lookup("Text_Other"):SetText(_L["Neutral"] .. _L(": Live(%d) Dead(%d) Total(%d)", t.Neutral.live, t.Neutral.dead, t.Neutral.total))
+		h:Lookup("Text_Other"):SetText(_L["Neut"] .. _L(": Live(%d) Dead(%d) Total(%d) Enemy(%d)", t.Neutral.live, t.Neutral.dead, t.Neutral.total, t.Neutral.red))
 	else
 		h:Lookup("Text_Other"):SetText("")
 	end
