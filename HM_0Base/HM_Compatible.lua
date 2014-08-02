@@ -638,3 +638,122 @@ function MakeNameLink(szName, szFont)
 	return szLink
 end
 end
+
+if not OutputNpcTip then
+function OutputNpcTip(dwNpcID, Rect)
+	local npc = GetNpc(dwNpcID)
+	if not npc then
+		return
+	end
+
+	if not npc.IsSelectable() then
+		return
+	end
+
+	local clientPlayer = GetClientPlayer()
+	local r, g, b=GetForceFontColor(dwNpcID, clientPlayer.dwID)
+
+	local szTip = ""
+
+	--------------名字-------------------------
+
+	szTip = szTip.."<Text>text="..EncodeComponentsString(npc.szName.."\n").." font=80".." r="..r.." g="..g.." b="..b.." </text>"
+
+	-------------称号----------------------------
+	if npc.szTitle ~= "" then
+		szTip = szTip.."<Text>text="..EncodeComponentsString("<"..npc.szTitle..">\n").." font=0 </text>"
+	end
+
+	-------------等级----------------------------
+	if npc.nLevel - clientPlayer.nLevel > 10 then
+		szTip = szTip.."<Text>text="..EncodeComponentsString(g_tStrings.STR_PLAYER_H_UNKNOWN_LEVEL).." font=82 </text>"
+	else
+		szTip = szTip.."<Text>text="..EncodeComponentsString(FormatString(g_tStrings.STR_NPC_H_WHAT_LEVEL, npc.nLevel)).." font=0 </text>"
+	end
+
+	------------模版ID-----------------------
+	if IsCtrlKeyDown() then
+		szTip = szTip.."<Text>text="..EncodeComponentsString(FormatString(g_tStrings.TIP_NPC_ID, npc.dwID)).."font=102 </text>"
+		szTip = szTip.."<Text>text="..EncodeComponentsString(FormatString(g_tStrings.TIP_TEMPLATE_ID_NPC_INTENSITY, npc.dwTemplateID, npc.nIntensity)).." font=102 </text>"
+		szTip = szTip.."<Text>text="..EncodeComponentsString(FormatString(g_tStrings.TIP_REPRESENTID_ID, npc.dwModelID)).." font=102 </text>"
+		if IsShiftKeyDown() then
+			local tState = GetNpcQuestState(npc) or {}
+			for szKey, tQuestList in pairs(tState) do
+				tState[szKey] = table.concat(tQuestList, ",")
+			end
+			szTip = szTip .. GetFormatText(var2str(tState), 102)
+		end
+	end
+
+	OutputTip(szTip, 345, Rect)
+end
+end
+
+if not OutputPlayerTip then
+function OutputPlayerTip(dwPlayerID, Rect)
+	--如果是自己，则不显示tip
+	local player = GetPlayer(dwPlayerID)
+	if not player then
+		return
+	end
+
+	local clientPlayer = GetClientPlayer()
+
+	if not IsCursorInExclusiveMode() then
+		if clientPlayer.dwID == dwPlayerID then
+			return
+		end
+	end
+
+	local r, g, b = GetForceFontColor(dwPlayerID, clientPlayer.dwID)
+	local szTip = ""
+
+	--------------名字-------------------------
+	szTip = szTip.."<Text>text="..EncodeComponentsString(FormatString(g_tStrings.STR_NAME_PLAYER, player.szName)).." font=80".." r="..r.." g="..g.." b="..b.." </text>"
+
+	-------------称号----------------------------
+	if player.szTitle ~= "" then
+		szTip = szTip.."<Text>text="..EncodeComponentsString("<"..player.szTitle..">\n").." font=0 </text>"
+	end
+
+	if player.dwTongID ~= 0 then
+		local szName = GetTongClient().ApplyGetTongName(player.dwTongID)
+		if szName and szName ~= "" then
+			szTip = szTip.."<Text>text="..EncodeComponentsString("["..szName.."]\n").." font=0 </text>"
+		end
+	end
+
+	-------------等级----------------------------
+	if player.nLevel - clientPlayer.nLevel > 10 and not clientPlayer.IsPlayerInMyParty(dwPlayerID) then 
+		szTip = szTip.."<Text>text="..EncodeComponentsString(g_tStrings.STR_PLAYER_H_UNKNOWN_LEVEL).." font=82 </text>"
+	else
+		szTip = szTip.."<Text>text="..EncodeComponentsString(FormatString(g_tStrings.STR_PLAYER_H_WHAT_LEVEL, player.nLevel)).." font=82 </text>"
+	end
+
+	if IsParty(dwPlayerID, clientPlayer.dwID) then
+		local hTeam = GetClientTeam()
+		local tMemberInfo = hTeam.GetMemberInfo(dwPlayerID)
+		if tMemberInfo then
+			local szMapName = Table_GetMapName(tMemberInfo.dwMapID)
+			if szMapName then
+				szTip = szTip.."<Text>text="..EncodeComponentsString(szMapName.."\n").." font=82 </text>"
+			end
+		end
+	end
+
+	if player.bCampFlag then
+		szTip = szTip .. GetFormatText(g_tStrings.STR_TIP_CAMP_FLAG, 163)
+	end
+
+	local nCamp = player.nCamp
+	szTip = szTip .. GetFormatText(g_tStrings.STR_GUILD_CAMP_NAME[nCamp], 82)
+
+	if IsCtrlKeyDown() then
+		szTip = szTip.."<Text>text="..EncodeComponentsString(FormatString(g_tStrings.TIP_PLAYER_ID, player.dwID)).." font=102 </text>"
+		szTip = szTip.."<Text>text="
+		szTip = szTip..EncodeComponentsString(FormatString(g_tStrings.TIP_REPRESENTID_ID, player.dwModelID.." "..var2str(player.GetRepresentID()))).." font=102 </text>" 
+	end
+
+	OutputTip(szTip, 345, Rect)
+end
+end
