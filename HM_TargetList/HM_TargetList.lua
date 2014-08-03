@@ -395,7 +395,7 @@ _HM_TargetList.UpdateFocusMana = function(h, tar)
 	end
 	if szSkill then
 		hImg:SetPercentage(fP)
-		hImg:SetFrame((h.bOld and 86) or 60)
+		hImg:SetFrame((h.bOld and 86) or 216)
 		hImg:Show()
 		hText:SetText(szSkill)
 		hText:SetFontScheme(18)
@@ -429,13 +429,13 @@ _HM_TargetList.UpdateFocusMana = function(h, tar)
 	end
 	if not h.bOld then
 		if nFrame == 42 then	-- blue
-			nFrame = 57
+			nFrame = 213
 		elseif nFrame == 86 then	-- sun
-			nFrame = 60
+			nFrame = 216
 		elseif nFrame == 87 then	-- green energy/rage
-			nFrame = 58
+			nFrame = 214
 		elseif nFrame == 84 then
-			nFrame = 56
+			nFrame = 220
 		end
 	end
 	if nMax > 0 then
@@ -544,7 +544,7 @@ _HM_TargetList.UpdateFocusItem = function(h, tar)
 				hImg:SetAlpha(255)
 			end
 			if hLow then
-				if fP < 0.33 then
+				if fP < 0.33 and tar.nMoveState ~= MOVE_STATE.ON_DEATH then
 					hLow:SetAlpha(math.ceil((1 - (GetLogicFrameCount() % 8)/16) * 255))
 					hLow:Show()
 				else
