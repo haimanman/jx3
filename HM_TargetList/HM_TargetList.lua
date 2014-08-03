@@ -11,27 +11,26 @@ HM_TargetList = {
 	--bShowFocus = true,	-- 显示焦点目标
 	bFocusState = true,		-- 显示焦点状态/BUFF
 	bFocusTarget2 = false,	-- 显示焦点的目标
-	bFocusOld2 = true,		-- 使用旧版焦点界面
+	bFocusOld3 = false,		-- 使用旧版焦点界面
 	bAltFocus = true,		-- 启用 Shift-点击设焦点
-	bMonPrepare = false,	-- 通过切目标监控读条
+	bMonPrepare = true,	-- 通过切目标监控读条
 	----
 	--bShowList = true,		-- 显示目标列表
 	nListMode = 6,			-- 列表模式
 	bListWhite = true,		-- 白色模式
 	tShowMode = {			-- 查看模式
 		bLevel = false,			-- 显示等级
-		bHP = false,			-- 显示血量
 		bDistance = false,	-- 显示距离
 		bForce = true,			-- 显示玩家职业
 		bOnly25 = false,		-- 最多只显示 25个
 	},
-	nSortType = 0,				-- 排序模式，0：不排序，1：按血量，2：按距离
+	nSortType2 = 1,				-- 排序模式，0：不排序，1：按血量，2：按距离
 	bUpTreat = false,		-- 治疗置顶
 	bDownDeath = true,	-- 重伤置底
 	bDownFar = true,		-- 远距离押后 （抢人头）
-	bDownFace = true,		-- 不面向的押后（抢人头）
-	nFarThreshold = 20,		-- 20 尺以外算远？
-	nAlphaBg = 80,			-- 背景透明度
+	bDownFace2 = false,		-- 不面向的押后（抢人头）
+	nFarThreshold = 21,		-- 21 尺以外算远？
+	nAlphaBg = 70,			-- 背景透明度
 	nMaxFocus = 5,			-- 最大数量
 	bListFocus = true,		-- 在列表中仍显示焦点目标
 	tAnchor = {},				-- 窗体位置
@@ -108,10 +107,10 @@ _HM_TargetList.GetFocusMenu = function()
 		}, { szOption = _L["Auto focus big/camp boss"], bCheck = true, bChecked = HM_TargetList.bAutoBigBoss,
 			fnDisable = function() return not HM_TargetList.bShowFocus and HM_Camp end,
 			fnAction = function() HM_TargetList.bAutoBigBoss = not HM_TargetList.bAutoBigBoss end
-		}, { szOption = _L["Use old focused interface"], bCheck = true, bChecked = HM_TargetList.bFocusOld2,
+		}, { szOption = _L["Use old focused interface"], bCheck = true, bChecked = HM_TargetList.bFocusOld3,
 			fnDisable = function() return not HM_TargetList.bShowFocus end,
 			fnAction = function()
-				HM_TargetList.bFocusOld2 = not HM_TargetList.bFocusOld2
+				HM_TargetList.bFocusOld3 = not HM_TargetList.bFocusOld3
 				if _HM_TargetList.frame then
 					_HM_TargetList.frame:Lookup("Wnd_Focus"):Lookup("", "Handle_Focus"):Clear()
 					_HM_TargetList.nFrameFocus = 0
@@ -234,9 +233,6 @@ end
 _HM_TargetList.SwitchFocus = function(dwID)
 	if _HM_TargetList.IsFocus(dwID) then
 		_HM_TargetList.DelFocus(dwID)
-		if _HM_TargetList.frame then
-			_HM_TargetList.frame:Lookup("Wnd_Focus"):Lookup("", "Image_FOver"):Hide()
-		end
 	else
 		_HM_TargetList.AddFocus(dwID)
 	end
@@ -300,11 +296,16 @@ _HM_TargetList.GetSimpleNum = function(n)
 end
 
 -- get color
-_HM_TargetList.GetForceFontColor = function(tar, myID, bFocus)
-	if tar.dwID == myID then
-		return 0, 200, 72
-	elseif tar.nMoveState == MOVE_STATE.ON_DEATH then
+_HM_TargetList.GetForceFontColor = function(tar, myID, bFocus, bAlone)
+	if tar.nMoveState == MOVE_STATE.ON_DEATH then
 		return 160, 160, 160
+	elseif not bFocus then
+		return 255, 255 ,255
+	elseif tar.dwID == myID then
+		if bFocus and not HM_TargetList.bFocusOld3 and not bAlone then
+			return 255, 255, 255
+		end
+		return 0, 200, 72
 	end
 	-- special PLAYER for 城战
 	if tar.nNpc and tar.nNpc > 0 then
@@ -321,7 +322,30 @@ _HM_TargetList.GetForceFontColor = function(tar, myID, bFocus)
 	if IsEnemy(myID, tar.dwID) then
 		return 255, 126, 126
 	end
-	return GetForceFontColor(tar.dwID, myID)
+	local r, g, b = GetForceFontColor(tar.dwID, myID)
+	if bFocus and not HM_TargetList.bFocusOld3 and not bAlone and r == 0 and g == 200 and b == 72 then
+		r, g, b = 255, 255, 255
+	end
+	return r, g, b
+end
+
+-- get hp frame
+_HM_TargetList.GetBackImageFrame = function(tar, myID)
+	if tar.dwID == myID then
+		return 218
+	elseif tar.nNpc and tar.nNpc > 0 then
+		return (IsEnemy(myID, tar.dwID) and 211) or 220
+	elseif HM.IsParty(tar.dwID) then
+		return 213
+	elseif HM_TargetList.bListWhite and HM_TargetList.nListMode ~= 1 and HM_TargetList.nListMode ~= 4 then
+		return 214
+	elseif IsEnemy(myID, tar.dwID) then
+		return 215
+	elseif IsNeutrality(myID, tar.dwID) then
+		return 216
+	else
+		return 214
+	end
 end
 
 -- update gps info
@@ -371,7 +395,7 @@ _HM_TargetList.UpdateFocusMana = function(h, tar)
 	end
 	if szSkill then
 		hImg:SetPercentage(fP)
-		hImg:SetFrame((h.bOld and 86) or 216)
+		hImg:SetFrame((h.bOld and 86) or 60)
 		hImg:Show()
 		hText:SetText(szSkill)
 		hText:SetFontScheme(18)
@@ -405,13 +429,13 @@ _HM_TargetList.UpdateFocusMana = function(h, tar)
 	end
 	if not h.bOld then
 		if nFrame == 42 then	-- blue
-			nFrame = 213
+			nFrame = 57
 		elseif nFrame == 86 then	-- sun
-			nFrame = 216
+			nFrame = 60
 		elseif nFrame == 87 then	-- green energy/rage
-			nFrame = 214
+			nFrame = 58
 		elseif nFrame == 84 then
-			nFrame = 220
+			nFrame = 56
 		end
 	end
 	if nMax > 0 then
@@ -488,8 +512,12 @@ _HM_TargetList.UpdateFocusItem = function(h, tar)
 	else
 		hText:SetText(hDis:GetText() .. _L["-"] .. HM.GetTargetName(tar))
 	end
-	hText:SetFontColor(_HM_TargetList.GetForceFontColor(tar, me.dwID, true))
+	hText:SetFontColor(_HM_TargetList.GetForceFontColor(tar, me.dwID, true, h.alone))
 	-- update life
+	local hImgL = h:Lookup("Image_LifeLine")
+	if hImgL and not hImgL.w then
+		hImgL.w, hImgL.h = hImgL:GetSize()
+	end
 	hImg, hText = h:Lookup("Image_Life"), h:Lookup("Text_Life")
 	if tar.nMaxLife > 0 then
 		local fP = math.min(1, tar.nCurrentLife / tar.nMaxLife)
@@ -498,18 +526,38 @@ _HM_TargetList.UpdateFocusItem = function(h, tar)
 			szHp = string.format("%.1f", fP * 100)
 		end
 		hImg:SetPercentage(fP)
-		local szText
+		local szText = _HM_TargetList.GetSimpleNum(tar.nCurrentLife)
 		if not h.bOld or hText.bIn then
-			szText = _HM_TargetList.GetSimpleNum(tar.nMaxLife) .. "(" .. szHp .. "%)"
+			szText = szText .. "(" .. szHp .. "%)"
 		elseif (GetLogicFrameCount() % 32) >= 16 then
 			szText = szHp .. "%"
-		else
-			szText = _HM_TargetList.GetSimpleNum(tar.nCurrentLife)
 		end
 		hText:SetText(szText)
+		if hImgL then
+			local hLow = h:Lookup("Image_LowHealth")
+			hImgL:SetSize(fP * hImgL.w, hImgL.h)
+			if nDis > (2 * HM_TargetList.nFarThreshold) then
+				hImg:SetAlpha(60)
+			elseif nDis > HM_TargetList.nFarThreshold then
+				hImg:SetAlpha(120)
+			else
+				hImg:SetAlpha(255)
+			end
+			if hLow then
+				if fP < 0.33 then
+					hLow:SetAlpha(math.ceil((1 - (GetLogicFrameCount() % 8)/16) * 255))
+					hLow:Show()
+				else
+					hLow:Hide()
+				end
+			end
+		end
 	else
-		hImg:Hide()
+		hImg:SetPercentage(0)
 		hText:SetText("")
+		if hImgL then
+			hImgL:SetSize(0, hImgL.h)
+		end
 	end
 	-- update mana/prepare
 	_HM_TargetList.UpdateFocusMana(h, tar)
@@ -527,7 +575,7 @@ _HM_TargetList.UpdateFocusItem = function(h, tar)
 	end
 	hText:SetText(szText)
 	-- update state(box)
-	if HM_TargetDir then
+	if HM_TargetDir and HM_TargetList.bFocusState then
 		local dwIcon, szText
 		local hBox, hText = h:Lookup("Box_State"), h:Lookup("Text_State")
 		local dwIcon, szText, buff = HM_TargetDir.GetState(tar, true)
@@ -563,6 +611,10 @@ _HM_TargetList.UpdateFocusItem = function(h, tar)
 			hBox:SetObjectIcon(dwIcon)
 			hBox:Show()
 		end
+	else
+		local hBox, hText = h:Lookup("Box_State"), h:Lookup("Text_State")
+		hBox:Hide()
+		hText:SetText("")
 	end
 	-- update slect image
 	local _, tarID = me.GetTarget()
@@ -570,6 +622,11 @@ _HM_TargetList.UpdateFocusItem = function(h, tar)
 		local hTotal = _HM_TargetList.frame:Lookup("Wnd_Focus"):Lookup("", "")
 		local hOver = hTotal:Lookup("Image_FSelect")
 		hOver:SetRelPos(0, h:GetIndex() * 63 - 3)
+		if HM_TargetList.bFocusOld3 then
+			hOver:SetSize(232, 67)
+		else
+			hOver:SetSize(212, 60)
+		end
 		hOver:Show()
 		hTotal:FormatAllItemPos()
 	end
@@ -578,7 +635,7 @@ end
 -- create focus item
 _HM_TargetList.NewFocusItem = function(handle, dwID)
 	local h
-	if HM_TargetList.bFocusOld2 or dwID == 0 then
+	if HM_TargetList.bFocusOld3 or dwID == 0 then
 		h = handle:AppendItemFromIni(_HM_TargetList.szIniFile, "Handle_Focuser", "Focus_" .. dwID)
 		h.bOld = true
 	else
@@ -593,9 +650,7 @@ _HM_TargetList.NewFocusItem = function(handle, dwID)
 	box.OnItemMouseEnter = function()
 		this:SetObjectMouseOver(1)
 		if this.dwID then
-			local x, y = this:GetAbsPos()
-			local w, h = this:GetSize()
-			OutputBuffTip(this.dwOwner, this.dwID, this.nLevel, 1, false, 0, { x, y, w, h })
+			OutputBuffTip(this.dwOwner, this.dwID, this.nLevel, 1, false, 0)
 		end
 	end
 	box.OnItemMouseLeave = function()
@@ -637,10 +692,6 @@ _HM_TargetList.UpdateFocusItems = function(handle)
 		h.dwID, h.szName = v.dwID, v.szName
 		h:Show()
 		_HM_TargetList.UpdateFocusItem(h, v)
-	end
-	-- clear hover
-	if handle:GetItemCount() == 0 then
-		handle:GetParent():Lookup("Image_FOver"):Hide()
 	end
 end
 
@@ -688,8 +739,6 @@ _HM_TargetList.GetListMenu = function()
 	table.insert(m0, { szOption = _L["View options of list"],
 		{ szOption = _L["Show level"], bCheck = true, bChecked = HM_TargetList.tShowMode.bLevel,
 			fnAction = function(d, b) HM_TargetList.tShowMode.bLevel = b end
-		}, { szOption = _L["Show HP"], bCheck = true, bChecked = HM_TargetList.tShowMode.bHP,
-			fnAction = function(d, b) HM_TargetList.tShowMode.bHP = b end
 		}, { szOption = _L["Show distance"], bCheck = true, bChecked = HM_TargetList.tShowMode.bDistance,
 			fnAction = function(d, b) HM_TargetList.tShowMode.bDistance = b end
 		}, { szOption = _L["Show player school"], bCheck = true, bChecked = HM_TargetList.tShowMode.bForce,
@@ -699,18 +748,18 @@ _HM_TargetList.GetListMenu = function()
 		}
 	})
 	table.insert(m0, { szOption = _L["Set list order"],
-		{ szOption = _L["Not sort"], bCheck = true, bMCheck = true, bChecked = HM_TargetList.nSortType == 0,
-			fnAction = function() HM_TargetList.nSortType = 0 end
-		}, { szOption = _L["Priority less HP"], bCheck = true, bMCheck = true, bChecked = HM_TargetList.nSortType == 1,
-			fnAction = function() HM_TargetList.nSortType = 1 end,
-			{ szOption = _L["Rear not oriented"], bCheck = true, bChecked = HM_TargetList.bDownFace,
-				fnAction = function(d, b) HM_TargetList.bDownFace = b end
+		{ szOption = _L["Not sort"], bCheck = true, bMCheck = true, bChecked = HM_TargetList.nSortType2 == 0,
+			fnAction = function() HM_TargetList.nSortType2 = 0 end
+		}, { szOption = _L["Priority less HP"], bCheck = true, bMCheck = true, bChecked = HM_TargetList.nSortType2 == 1,
+			fnAction = function() HM_TargetList.nSortType2 = 1 end,
+			{ szOption = _L["Rear not oriented"], bCheck = true, bChecked = HM_TargetList.bDownFace2,
+				fnAction = function(d, b) HM_TargetList.bDownFace2 = b end
 			}, { szOption = _L["Rear"] .. HM_TargetList.nFarThreshold .. _L["feet far"], bCheck = true, bChecked = HM_TargetList.bDownFar,
 				fnAction = function(d, b) HM_TargetList.bDownFar = b end,
 				{ szOption = _L["Edit distance"], fnAction = _HM_TargetList.SetFarThreshold },
 			}
-		}, { szOption = _L["Priority closer"], bCheck = true, bMCheck = true, bChecked = HM_TargetList.nSortType == 2,
-			fnAction = function() HM_TargetList.nSortType = 2 end
+		}, { szOption = _L["Priority closer"], bCheck = true, bMCheck = true, bChecked = HM_TargetList.nSortType2 == 2,
+			fnAction = function() HM_TargetList.nSortType2 = 2 end
 		}, { bDevide = true,
 		}, { szOption = _L["Sticky treat player"], bCheck = true, bChecked = HM_TargetList.bUpTreat,
 			fnAction = function(d, b) HM_TargetList.bUpTreat = b end
@@ -939,7 +988,7 @@ _HM_TargetList.ListItemCompare = function(a, b)
 		end
 	end
 	-- down far, down face, HP
-	if HM_TargetList.nSortType == 1 then
+	if HM_TargetList.nSortType2 == 1 then
 		if HM_TargetList.bDownFar then
 			if a.nDis <= HM_TargetList.nFarThreshold and b.nDis > HM_TargetList.nFarThreshold then
 				return true
@@ -947,7 +996,7 @@ _HM_TargetList.ListItemCompare = function(a, b)
 				return false
 			end
 		end
-		if HM_TargetList.bDownFace then
+		if HM_TargetList.bDownFace2 then
 			if a.nAngle <= 80 and b.nAngle > 80 then
 				return true
 			elseif a.nAngle > 80 and b.nAngle <= 80 then
@@ -958,7 +1007,7 @@ _HM_TargetList.ListItemCompare = function(a, b)
 			return a.nMaxLife < b.nMaxLife
 		end
 		return a.nHP < b.nHP
-	elseif HM_TargetList.nSortType == 2 then
+	elseif HM_TargetList.nSortType2 == 2 then
 		return a.nDis < b.nDis
 	end
 	return a.nIndex < b.nIndex
@@ -1026,9 +1075,8 @@ end
 _HM_TargetList.UpdateListItems = function(handle)
 	-- load data, sort
 	local aList = {}
-	local bHP = HM_TargetList.tShowMode.bHP or HM_TargetList.nSortType == 1
-	local bDis = HM_TargetList.tShowMode.bDistance or HM_TargetList.nSortType == 2 or (HM_TargetList.nSortType == 1 and HM_TargetList.bDownFar)
-	local bFace = HM_TargetList.nSortType == 1 and HM_TargetList.bDownFace
+	local bDis = HM_TargetList.tShowMode.bDistance or HM_TargetList.nSortType2 == 2 or (HM_TargetList.nSortType2 == 1 and HM_TargetList.bDownFar)
+	local bFace = HM_TargetList.nSortType2 == 1 and HM_TargetList.bDownFace2
 	local aItem, me, nMode = {}, GetClientPlayer(), HM_TargetList.nListMode
 	local bXGF = false
 	if nMode <= 3 then
@@ -1071,10 +1119,8 @@ _HM_TargetList.UpdateListItems = function(handle)
 				end
 			end
 			item.nIndex = #aItem + 1
-			if bHP then
-				item.nMaxLife = math.max(1, v.nMaxLife)
-				item.nHP = math.min(100, math.ceil(v.nCurrentLife * 100 / v.nMaxLife))
-			end
+			item.nMaxLife = math.max(1, v.nMaxLife)
+			item.nHP = math.min(100, math.ceil(v.nCurrentLife * 100 / v.nMaxLife))
 			if bDis then
 				item.nDis = HM.GetDistance(v)
 			end
@@ -1097,6 +1143,12 @@ _HM_TargetList.UpdateListItems = function(handle)
 	end
 	for k, v in ipairs(aItem) do
 		local h, szText = nil, HM.GetTargetName(v)
+		if k <= nCount then
+			h = handle:Lookup(k - 1)
+		else
+			h = handle:AppendItemFromIni(_HM_TargetList.szIniFile, "Handle_Lister", "List_" .. k)
+			h:Show()
+		end
 		if HM_TargetList.tShowMode.bForce and nMode >= 4 then
 			szText = "[" .. g_tStrings.tForceTitle[v.dwForceID] .. "]" .. szText
 		end
@@ -1106,18 +1158,16 @@ _HM_TargetList.UpdateListItems = function(handle)
 		if HM_TargetList.tShowMode.bDistance then
 			szText = szText .. "<" .. string.format("%.1f", v.nDis) .. ">"
 		end
-		if HM_TargetList.tShowMode.bHP then
-			szText = szText .. " " .. v.nHP .. "%"
-		end
-		if k <= nCount then
-			h = handle:Lookup(k - 1)
-		else
-			h = handle:AppendItemFromIni(_HM_TargetList.szIniFile, "Handle_Lister", "List_" .. k)
-			h:Show()
-		end
+		h:Lookup("Text_LLife"):SetText(v.nHP .. "%")
 		h.dwID, h.szName, h.bList = v.dwID, v.szName, true
 		h:Lookup("Text_Player"):SetText(szText)
 		h:Lookup("Text_Player"):SetFontColor(_HM_TargetList.GetForceFontColor(v, me.dwID))
+		local img = h:Lookup("Image_LPlayer")
+		if img then
+			img:SetFrame(_HM_TargetList.GetBackImageFrame(v, me.dwID))
+			img:SetPercentage(v.nHP / 100)
+			img:SetAlpha((v.nDis and v.nDis > HM_TargetList.nFarThreshold and 120) or 255)
+		end
 		if v.dwID == tarID then
 			nSelect = k
 		end
@@ -1570,12 +1620,12 @@ HM_TargetList.OnItemMouseEnter = function()
 			hOver:SetRelPos(0, nY)
 			hOver:Show()
 			hTotal:FormatAllItemPos()
+		end
+		-- show tips
+		if IsPlayer(this.dwID) then
+			OutputPlayerTip(this.dwID)
 		else
-			local hTotal = _HM_TargetList.frame:Lookup("Wnd_Focus"):Lookup("", "")
-			local hOver = hTotal:Lookup("Image_FOver")
-			hOver:SetRelPos(0, this:GetIndex() * 63 - 3)
-			hOver:Show()
-			hTotal:FormatAllItemPos()
+			OutputNpcTip(this.dwID)
 		end
 	elseif szName == "Text_LCount" then
 		local nX, nY = this:GetAbsPos()
@@ -1599,9 +1649,8 @@ HM_TargetList.OnItemMouseLeave = function()
 	if this.dwID and not this.alone then
 		if this.bList then
 			this:GetParent():GetParent():Lookup("Image_LOver"):Hide()
-		else
-			this:GetParent():GetParent():Lookup("Image_FOver"):Hide()
 		end
+		HideTip()
 	elseif szName == "Text_LCount" then
 		HideTip()
 	end
