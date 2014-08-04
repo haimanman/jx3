@@ -323,8 +323,12 @@ _HM_TargetList.GetForceFontColor = function(tar, myID, bFocus, bAlone)
 		return 255, 126, 126
 	end
 	local r, g, b = GetForceFontColor(tar.dwID, myID)
-	if bFocus and not HM_TargetList.bFocusOld3 and not bAlone and r == 0 and g == 200 and b == 72 then
-		r, g, b = 255, 255, 255
+	if bFocus and not HM_TargetList.bFocusOld3 and not bAlone then
+		if r == 0 and g == 200 and b == 72 then
+			r, g, b = 255, 255, 255
+		elseif r == 126 and g == 126 and b == 255 then
+			r, g, b = 60, 200, 255
+		end
 	end
 	return r, g, b
 end
