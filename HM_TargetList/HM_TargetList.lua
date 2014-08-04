@@ -630,11 +630,11 @@ _HM_TargetList.UpdateFocusItem = function(h, tar)
 	if tarID == tar.dwID and not h.alone then
 		local hTotal = _HM_TargetList.frame:Lookup("Wnd_Focus"):Lookup("", "")
 		local hOver = hTotal:Lookup("Image_FSelect")
-		hOver:SetRelPos(0, h:GetIndex() * 63 - 3)
+		hOver:SetRelPos((HM_TargetList.bFocusOld3 and 0) or 3, h:GetIndex() * 63 - 3)
 		if HM_TargetList.bFocusOld3 then
 			hOver:SetSize(236, 64)
 		else
-			hOver:SetSize(216, 61)
+			hOver:SetSize(230, 61)
 		end
 		hOver:Show()
 		hTotal:FormatAllItemPos()
@@ -1608,6 +1608,22 @@ HM_TargetList.OnScrollBarPosChanged = function()
 	local nPos, win = this:GetScrollPos(), _HM_TargetList.frame:Lookup("Wnd_List")
 	win:Lookup("", "Handle_List"):SetItemStartRelPos(0, - nPos * 10)
 	_HM_TargetList.nFrameList = 0
+end
+
+HM_TargetList.OnMouseEnter = function()
+	if this:GetName() == "Scroll_List" then
+		this:Lookup("Btn_List"):SetAlpha(255)
+	elseif this:GetName() == "Btn_List" then
+		this:SetAlpha(255)
+	end
+end
+
+HM_TargetList.OnMouseLeave = function()
+	if this:GetName() == "Scroll_List" then
+		this:Lookup("Btn_List"):SetAlpha(120)
+	elseif this:GetName() == "Btn_List" then
+		this:SetAlpha(120)
+	end
 end
 
 HM_TargetList.OnItemMouseEnter = function()
