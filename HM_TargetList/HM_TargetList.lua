@@ -527,7 +527,9 @@ _HM_TargetList.UpdateFocusItem = function(h, tar)
 		end
 		hImg:SetPercentage(fP)
 		local szText = _HM_TargetList.GetSimpleNum(tar.nCurrentLife)
-		if not h.bOld or hText.bIn then
+		if tar.nMoveState == MOVE_STATE.ON_DEATH then
+			szText = ""
+		elseif not h.bOld or hText.bIn then
 			szText = szText .. "(" .. szHp .. "%)"
 		elseif (GetLogicFrameCount() % 32) >= 16 then
 			szText = szHp .. "%"
@@ -538,10 +540,13 @@ _HM_TargetList.UpdateFocusItem = function(h, tar)
 			hImgL:SetSize(fP * hImgL.w, hImgL.h)
 			if nDis > (2 * HM_TargetList.nFarThreshold) then
 				hImg:SetAlpha(60)
+				h:Lookup("Image_Mana"):SetAlpha(80)
 			elseif nDis > HM_TargetList.nFarThreshold then
 				hImg:SetAlpha(120)
+				h:Lookup("Image_Mana"):SetAlpha(140)
 			else
 				hImg:SetAlpha(255)
+				h:Lookup("Image_Mana"):SetAlpha(255)
 			end
 			if hLow then
 				if fP < 0.33 and tar.nMoveState ~= MOVE_STATE.ON_DEATH then
@@ -623,9 +628,9 @@ _HM_TargetList.UpdateFocusItem = function(h, tar)
 		local hOver = hTotal:Lookup("Image_FSelect")
 		hOver:SetRelPos(0, h:GetIndex() * 63 - 3)
 		if HM_TargetList.bFocusOld3 then
-			hOver:SetSize(232, 67)
+			hOver:SetSize(236, 64)
 		else
-			hOver:SetSize(212, 60)
+			hOver:SetSize(216, 61)
 		end
 		hOver:Show()
 		hTotal:FormatAllItemPos()
@@ -1325,7 +1330,7 @@ _HM_TargetList.UpdateSize = function(bFocusOnly)
 	else
 		nY = nY +  wFocus:Lookup("", "Handle_Focus"):GetItemCount() * 63
 		if nY > 30 then
-			nY = nY + 10
+			nY = nY + 5
 		end
 		nH = nY
 		wFocus:Show()
