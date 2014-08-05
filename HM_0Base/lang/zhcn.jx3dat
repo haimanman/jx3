@@ -586,6 +586,8 @@ data = {
 	["Battle begin."] = "争夺开始。",
 	["Auto focus specified NPC"] = "自动焦点指定 NPC",
 	["One per line"] = "每行一个",
+	["Split focus panel"] = "分割显示焦点列表",
+	["HM, focus list"] = "海鳗焦点列表",
 	-- HM_TargetMon.lua --
 	["Call pet"] = "召唤宠物",
 	["Invincible"] = "无敌",
