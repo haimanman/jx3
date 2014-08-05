@@ -117,7 +117,6 @@ _HM_TargetList.GetFocusMenu = function()
 					_HM_TargetList.nFrameFocus = 0
 				end
 			end
-		}, { szOption = _L["Auto focus specified NPC"], fnAction = function() HM.OpenPanel(_L["Focus/TargetList"]) end
 		}, { szOption = _L("Maximum focus num [%d]", HM_TargetList.nMaxFocus),
 			fnDisable = function() return not HM_TargetList.bShowFocus end,
 			{ szOption = "1", bCheck = true, bMCheck = true, UserData = 1, bChecked = n == 1 , fnAction = _HM_TargetList.AdjustMaxFocus },
@@ -126,6 +125,7 @@ _HM_TargetList.GetFocusMenu = function()
 			{ szOption = "4", bCheck = true, bMCheck = true, UserData = 4, bChecked = n == 4 , fnAction = _HM_TargetList.AdjustMaxFocus },
 			{ szOption = "5", bCheck = true, bMCheck = true, UserData = 5, bChecked = n == 5 , fnAction = _HM_TargetList.AdjustMaxFocus },
 			{ szOption = "10", bCheck = true, bMCheck = true, UserData = 10, bChecked = n == 10 , fnAction = _HM_TargetList.AdjustMaxFocus },
+		}, { szOption = _L["Auto focus specified NPC"], fnAction = function() HM.OpenPanel(_L["Focus/TargetList"]) end
 		}, { szOption = _L["<Shift-Click to add focus>"],
 			bCheck = true, bChecked = HM_TargetList.bAltFocus,
 			fnAction = function(d, b) HM_TargetList.bAltFocus = b end,
@@ -638,6 +638,10 @@ _HM_TargetList.UpdateFocusItem = function(h, tar)
 		hOver:Show()
 		hTotal:FormatAllItemPos()
 	end
+	-- update persist name
+	if HM_TargetList.tPersistFocus[tar.dwID] == true then
+		HM_TargetList.tPersistFocus[tar.dwID] = tar.szName
+	end
 end
 
 -- create focus item
@@ -732,70 +736,8 @@ _HM_TargetList.SetFarThreshold = function()
 	end, nil, nil, nil, tostring(HM_TargetList.nFarThreshold), 5, true)
 end
 
--- get list menu
-_HM_TargetList.GetListMenu = function()
-	local m0 = {}
-	local m1 = { szOption = _L["View mode of list"] }
-	for k, v in ipairs (_HM_TargetList.tListMode) do
-		table.insert(m1, { szOption = v, bCheck = true, bMCheck = true, bChecked = k == HM_TargetList.nListMode, fnAction = function()
-			HM_TargetList.nListMode = k
-			_HM_TargetList.bCustom = false
-			_HM_TargetList.UpdateList()
-		end })
-	end
-	table.insert(m0, m1)
-	table.insert(m0, { szOption = _L["View options of list"],
-		{ szOption = _L["Show image of HP"], bCheck = true, bChecked = HM_TargetList.bListImage,
-			fnAction = function(d, b) HM_TargetList.bListImage = b end
-		}, { szOption = _L["Show level"], bCheck = true, bChecked = HM_TargetList.tShowMode.bLevel,
-			fnAction = function(d, b) HM_TargetList.tShowMode.bLevel = b end
-		}, { szOption = _L["Show distance"], bCheck = true, bChecked = HM_TargetList.tShowMode.bDistance,
-			fnAction = function(d, b) HM_TargetList.tShowMode.bDistance = b end
-		}, { szOption = _L["Show player school"], bCheck = true, bChecked = HM_TargetList.tShowMode.bForce,
-			fnAction = function(d, b) HM_TargetList.tShowMode.bForce = b end
-		}, { szOption = _L["Show only up to 25"], bCheck = true, bChecked = HM_TargetList.tShowMode.bOnly25,
-			fnAction = function(d, b) HM_TargetList.tShowMode.bOnly25 = b end
-		}
-	})
-	table.insert(m0, { szOption = _L["Set list order"],
-		{ szOption = _L["Not sort"], bCheck = true, bMCheck = true, bChecked = HM_TargetList.nSortType2 == 0,
-			fnAction = function() HM_TargetList.nSortType2 = 0 end
-		}, { szOption = _L["Priority less HP"], bCheck = true, bMCheck = true, bChecked = HM_TargetList.nSortType2 == 1,
-			fnAction = function() HM_TargetList.nSortType2 = 1 end,
-			{ szOption = _L["Rear not oriented"], bCheck = true, bChecked = HM_TargetList.bDownFace2,
-				fnAction = function(d, b) HM_TargetList.bDownFace2 = b end
-			}, { szOption = _L["Rear"] .. HM_TargetList.nFarThreshold .. _L["feet far"], bCheck = true, bChecked = HM_TargetList.bDownFar,
-				fnAction = function(d, b) HM_TargetList.bDownFar = b end,
-				{ szOption = _L["Edit distance"], fnAction = _HM_TargetList.SetFarThreshold },
-			}
-		}, { szOption = _L["Priority closer"], bCheck = true, bMCheck = true, bChecked = HM_TargetList.nSortType2 == 2,
-			fnAction = function() HM_TargetList.nSortType2 = 2 end
-		}, { bDevide = true,
-		}, { szOption = _L["Sticky treat player"], bCheck = true, bChecked = HM_TargetList.bUpTreat,
-			fnAction = function(d, b) HM_TargetList.bUpTreat = b end
-		}, { szOption = _L["Rear dead player"], bCheck = true, bChecked = HM_TargetList.bDownDeath,
-			fnAction = function(d, b) HM_TargetList.bDownDeath = b end
-		}
-	})
-	-- filter npc
-	local m1 = { szOption = _L["Temporarily filter NPC"], {
-		szOption = _L["* New *"], fnAction = function()
-			GetUserInput(_L["Enter NPC name to filter"], function(szText)
-				_HM_TargetList.tFilterNpc[szText] = true
-			end)
-		end,
-	}, {
-		bDevide = true
-	} }
-	for k, v in pairs(_HM_TargetList.tFilterNpc) do
-		table.insert(m1, { szOption = k, bCheck = true, bChecked = v,
-			fnAction = function(d, b) _HM_TargetList.tFilterNpc[k] = b end, {
-				szOption = _L["Remove"], fnAction = function() _HM_TargetList.tFilterNpc[k] = nil end
-			}
-		})
-	end
-	table.insert(m0, m1)
-	-- custom
+-- get custom menu
+_HM_TargetList.GetCustomMenu = function()
 	local m1 = { szOption = _L["Enable custom option"],
 		bCheck = true, bChecked = _HM_TargetList.bCustom,
 		fnAction = function(d, b)
@@ -874,7 +816,74 @@ _HM_TargetList.GetListMenu = function()
 		} })
 	end
 	table.insert(m1, m2)
+	return m1
+end
+
+-- get list menu
+_HM_TargetList.GetListMenu = function()
+	local m0 = {}
+	local m1 = { szOption = _L["View mode of list"] }
+	for k, v in ipairs (_HM_TargetList.tListMode) do
+		table.insert(m1, { szOption = v, bCheck = true, bMCheck = true, bChecked = k == HM_TargetList.nListMode, fnAction = function()
+			HM_TargetList.nListMode = k
+			_HM_TargetList.bCustom = false
+			_HM_TargetList.UpdateList()
+		end })
+	end
 	table.insert(m0, m1)
+	table.insert(m0, { szOption = _L["View options of list"],
+		{ szOption = _L["Show image of HP"], bCheck = true, bChecked = HM_TargetList.bListImage,
+			fnAction = function(d, b) HM_TargetList.bListImage = b end
+		}, { szOption = _L["Show level"], bCheck = true, bChecked = HM_TargetList.tShowMode.bLevel,
+			fnAction = function(d, b) HM_TargetList.tShowMode.bLevel = b end
+		}, { szOption = _L["Show distance"], bCheck = true, bChecked = HM_TargetList.tShowMode.bDistance,
+			fnAction = function(d, b) HM_TargetList.tShowMode.bDistance = b end
+		}, { szOption = _L["Show player school"], bCheck = true, bChecked = HM_TargetList.tShowMode.bForce,
+			fnAction = function(d, b) HM_TargetList.tShowMode.bForce = b end
+		}, { szOption = _L["Show only up to 25"], bCheck = true, bChecked = HM_TargetList.tShowMode.bOnly25,
+			fnAction = function(d, b) HM_TargetList.tShowMode.bOnly25 = b end
+		}
+	})
+	table.insert(m0, { szOption = _L["Set list order"],
+		{ szOption = _L["Not sort"], bCheck = true, bMCheck = true, bChecked = HM_TargetList.nSortType2 == 0,
+			fnAction = function() HM_TargetList.nSortType2 = 0 end
+		}, { szOption = _L["Priority less HP"], bCheck = true, bMCheck = true, bChecked = HM_TargetList.nSortType2 == 1,
+			fnAction = function() HM_TargetList.nSortType2 = 1 end,
+			{ szOption = _L["Rear not oriented"], bCheck = true, bChecked = HM_TargetList.bDownFace2,
+				fnAction = function(d, b) HM_TargetList.bDownFace2 = b end
+			}, { szOption = _L["Rear"] .. HM_TargetList.nFarThreshold .. _L["feet far"], bCheck = true, bChecked = HM_TargetList.bDownFar,
+				fnAction = function(d, b) HM_TargetList.bDownFar = b end,
+				{ szOption = _L["Edit distance"], fnAction = _HM_TargetList.SetFarThreshold },
+			}
+		}, { szOption = _L["Priority closer"], bCheck = true, bMCheck = true, bChecked = HM_TargetList.nSortType2 == 2,
+			fnAction = function() HM_TargetList.nSortType2 = 2 end
+		}, { bDevide = true,
+		}, { szOption = _L["Sticky treat player"], bCheck = true, bChecked = HM_TargetList.bUpTreat,
+			fnAction = function(d, b) HM_TargetList.bUpTreat = b end
+		}, { szOption = _L["Rear dead player"], bCheck = true, bChecked = HM_TargetList.bDownDeath,
+			fnAction = function(d, b) HM_TargetList.bDownDeath = b end
+		}
+	})
+	-- filter npc
+	local m1 = { szOption = _L["Temporarily filter NPC"], {
+		szOption = _L["* New *"], fnAction = function()
+			GetUserInput(_L["Enter NPC name to filter"], function(szText)
+				_HM_TargetList.tFilterNpc[szText] = true
+			end)
+		end,
+	}, {
+		bDevide = true
+	} }
+	for k, v in pairs(_HM_TargetList.tFilterNpc) do
+		table.insert(m1, { szOption = k, bCheck = true, bChecked = v,
+			fnAction = function(d, b) _HM_TargetList.tFilterNpc[k] = b end, {
+				szOption = _L["Remove"], fnAction = function() _HM_TargetList.tFilterNpc[k] = nil end
+			}
+		})
+	end
+	table.insert(m0, m1)
+	-- custom
+	table.insert(m0, _HM_TargetList.GetCustomMenu())
 	table.insert(m0, { szOption = _L["Keep foucs in list"], bCheck = true, bChecked = HM_TargetList.bListFocus,
 		fnDisable = function() return not HM_TargetList.bShowList end,
 		fnAction = function() HM_TargetList.bListFocus = not HM_TargetList.bListFocus end,
@@ -1714,7 +1723,11 @@ HM_TargetList.OnItemLButtonDown = function()
 end
 
 HM_TargetList.OnItemRButtonDown = function()
-	if this.dwID and this.szName then
+	if this:GetName() == "Text_LTitle" then
+		local m0 = {}
+		table.insert(m0, _HM_TargetList.GetCustomMenu())
+		PopupMenu(m0)
+	elseif this.dwID and this.szName then
 		if _HM_TargetList.bInArena and _HM_TargetList.nBeginArena then
 			return HM.SetTarget(this.dwID)
 		end
