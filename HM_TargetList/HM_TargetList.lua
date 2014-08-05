@@ -9,6 +9,7 @@ HM_TargetList = {
 	bAutoBigBoss = true,	-- 自动焦点攻防/计时 BOSS
 	----
 	--bShowFocus = true,	-- 显示焦点目标
+	bSplitFocus = false,		-- 分割焦点列表
 	bFocusState = true,		-- 显示焦点状态/BUFF
 	bFocusTarget2 = false,	-- 显示焦点的目标
 	bFocusOld3 = false,		-- 使用旧版焦点界面
@@ -115,6 +116,13 @@ _HM_TargetList.GetFocusMenu = function()
 				if _HM_TargetList.frame then
 					_HM_TargetList.frame:Lookup("Wnd_Focus"):Lookup("", "Handle_Focus"):Clear()
 					_HM_TargetList.nFrameFocus = 0
+				end
+				if HM_TargetList.bSplitFocus then
+					local hL = Station.Lookup("Normal/HM_SplitFocus", "Handle_Focus")
+					if hL then
+						hL:Clear()
+						_HM_TargetList.nFrameFocus = 0
+					end
 				end
 			end
 		}, { szOption = _L("Maximum focus num [%d]", HM_TargetList.nMaxFocus),
@@ -627,7 +635,12 @@ _HM_TargetList.UpdateFocusItem = function(h, tar)
 	-- update slect image
 	local _, tarID = me.GetTarget()
 	if tarID == tar.dwID and not h.alone then
-		local hTotal = _HM_TargetList.frame:Lookup("Wnd_Focus"):Lookup("", "")
+		local hTotal = nil
+		if HM_TargetList.bSplitFocus then
+			hTotal = this:GetRoot():Lookup("", "")
+		else
+			hTotal = _HM_TargetList.frame:Lookup("Wnd_Focus"):Lookup("", "")
+		end
 		local hOver = hTotal:Lookup("Image_FSelect")
 		hOver:SetRelPos((HM_TargetList.bFocusOld3 and 0) or 3, h:GetIndex() * 63 - 3)
 		if HM_TargetList.bFocusOld3 then
@@ -1346,7 +1359,7 @@ _HM_TargetList.UpdateSize = function(bFocusOnly)
 	local frame, nY, nH = _HM_TargetList.frame, 30, 30
 	local nW, _ = frame:Lookup("", "Image_Bg"):GetSize()
 	local wFocus, wList, wAcct = frame:Lookup("Wnd_Focus"), frame:Lookup("Wnd_List"), frame:Lookup("Wnd_Account")
-	if _HM_TargetList.bCollapse or not HM_TargetList.bShowFocus then
+	if _HM_TargetList.bCollapse or not HM_TargetList.bShowFocus or HM_TargetList.bSplitFocus then
 		wFocus:Hide()
 	else
 		nY = nY +  wFocus:Lookup("", "Handle_Focus"):GetItemCount() * 63
@@ -1415,6 +1428,7 @@ HM_TargetList.OnFrameBreathe = function()
 	local nFrame = GetLogicFrameCount()
 	-- focus
 	if not _HM_TargetList.bCollapse and HM_TargetList.bShowFocus
+		and not HM_TargetList.bSplitFocus
 		and (nFrame - _HM_TargetList.nFrameFocus) > 1
 	then
 		local handle = this:Lookup("Wnd_Focus"):Lookup("", "Handle_Focus")
@@ -1570,6 +1584,12 @@ HM_TargetList.OnLButtonClick = function()
 			fnAction = function(d, b)
 				HM_TargetList.bShowAcct = b
 				_HM_TargetList.UpdateSize()
+			end
+		})
+		table.insert(m0, { szOption = _L["Split focus panel"], bCheck = true, bChecked = HM_TargetList.bSplitFocus,
+			fnAction = function(d, b)
+				HM_SplitFocus.Switch(b)
+				_HM_TargetList.UpdateSize(true)
 			end
 		})
 		table.insert(m0, { bDevide = true, })
@@ -1826,6 +1846,86 @@ HM_TargetList.OnItemMouseWheel = function()
 			scroll:ScrollNext(nStep)
 			return true
 		end
+	end
+end
+
+---------------------------------------------------------------------
+-- 拆分焦点窗口 （just for PVER）
+---------------------------------------------------------------------
+HM_SplitFocus = {
+	tAnchor = {},
+}
+RegisterCustomData("HM_SplitFocus.tAnchor")
+
+-- update size/pos
+HM_SplitFocus.UpdateAnchor = function(frame)
+	local a = HM_SplitFocus.tAnchor
+	if not IsEmpty(a) then
+		frame:SetPoint(a.s, 0, 0, a.r, a.x, a.y)
+	end
+	frame:CorrectPos()
+end
+
+-- attach callback
+for _, v in ipairs({"MouseEnter", "MouseLeave", "LButtonDown", "RButtonDown", "LButtonDBClick" }) do
+	local k = "OnItem" .. v
+	HM_SplitFocus[k] = HM_TargetList[k]
+end
+
+-- init frame
+HM_SplitFocus.OnFrameCreate = function()
+	-- init handle
+	this:Lookup("", "Handle_Focus").bSplit = true
+	-- adjust custom
+	UpdateCustomModeWindow(this, _L["HM, focus list"])
+	HM_SplitFocus.UpdateAnchor(this)
+	-- events
+	this:RegisterEvent("ON_ENTER_CUSTOM_UI_MODE")
+	this:RegisterEvent("ON_LEAVE_CUSTOM_UI_MODE")
+	this:RegisterEvent("UI_SCALED")
+end
+
+-- breathe frame
+HM_SplitFocus.OnFrameBreathe = function()
+	if not GetClientPlayer() then return end
+	local nFrame = GetLogicFrameCount()
+	if (nFrame - _HM_TargetList.nFrameFocus) > 1 then
+		local handle = this:Lookup("", "Handle_Focus")
+		_HM_TargetList.nFrameFocus = nFrame
+		_HM_TargetList.UpdateFocusItems(handle)
+		handle:FormatAllItemPos()
+	end
+end
+
+-- drag end
+HM_SplitFocus.OnFrameDragEnd = function()
+	this:CorrectPos()
+	HM_SplitFocus.tAnchor = GetFrameAnchor(this)
+end
+
+-- events
+HM_SplitFocus.OnEvent = function(event)
+	if event == "ON_ENTER_CUSTOM_UI_MODE" or event == "ON_LEAVE_CUSTOM_UI_MODE" then
+		UpdateCustomModeWindow(this)
+	elseif event == "UI_SCALED" then
+		HM_SplitFocus.UpdateAnchor(this)
+	end
+end
+
+-- switch
+HM_SplitFocus.Switch = function(bEnable)
+	if bEnable ~= nil then
+		HM_TargetList.bSplitFocus = bEnable
+	else
+		HM_TargetList.bSplitFocus = not HM_TargetList.bSplitFocus
+	end
+	local frame = Station.Lookup("Normal/HM_SplitFocus")
+	if not HM_TargetList.bSplitFocus then
+		if frame then
+			Wnd.CloseWindow(frame)
+		end
+	elseif not frame then
+		Wnd.OpenWindow("interface\\HM\\HM_TargetList\\HM_SplitFocus.ini", "HM_SplitFocus")
 	end
 end
 
@@ -2140,6 +2240,7 @@ HM.RegisterEvent("CUSTOM_DATA_LOADED", function()
 		_HM_TargetList.Switch(HM_TargetList.bShow)
 		_HM_TargetList.HookTargetMenu()
 		HM_SingleFocus.Switch(HM_SingleFocus.bEnable2)
+		HM_SplitFocus.Switch(HM_TargetList.bSplitFocus)
 	end
 end)
 HM.RegisterEvent("LOADING_END", function()
