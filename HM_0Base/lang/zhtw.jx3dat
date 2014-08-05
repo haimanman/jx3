@@ -515,6 +515,7 @@ data = {
 	["Please set the long distance threshold"] = "請設置遠距離閥值",
 	["View mode of list"] = "列表查看模式",
 	["View options of list"] = "列表顯示選項",
+	["Show image of HP"] = "顯示血條背景",
 	["Show level"] = "顯示等級",
 	["Show HP"] = "顯示血量",
 	["Show distance"] = "顯示距離",

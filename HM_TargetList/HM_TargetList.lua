@@ -18,7 +18,8 @@ HM_TargetList = {
 	--bShowList = true,		-- 显示目标列表
 	nListMode = 6,			-- 列表模式
 	bListWhite = true,		-- 白色模式
-	tShowMode = {			-- 查看模式
+	bListImage = true,		-- 显示血条背景
+	tShowMode = {			-- 查看模式	
 		bLevel = false,			-- 显示等级
 		bDistance = false,	-- 显示距离
 		bForce = true,			-- 显示玩家职业
@@ -299,7 +300,7 @@ end
 _HM_TargetList.GetForceFontColor = function(tar, myID, bFocus, bAlone)
 	if tar.nMoveState == MOVE_STATE.ON_DEATH then
 		return 160, 160, 160
-	elseif not bFocus then
+	elseif not bFocus and HM_TargetList.bListImage then
 		return 255, 255 ,255
 	elseif tar.dwID == myID then
 		if bFocus and not HM_TargetList.bFocusOld3 and not bAlone then
@@ -326,8 +327,6 @@ _HM_TargetList.GetForceFontColor = function(tar, myID, bFocus, bAlone)
 	if bFocus and not HM_TargetList.bFocusOld3 and not bAlone then
 		if r == 0 and g == 200 and b == 72 then
 			r, g, b = 255, 255, 255
-		elseif r == 126 and g == 126 and b == 255 then
-			r, g, b = 60, 200, 255
 		end
 	end
 	return r, g, b
@@ -746,7 +745,9 @@ _HM_TargetList.GetListMenu = function()
 	end
 	table.insert(m0, m1)
 	table.insert(m0, { szOption = _L["View options of list"],
-		{ szOption = _L["Show level"], bCheck = true, bChecked = HM_TargetList.tShowMode.bLevel,
+		{ szOption = _L["Show image of HP"], bCheck = true, bChecked = HM_TargetList.bListImage,
+			fnAction = function(d, b) HM_TargetList.bListImage = b end
+		}, { szOption = _L["Show level"], bCheck = true, bChecked = HM_TargetList.tShowMode.bLevel,
 			fnAction = function(d, b) HM_TargetList.tShowMode.bLevel = b end
 		}, { szOption = _L["Show distance"], bCheck = true, bChecked = HM_TargetList.tShowMode.bDistance,
 			fnAction = function(d, b) HM_TargetList.tShowMode.bDistance = b end
@@ -1173,9 +1174,16 @@ _HM_TargetList.UpdateListItems = function(handle)
 		h:Lookup("Text_Player"):SetFontColor(_HM_TargetList.GetForceFontColor(v, me.dwID))
 		local img = h:Lookup("Image_LPlayer")
 		if img then
-			img:SetFrame(_HM_TargetList.GetBackImageFrame(v, me.dwID))
-			img:SetPercentage(v.nHP / 100)
-			img:SetAlpha((v.nDis and v.nDis > HM_TargetList.nFarThreshold and 120) or 255)
+			if HM_TargetList.bListImage then
+				img:SetFrame(_HM_TargetList.GetBackImageFrame(v, me.dwID))
+				img:SetPercentage(v.nHP / 100)
+				img:SetAlpha((v.nDis and v.nDis > HM_TargetList.nFarThreshold and 100) or 200)
+				img:Show()
+				h:Lookup("Image_LPlayerBg"):Show()
+			else
+				img:Hide()
+				h:Lookup("Image_LPlayerBg"):Hide()
+			end
 		end
 		if v.dwID == tarID then
 			nSelect = k
