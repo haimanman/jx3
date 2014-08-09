@@ -540,10 +540,8 @@ _HM_TargetList.UpdateFocusItem = function(h, tar)
 		local szText = _HM_TargetList.GetSimpleNum(tar.nCurrentLife)
 		if tar.nMoveState == MOVE_STATE.ON_DEATH then
 			szText = ""
-		elseif not h.bOld or hText.bIn then
+		else
 			szText = szText .. "(" .. szHp .. "%)"
-		elseif (GetLogicFrameCount() % 32) >= 16 then
-			szText = szHp .. "%"
 		end
 		hText:SetText(szText)
 		if hImgL then
