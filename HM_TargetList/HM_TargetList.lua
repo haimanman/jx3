@@ -181,7 +181,7 @@ _HM_TargetList.AddFocus = function(dwID, bAuto)
 		-- protected focus people
 		if nRemove == 0 then
 			local dwFirst = _HM_TargetList.tFocus[1]
-			if bAuto and not IsInArena() and HM_TargetList.tPersistFocus[dwFirst] then
+			if bAuto and not _HM_TargetList.bInArena and HM_TargetList.tPersistFocus[dwFirst] then
 				nRemove = 2
 			else
 				nRemove = 1
@@ -1149,8 +1149,17 @@ _HM_TargetList.UpdateListItems = function(handle)
 				end
 			end
 			item.nIndex = #aItem + 1
-			item.nMaxLife = math.max(1, v.nMaxLife)
-			item.nHP = math.min(100, math.ceil(v.nCurrentLife * 100 / v.nMaxLife))
+			if (nMode == 4 or nMode == 5) and me.IsPlayerInMyParty(v.dwID) then
+				local info = GetClientTeam().GetMemberInfo(v.dwID)
+				if info then
+					item.nMaxLife = math.max(1, info.nMaxLife)
+					item.nHP = math.min(100, math.ceil(info.nCurrentLife * 100 / info.nMaxLife))
+				end
+			end
+			if not item.nHP then
+				item.nMaxLife = math.max(1, v.nMaxLife)
+				item.nHP = math.min(100, math.ceil(v.nCurrentLife * 100 / v.nMaxLife))
+			end
 			if bDis then
 				item.nDis = HM.GetDistance(v)
 			end
@@ -1506,7 +1515,7 @@ HM_TargetList.OnEvent = function(event)
 		-- auto focus in arean
 		if HM_TargetList.bAutoArena and event == "PLAYER_ENTER_SCENE"
 			and not _HM_TargetList.IsFocus(arg0) and IsEnemy(GetClientPlayer().dwID, arg0)
-			and (IsInArena() or IsInSameQWG(arg0))
+			and (_HM_TargetList.bInArena or IsInSameQWG(arg0))
 		then
 			_HM_TargetList.AddFocus(arg0, true)
 		end
@@ -1525,7 +1534,7 @@ HM_TargetList.OnEvent = function(event)
 			end
 		end
 		-- auto focus big boss
-		if HM_TargetList.bAutoBigBoss and HM_Camp and event == "NPC_ENTER_SCENE"
+		if HM_TargetList.bAutoBigBoss and not _HM_TargetList.bInCopy and HM_Camp and event == "NPC_ENTER_SCENE"
 			and not _HM_TargetList.IsFocus(arg0) and HM_Camp.IsCareNpc(GetNpc(arg0))
 		then
 			_HM_TargetList.AddFocus(arg0, true)
@@ -2230,6 +2239,18 @@ _HM_TargetList.PS.OnPlayerMenu = function()
 	}
 end
 
+-- is in dungeon (map copy)
+local function IsInDungeon()
+	local me = GetClientPlayer()
+	if me then
+		local _, nType = GetMapParams(me.GetMapID())
+		if nType == 1 then
+			return true
+		end
+	end
+	return false
+end
+
 ---------------------------------------------------------------------
 -- 注册事件、初始化
 ---------------------------------------------------------------------
@@ -2243,6 +2264,7 @@ HM.RegisterEvent("CUSTOM_DATA_LOADED", function()
 end)
 HM.RegisterEvent("LOADING_END", function()
 	_HM_TargetList.bInArena = IsInArena()
+	_HM_TargetList.bInCopy = IsInDungeon()
 	_HM_TargetList.nBeginArena = nil
 	_HM_TargetList.nFrameAcct = 0
 	if _HM_TargetList.bInArena or IsInSameQWG() then
