@@ -470,6 +470,22 @@ _HM.HookPlayerMenu = function()
 	Player_AppendAddonMenu({ _HM.GetPlayerMenu })
 end
 
+-- shield sound from mock bg_talk
+g_sound_Whisper = g_sound_Whisper or g_sound.Whisper
+g_sound.Whisper = nil
+setmetatable(g_sound, {
+	__index = function(tb, k)
+		if k ~= "Whisper" then
+			return nil
+		end
+		local t = GetClientPlayer().GetTalkData()
+		if t and #t > 1 and t[1].text == _L["Addon comm."] and t[2].type == "eventlink" then
+			return ""
+		end
+		return g_sound_Whisper
+	end
+})
+
 ---------------------------------------------------------------------
 -- 全局函数和变量（HM.xxx）
 ---------------------------------------------------------------------
