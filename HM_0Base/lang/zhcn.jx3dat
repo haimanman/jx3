@@ -134,6 +134,7 @@ data = {
 	[", "] = "，",
 	["Hotkey"] = "快捷键",
 	[") "] = "）",
+	["Keep shield even if relogin"] = "重新上线仍保持屏蔽",
 	["Set shield item"] = "设置屏蔽项目",
 	["Select camp target"] = "选攻防目标",
 	["("] = "（",

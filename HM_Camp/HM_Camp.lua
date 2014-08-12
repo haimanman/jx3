@@ -8,6 +8,7 @@ end
 
 HM_Camp = {
 	bHideEnable = false,
+	bHideForever = false,	-- 下线再上线也保持屏蔽
 	tHideExclude = { [4] = true, [6] = true, [7] = true },
 	tHideSave = {},
 	bPartyAlert = true,			-- 不同阵营的成员进队发出提示
@@ -641,15 +642,18 @@ _HM_Camp.PS.OnPanelActive = function(frame)
 	-- quick shield
 	ui:Append("Text", { txt = _L["CampShield"], x = 0, y = 0, font = 27 })
 	_HM_Camp.HideBox = ui:Append("WndCheckBox", { x = 10, y = 28, checked = HM_Camp.bHideEnable })
-	:Text(_L["Enable shield ("] .. _L["CampShield"] .. _L[", "]):Click(_HM_Camp.HideGF)
+	:Text(_L["Enable shield ("]):Click(_HM_Camp.HideGF)
 	nX = _HM_Camp.HideBox:Pos_()
 	nX = ui:Append("Text", { txt = _L["Hotkey"], x = nX, y = 27 }):Click(HM.SetHotKey):Pos_()
-	ui:Append("Text", { txt = HM.GetHotKey("HideGF", false) .. _L[") "], x = nX, y = 27 })
+	nX = ui:Append("Text", { txt = HM.GetHotKey("HideGF", false) .. _L[") "], x = nX, y = 27 }):Pos_()
+	ui:Append("WndCheckBox", { txt = _L["Keep shield even if relogin"], x = nX + 10, y = 27, checked = HM_Camp.bHideForever }):Click(function(bChecked)
+		HM_Camp.bHideForever = bChecked
+	end)
 	ui:Append("WndComboBox", { txt = _L["Set shield item"], x = 14, y = 56 }):Menu(_HM_Camp.GetHideMenu)
 	-- select target
 	ui:Append("Text", { txt = _L["Camp fight target"], x = 0, y = 92, font = 27 })
 	nX = ui:Append("WndButton", { txt = _L["Select camp target"], x = 10, y = 122 }):AutoSize(8):Click(_HM_Camp.TargetGF):Pos_()
-	nX = ui:Append("Text", { txt = _L["("] .. _L["CampTarget"] .. _L[", "], x = nX, y = 121 }):Pos_()
+	nX = ui:Append("Text", { txt = _L["("], x = nX, y = 121 }):Pos_()
 	nX = ui:Append("Text", { txt = _L["Hotkey"], x = nX, y = 121 }):Click(HM.SetHotKey):Pos_()
 	ui:Append("Text", { txt = HM.GetHotKey("TargetGF", false) .. _L[") "], x = nX, y = 121 })
 	ui:Append("Text", { txt = _L["In offensive, DPS select BOSS and healer select MT, otherwise is the opposite"], x = 14, y = 148, font = 161 })
@@ -707,7 +711,12 @@ end)
 HM.RegisterEvent("SYNC_ROLE_DATA_END", function()
 	if HM_Camp.bHideEnable then
 		_HM_Camp.HideGF(_HM_Camp.bEnter == true, _HM_Camp.bEnter == true)
-		_HM_Camp.bEnter = true
+		if not _HM_Camp.bEnter then
+			if HM_Camp.bHideForever then
+				_HM_Camp.HideGF(true, false)
+			end
+			_HM_Camp.bEnter = true
+		end
 	end
 end)
 HM.RegisterEvent("ON_CAN_ENTER_MAP_NOTIFY", function()
