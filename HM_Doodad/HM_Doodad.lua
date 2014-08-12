@@ -153,7 +153,7 @@ _HM_Doodad.TryAdd = function(dwID, bDelay)
 			then
 				data = { craft = true }
 			end
-		elseif d.dwTemplateID == 3713 or d.dwTemplateID == 3714 then
+		elseif HM_Doodad.bQuest and (d.dwTemplateID == 3713 or d.dwTemplateID == 3714) then
 			data = { craft = true }
 		elseif HM_Doodad.tCraft[d.szName] or (HM_Doodad.bCustom and HM_Doodad.tCustom[d.szName]) then
 			data = { craft = true }
