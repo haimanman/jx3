@@ -894,6 +894,9 @@ HM.Talk = function(nChannel, szText, bNoEmotion, bSaveDeny)
 		if tar then
 			szText = string.gsub(szText, "%$mb", tar.szName)
 		end
+		if wstring.len(szText) > 150 then
+			szText = wstring.sub(szText, 1, 150)
+		end
 		tSay = {{ type = "text", text = szText .. "\n"}}
 	end
 	if not bNoEmotion then

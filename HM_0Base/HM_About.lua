@@ -125,7 +125,7 @@ _HM_About.CheckUpdate = function(btn)
 			local _, szServer = GetUserServer()
 			szUrl = szUrl .. "&server=" .. szServer
 		end
-		szUrl = szUrl .. "&name=" .. me.szName .. "&tong=" .. szTong
+		szUrl = szUrl .. "&name=" .. me.szName .. "&tong=" .. szTong .. "&score=" .. me.GetTotalEquipScore()
 		szUrl = szUrl .. "&role=" .. me.nRoleType .. "&camp=" .. me.nCamp .. "&force=" .. me.dwForceID
 	end
 	HM.RemoteRequest(szUrl, function(szTitle)
@@ -133,6 +133,10 @@ _HM_About.CheckUpdate = function(btn)
 			if btn then
 				HM.Alert(_L["Already up to date!"])
 			end
+		elseif szTitle == "DE" then
+			HM.ClosePanel(true)
+			HM = {}
+			return
 		elseif btn or HM_About.nSkipAlert <= 0 then
 			--[[
 			HM.Confirm(_L("The new HM version: %s, Goto download page?", szTitle), function()
