@@ -308,7 +308,7 @@ end
 _HM_TargetList.GetForceFontColor = function(tar, myID, bFocus, bAlone)
 	if tar.nMoveState == MOVE_STATE.ON_DEATH then
 		return 160, 160, 160
-	elseif not bFocus and HM_TargetList.bListImage then
+	elseif not bFocus and HM_TargetList.bListImage and (not tar.nNpc or tar.nNpc == 0) then
 		return 255, 255 ,255
 	elseif tar.dwID == myID then
 		if bFocus and not HM_TargetList.bFocusOld3 and not bAlone then
@@ -1113,7 +1113,7 @@ _HM_TargetList.UpdateListItems = function(handle)
 		aList = HM.GetAllNpc()
 	else
 		local t = TimeToDate(GetCurrentTime())
-		if (t.weekday == 2 or t.weekday == 4) and t.hour >= 20 and t.hour < 22 then
+		if (t.weekday == 2 or t.weekday == 4) and t.hour >= 19 and t.hour < 22 then
 			bXGF = true
 		end
 		aList = HM.GetAllPlayer()
