@@ -78,6 +78,9 @@ _HM_Ent.tInfo = {
 	{ szName = _L["EquipScore"], bChecked = true, fnValue = function()
 		return GetClientPlayer().GetTotalEquipScore() end
 	},
+	{ szName = _L["KillCount"], bChecked = true, fnValue = function()
+		return GetClientPlayer().dwKillCount end
+	},
 }
 
 -- renum
