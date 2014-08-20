@@ -1284,7 +1284,7 @@ end
 -- (string, number) HM.GetBuffName(number dwBuffID[, number dwLevel])
 HM.GetBuffName = function(dwBuffID, dwLevel)
 	local xKey = dwBuffID
-	if dwBuffID == 4937 and dwLevel ~= nil then
+	if dwLevel then
 		xKey = dwBuffID .. "_" .. dwLevel
 	end
 	if not _HM.tBuffCache[xKey] then
