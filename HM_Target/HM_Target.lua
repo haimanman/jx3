@@ -808,7 +808,7 @@ HM_TargetDir.GetState = function(tar, bBuff)
 			end
 			if buff then
 				szText, dwIcon = HM.GetBuffName(buff.dwID, buff.nLevel)
-				if szType ~= _L["Others"] then
+				if szType ~= _L["Others"] and szType ~= _L["Orange-weapon"] then
 					szText = string.gsub(szType, "%d+$", "")
 				end
 			end
