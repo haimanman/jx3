@@ -47,6 +47,47 @@ _HM_FindStation.UpdateButton = function()
 	end
 end
 
+_HM_FindStation.UpdateBox = function()
+	_HM_FindStation.bBox = not _HM_FindStation.bBox
+	local function fnApply(wnd)
+		if wnd and wnd:IsVisible() then
+			-- update mouse tips
+			if wnd:GetType() == "Box" then
+				if _HM_FindStation.bBox then
+					wnd._OnItemMouseEnter = wnd.OnItemMouseEnter
+					wnd.OnItemMouseEnter = function()
+						local nX, nY = wnd:GetAbsPos()
+						local nW, nH = wnd:GetSize()
+						local szTip = GetFormatText("<HM：控件路径>\n", 101)
+						szTip = szTip .. GetFormatText(string.sub(wnd:GetTreePath(), 1, -2), 106)
+						OutputTip(szTip, 400, { nX, nY, nW, nH })
+					end
+				else
+					wnd.OnItemMouseEnter = wnd._OnItemMouseEnter
+					wnd._OnItemMouseEnter = nil
+				end
+			elseif wnd:GetType() == "Handle" then
+				-- handle traverse
+				for i = 0, wnd:GetItemCount() - 1, 1 do
+					fnApply(wnd:Lookup(i))
+				end
+			elseif wnd:GetType() == "WndFrame" or wnd:GetType() == "WndWindow" then
+				-- main handle
+				fnApply(wnd:Lookup("", ""))
+				-- update childs
+				local cld = wnd:GetFirstChild()
+				while cld ~= nil do
+					fnApply(cld)
+					cld = cld:GetNext()
+				end
+			end
+		end
+	end
+	for _, v in ipairs(_HM_FindStation.tLayer) do
+		fnApply(Station.Lookup(v))
+	end
+end
+
 _HM_FindStation.SearchText = function(szText)
 	local tResult = {}
 	local function fnSearch(wnd)
@@ -99,22 +140,24 @@ end
 -- init panel
 _HM_FindStation.OnPanelActive = function(frame)
 	local ui = HM.UI(frame)
-	ui:Append("Text", { txt = "按钮查找", x = 0, y = 0, font = 27 })
+	ui:Append("Text", { txt = "控件查找", x = 0, y = 0, font = 27 })
 	ui:Append("WndCheckBox", { x = 10, y = 28, checked = _HM_FindStation.bButton })
 	:Text("启用按钮查找，鼠标移上会显示控件路径"):Click(_HM_FindStation.UpdateButton)
-	ui:Append("Text", { txt = "文本查找", x = 0, y = 64, font = 27 })
-	local nX = ui:Append("Text", { txt = "关键词：", x = 10, y = 92 }):Pos_()
-	nX = ui:Append("WndEdit", "Edit_Query", { x = nX + 5, y = 92, limit = 256, h = 27, w = 200 })
+	ui:Append("WndCheckBox", { x = 10, y = 56, checked = _HM_FindStation.bBox })
+	:Text("启用BOX查找，鼠标移上会显示控件路径"):Click(_HM_FindStation.UpdateBox)
+	ui:Append("Text", { txt = "文本查找", x = 0, y = 92, font = 27 })
+	local nX = ui:Append("Text", { txt = "关键词：", x = 10, y = 120 }):Pos_()
+	nX = ui:Append("WndEdit", "Edit_Query", { x = nX + 5, y = 120, limit = 256, h = 27, w = 200 })
 	:Text(_HM_FindStation.szQuery):Pos_()
-	nX = ui:Append("WndButton", { x = nX + 5, y = 92, txt = "搜 索" })
+	nX = ui:Append("WndButton", { x = nX + 5, y = 120, txt = "搜 索" })
 	:Click(function()
 		ui:Fetch("Edit_Result"):Text("正在检索，请稍候……")
 		_HM_FindStation.szQuery = ui:Fetch("Edit_Query"):Text()
 		_HM_FindStation.szResult = _HM_FindStation.SearchText(_HM_FindStation.szQuery)
 		ui:Fetch("Edit_Result"):Text(_HM_FindStation.szResult)
 	end):Pos_()
-	ui:Append("Text", { x = nX + 5, y = 92, txt = "（支持 Lua 正则）" })
-	ui:Append("WndEdit", "Edit_Result", { x = 10, y = 122, limit = 9999, h = 200, w = 480, multi = true })
+	ui:Append("Text", { x = nX + 5, y = 120, txt = "（支持 Lua 正则）" })
+	ui:Append("WndEdit", "Edit_Result", { x = 10, y = 150, limit = 9999, h = 200, w = 480, multi = true })
 	:Text(_HM_FindStation.szResult)
 end
 
@@ -123,3 +166,4 @@ end
 ---------------------------------------------------------------------
 -- add to HM panel
 HM.RegisterPanel("界面控件查找", 2791, "开发", _HM_FindStation)
+
