@@ -627,15 +627,20 @@ _HM_ToolBox.SortGuildBank = function()
 		table.sort(aItem, fnCompare)
 	end
 	-- exchange them
-	local aIndex, nDst, dwBagX2, bTrigger = {}, 1, nil, false
+	local aIndex, nDst, dwBankX, dwBankX2, bTrigger = {}, 1, nil, nil, false
 	for k, v in ipairs(aItem) do
 		aIndex[v.dwX] = k
 	end
 	local fnLoop = function()
 		bTrigger = true
-		if dwBagX2 then	-- restore from bagbox
-			OnExchangeItem(dwBagBox, dwBagX, INVENTORY_GUILD_BANK, dwBagX2)
-			dwBagX2 = nil
+		-- swap to empty pos & restore from bagbox
+		if dwBankX then
+			OnExchangeItem(INVENTORY_GUILD_BANK, dwBankX2, INVENTORY_GUILD_BANK, dwBankX)
+			dwBankX = nil
+			return
+		elseif dwBankX2 then
+			OnExchangeItem(dwBagBox, dwBagX, INVENTORY_GUILD_BANK, dwBankX2)
+			dwBankX2 = nil
 			return
 		end
 		while nDst <= #aItem do
@@ -646,20 +651,24 @@ _HM_ToolBox.SortGuildBank = function()
 				if nSrc then
 					local item1 = aItem[nDst].item
 					local item2 = aItem[nSrc].item
-					if item1.nUiId == item2.nUiId and item1.bCanStack then
-						if item1.nStackNum ~= item2.nStackNum then	-- exchange via bagbox
+					if item1.nUiId == item2.nUiId then
+						if item1.bCanStack and item1.nStackNum ~= item2.nStackNum then
+							-- exchange via bagbox
 							OnExchangeItem(INVENTORY_GUILD_BANK, dwX, dwBagBox, dwBagX)
-							dwBagX2 = dwX2
+							dwBankX, dwBankX2 = dwX, dwX2
+						else
+							bChange = false
 						end
-						bChange = false
 					end
-					aItem[nSrc].dwX = dwX2
-					aIndex[dwX2] = nSrc
 				end
 				if bChange then
-					OnExchangeItem(INVENTORY_GUILD_BANK, dwX2, INVENTORY_GUILD_BANK, dwX)
-					break
-				elseif dwBagX2 then
+					if nSrc then
+						aItem[nSrc].dwX = dwX2
+					end
+					aIndex[dwX2] = nSrc
+					if not dwBankX then
+						OnExchangeItem(INVENTORY_GUILD_BANK, dwX2, INVENTORY_GUILD_BANK, dwX)
+					end
 					break
 				end
 			end
