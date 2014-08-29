@@ -183,6 +183,7 @@ _HM_Force.tPlayHorse = {
 	[60358] = true,	-- ¶ÉÇé
 	[63440] = true,	-- ð½
 	[90491] = true,	-- åë³ßÌìÑÄ
+	[90728] = true,	-- ¾í»Æ³¾ 
 }
 _HM_Force.ReplaceHorse = function()
 	-- is now a play horse
@@ -377,7 +378,7 @@ HM.RegisterEvent("SYS_MSG", function()
 			_HM_Force.ReplaceHorse()
 		end
 		-- on prepare Æï³Ë
-		if HM_Force.bFeedHorse and arg1 == me.dwID and (arg2 == 53 or arg2 == 433 or arg2 == 4097 or arg2 == 4098) then
+		if HM_Force.bFeedHorse and arg1 == me.dwID and (arg2 == 433 or arg2 == 53 or Table_GetSkillName(arg2, 1) == Table_GetSkillName(53, 1)) then
 			local it = me.GetItem(INVENTORY_INDEX.EQUIP, EQUIPMENT_INVENTORY.HORSE)
 			if it then
 				OutputItemTip(UI_OBJECT_ITEM, INVENTORY_INDEX.EQUIP, EQUIPMENT_INVENTORY.HORSE)
@@ -388,7 +389,7 @@ HM.RegisterEvent("SYS_MSG", function()
 						local szFullMeasure = HM.Trim(hT:GetText())
 						local tDisplay = g_tTable.RideSubDisplay:Search(it.nDetail)
 						if tDisplay and szFullMeasure ~= tDisplay.szFullMeasure3 then
-							OutputWarningMessage("MSG_WARNING_YELLOW", it.szName .. ": " .. szFullMeasure)
+							OutputWarningMessage("MSG_WARNING_YELLOW", Table_GetItemName(it.nUiId) .. ": " .. szFullMeasure)
 							PlaySound(SOUND.UI_SOUND, g_sound.CloseAuction)
 						end
 						break
