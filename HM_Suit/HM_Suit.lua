@@ -189,12 +189,13 @@ end
 -- 按纽 HOOK (人物进入游戏后)
 _HM_Suit.OnEnterGame = function()
 	local frame = Player_GetFrame()
-	if frame:Lookup("Btn_Change") then
-		return
-	end
 	local nW, _ = frame:GetSize()
 	local temp = Wnd.OpenWindow("interface\\HM\\HM_Suit\\HM_Suit.ini")
 	for k, v in ipairs({"Btn_Three", "Btn_Change", "Btn_Umount"}) do
+		local _btn = frame:Lookup(v)
+		if _btn then
+			_btn:Destroy()
+		end
 		local btn = temp:Lookup(v)
 		btn:ChangeRelation(frame, true, true)
 		btn:SetRelPos(nW - 27 * k, 15)
