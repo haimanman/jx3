@@ -11,9 +11,21 @@ HM_TargetMon = {
 	bSelfRight = false,		-- 自身BUFF 右对齐
 	bBoxEvent2 = false,		-- 图标鼠标事件
 	nSize = 55,					-- BOX 大小
+	tSkillList = {},			-- 自定义监控技能  	[dwForce] => { [name] => N (s) }
+	tBuffList = {},			-- 自定义监控BUFF	[nType] => { [name] => true|false }
 	tNSBuffEx = {},			-- 排除监控自己
 	tNTBuffEx = {},			-- 排除监控目标
 	tAnchor = {},				-- 位置
+}
+
+-- customdata
+HM.RegisterCustomData("HM_TargetMon")
+
+---------------------------------------------------------------------
+-- 本地函数和变量
+---------------------------------------------------------------------
+local _HM_TargetMon = {
+	tCD = {},
 }
 
 -- get skill name by id
@@ -29,7 +41,7 @@ local function _b(dwBuffID, dwLevel)
 end
 
 -- skill list (by force, < 0 disable )
-HM_TargetMon.tSkillList4 = {
+_HM_TargetMon.tSkillList4 = {
 	{		-- 少林
 		[_s(236)--[[摩诃无量]]] = 25,
 		[_s(242)--[[捉影式]]] = 17,
@@ -117,7 +129,7 @@ HM_TargetMon.tSkillList4 = {
 }
 
 --buff list (by type)
-HM_TargetMon.tBuffList4 = {
+_HM_TargetMon.tBuffList4 = {
 	{
 		szType = _L["Invincible"],	-- 1
 		tName = {
@@ -252,20 +264,6 @@ HM_TargetMon.tBuffList4 = {
 	}
 }
 
--- customdata
-HM.RegisterCustomData("HM_TargetMon")
-
----------------------------------------------------------------------
--- 本地函数和变量
----------------------------------------------------------------------
-local _HM_TargetMon = {
-	tCD = {},
-}
-
--- save data to restore
-_HM_TargetMon.tBakSkill = HM_TargetMon.tSkillList4
-_HM_TargetMon.tBakBuff = HM_TargetMon.tBuffList4
-
 -- reset cd
 _HM_TargetMon.tSkillReset = {
 	[_s(552)--[[邻里曲]]] = { _s(557)--[[天地低昂]], _s(550)--[[鹊踏枝]], _s(574)--[[蝶弄足]], _s(548)--[[龙池乐]] },
@@ -345,13 +343,23 @@ _HM_TargetMon.tFixedSkill = {
 -- load buffex cache
 _HM_TargetMon.LoadBuffEx = function()
 	local aCache = {}
-	for k, v in ipairs(HM_TargetMon.tBuffList4) do
+	local aType = {}
+	for k, v in ipairs(_HM_TargetMon.tBuffList4) do
+		aType[k] = v.szType
 		for _, vv in ipairs(v.tName) do
-			local dwFixedID = _HM_TargetMon.tFixedBuffEx[v.szType .. "_" .. vv]
-			if dwFixedID then
-				aCache[dwFixedID] = { v.szType, k }
+			local kkk = _HM_TargetMon.tFixedBuffEx[v.szType .. "_" .. vv] or vv
+			aCache[kkk] = { v.szType, k }
+		end
+	end
+	-- override by customdata
+	for k, v in pairs(HM_TargetMon.tBuffList) do
+		for kk, vv in pairs(v) do
+			local szType = aType[k]
+			local kkk = _HM_TargetMon.tFixedBuffEx[szType .. "_" .. kk] or kk
+			if vv == true then
+				aCache[kkk] = { szType, k }
 			else
-				aCache[vv] = { v.szType, k }
+				aCache[kkk] = nil
 			end
 		end
 	end
@@ -361,10 +369,18 @@ end
 -- load  monskill cache
 _HM_TargetMon.LoadSkillMon = function()
 	local aCache = {}
-	for _, v in ipairs(HM_TargetMon.tSkillList4) do
+	for _, v in ipairs(_HM_TargetMon.tSkillList4) do
+		for kk, vv in pairs(v) do
+			aCache[kk] = vv
+		end
+	end
+	-- override by customdata
+	for _, v in pairs(HM_TargetMon.tSkillList) do
 		for kk, vv in pairs(v) do
 			if vv > 0 then
 				aCache[kk] = vv
+			else
+				aCache[kk] = nil
 			end
 		end
 	end
@@ -503,7 +519,10 @@ _HM_TargetMon.EditSkill = function(nForce, szName)
 				if not nForce then
 					HM.Alert(_L("Invalid skill name [%s]", szName))
 				else
-					HM_TargetMon.tSkillList4[nForce][szName] = nTime
+					if not HM_TargetMon.tSkillList[nForce] then
+						HM_TargetMon.tSkillList[nForce] = {}
+					end
+					HM_TargetMon.tSkillList[nForce][szName] = nTime
 					if not frm.nForce then
 						HM.Sysmsg(_L("Added skill CD monitor [%s-%s]", _HM_TargetMon.GetForceTitle(nForce), szName))
 					end
@@ -522,9 +541,10 @@ _HM_TargetMon.EditSkill = function(nForce, szName)
 		frm:Fetch("Edit_Name"):Text(""):Enable(true)
 		frm:Fetch("Edit_Time"):Text("")
 	else
+		local tS = HM_TargetMon.tSkillList[nForce] or {}
 		frm:Title(_L["Edit skill CD"])
 		frm:Fetch("Edit_Name"):Text(szName):Enable(false)
-		frm:Fetch("Edit_Time"):Text(tostring(math.abs(HM_TargetMon.tSkillList4[nForce][szName])))
+		frm:Fetch("Edit_Time"):Text(tostring(math.abs(tS[szName] or _HM_TargetMon.tSkillList4[nForce][szName])))
 	end
 	frm:Toggle(true)
 end
@@ -536,22 +556,39 @@ _HM_TargetMon.GetSkillMenu = function()
 		{
 			szOption = _L["* Reset *"],
 			fnAction = function()
-				HM_TargetMon.tSkillList4 = clone(_HM_TargetMon.tBakSkill)
+				HM_TargetMon.tSkillList = {}
 				_HM_TargetMon.tSkillCache = nil
 			end
 		},
 		{ bDevide = true, }
 	}
-	for k, v in ipairs(HM_TargetMon.tSkillList4) do
+	-- default data
+	for k, v in ipairs(_HM_TargetMon.tSkillList4) do
 		if not IsEmpty(v) then
 			local m1 = { szOption = _HM_TargetMon.GetForceTitle(k) }
+			local tS = HM_TargetMon.tSkillList[k] or {}
+			local aS = {}
+			for kk, vv in pairs(tS) do
+				if vv > 0 then
+					aS[kk] = vv
+				end
+			end
 			for kk, vv in pairs(v) do
+				if not tS[kk] then
+					aS[kk] = vv
+				end
+			end
+			for kk, vv in pairs(aS) do
 				table.insert(m1, {
 					szOption = kk .. " (" .. math.abs(vv) .. ")",
 					bCheck = true, bChecked = vv > 0,
 					fnAction = function() v[kk] = 0 - vv end,
 					{ szOption = _L["Edit"], fnAction = function() _HM_TargetMon.EditSkill(k, kk) end },
-					{ szOption = _L["Remove"], fnAction = function() v[kk] = nil
+					{ szOption = _L["Remove"], fnAction = function()
+						if not HM_TargetMon.tSkillList[k] then
+							HM_TargetMon.tSkillList[k] = {}
+						end
+						HM_TargetMon.tSkillList[k][kk] = 0
 						_HM_TargetMon.tSkillCache = nil
 						HM.Sysmsg(_L("Removed skill CD monitor [%s-%s]", _HM_TargetMon.GetForceTitle(k), kk)) end },
 				})
@@ -572,7 +609,7 @@ _HM_TargetMon.EditBuff = function()
 		nX = frm:Append("WndEdit", "Edit_Name", { x = nX + 5, y = 20, limit = 100, w = 160, h = 25 } ):Pos_()
 		frm:Append("WndComboBox", "Combo_Type", { x = nX + 5, y = 20, w = 80, h = 25 } ):Menu( function()
 			local m0 = {}
-			for k, v in ipairs(HM_TargetMon.tBuffList4) do
+			for k, v in ipairs(_HM_TargetMon.tBuffList4) do
 				table.insert(m0, { szOption = v.szType, fnAction = function()
 					frm.nType = k
 					frm:Fetch("Combo_Type"):Text(v.szType)
@@ -586,27 +623,42 @@ _HM_TargetMon.EditBuff = function()
 			if szName == "" then
 				HM.Alert(_L["Buff name can not be empty"])
 			else
-				local tBuff = HM_TargetMon.tBuffList4[frm.nType]
-				if tBuff then
-					for _, v in ipairs(tBuff.tName) do
-						if v == szName then
-							return HM.Alert(_L["Buff name already exists"])
+				local bExist = nil
+				local tBuff = HM_TargetMon.tBuffList[frm.nType] or {}
+				for k, v in pairs(tBuff) do
+					if k == szName then
+						bExist = v == true
+						break
+					end
+				end
+				if bExist == nil then
+					local tBuff4 = _HM_TargetMon.tBuffList4[frm.nType]
+					if tBuff4 then
+						for _, v in ipairs(tBuff4.tName) do
+							if v == szName then
+								bExist = true
+								break
+							end
 						end
 					end
-					table.insert(tBuff.tName, szName)
-					HM.Sysmsg(_L("Added buff monitor [%s-%s]", tBuff.szType, szName))
-					frm:Toggle(false)
-					_HM_TargetMon.tBuffCache = nil
 				end
+				if bExist then
+					return HM.Alert(_L["Buff name already exists"])
+				end
+				tBuff[szName] = true
+				HM_TargetMon.tBuffList[frm.nType] = tBuff
+				HM.Sysmsg(_L("Added buff monitor [%s-%s]", frm:Fetch("Combo_Type"):Text(), szName))
+				frm:Toggle(false)
+				_HM_TargetMon.tBuffCache = nil
 			end
 		end)
 		frm:Append("WndButton", "Btn_Cancel", { txt = _L["Cancel"], x = 145, y = 80 }):Click(function() frm:Toggle(false) end)
 		_HM_TargetMon.bFrame = frm
 	end
 	-- show frm
-	frm.nType = table.getn(HM_TargetMon.tBuffList4)
+	frm.nType = table.getn(_HM_TargetMon.tBuffList4)
 	frm:Fetch("Edit_Name"):Text("")
-	frm:Fetch("Combo_Type"):Text(HM_TargetMon.tBuffList4[frm.nType].szType)
+	frm:Fetch("Combo_Type"):Text(_HM_TargetMon.tBuffList4[frm.nType].szType)
 	frm:Title(_L["Add buff monitor"])
 	frm:Toggle(true)
 end
@@ -618,16 +670,28 @@ _HM_TargetMon.GetBuffMenu = function()
 		{
 			szOption = _L["* Reset *"],
 			fnAction = function()
-				HM_TargetMon.tBuffList4 = clone(_HM_TargetMon.tBakBuff)
+				HM_TargetMon.tBuffList = {}
 				_HM_TargetMon.tBuffCache = nil
 			end
 		},
 		{ bDevide = true, }
 	}
-	for _, v in ipairs(HM_TargetMon.tBuffList4) do
+	for k, v in ipairs(_HM_TargetMon.tBuffList4) do
 		if not IsEmpty(v.tName) then
 			local m1 = { szOption = v.szType }
-			for kk, vv in ipairs(v.tName) do
+			local tB = HM_TargetMon.tBuffList[k] or {}
+			local aB = {}
+			for kk, vv in pairs(tB) do
+				if vv == true then
+					table.insert(aB, kk)
+				end
+			end
+			for _, vv in ipairs(v.tName) do
+				if tB[vv] == nil then
+					table.insert(aB, vv)
+				end
+			end
+			for _, vv in ipairs(aB) do
 				local vk = _HM_TargetMon.tFixedBuffEx[v.szType .. "_" .. vv] or vv
 				table.insert(m1, { szOption = vv,
 					{ szOption = _L["Monitor target"], bCheck = true, bChecked = not HM_TargetMon.tNTBuffEx[vk], fnAction = function()
@@ -643,7 +707,10 @@ _HM_TargetMon.GetBuffMenu = function()
 							HM_TargetMon.tNSBuffEx[vk] = true
 						end
 					end }, { szOption = _L["Remove"], fnAction = function()
-						table.remove(v.tName, kk)
+						if not HM_TargetMon.tBuffList[k] then
+							HM_TargetMon.tBuffList[k] = {}
+						end
+						HM_TargetMon.tBuffList[k][vv] = false
 						_HM_TargetMon.tBuffCache = nil
 						HM.Sysmsg(_L("Removed buff monitor [%s_%s]", v.szType, vv))
 					end },
