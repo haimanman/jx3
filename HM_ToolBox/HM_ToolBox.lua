@@ -1026,7 +1026,7 @@ _HM_ToolBox.OnShopUpdateItem = function()
 			if IsShiftKeyDown() and item.nMaxDurability > 1
 				and (item.nGenre ~= ITEM_GENRE.EQUIPMENT or item.nSub == EQUIPMENT_SUB.ARROW)
 			then
-				local nMax = item.nMaxDurability
+				local nMax = (item.bCanStack and item.nMaxDurability) or 1
 				local x, y = this:GetAbsPos()
 				local w, h = this:GetSize()
 				local fnSure = function(nNum)
