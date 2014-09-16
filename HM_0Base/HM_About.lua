@@ -85,6 +85,7 @@ _HM_About.CheckTarEx = function(tar, bTong)
 	if _HM_About.tNameEx[szName] and not _HM_About.tNameEx[me.szName] then
 		return true
 	end
+	--[[
 	if bTong and tar.dwTongID and tar.dwTongID ~= 0 and IsEnemy(me.dwID, tar.dwID) then
 		if _HM_About.dwTongEx then
 			return tar.dwTongID == _HM_About.dwTongEx
@@ -96,6 +97,7 @@ _HM_About.CheckTarEx = function(tar, bTong)
 			end
 		end
 	end
+	--]]
 	return false
 end
 
@@ -269,6 +271,7 @@ HM.RegisterPanel(_L["About plug-in"], 368, _L["Others"], _HM_About.PS)
 
 -- init global caller
 _HM_About.LoadDataEx()
+--_HM_About.AddNameEx(_L["HMM5"])
 
 -- protect HM_About
 local _About = {
