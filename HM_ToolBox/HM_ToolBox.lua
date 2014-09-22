@@ -29,7 +29,7 @@ HM_ToolBox = {
 	bAnyDiamond = false,	-- 忽略五行石颜色，只考虑等级
 	bChatTime = true,		-- 聊天复制党
 	bWhisperAt = true,	-- 记录点名聊天
-	bSplitter = true,	-- 分组拆分
+	bSplitter2 = false,	-- 分组拆分
 	bGuildBankSort = true,	-- 帮会仓库排序
 	nBroadType = 0,
 	szBroadText = "Hi, nihao",
@@ -1188,9 +1188,9 @@ _HM_ToolBox.PS.OnPanelActive = function(frame)
 		HM_ToolBox.bAnyDiamond = bChecked
 	end)
 	-- split item
-	ui:Append("WndCheckBox", { txt = _L["Enable to split bag item into groups"], x = 10, y = 176, checked = HM_ToolBox.bSplitter })
+	ui:Append("WndCheckBox", { txt = _L["Enable to split bag item into groups"], x = 10, y = 176, checked = HM_ToolBox.bSplitter2 })
 	:Click(function(bChecked)
-		HM_ToolBox.bSplitter = bChecked
+		HM_ToolBox.bSplitter2 = bChecked
 		HM_Splitter.Switch(bChecked)
 	end)
 	-- guild bank sort
@@ -1237,7 +1237,7 @@ _HM_ToolBox.PS.OnConflictCheck = function()
 		MY_Chat.bChatTime = false
 	end
 	_HM_ToolBox.InitFaceIcon()
-	HM_Splitter.Switch(HM_ToolBox.bSplitter)
+	HM_Splitter.Switch(HM_ToolBox.bSplitter2)
 end
 
 ---------------------------------------------------------------------
