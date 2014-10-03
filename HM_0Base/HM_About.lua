@@ -4,6 +4,7 @@
 
 HM_About = {
 	bPlayOpen = true,	-- 播放开场音乐
+	bPlayOld = false,		-- 旧版开场音乐
 	szCheckDate = "",	-- 更新检测日期
 	nSkipAlert = 0,			-- 忽略更新提醒天数（取消后忽略7天）
 }
@@ -211,6 +212,8 @@ _HM_About.PS.OnPanelActive = function(frame)
 	:Text(_L["Play music on hourly first time to open panel"]):Click(function(bChecked) HM_About.bPlayOpen = bChecked end):Pos_()
 	ui:Append("WndCheckBox", { x = nX + 10, y = 292, checked = HM_About.bDebug == true })
 	:Text("Enable Debug"):Click(function(bChecked) HM_About.bDebug = bChecked end)
+	--ui:Append("WndCheckBox", { x = 0, y = 320, checked = HM_About.bPlayOld })
+	--:Text(_L["Use old version of background music"]):Click(function(bChecked) HM_About.bPlayOld = bChecked end)
 end
 
 -- author
@@ -240,7 +243,8 @@ _HM_About.PS.OnTaboxCheck = function(frame, nIndex, szTitle)
 	ui:Append("Text", { txt = _L["YY-group: 6685583"], x = 10, y = 280, font = 27 })
 	-- buttons
 	local nX = ui:Append("Text", { txt = _L["<Opening music>"], x = 10, y = 305, font = 27 }):Click(function()
-		PlaySound(SOUND.UI_SOUND, HM.GetCustomFile("opening.wav", "interface\\HM\\HM_0Base\\opening.wav"))
+		local szSound = "interface\\HM\\HM_0Base\\opening" .. ((HM_About.bPlayOld and "2") or "") .. ".wav"
+		PlaySound(SOUND.UI_SOUND, HM.GetCustomFile("opening.wav", szSound))
 	end):Pos_()
 	nX = ui:Append("Text", { txt = _L["<About plug-in>"], x = nX + 10, y = 305, font = 27 }):Click(function()
 		HM.OpenPanel(_L["About plug-in"])
@@ -249,6 +253,9 @@ _HM_About.PS.OnTaboxCheck = function(frame, nIndex, szTitle)
 	--	OpenInternetExplorer(_HM_About.szHost .. "down/")
 	--end):Pos_()
 	nX = ui:Append("Text", { txt = _L["<Set hotkeys>"], x = nX + 10, y = 305, font = 27 }):Click(HM.SetHotKey):Pos_()
+	nX = ui:Append("Text", { txt = _L["<Weibo@haimanman>"], x = nX + 10, y = 305, font = 27 }):Click(function()
+		OpenInternetExplorer("http://weibo.com/haimanman")
+	end):Pos_()
 end
 
 ---------------------------------------------------------------------
