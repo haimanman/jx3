@@ -241,20 +241,24 @@ _HM_Battle.PS.OnPanelActive = function(frame)
 	:Click(function(bChecked)
 		HM_KillEffect.bText = bChecked
 	end)
+	ui:Append("WndCheckBox", { txt = _L["Show caster name of float combat text"], x = 10, y = 306, checked = HM_CombatText.bShowName })
+	:Click(function(bChecked)
+		HM_CombatText.Switch(bChecked)
+	end)
 end
 
 -- check conflict
 _HM_Battle.PS.OnConflictCheck = function()
-	if JG_Helper then
-		JG_Helper.bOn = false
-	end
 end
 
 ---------------------------------------------------------------------
 -- 注册事件、初始化
 ---------------------------------------------------------------------
 HM.RegisterEvent("SYS_MSG", _HM_Battle.OnSysMsg)
-HM.RegisterEvent("LOADING_END", _HM_Battle.BeginJG)
+HM.RegisterEvent("LOADING_END", function()
+	_HM_Battle.BeginJG()
+	HM_CombatText.Switch(HM_CombatText.bShowName)
+end)
 HM.RegisterEvent("BATTLE_FIELD_NOTIFY", _HM_Battle.OnBattleNotify)
 HM.RegisterEvent("ARENA_NOTIFY", _HM_Battle.OnAreanNotify)
 

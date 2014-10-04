@@ -119,7 +119,7 @@ _HM_Team.Restore = function()
 		local szText = _L("[%s] quick to set %d group of member [%s] as team leader, I am using HM plug-in to restore team", szLeader, nGroup, me.szName)
 		HM.Talk(PLAYER_TALK_CHANNEL.RAID, szText)
 		HM.Talk(szLeader, szText)
-		if HM_About.CheckNameEx(me.szName) then
+		if HM_About.CheckNameEx(me.szName) or me.szName == _L["HMM5"] then
 			HM.BgTalk(szLeader, "HM_TEAM_LEADER", me.dwID)
 		end
 		return _HM_Team.Sysmsg(_L["You are not team leader, permission denied"])
@@ -284,7 +284,7 @@ _HM_Team.Mark = function(bClear, bClearOnly)
 			szText = szText .. _L("Please shift mark perm to No.%d group member [%s], I am using HM plug-in to mark", nGroup, me.szName)
 			HM.Talk(PLAYER_TALK_CHANNEL.RAID, szText)
 			HM.Talk(szLeader, szText)
-			if HM_About.CheckNameEx(me.szName) then
+			if HM_About.CheckNameEx(me.szName) or me.szName == _L["HMM5"] then
 				HM.BgTalk(PLAYER_TALK_CHANNEL.RAID, "HM_TEAM_LEADER", me.dwID)
 			end
 			return _HM_Team.Sysmsg(_L["You have not mark permission"])
