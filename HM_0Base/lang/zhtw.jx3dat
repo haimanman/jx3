@@ -369,6 +369,8 @@ data = {
 	["PVP kill effect"] = "PVP斬殺特效",
 	["Play sound after killing"] = "播放成功斬殺后的聲音效果",
 	["Show red text after killing"] = "顯示成功斬殺的大紅字效果",
+	-- HM_CombatText.lua --
+	["Show caster name of float combat text"] = "在戰斗浮動信息顯示技能施放者名字",
 	-- HM_RedName.lua --
 	[" [%s: %d players"] = "【%s：%d人",
 	[" %d dead"] = " %d死",
