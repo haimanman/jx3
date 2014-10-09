@@ -31,7 +31,9 @@ _HM_CombatText.SetText = function(txt, szText)
 	else
 		txt.arg0, txt.arg1 = arg0, arg1
 	end
-	table.insert(_HM_CombatText.tList, txt)
+	if txt.arg0 ~= UI_GetClientPlayerID() then
+		table.insert(_HM_CombatText.tList, txt)
+	end
 end
 
 -- hook
