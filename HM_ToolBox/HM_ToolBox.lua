@@ -976,16 +976,24 @@ _HM_ToolBox.AppendChatItem = function(h, szMsg)
 	h:__AppendItemFromString(szMsg)
 	-- add chat time
 	if HM_ToolBox.bChatTime then
-		local h2 = h:Lookup(i)
-		if h2 and h2:GetType() == "Text" then
-			local r, g, b = h2:GetFontColor()
-			if r == 255 and g == 255 and b == 0 then
+		-- get msg rgb
+		local r, g, b = 255, 255, 0
+		for j = i, h:GetItemCount() - 1 do
+			local h2 = h:Lookup(j)
+			if not h2 then
 				return
+			elseif h2:GetType() == "Text" and h2:GetName():sub(1, 8) ~= 'namelink' then
+				r, g, b = h2:GetFontColor()
+				break
 			end
-			local t =TimeToDate(GetCurrentTime())
-			local szTime = GetFormatText(string.format("[%02d:%02d.%02d]", t.hour, t.minute, t.second), 10, r, g, b, 515, "this.OnItemLButtonDown=function() HM_ToolBox.CopyChatLine(this) end\nthis.OnItemRButtonDown=function() HM_ToolBox.RepeatChatLine(this) end", "timelink")
-			h:InsertItemFromString(i, false, szTime)
 		end
+		
+		if r == 255 and g == 255 and b == 0 then
+			return
+		end
+		local t =TimeToDate(GetCurrentTime())
+		local szTime = GetFormatText(string.format("[%02d:%02d.%02d]", t.hour, t.minute, t.second), 10, r, g, b, 515, "this.OnItemLButtonDown=function() HM_ToolBox.CopyChatLine(this) end\nthis.OnItemRButtonDown=function() HM_ToolBox.RepeatChatLine(this) end", "timelink")
+		h:InsertItemFromString(i, false, szTime)
 	end
 end
 
