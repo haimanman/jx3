@@ -514,9 +514,10 @@ end
 -- init revive message (after loading)
 _HM_Jabber.InitReviveTalk = function()
 	local me = GetClientPlayer()
-	if not me then
+	if not me or HM_Jabber.tMessage.bRevived then
 		return
 	end
+	HM_Jabber.tMessage.bRevived = true 
 	local mnt = me.GetKungfuMount()
 	if mnt.dwMountType == 2 then			-- ÕÚª®
 		_HM_Jabber.RegisterReviveTalk(139)	-- ∑Ê’Î
