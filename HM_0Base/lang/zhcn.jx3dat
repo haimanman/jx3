@@ -371,6 +371,7 @@ data = {
 	["Show red text after killing"] = "显示成功斩杀的大红字效果",
 	-- HM_CombatText.lua --
 	["Show caster name of float combat text"] = "在战斗浮动信息显示技能施放者名字",
+	["Exclude self"] = "自己除外",
 	-- HM_RedName.lua --
 	[" [%s: %d players"] = "【%s：%d人",
 	[" %d dead"] = " %d死",

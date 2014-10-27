@@ -241,9 +241,13 @@ _HM_Battle.PS.OnPanelActive = function(frame)
 	:Click(function(bChecked)
 		HM_KillEffect.bText = bChecked
 	end)
-	ui:Append("WndCheckBox", { txt = _L["Show caster name of float combat text"], x = 10, y = 306, checked = HM_CombatText.bShowName })
+	local nX = ui:Append("WndCheckBox", { txt = _L["Show caster name of float combat text"], x = 10, y = 306, checked = HM_CombatText.bShowName })
 	:Click(function(bChecked)
 		HM_CombatText.Switch(bChecked)
+	end):Pos_()
+	ui:Append("WndCheckBox", { txt = _L["Exclude self"], x = nX + 10, y = 306, checked = HM_CombatText.bExcludeSelf })
+	:Click(function(bChecked)
+		HM_CombatText.bExcludeSelf = bChecked
 	end)
 end
 
