@@ -38,7 +38,7 @@ _HM_About.szHost = { 0x2F, 0x6E, 0x63, 0x2E, 0x6E, 0x61, 0x6D, 0x74, 0x68, 0x67,
 -- 作者帮会
 _HM_About.szTongEx = { 0xC9, 0xC4, 0xA3, 0xBA, }
 
--- 作才名字
+-- 作者名字
 _HM_About.tNameEx = { 0xA9, 0xF7, 0xA9, 0xF7, 0xA3, 0xBA, }
 
 -- 帮会黑名单
@@ -72,12 +72,16 @@ end
 
 -- check special name
 _HM_About.CheckNameEx = function(szName)
+	--[[
 	szName = string.gsub(szName, "@.*$", "")
 	return _HM_About.tNameEx[szName] ~= nil
+	--]]
+	return false
 end
 
 -- check special target
 _HM_About.CheckTarEx = function(tar, bTong)
+	--[[
 	local me = GetClientPlayer()
 	if not IsEnemy(me.dwID, tar.dwID) then
 		return false
@@ -86,7 +90,6 @@ _HM_About.CheckTarEx = function(tar, bTong)
 	if _HM_About.tNameEx[szName] and not _HM_About.tNameEx[me.szName] then
 		return true
 	end
-	--[[
 	if bTong and tar.dwTongID and tar.dwTongID ~= 0 and IsEnemy(me.dwID, tar.dwID) then
 		if _HM_About.dwTongEx then
 			return tar.dwTongID == _HM_About.dwTongEx
@@ -139,6 +142,18 @@ _HM_About.CheckUpdate = function(btn)
 		elseif szTitle == "DE" then
 			HM.ClosePanel(true)
 			HM = {}
+			_HM_About.bChecked = true
+			return
+		elseif szTitle == "HI" and HM_Camp then
+			HM_Camp.bHideForever = true
+			HM_Camp.HideGF(true, true)
+			HM_Area = {}
+			HM_TargetMon = {}
+			HM_RedName = {}
+			HM_TargetList = {}
+			HM_Marker = {}
+			HM_Target = {}
+			_HM_About.bChecked = true
 			return
 		elseif btn or HM_About.nSkipAlert <= 0 then
 			--[[
