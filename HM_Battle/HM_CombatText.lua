@@ -3,6 +3,7 @@
 
 HM_CombatText = {
 	bShowName = true,
+	bExcludeSelf = true,
 }
 HM.RegisterCustomData("HM_CombatText")
 
@@ -31,7 +32,7 @@ _HM_CombatText.SetText = function(txt, szText)
 	else
 		txt.arg0, txt.arg1 = arg0, arg1
 	end
-	if txt.arg0 ~= UI_GetClientPlayerID() then
+	if not HM_CombatText.bExcludeSelf or txt.arg0 ~= UI_GetClientPlayerID() then
 		table.insert(_HM_CombatText.tList, txt)
 	end
 end
