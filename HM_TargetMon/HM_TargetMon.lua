@@ -129,9 +129,20 @@ _HM_TargetMon.tSkillList4 = {
 		[_s(3969)--[[光明相]]] = 90,
 		[_s(3968)--[[如意法]]] = 60,
 		[_s(3971)--[[极乐引]]] = 45,
-	},  {	-- 其它
-	}
+	},
+	-- 江湖
+	[0] = {},
+	-- 苍云
+	[21] = {
+	},
 }
+
+-- add new force
+for k, v in pairs(g_tStrings.tForceTitle) do
+	if k > 10 and not _HM_TargetMon.tSkillList4[k] then
+		_HM_TargetMon.tSkillList4[k] = {}
+	end
+end
 
 --buff list (by type)
 _HM_TargetMon.tBuffList4 = {
@@ -376,7 +387,7 @@ end
 -- load  monskill cache
 _HM_TargetMon.LoadSkillMon = function()
 	local aCache = {}
-	for _, v in ipairs(_HM_TargetMon.tSkillList4) do
+	for _, v in pairs(_HM_TargetMon.tSkillList4) do
 		for kk, vv in pairs(v) do
 			aCache[kk] = vv
 		end
@@ -474,16 +485,13 @@ end
 
 -- get forcetitle
 _HM_TargetMon.GetForceTitle = function(nForce)
-	if nForce >= 1 and nForce <= 10 then
+	if nForce > 0 and g_tStrings.tForceTitle[nForce] then
 		return g_tStrings.tForceTitle[nForce]
 	end
-	return _L["Others"]
+	return g_tStrings.tForceTitle[0]
 end
 
 -- get skill belong force
--- 1：天策，2：万花，3：纯阳，4：七秀，5：少林，6：藏剑，7：丐帮，8：明教，9：五毒，10：唐门
--- 1：少林，2：万花，3：天策，4：纯阳，5：七秀，6：五毒，7：唐门，8：藏剑，9:丐帮，10：明教
-_HM_TargetMon.tSchoolToForce = { 3, 2, 4, 5, 1, 8, 9, 10, 6, 7 }
 _HM_TargetMon.GetSkillForce = function(szName)
 	local nCount = g_tTable.Skill:GetRowCount()
 	for i = 1, nCount do
@@ -491,13 +499,13 @@ _HM_TargetMon.GetSkillForce = function(szName)
 		if tLine.bShow and tLine.dwIconID ~= 13 and tLine.szName == szName then
 			local skill = GetSkill(tLine.dwSkillID, 1)
 			if skill then
-				if skill.dwBelongSchool >= 1 and skill.dwBelongSchool <= 10 then
-					return _HM_TargetMon.tSchoolToForce[skill.dwBelongSchool]
-				elseif skill.dwBelongSchool == 0 or skill.dwBelongSchool == 14
-					or skill.dwBelongSchool == 15 or skill.dwBelongSchool == 16
-				then	-- 江湖，轻功，经脉，装备
-					return 11
+				local szSchool = Table_GetSkillSchoolName(skill.dwBelongSchool)
+				for k, v in pairs(g_tStrings.tForceTitle) do
+					if k > 0 and v == szSchool then
+						return k
+					end
 				end
+				return 0
 			end
 		end
 	end
@@ -570,21 +578,21 @@ _HM_TargetMon.GetSkillMenu = function()
 		{ bDevide = true, }
 	}
 	-- default data
-	for k, v in ipairs(_HM_TargetMon.tSkillList4) do
-		if not IsEmpty(v) then
-			local m1 = { szOption = _HM_TargetMon.GetForceTitle(k) }
-			local tS = HM_TargetMon.tSkillList[k] or {}
-			local aS = {}
-			for kk, vv in pairs(tS) do
-				if vv > 0 then
-					aS[kk] = vv
-				end
+	for k, v in pairs(_HM_TargetMon.tSkillList4) do
+		local m1 = { szOption = _HM_TargetMon.GetForceTitle(k) }
+		local tS = HM_TargetMon.tSkillList[k] or {}
+		local aS = {}
+		for kk, vv in pairs(tS) do
+			if vv > 0 then
+				aS[kk] = vv
 			end
-			for kk, vv in pairs(v) do
-				if not tS[kk] then
-					aS[kk] = vv
-				end
+		end
+		for kk, vv in pairs(v) do
+			if not tS[kk] then
+				aS[kk] = vv
 			end
+		end
+		if not IsEmpty(aS) then
 			for kk, vv in pairs(aS) do
 				table.insert(m1, {
 					szOption = kk .. " (" .. math.abs(vv) .. ")",

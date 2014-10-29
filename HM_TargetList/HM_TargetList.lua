@@ -792,9 +792,9 @@ _HM_TargetList.GetCustomMenu = function()
 	table.insert(m1, m2)
 	-- custom force
 	local m2 = { szOption = _L["School force"] }
-	for i = 0, 10 do
-		table.insert(m2, { szOption = g_tStrings.tForceTitle[i], bCheck = true, bChecked = HM_TargetList.tCustomForce[i] == true,
-			fnAction = function(d, b) HM_TargetList.tCustomForce[i] = b end
+	for k, v in pairs(g_tStrings.tForceTitle) do
+		table.insert(m2, { szOption = v, bCheck = true, bChecked = HM_TargetList.tCustomForce[k] == true,
+			fnAction = function(d, b) HM_TargetList.tCustomForce[k] = b end
 		})
 	end
 	table.insert(m1, m2)
