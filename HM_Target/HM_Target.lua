@@ -447,9 +447,12 @@ _HM_Target.UpdateLM = function(frame, bTTarget)
 		if frame.dwMountType == 10 and tar.nMaxEnergy > 0 then	-- TM
 			fM = tar.nCurrentEnergy / tar.nMaxEnergy
 			sM = _HM_Target.GetStateString(tar.nCurrentEnergy, tar.nMaxEnergy, bTTarget)
-		elseif frame.dwMountType == 6 and tar.nMaxRage > 0 then	-- CJ
+		elseif (frame.dwMountType == 6 or frame.dwMountType == 18) and tar.nMaxRage > 0 then	-- CJ, CangYun
 			fM = tar.nCurrentRage / tar.nMaxRage
 			sM = _HM_Target.GetStateString(tar.nCurrentRage, tar.nMaxRage, bTTarget)
+			if frame.dwMountType == 18 then
+				nM = 86
+			end
 		elseif frame.dwMountType == 8 then	-- MJ
 			-- 日月能量哪个较多优先哪个，日：86，月：84
 			if tar.nSunPowerValue == 1 then
@@ -473,6 +476,11 @@ _HM_Target.UpdateLM = function(frame, bTTarget)
 		hMana:SetFrame(nM)
 		hMana:SetPercentage(fM)
 		hMana:Show()
+		local hFBg, hTarBg = frame:Lookup("", "Handle_FBg"), frame:Lookup("", "Handle_TarBg")
+		if hFBg and hTarBg then
+			hFBg:Hide()
+			hTarBg:Show()
+		end
 		for _, v in ipairs({ "FBgC", "FBgCR", "FBgCRR", "FBgR", "FBgL", "TarBgF" }) do
 			local h = frame:Lookup("", "Image_" .. v)
 			if h then h:Hide() end
@@ -520,6 +528,7 @@ _HM_Target.AddBreathe = function(frame, bTTarget)
 		if bTTarget then
 			if HM_Target.bEnableTTarget then
 				_HM_Target.UpdateName(frame)
+				_HM_Target.UpdateLM(frame, true)
 			elseif _HM_Target.bChangeTTarget then
 				_HM_Target.UpdateName(frame, true)
 				_HM_Target.bChangeTTarget = nil
@@ -527,6 +536,7 @@ _HM_Target.AddBreathe = function(frame, bTTarget)
 		else
 			if HM_Target.bEnable then
 				_HM_Target.UpdateName(frame)
+				_HM_Target.UpdateLM(frame)
 			elseif _HM_Target.bChange then
 				_HM_Target.UpdateName(frame, true)
 				_HM_Target.bChange = nil
