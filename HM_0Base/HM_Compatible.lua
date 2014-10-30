@@ -16,12 +16,19 @@ if not BATTLE_FIELD_NOTIFY_TYPE then
 end
 
 if not ARENA_NOTIFY_TYPE then
-	ARENA_NOTIFY_TYPE ={
+	ARENA_NOTIFY_TYPE = {
 		IN_BLACK_LIST = 5,
 		LEAVE_BLACK_LIST = 4,
 		LOG_OUT_ARENA_MAP = 3,
 		LOG_IN_ARENA_MAP = 2,
 		ARENA_QUEUE_INFO = 1,
+	}
+end
+
+if not POSE_TYPE then
+	POSE_TYPE = {
+		SWORD = 1,
+		SHIELD = 2,
 	}
 end
 
