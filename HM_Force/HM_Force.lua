@@ -132,7 +132,7 @@ _HM_Force.UpdateOTActionBar = function()
 		return
 	end
 	local frame = Station.Lookup("Topmost/OTActionBar")
-	if not frame or not frame.bShow then
+	if not frame or not frame:IsVisible() then
 		_HM_Force.nActionTotal = nil
 		return
 	end
