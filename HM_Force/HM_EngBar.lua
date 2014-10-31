@@ -10,7 +10,7 @@ HM.RegisterCustomData("HM_EngBar")
 ---------------------------------------------------------------------
 -- 本地函数和变量
 ---------------------------------------------------------------------
-_HM_EngBar = {
+local _HM_EngBar = {
 	bEnable = false,
 	nBombCount = 0,
 	aAccumulateShow =
@@ -183,6 +183,25 @@ _HM_EngBar.UpdateMingJiao = function(frame)
 	frame:Lookup("", "Text_Moon"):SetText(FormatString(g_tStrings.MINGJIAO_POWER_MOON, string.format("%d/%d", me.nCurrentMoonEnergy / 100, me.nMaxMoonEnergy / 100)))
 end
 
+-- cangyun pose type
+_HM_EngBar.UpdateCangYun = function(frame)
+	local me, hCangyun = GetClientPlayer(), frame:Lookup("", "Handle_CangYun")
+	if not me or not hCangyun then
+		return
+	end
+    local hImageRang = hCangyun:Lookup("Image_Rang")
+    local hTextRang = hCangyun:Lookup("Text_Rang")
+	if me.nMaxRage > 0 then
+		hImageRang:SetPercentage(me.nCurrentRage / me.nMaxRage)
+		hTextRang:SetText(me.nCurrentRage .. "/" .. me.nMaxRage)
+	else
+		hImageRang:SetPercentage(0)
+		hTextRang:SetText("")
+	end
+	hCangyun:Lookup("Image_Sword"):SetVisible(me.nPoseState == POSE_TYPE.SWORD)
+	hCangyun:Lookup("Image_Shield"):SetVisible(me.nPoseState == POSE_TYPE.SHIELD)
+end
+
 _HM_EngBar.GetBombCount = function()
 	if _HM_EngBar.nBombTime and (GetTime() - _HM_EngBar.nBombTime) < 1000 then
 		return _HM_EngBar.nBombCount
@@ -239,6 +258,8 @@ _HM_EngBar.Update = function(frame)
 		_HM_EngBar.UpdateCangJian(frame)
 	elseif _HM_EngBar.szShow == "Handle_MingJiao" then
 		_HM_EngBar.UpdateMingJiao(frame)
+	elseif _HM_EngBar.szShow == "Handle_CangYun" then
+		_HM_EngBar.UpdateCangYun(frame)
 	end
 end
 
@@ -256,6 +277,8 @@ _HM_EngBar.UpdateHandleName = function()
 			szShow, szShowSub = "Handle_QiXiu", "QX_"
 		elseif mnt.dwMountType == 8 then
 			szShow, szShowSub = "Handle_MingJiao", "MJ_"
+		elseif mnt.dwMountType == 18 then
+			szShow, szShowSub = "Handle_CangYun", "CYUN_"
 		end
 	end
 	_HM_EngBar.szShow = szShow
@@ -348,6 +371,8 @@ HM_EngBar.OnEvent = function(event)
 			_HM_EngBar.UpdateTangMen(this)
 		elseif _HM_EngBar.szShow == "Handle_MingJiao" then
 			_HM_EngBar.UpdateMingJiao(this)
+		elseif _HM_EngBar.szShow == "Handle_CangYun" then
+			_HM_EngBar.UpdateCangYun(this)
 		end
 	elseif event == "LOADING_END" then
 		_HM_EngBar.Update(this)

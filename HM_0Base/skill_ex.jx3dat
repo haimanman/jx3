@@ -16,6 +16,10 @@ data =
   {
     ["nBrokenRate"] = 0,
   },
+  [13283] = 
+  {
+    ["nBrokenRate"] = 0,
+  },
   [2048] = 
   {
     ["nBrokenRate"] = 0,
@@ -37,6 +41,12 @@ data =
   [5131] = 
   {
     ["nBrokenRate"] = 0,
+  },
+  [9263] = 
+  {
+    ["nAreaRadius"] = 512,
+    ["nMaxRadius"] = 1280,
+    ["nMinRadius"] = 0,
   },
   [4128] = 
   {
@@ -402,6 +412,10 @@ data =
   {
     ["nBrokenRate"] = 0,
   },
+  [10335] = 
+  {
+    ["nBrokenRate"] = 0,
+  },
   [6714] = 
   {
     ["nAreaRadius"] = 384,
@@ -501,6 +515,10 @@ data =
     ["nAreaRadius"] = 512,
     ["nMaxRadius"] = 3200,
     ["nMinRadius"] = 0,
+  },
+  [9544] = 
+  {
+    ["nBrokenRate"] = 0,
   },
   [300] = 
   {
@@ -661,6 +679,16 @@ data =
   {
     ["nBrokenRate"] = 0,
   },
+  [13197] = 
+  {
+    ["nBrokenRate"] = 0,
+  },
+  [13213] = 
+  {
+    ["nAreaRadius"] = 1280,
+    ["nMaxRadius"] = 6400,
+    ["nMinRadius"] = 0,
+  },
   [6103] = 
   {
     ["nAreaRadius"] = 512,
@@ -793,7 +821,15 @@ data =
   {
     ["nBrokenRate"] = 0,
   },
+  [13392] = 
+  {
+    ["nBrokenRate"] = 0,
+  },
   [9417] = 
+  {
+    ["nBrokenRate"] = 0,
+  },
+  [13390] = 
   {
     ["nBrokenRate"] = 0,
   },
@@ -849,6 +885,10 @@ data =
   {
     ["nChannelFrame"] = 64,
   },
+  [13381] = 
+  {
+    ["nBrokenRate"] = 0,
+  },
   [331] = 
   {
     ["nAreaRadius"] = 512,
@@ -875,11 +915,19 @@ data =
     ["nMaxRadius"] = 3200,
     ["nMinRadius"] = 0,
   },
+  [3129] = 
+  {
+    ["nBrokenRate"] = 0,
+  },
   [2654] = 
   {
     ["nAreaRadius"] = 384,
     ["nMaxRadius"] = 1280,
     ["nMinRadius"] = 0,
+  },
+  [13377] = 
+  {
+    ["nBrokenRate"] = 0,
   },
   [1330] = 
   {
@@ -911,12 +959,24 @@ data =
     ["nMaxRadius"] = 63999936,
     ["nMinRadius"] = 0,
   },
+  [8329] = 
+  {
+    ["nChannelFrame"] = 128,
+  },
+  [13305] = 
+  {
+    ["nBrokenRate"] = 0,
+  },
   [2674] = 
   {
     ["nMinRadius"] = 0,
     ["nAreaRadius"] = 512,
     ["nMaxRadius"] = 1280,
     ["nChannelFrame"] = 8,
+  },
+  [9537] = 
+  {
+    ["nBrokenRate"] = 0,
   },
   [1340] = 
   {
@@ -930,9 +990,20 @@ data =
   {
     ["nBrokenRate"] = 0,
   },
+  [13252] = 
+  {
+    ["nBrokenRate"] = 0,
+    ["nChannelFrame"] = 96,
+  },
   [1344] = 
   {
     ["nBrokenRate"] = 0,
+  },
+  [13245] = 
+  {
+    ["nAreaRadius"] = 192,
+    ["nMaxRadius"] = 6400,
+    ["nMinRadius"] = 0,
   },
   [3713] = 
   {
@@ -984,6 +1055,28 @@ data =
   {
     ["nBrokenRate"] = 0,
   },
+  [8434] = 
+  {
+    ["nAreaRadius"] = 320,
+    ["nMaxRadius"] = 3200,
+    ["nMinRadius"] = 0,
+  },
+  [13225] = 
+  {
+    ["nBrokenRate"] = 0,
+  },
+  [13224] = 
+  {
+    ["nAreaRadius"] = 192,
+    ["nMaxRadius"] = 25600,
+    ["nMinRadius"] = 0,
+  },
+  [13220] = 
+  {
+    ["nAreaRadius"] = 1280,
+    ["nMaxRadius"] = 25600,
+    ["nMinRadius"] = 0,
+  },
   [1362] = 
   {
     ["nBrokenRate"] = 0,
@@ -991,6 +1084,10 @@ data =
   [2724] = 
   {
     ["nChannelFrame"] = 40,
+  },
+  [2051] = 
+  {
+    ["nBrokenRate"] = 0,
   },
   [8850] = 
   {
@@ -1002,15 +1099,68 @@ data =
     ["nMaxRadius"] = 6400,
     ["nMinRadius"] = 0,
   },
+  [9133] = 
+  {
+    ["nBrokenRate"] = 0,
+    ["nChannelFrame"] = 96,
+  },
+  [10347] = 
+  {
+    ["nBrokenRate"] = 0,
+  },
+  [13212] = 
+  {
+    ["nAreaRadius"] = 1024,
+    ["nMaxRadius"] = 6400,
+    ["nMinRadius"] = 0,
+  },
+  [13211] = 
+  {
+    ["nAreaRadius"] = 768,
+    ["nMaxRadius"] = 6400,
+    ["nMinRadius"] = 0,
+  },
+  [13210] = 
+  {
+    ["nBrokenRate"] = 0,
+  },
   [4457] = 
   {
     ["nBrokenRate"] = 0,
+  },
+  [13203] = 
+  {
+    ["nAreaRadius"] = 128,
+    ["nMaxRadius"] = 6400,
+    ["nMinRadius"] = 0,
+  },
+  [8442] = 
+  {
+    ["nAreaRadius"] = 640,
+    ["nMaxRadius"] = 6400,
+    ["nMinRadius"] = 0,
   },
   [1375] = 
   {
     ["nBrokenRate"] = 0,
   },
   [5496] = 
+  {
+    ["nBrokenRate"] = 0,
+  },
+  [13175] = 
+  {
+    ["nAreaRadius"] = 384,
+    ["nMaxRadius"] = 6400,
+    ["nMinRadius"] = 0,
+  },
+  [8608] = 
+  {
+    ["nAreaRadius"] = 640,
+    ["nMaxRadius"] = 1280,
+    ["nMinRadius"] = 0,
+  },
+  [2548] = 
   {
     ["nBrokenRate"] = 0,
   },
@@ -1022,6 +1172,28 @@ data =
   {
     ["nBrokenRate"] = 0,
   },
+  [13157] = 
+  {
+    ["nAreaRadius"] = 6400,
+    ["nMaxRadius"] = 19200,
+    ["nMinRadius"] = 0,
+  },
+  [13148] = 
+  {
+    ["nAreaRadius"] = 0,
+    ["nMaxRadius"] = 64000,
+    ["nMinRadius"] = 0,
+  },
+  [3708] = 
+  {
+    ["nBrokenRate"] = 0,
+  },
+  [13105] = 
+  {
+    ["nAreaRadius"] = 1280,
+    ["nMaxRadius"] = 25600,
+    ["nMinRadius"] = 0,
+  },
   [3793] = 
   {
     ["nBrokenRate"] = 0,
@@ -1030,11 +1202,85 @@ data =
   {
     ["nBrokenRate"] = 0,
   },
+  [13104] = 
+  {
+    ["nMaxRadius"] = 12800,
+    ["nAreaRadius"] = 12800,
+    ["nBrokenRate"] = 0,
+    ["nMinRadius"] = 2240,
+  },
+  [13062] = 
+  {
+    ["nAreaRadius"] = 256,
+    ["nMaxRadius"] = 6400,
+    ["nMinRadius"] = 0,
+  },
+  [13048] = 
+  {
+    ["nChannelFrame"] = 80,
+  },
+  [13030] = 
+  {
+    ["nBrokenRate"] = 0,
+  },
   [2782] = 
   {
     ["nBrokenRate"] = 0,
   },
+  [13016] = 
+  {
+    ["nChannelFrame"] = 80,
+  },
+  [13174] = 
+  {
+    ["nAreaRadius"] = 128,
+    ["nMaxRadius"] = 6400,
+    ["nMinRadius"] = 0,
+  },
+  [10399] = 
+  {
+    ["nBrokenRate"] = 0,
+  },
+  [10398] = 
+  {
+    ["nBrokenRate"] = 0,
+  },
+  [10352] = 
+  {
+    ["nBrokenRate"] = 0,
+  },
+  [10349] = 
+  {
+    ["nAreaRadius"] = 320,
+    ["nMaxRadius"] = 6400,
+    ["nMinRadius"] = 0,
+  },
+  [13214] = 
+  {
+    ["nAreaRadius"] = 1536,
+    ["nMaxRadius"] = 6400,
+    ["nMinRadius"] = 0,
+  },
   [2798] = 
+  {
+    ["nBrokenRate"] = 0,
+  },
+  [10346] = 
+  {
+    ["nBrokenRate"] = 0,
+  },
+  [10338] = 
+  {
+    ["nBrokenRate"] = 0,
+  },
+  [10337] = 
+  {
+    ["nMaxRadius"] = 6400,
+    ["nAreaRadius"] = 1920,
+    ["nBrokenRate"] = 0,
+    ["nMinRadius"] = 0,
+  },
+  [13254] = 
   {
     ["nBrokenRate"] = 0,
   },
@@ -1054,11 +1300,23 @@ data =
   {
     ["nBrokenRate"] = 0,
   },
+  [9533] = 
+  {
+    ["nBrokenRate"] = 0,
+  },
+  [8194] = 
+  {
+    ["nBrokenRate"] = 0,
+  },
   [706] = 
   {
     ["nAreaRadius"] = 384,
     ["nMaxRadius"] = 3200,
     ["nMinRadius"] = 0,
+  },
+  [9519] = 
+  {
+    ["nBrokenRate"] = 0,
   },
   [2824] = 
   {
@@ -1076,13 +1334,33 @@ data =
     ["nMaxRadius"] = 3200,
     ["nMinRadius"] = 0,
   },
+  [9514] = 
+  {
+    ["nBrokenRate"] = 0,
+  },
   [9266] = 
   {
     ["nAreaRadius"] = 320,
     ["nMaxRadius"] = 2880,
     ["nMinRadius"] = 0,
   },
+  [9511] = 
+  {
+    ["nBrokenRate"] = 0,
+  },
+  [5531] = 
+  {
+    ["nBrokenRate"] = 0,
+  },
+  [9509] = 
+  {
+    ["nBrokenRate"] = 0,
+  },
   [7722] = 
+  {
+    ["nBrokenRate"] = 0,
+  },
+  [8206] = 
   {
     ["nBrokenRate"] = 0,
   },
@@ -1102,7 +1380,11 @@ data =
     ["nMaxRadius"] = 6400,
     ["nMinRadius"] = 0,
   },
-  [9537] = 
+  [9506] = 
+  {
+    ["nBrokenRate"] = 0,
+  },
+  [9505] = 
   {
     ["nBrokenRate"] = 0,
   },
@@ -1120,11 +1402,11 @@ data =
     ["nMaxRadius"] = 6400,
     ["nMinRadius"] = 0,
   },
-  [9533] = 
+  [9499] = 
   {
     ["nBrokenRate"] = 0,
   },
-  [8194] = 
+  [9498] = 
   {
     ["nBrokenRate"] = 0,
   },
@@ -1166,7 +1448,7 @@ data =
   {
     ["nBrokenRate"] = 0,
   },
-  [9519] = 
+  [9497] = 
   {
     ["nBrokenRate"] = 0,
   },
@@ -1202,15 +1484,15 @@ data =
   {
     ["nBrokenRate"] = 0,
   },
-  [9514] = 
+  [9495] = 
   {
     ["nBrokenRate"] = 0,
   },
-  [9511] = 
+  [9494] = 
   {
     ["nBrokenRate"] = 0,
   },
-  [5531] = 
+  [7343] = 
   {
     ["nBrokenRate"] = 0,
   },
@@ -1224,19 +1506,21 @@ data =
     ["nMaxRadius"] = 3840,
     ["nMinRadius"] = 0,
   },
-  [9509] = 
+  [8270] = 
+  {
+    ["nAreaRadius"] = 320,
+    ["nMaxRadius"] = 6400,
+    ["nMinRadius"] = 0,
+  },
+  [9487] = 
   {
     ["nBrokenRate"] = 0,
   },
-  [8206] = 
+  [9475] = 
   {
     ["nBrokenRate"] = 0,
   },
-  [9506] = 
-  {
-    ["nBrokenRate"] = 0,
-  },
-  [9505] = 
+  [9470] = 
   {
     ["nBrokenRate"] = 0,
   },
@@ -1244,23 +1528,26 @@ data =
   {
     ["nBrokenRate"] = 0,
   },
-  [9499] = 
+  [9457] = 
   {
     ["nBrokenRate"] = 0,
   },
-  [9498] = 
+  [7364] = 
   {
+    ["nMaxRadius"] = 2560,
+    ["nAreaRadius"] = 128,
     ["nBrokenRate"] = 0,
+    ["nMinRadius"] = 0,
   },
   [4813] = 
   {
     ["nBrokenRate"] = 0,
   },
-  [9497] = 
+  [9434] = 
   {
     ["nBrokenRate"] = 0,
   },
-  [9495] = 
+  [9432] = 
   {
     ["nBrokenRate"] = 0,
   },
@@ -1276,19 +1563,17 @@ data =
   {
     ["nBrokenRate"] = 0,
   },
-  [9494] = 
+  [9419] = 
   {
     ["nBrokenRate"] = 0,
   },
-  [7343] = 
+  [9418] = 
   {
     ["nBrokenRate"] = 0,
   },
-  [8270] = 
+  [9415] = 
   {
-    ["nAreaRadius"] = 320,
-    ["nMaxRadius"] = 6400,
-    ["nMinRadius"] = 0,
+    ["nBrokenRate"] = 0,
   },
   [368] = 
   {
@@ -1297,13 +1582,15 @@ data =
     ["nMaxRadius"] = 960,
     ["nChannelFrame"] = 80,
   },
-  [9487] = 
+  [9413] = 
   {
     ["nBrokenRate"] = 0,
   },
-  [9475] = 
+  [9404] = 
   {
-    ["nBrokenRate"] = 0,
+    ["nAreaRadius"] = 256,
+    ["nMaxRadius"] = 9600,
+    ["nMinRadius"] = 0,
   },
   [4861] = 
   {
@@ -1313,17 +1600,21 @@ data =
   {
     ["nBrokenRate"] = 0,
   },
-  [9470] = 
+  [9403] = 
   {
-    ["nBrokenRate"] = 0,
+    ["nAreaRadius"] = 512,
+    ["nMaxRadius"] = 2560,
+    ["nMinRadius"] = 0,
   },
   [7942] = 
   {
     ["nBrokenRate"] = 0,
   },
-  [9434] = 
+  [9398] = 
   {
-    ["nBrokenRate"] = 0,
+    ["nAreaRadius"] = 512,
+    ["nMaxRadius"] = 2560,
+    ["nMinRadius"] = 0,
   },
   [6927] = 
   {
@@ -1333,11 +1624,13 @@ data =
   {
     ["nBrokenRate"] = 0,
   },
-  [9432] = 
+  [7372] = 
   {
-    ["nBrokenRate"] = 0,
+    ["nAreaRadius"] = 640,
+    ["nMaxRadius"] = 1280,
+    ["nMinRadius"] = 0,
   },
-  [9419] = 
+  [9393] = 
   {
     ["nBrokenRate"] = 0,
   },
@@ -1356,11 +1649,11 @@ data =
   {
     ["nBrokenRate"] = 0,
   },
-  [9418] = 
+  [9392] = 
   {
     ["nBrokenRate"] = 0,
   },
-  [9415] = 
+  [9391] = 
   {
     ["nBrokenRate"] = 0,
   },
@@ -1368,7 +1661,7 @@ data =
   {
     ["nBrokenRate"] = 0,
   },
-  [9413] = 
+  [9376] = 
   {
     ["nBrokenRate"] = 0,
   },
@@ -1376,10 +1669,10 @@ data =
   {
     ["nBrokenRate"] = 0,
   },
-  [9403] = 
+  [8837] = 
   {
-    ["nAreaRadius"] = 512,
-    ["nMaxRadius"] = 2560,
+    ["nAreaRadius"] = 320,
+    ["nMaxRadius"] = 6400,
     ["nMinRadius"] = 0,
   },
   [6979] = 
@@ -1390,23 +1683,19 @@ data =
   {
     ["nBrokenRate"] = 0,
   },
-  [9398] = 
-  {
-    ["nAreaRadius"] = 512,
-    ["nMaxRadius"] = 2560,
-    ["nMinRadius"] = 0,
-  },
-  [7372] = 
-  {
-    ["nAreaRadius"] = 640,
-    ["nMaxRadius"] = 1280,
-    ["nMinRadius"] = 0,
-  },
   [9353] = 
   {
     ["nAreaRadius"] = 640,
     ["nMaxRadius"] = 1920,
     ["nMinRadius"] = 0,
+  },
+  [9335] = 
+  {
+    ["nChannelFrame"] = 40,
+  },
+  [9307] = 
+  {
+    ["nBrokenRate"] = 0,
   },
   [4953] = 
   {
@@ -1420,9 +1709,9 @@ data =
   {
     ["nBrokenRate"] = 0,
   },
-  [9335] = 
+  [3137] = 
   {
-    ["nChannelFrame"] = 40,
+    ["nBrokenRate"] = 0,
   },
   [8907] = 
   {
@@ -1436,24 +1725,26 @@ data =
   {
     ["nBrokenRate"] = 0,
   },
-  [9307] = 
-  {
-    ["nBrokenRate"] = 0,
-  },
-  [8939] = 
-  {
-    ["nBrokenRate"] = 0,
-  },
-  [3137] = 
-  {
-    ["nBrokenRate"] = 0,
-  },
   [9301] = 
   {
     ["nMaxRadius"] = 2560,
     ["nAreaRadius"] = 2560,
     ["nBrokenRate"] = 0,
     ["nMinRadius"] = 1280,
+  },
+  [8939] = 
+  {
+    ["nBrokenRate"] = 0,
+  },
+  [9269] = 
+  {
+    ["nBrokenRate"] = 0,
+  },
+  [328] = 
+  {
+    ["nAreaRadius"] = 512,
+    ["nMaxRadius"] = 1280,
+    ["nMinRadius"] = 0,
   },
   [9242] = 
   {
@@ -1551,10 +1842,11 @@ data =
     ["nMaxRadius"] = 2560,
     ["nMinRadius"] = 0,
   },
-  [9133] = 
+  [13215] = 
   {
-    ["nBrokenRate"] = 0,
-    ["nChannelFrame"] = 96,
+    ["nAreaRadius"] = 1792,
+    ["nMaxRadius"] = 6400,
+    ["nMinRadius"] = 0,
   },
   [9130] = 
   {
@@ -1696,16 +1988,14 @@ data =
     ["nMaxRadius"] = 6400,
     ["nMinRadius"] = 0,
   },
-  [8837] = 
+  [9371] = 
   {
-    ["nAreaRadius"] = 320,
-    ["nMaxRadius"] = 6400,
-    ["nMinRadius"] = 0,
+    ["nBrokenRate"] = 0,
   },
-  [8608] = 
+  [10402] = 
   {
-    ["nAreaRadius"] = 640,
-    ["nMaxRadius"] = 1280,
+    ["nAreaRadius"] = 384,
+    ["nMaxRadius"] = 6400,
     ["nMinRadius"] = 0,
   },
   [1560] = 
@@ -2125,9 +2415,9 @@ data =
     ["nMaxRadius"] = 1600,
     ["nMinRadius"] = 0,
   },
-  [8442] = 
+  [13176] = 
   {
-    ["nAreaRadius"] = 640,
+    ["nAreaRadius"] = 6400,
     ["nMaxRadius"] = 6400,
     ["nMinRadius"] = 0,
   },
@@ -2167,11 +2457,9 @@ data =
   {
     ["nBrokenRate"] = 0,
   },
-  [8434] = 
+  [13240] = 
   {
-    ["nAreaRadius"] = 320,
-    ["nMaxRadius"] = 3200,
-    ["nMinRadius"] = 0,
+    ["nBrokenRate"] = 0,
   },
   [4582] = 
   {
@@ -2249,9 +2537,9 @@ data =
   {
     ["nChannelFrame"] = 128,
   },
-  [8329] = 
+  [13376] = 
   {
-    ["nChannelFrame"] = 128,
+    ["nBrokenRate"] = 0,
   },
   [7719] = 
   {
@@ -2929,12 +3217,9 @@ data =
     ["nMaxRadius"] = 256,
     ["nMinRadius"] = 0,
   },
-  [7364] = 
+  [9453] = 
   {
-    ["nMaxRadius"] = 2560,
-    ["nAreaRadius"] = 128,
     ["nBrokenRate"] = 0,
-    ["nMinRadius"] = 0,
   },
   [6269] = 
   {
@@ -3295,9 +3580,11 @@ data =
     ["nMaxRadius"] = 1280,
     ["nMinRadius"] = 0,
   },
-  [2548] = 
+  [13170] = 
   {
-    ["nBrokenRate"] = 0,
+    ["nAreaRadius"] = 960,
+    ["nMaxRadius"] = 1088,
+    ["nMinRadius"] = 0,
   },
   [7616] = 
   {
@@ -3321,7 +3608,7 @@ data =
   {
     ["nBrokenRate"] = 0,
   },
-  [2051] = 
+  [13218] = 
   {
     ["nBrokenRate"] = 0,
   },
@@ -3403,7 +3690,7 @@ data =
   {
     ["nBrokenRate"] = 0,
   },
-  [328] = 
+  [9262] = 
   {
     ["nAreaRadius"] = 512,
     ["nMaxRadius"] = 1280,
@@ -3417,9 +3704,11 @@ data =
   {
     ["nBrokenRate"] = 0,
   },
-  [3129] = 
+  [13378] = 
   {
-    ["nBrokenRate"] = 0,
+    ["nAreaRadius"] = 192,
+    ["nMaxRadius"] = 64000,
+    ["nMinRadius"] = 0,
   },
   [7720] = 
   {
@@ -3857,9 +4146,11 @@ data =
   {
     ["nBrokenRate"] = 0,
   },
-  [3708] = 
+  [13147] = 
   {
-    ["nBrokenRate"] = 0,
+    ["nAreaRadius"] = 0,
+    ["nMaxRadius"] = 64000,
+    ["nMinRadius"] = 0,
   },
   [2031] = 
   {
