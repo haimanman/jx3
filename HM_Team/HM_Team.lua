@@ -23,6 +23,13 @@ local _HM_Team = {
 	nLastFrame = 0,
 }
 
+-- add new force
+for k, v in pairs(g_tStrings.tForceTitle) do
+	if k > 10 then
+		table.insert(_HM_Team.tForceOrder, k)
+	end
+end
+
 -- sysmsg
 _HM_Team.Sysmsg = function(szMsg)
 	HM.Sysmsg(szMsg, _L["HM_Team"])

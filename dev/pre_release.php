@@ -33,7 +33,7 @@ if (($pos1 = strpos($body, $tag_version)))
 {
 	$pos1 = $pos1 + strlen($tag_version);
 	$pos2 = strpos($body, ',', $pos1);
-	if ($version_str != '' && preg_match('/(\d+)\.(\d+)\.(\d+)(?:b(\d+))?/', $version_str, $match))
+	if ($version_str != '' && preg_match('/(\d+)\.(\d+)\.(\d+)(?:[ab](\d+))?/', $version_str, $match))
 	{
 		// man-version
 		$version = (intval($match[1]) << 24) | (intval($match[2]) << 16);
