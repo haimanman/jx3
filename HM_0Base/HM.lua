@@ -522,12 +522,15 @@ HM.OpenPanel = function(szTitle)
 		for k, v in ipairs(_HM.tItem) do
 			if _HM.tClass[k] == szTitle then
 				nClass = k
-				break
 			end
 			for kk, vv in ipairs(v) do
 				if vv.szTitle == szTitle then
 					nClass, nItem = k, kk
+					break
 				end
+			end
+			if nClass ~= 0 then
+				break
 			end
 		end
 		if nClass ~= 0 then
