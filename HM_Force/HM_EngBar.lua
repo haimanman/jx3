@@ -61,18 +61,18 @@ _HM_EngBar.UpdateAccumulateValue = function(frame)
 		if nValue < 0 then
 			nValue = 0
 		end
-		if _HM_EngBar.szShow == "Handle_ShaoLin" then
+		if _HM_EngBar.szShowSub == "SL" then
 			if nValue > 3 then
 				nValue = 3
 			end
-			local szSub = _HM_EngBar.szShowSub
+			local szSub = _HM_EngBar.szShowSub .. "_"
 			for i = 1, nValue, 1 do
 				handle:Lookup(szSub .. i):Show()
 			end
 			for i = nValue + 1, 3, 1 do
 				handle:Lookup(szSub .. i):Hide()
 			end
-		elseif _HM_EngBar.szShow == "Handle_QiXiu" then
+		elseif _HM_EngBar.szShowSub == "QX" then
 			local hText = handle:Lookup("Text_Layer")
 			local hImage = handle:Lookup("Image_QX_Btn")
 			if nValue > 10 then
@@ -95,7 +95,7 @@ _HM_EngBar.UpdateAccumulateValue = function(frame)
 			else
 				hImage:SetFrame(85)
 			end
-			local szSub =_HM_EngBar.szShowSub
+			local szSub =_HM_EngBar.szShowSub .. "_"
 			for i = 1, nValue, 1 do
 				handle:Lookup(szSub .. i):Show()
 			end
@@ -107,7 +107,7 @@ _HM_EngBar.UpdateAccumulateValue = function(frame)
 				nValue = 10
 			end
 			nValue = nValue + 1
-			local szSub =_HM_EngBar.szShowSub
+			local szSub =_HM_EngBar.szShowSub .. "_"
 			local aShow = _HM_EngBar.aAccumulateShow[nValue]
 			local aHide = _HM_EngBar.aAccumulateHide[nValue]
 			for k, v in pairs(aShow) do
@@ -121,8 +121,8 @@ _HM_EngBar.UpdateAccumulateValue = function(frame)
 end
 
 _HM_EngBar.UpdateCangJian = function(frame)
-	local me, hCangjian = GetClientPlayer(), frame:Lookup("", "Handle_CangJian")
-	if not hCangjian or not me.bCanUseBigSword then
+	local me, hCangjian = GetClientPlayer(), frame:Lookup("", _HM_EngBar.szShow)
+	if not me or not hCangjian or not me.bCanUseBigSword then
 		return
 	end
     local hImageShort = hCangjian:Lookup("Image_Short")
@@ -159,7 +159,7 @@ _HM_EngBar.UpdateCangJian = function(frame)
 end
 
 _HM_EngBar.UpdateMingJiao = function(frame)
-	local hMingJiao = frame:Lookup("", "Handle_MingJiao")
+	local hMingJiao = frame:Lookup("", _HM_EngBar.szShow)
 	if not hMingJiao then
 		return
 	end
@@ -185,7 +185,7 @@ end
 
 -- cangyun pose type
 _HM_EngBar.UpdateCangYun = function(frame)
-	local me, hCangyun = GetClientPlayer(), frame:Lookup("", "Handle_CangYun")
+	local me, hCangyun = GetClientPlayer(), frame:Lookup("", _HM_EngBar.szShow)
 	if not me or not hCangyun then
 		return
 	end
@@ -218,7 +218,7 @@ _HM_EngBar.GetBombCount = function()
 end
 
 _HM_EngBar.UpdateBomb = function(frame)
-	local h = frame:Lookup("", "Handle_TangMen")
+	local h = frame:Lookup("", _HM_EngBar.szShow)
 	if not h then
 		return
 	end
@@ -234,11 +234,10 @@ _HM_EngBar.UpdateBomb = function(frame)
 end
 
 _HM_EngBar.UpdateTangMen = function(frame)
-	local me = GetClientPlayer()
-	if _HM_EngBar.szShow ~= "Handle_TangMen" or not me then
+	local me, h = GetClientPlayer(), frame:Lookup("", _HM_EngBar.szShow)
+	if _HM_EngBar.szShowSub ~= "TM" or not me or not h then
 		return
 	end
-	local h = frame:Lookup("", "Handle_TangMen")
 	if me.nMaxEnergy > 0 then
 		h:Lookup("Image_Strip"):SetPercentage(me.nCurrentEnergy / me.nMaxEnergy)
 		h:Lookup("Text_Energy"):SetText(me.nCurrentEnergy .. "/" .. me.nMaxEnergy)
@@ -249,14 +248,14 @@ _HM_EngBar.UpdateTangMen = function(frame)
 end
 
 _HM_EngBar.Update = function(frame)
-	if _HM_EngBar.szShow == "Handle_ChunYang" or _HM_EngBar.szShow == "Handle_ShaoLin" or _HM_EngBar.szShow == "Handle_QiXiu" then
+	if _HM_EngBar.szShowSub == "CY" or _HM_EngBar.szShowSub == "SL" or _HM_EngBar.szShowSub == "QX" then
 		_HM_EngBar.UpdateAccumulateValue(frame)
-	elseif _HM_EngBar.szShow == "Handle_TangMen" then
+	elseif _HM_EngBar.szShowSub == "TM" then
 		_HM_EngBar.UpdateTangMen(frame)
 		_HM_EngBar.UpdateBomb(frame)
-	elseif _HM_EngBar.szShow == "Handle_CangJian" then
+	elseif _HM_EngBar.szShowSub == "CJ" then
 		_HM_EngBar.UpdateCangJian(frame)
-	elseif _HM_EngBar.szShow == "Handle_MingJiao" then
+	elseif _HM_EngBar.szShowSub == "MJ" then
 		_HM_EngBar.UpdateMingJiao(frame)
 	elseif _HM_EngBar.szShow == "Handle_CangYun" then
 		_HM_EngBar.UpdateCangYun(frame)
@@ -268,17 +267,17 @@ _HM_EngBar.UpdateHandleName = function()
 	local szShow, szShowSub = "", ""
 	if mnt then
 		if mnt.dwMountType == 3 then
-			szShow, szShowSub = "Handle_ChunYang", "CY_"
+			szShow, szShowSub = "Handle_ChunYang", "CY"
 		elseif mnt.dwMountType == 5 then
-			szShow, szShowSub = "Handle_ShaoLin", "SL_"
+			szShow, szShowSub = "Handle_ShaoLin", "SL"
 		elseif mnt.dwMountType == 10 then
-			szShow, szShowSub = "Handle_TangMen", "TM_"
+			szShow, szShowSub = "Handle_TangMen", "TM"
 		elseif mnt.dwMountType == 4 then
-			szShow, szShowSub = "Handle_QiXiu", "QX_"
+			szShow, szShowSub = "Handle_QiXiu", "QX"
 		elseif mnt.dwMountType == 8 then
-			szShow, szShowSub = "Handle_MingJiao", "MJ_"
+			szShow, szShowSub = "Handle_MingJiao", "MJ"
 		elseif mnt.dwMountType == 18 then
-			szShow, szShowSub = "Handle_CangYun", "CYUN_"
+			szShow, szShowSub = "Handle_CangYun", "CYUN"
 		end
 	end
 	_HM_EngBar.szShow = szShow
@@ -291,18 +290,21 @@ _HM_EngBar.CopyHandle = function(frame)
 	_HM_EngBar.UpdateHandleName()
 	if me and me.bCanUseBigSword then
 		_HM_EngBar.szShow = "Handle_CangJian"
-		_HM_EngBar.szShowSub = "CJ_"
+		_HM_EngBar.szShowSub = "CJ"
 	end
 	hTotal:Clear()
 	if _HM_EngBar.szShow ~= "" then
+		if not Station.Lookup("Normal/Player", _HM_EngBar.szShow) then
+			_HM_EngBar.szShow = "Handle_" .. _HM_EngBar.szShowSub
+		end
 		hTotal:AppendItemFromIni("ui\\config\\default\\Player.ini", _HM_EngBar.szShow)
-		if _HM_EngBar.szShow == "Handle_TangMen" then
+		if _HM_EngBar.szShowSub == "TM" then
 			local x = 125
 			for i = 0, 2, 1 do
 				hTotal:AppendItemFromString("<image>path=\"interface/HM/HM_Force/Ball.UiTex\" frame=0 name=\"Image_Bomb" .. i .. "\" x=" .. x .. " y=0 w=25 h=25 lockshowhide=1 </image>")
 				x = x + 25
 			end
-		elseif _HM_EngBar.szShow == "Handle_MingJiao" then
+		elseif _HM_EngBar.szShowSub == "MJ" then
 			hTotal:AppendItemFromString("<text>text=\"\" name=\"Text_Sun\" x=87 y=10 w=144 h=20 font=163 </text>")
 			hTotal:AppendItemFromString("<text>text=\"\" name=\"Text_Moon\" x=87 y=52 w=144 h=20 font=202 </text>")
 		end
@@ -365,11 +367,11 @@ HM_EngBar.OnEvent = function(event)
 	elseif event == "UI_SCALED" then
 		_HM_EngBar.UpdateAnchor(this)
 	elseif event == "PLAYER_STATE_UPDATE" and arg0 == GetClientPlayer().dwID then
-		if _HM_EngBar.szShow == "Handle_CangJian" then
+		if _HM_EngBar.szShowSub == "CJ" then
 			_HM_EngBar.UpdateCangJian(this)
-		elseif _HM_EngBar.szShow == "Handle_TangMen" then
+		elseif _HM_EngBar.szShowSub == "TM" then
 			_HM_EngBar.UpdateTangMen(this)
-		elseif _HM_EngBar.szShow == "Handle_MingJiao" then
+		elseif _HM_EngBar.szShowSub == "MJ" then
 			_HM_EngBar.UpdateMingJiao(this)
 		elseif _HM_EngBar.szShow == "Handle_CangYun" then
 			_HM_EngBar.UpdateCangYun(this)
@@ -380,7 +382,7 @@ HM_EngBar.OnEvent = function(event)
 end
 
 HM_EngBar.OnFrameBreathe = function()
-	if _HM_EngBar.szShow == "Handle_TangMen" and _HM_EngBar.nBombTime and _HM_EngBar.nBombTime < (GetTime() - 1000) then
+	if _HM_EngBar.szShowSub == "TM" and _HM_EngBar.nBombTime and _HM_EngBar.nBombTime < (GetTime() - 1000) then
 		_HM_EngBar.UpdateBomb(this)
 	end
 end
