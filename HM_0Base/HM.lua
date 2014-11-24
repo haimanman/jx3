@@ -1141,7 +1141,9 @@ end
 -- nZ		-- *可选* 世界坐标系下的目标点 Z 值
 HM.GetDistance = function(nX, nY, nZ)
 	local me = GetClientPlayer()
-	if not nY and not nZ then
+	if not me then
+		return 0
+	elseif not nY and not nZ then
 		local tar = nX
 		nX, nY, nZ = tar.nX, tar.nY, tar.nZ
 	elseif not nZ then
