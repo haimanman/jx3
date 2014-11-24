@@ -1018,19 +1018,23 @@ _HM_ToolBox.OnShopUpdateItem = function()
 		return
 	end
 	-- 排除未解锁用户
-	local btn = Station.Lookup("Normal1/TopMenu/WndContainer_List/Wnd_Lock/Btn_Lock")
+	local btn = Station.Lookup("Normal/TopMenu/WndContainer_List/Wnd_Lock/Btn_Lock")
 	if btn and btn:IsVisible() then
 		return
 	end
 	-- 由于 ShopPanel 的事件后注册，因此需要延迟一帧调用
-	local nShopID, dwPage, dwPos = arg0, arg1, arg2
+	local nShopID, dwShopIndex = arg0, arg1
 	HM.DelayCall(50, function()
-		local box = Station.Lookup("Normal/ShopPanel/PageSet_Main/Page_Sale", "Handle_Sale"):Lookup(dwPos):Lookup("Box_Item")
-		box.OnItemRButtonClick = function()
-			if not this:IsObjectEnable() then
-				return
-			end
-			local item = GetItem(GetShopItemID(nShopID, dwPage, dwPos))
+		local hI = Station.Lookup("Normal/ShopPanel", "Handle_ItemList/Handle_ListBox/Goods_" .. nShopID .. "_" .. dwShopIndex)
+		if not hI then
+			return
+		end
+		local box = hI:Lookup("Box_Item")
+		if not box or box:GetType() ~= "Box" or box:IsEmpty() or not box:IsObjectEnable() then
+			return
+		end
+		hI.OnItemRButtonClick = function()
+			local item = GetItem(GetShopItemID(nShopID, dwShopIndex))
 			if IsShiftKeyDown() and item.nMaxDurability > 1
 				and (item.nGenre ~= ITEM_GENRE.EQUIPMENT or item.nSub == EQUIPMENT_SUB.ARROW)
 			then
@@ -1042,19 +1046,20 @@ _HM_ToolBox.OnShopUpdateItem = function()
 						if nNum < nMax then
 							nMax = nNum
 						end
-						BuyItem(_HM_ToolBox.nShopNpcID, nShopID, dwPage, dwPos, nMax)
+						BuyItem(_HM_ToolBox.nShopNpcID, nShopID, dwShopIndex, nMax)
 						nNum = nNum - nMax
 					end
 				end
 				GetUserInputNumber(nMax, 10000, { x, y, x + w, y + h }, fnSure)
 			else
 				local nCount = 1
-				if this.bGroup then
+				if item.bCanStack then
 					nCount = item.nCurrentDurability
 				end
-				BuyItem(_HM_ToolBox.nShopNpcID, nShopID, dwPage, dwPos, nCount)
+				BuyItem(_HM_ToolBox.nShopNpcID, nShopID, dwShopIndex, nCount)
 			end
 		end
+		box.OnItemRButtonClick = hI.OnItemRButtonClick
 	end)
 end
 
