@@ -271,7 +271,7 @@ _HM_Doodad.OnAutoDoodad = function()
 			bKeep = d ~= nil
 		elseif v.loot then		-- 尸体只摸一次
 			bKeep = true	-- 改在 opendoodad 中删除
-			bIntr = not me.bFightState or HM_Doodad.bLootFight
+			bIntr = (not me.bFightState or HM_Doodad.bLootFight) and d.CanLoot(me.dwID)
 			if bIntr then
 				_HM_Doodad.dwOpenID = k
 			end
