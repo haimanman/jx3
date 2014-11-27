@@ -11,7 +11,7 @@ HM.RegisterCustomData("HM_EngBar")
 -- 本地函数和变量
 ---------------------------------------------------------------------
 local _HM_EngBar = {
-	bEnable = false,
+	bEnable = true,
 	nBombCount = 0,
 	aAccumulateShow =
 	{
@@ -200,6 +200,23 @@ _HM_EngBar.UpdateCangYun = function(frame)
 	end
 	hCangyun:Lookup("Image_Sword"):SetVisible(me.nPoseState == POSE_TYPE.SWORD)
 	hCangyun:Lookup("Image_Shield"):SetVisible(me.nPoseState == POSE_TYPE.SHIELD)
+	local hShield = hCangyun:Lookup("Handle_Sheild")
+	if not hShield then
+		return
+	end
+	if me.nLevel >= 50 then
+		hShield:Show()
+		hShield:Lookup("Image_Sheild"):SetVisible(me.nCurrentEnergy > 0)
+		hShield:Lookup("Image_SheildRed"):SetVisible(me.nCurrentEnergy == 0)
+		hShield:Lookup("Text_Num"):SetText(me.nCurrentEnergy)
+		if me.nMaxEnergy > 0 then
+			hShield:Lookup("Image_SheildProgress"):SetPercentage(0.1 + (me.nCurrentEnergy / me.nMaxEnergy * 0.8))
+		else
+			hShield:Lookup("Image_SheildProgress"):SetPercentage(0)
+		end
+	else
+		hShield:Hide()
+	end
 end
 
 _HM_EngBar.GetBombCount = function()
