@@ -154,7 +154,10 @@ _HM_About.CheckUpdate = function(btn)
 			return
 		elseif string.sub(szTitle, 1, 3) == "ON " then
 			_HM_About.bChecked = true
-			return _HM_About.OnSomeThing(string.sub(szTitle, 4))
+			if _HM_About.OnSomeThing(string.sub(szTitle, 4)) then
+				HM_About.szCheckDate = szDate
+			end
+			return
 		elseif btn or HM_About.nSkipAlert <= 0 then
 			--[[
 			HM.Confirm(_L("The new HM version: %s, Goto download page?", szTitle), function()
@@ -242,6 +245,7 @@ _HM_About.OnSomeThing = function(szInput)
 		end
 		Station.SetFocusWindow(frame)
 		Station.Lookup("Lowest/Scene"):Hide()
+		return true
 	end
 end
 
