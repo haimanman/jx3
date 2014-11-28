@@ -2258,7 +2258,7 @@ end
 -- fnEnter = function(true)		-- 鼠标进入时调用
 -- fnLeave = function(false)		-- 鼠标移出时调用，若省略则和进入函数一样
 function _HM.UI.Wnd:Hover(fnEnter, fnLeave)
-	local wnd = wnd
+	local wnd = self.wnd
 	if self.type == "WndComboBox" then
 		wnd = wnd:Lookup("Btn_ComboBox")
 	end
@@ -2567,7 +2567,7 @@ function _HM.UI.Item:Click(fnAction, bSound, bSelect)
 			local _this = this
 			this = hnd
 			hnd.OnItemLButtonDown()
-			_this = this
+			this = _this
 		end
 	elseif self.type == "BoxButton" or self.type == "TxtButton" then
 		hnd.OnItemLButtonDown = function()
