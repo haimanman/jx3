@@ -447,11 +447,18 @@ _HM_Target.UpdateLM = function(frame, bTTarget)
 		if frame.dwMountType == 10 and tar.nMaxEnergy > 0 then	-- TM
 			fM = tar.nCurrentEnergy / tar.nMaxEnergy
 			sM = _HM_Target.GetStateString(tar.nCurrentEnergy, tar.nMaxEnergy, bTTarget)
-		elseif (frame.dwMountType == 6 or frame.dwMountType == 18) and tar.nMaxRage > 0 then	-- CJ, CangYun
+		elseif frame.dwMountType == 6 and tar.nMaxRage > 0 then	-- CJ
 			fM = tar.nCurrentRage / tar.nMaxRage
 			sM = _HM_Target.GetStateString(tar.nCurrentRage, tar.nMaxRage, bTTarget)
-			if frame.dwMountType == 18 then
+		elseif frame.dwMountType == 18 then	-- CangYun
+			if HM.HasBuff(8300, nil, tar) then
+				nM = 84
+				fM = tar.nCurrentEnergy / math.max(tar.nMaxEnergy, 1)
+				sM = _HM_Target.GetStateString(tar.nCurrentEnergy, tar.nMaxEnergy, bTTarget)
+			else
 				nM = 86
+				fM = tar.nCurrentRage / math.max(tar.nMaxRage, 1)
+				sM = _HM_Target.GetStateString(tar.nCurrentRage, tar.nMaxRage, bTTarget)
 			end
 		elseif frame.dwMountType == 8 then	-- MJ
 			-- 日月能量哪个较多优先哪个，日：86，月：84
