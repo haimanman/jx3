@@ -451,7 +451,7 @@ _HM_Target.UpdateLM = function(frame, bTTarget)
 			fM = tar.nCurrentRage / tar.nMaxRage
 			sM = _HM_Target.GetStateString(tar.nCurrentRage, tar.nMaxRage, bTTarget)
 		elseif frame.dwMountType == 18 then	-- CangYun
-			if HM.HasBuff(8300, nil, tar) then
+			if HM.HasBuff(8299, nil, tar) then
 				nM = 84
 				fM = tar.nCurrentEnergy / math.max(tar.nMaxEnergy, 1)
 				sM = _HM_Target.GetStateString(tar.nCurrentEnergy, tar.nMaxEnergy, bTTarget)
@@ -535,7 +535,9 @@ _HM_Target.AddBreathe = function(frame, bTTarget)
 		if bTTarget then
 			if HM_Target.bEnableTTarget then
 				_HM_Target.UpdateName(frame)
-				_HM_Target.UpdateLM(frame, true)
+				if HM_Target.bEnableLM then
+					_HM_Target.UpdateLM(frame, true)
+				end
 			elseif _HM_Target.bChangeTTarget then
 				_HM_Target.UpdateName(frame, true)
 				_HM_Target.bChangeTTarget = nil
@@ -543,7 +545,9 @@ _HM_Target.AddBreathe = function(frame, bTTarget)
 		else
 			if HM_Target.bEnable then
 				_HM_Target.UpdateName(frame)
-				_HM_Target.UpdateLM(frame)
+				if HM_Target.bEnableLM then
+					_HM_Target.UpdateLM(frame)
+				end
 			elseif _HM_Target.bChange then
 				_HM_Target.UpdateName(frame, true)
 				_HM_Target.bChange = nil
