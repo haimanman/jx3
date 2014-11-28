@@ -368,7 +368,7 @@ _HM_TargetMon.tFixedBuffEx = {
 	[_L("Reduce-injury_%s", _b(5996)--[[Ð¦×í¿ñ]])] = 5996,
 	[_L("Reduce-injury_%s", _b(5810)--[[ÄÔ»§]])] = 5810,
 	[_L("Reduce-injury_%s", _b(8279)--[[¶Ü±Ú]])] = 8279,
-	[_L("Reduce-injury_%s", _b(8300)--[[¶ÜÇ½]])] = 8300,
+	[_L("Reduce-injury_%s", _b(8300)--[[¶ÜÇ½]])] = 8300,	-- or 8650
 	[_L("BanSprint_%s", _b(562, 1)--[[ÍÌÈÕÔÂ]])] = 562,
 	[_L("BanSprint_%s", _b(562, 9)--[[çéÏÒ]])] = 562,
 	[_L("BanSprint_%s", _b(6074)--[[¶ñ¹·À¹Â·]])] = 6074,
@@ -402,6 +402,9 @@ _HM_TargetMon.LoadBuffEx = function()
 		for _, vv in ipairs(v.tName) do
 			local kkk = _HM_TargetMon.tFixedBuffEx[v.szType .. "_" .. vv] or vv
 			aCache[kkk] = { v.szType, k }
+			if kkk == 8300 then
+				aCache[8650] = { v.szType, k }
+			end
 		end
 	end
 	-- override by customdata
