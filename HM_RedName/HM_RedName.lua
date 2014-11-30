@@ -535,6 +535,53 @@ _HM_RedName.AddWorldBreathe = function()
 	end
 end
 
+-- add acct options into middlemap
+MiddleMap._ShowMap = MiddleMap._ShowMap or MiddleMap.ShowMap
+MiddleMap.ShowMap = function(frame, ...)
+	MiddleMap._ShowMap(frame, ...)
+	if not frame.szHM or frame.szHM ~= tostring(HM) then
+		local ui = HM.UI(frame)
+		if frame.szHM then
+			ui:Fetch("Check_AcctUser"):Remove()
+			ui:Fetch("Combo_AcctType"):Remove()
+		end
+		frame.szHM = tostring(HM)
+		local nX = ui:Append("WndCheckBox", "Check_AcctUser", { txt = "HM: " .. _L["Nearby players (middle map)"], checked = HM_RedName.bAcctUser, x = 700, y = 88 })
+		:Click(function(bChecked)
+			HM_RedName.bAcctUser= bChecked
+		end):Pos_()
+		ui:Append("WndComboBox", "Combo_AcctType", { x = nX + 10, y = 88, txt = _L["Stats type"] }):Menu(function()
+			return {
+				{
+					szOption = _L["Camp/Enemy"], bCheck = true, bMCheck = true,
+					bChecked = _HM_RedName.nAcctType == 0,
+					fnAction = function(d, b)
+						if b then
+							_HM_RedName.nAcctType = 0
+						end
+					end
+				}, {
+					szOption = _L["School"], bCheck = true, bMCheck = true,
+					bChecked = _HM_RedName.nAcctType == 1,
+					fnAction = function(d, b)
+						if b then
+							_HM_RedName.nAcctType = 1
+						end
+					end
+				}, {
+					szOption = _L["Guild"], bCheck = true, bMCheck = true,
+					bChecked = _HM_RedName.nAcctType == 2,
+					fnAction = function(d, b)
+						if b then
+							_HM_RedName.nAcctType = 2
+						end
+					end
+				}
+			}
+		end):AutoSize()
+	end
+end
+
 -------------------------------------
 -- 事件处理函数
 -------------------------------------
