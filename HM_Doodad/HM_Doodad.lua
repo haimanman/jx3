@@ -361,6 +361,12 @@ _HM_Doodad.OnLootDoodad = function()
 	end
 	local t = GetDoodadTemplate(d.dwTemplateID)
 	if t.dwCraftID >= 1 and t.dwCraftID <= 3 and not HM_Doodad.tCraft[d.szName] then
+		for _, v in ipairs(_HM_Doodad.tCraft) do
+			if v == d.dwTemplateID then
+				HM_Doodad.tCraft[d.szName] = true
+				return
+			end
+		end
 		HM_Doodad.tCustom[d.szName] = true
 	end
 end
