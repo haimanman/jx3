@@ -15,6 +15,7 @@ HM_TargetList = {
 	bFocusOld3 = false,		-- 使用旧版焦点界面
 	bAltFocus = true,		-- 启用 Shift-点击设焦点
 	bMonPrepare = true,	-- 通过切目标监控读条
+	bFocusCD = true,			-- 是否显示焦点的 CD
 	----
 	--bShowList = true,		-- 显示目标列表
 	nListMode = 6,			-- 列表模式
@@ -140,6 +141,9 @@ _HM_TargetList.GetFocusMenu = function()
 		}, { szOption = _L["Monitor focus prepare via set target"],
 			bCheck = true, bChecked = HM_TargetList.bMonPrepare,
 			fnAction = function(d, b) HM_TargetList.bMonPrepare = b end,
+		}, { szOption = _L["Show skill CD on focus"],
+			bCheck = true, bChecked = HM_TargetList.bFocusCD,
+			fnAction = function(d, b) HM_TargetList.bFocusCD = b end,
 		}
 	}
 end
@@ -588,6 +592,40 @@ _HM_TargetList.UpdateFocusItem = function(h, tar)
 		end
 	end
 	hText:SetText(szText)
+	-- update CD list
+	local hList = h:Lookup("Handle_CD2")
+	if not hList or not HM_TargetMon then
+	elseif HM_TargetList.bFocusCD and not h.alone then
+		local _, nS = hList:GetSize()
+		local mCD = HM_TargetMon.GetPlayerCD(tar.dwID)
+		local nFrame = GetLogicFrameCount()
+		hList.nIndex = 0
+		for _, v in ipairs(mCD) do
+			if v.nEnd > nFrame then
+				local szTime, nFont = HM_TargetMon.GetLeftTime(v.nEnd)
+				local box = HM_SingleFocus.GetListBox(hList, nS)
+				box:SetObject(UI_OBJECT_SKILL, v.dwSkillID, v.dwLevel)
+				box:SetObjectIcon(v.dwIconID)
+				box:SetOverText(1, szTime)
+				box:SetOverTextPosition(1, 3)
+				box:SetOverTextFontScheme(1, nFont)
+				box:SetObjectCoolDown(1)
+				box:SetCoolDownPercentage(1 - (v.nEnd - nFrame) / v.nTotal)
+				box:Show()
+			end
+		end
+		if hList.nIndex == 0 then
+			hList:Hide()
+		else
+			for i = hList:GetItemCount() - 1, hList.nIndex, -1 do
+				hList:Lookup(i):Hide()
+			end
+			hList:FormatAllItemPos()
+			hList:Show()
+		end
+	else
+		hList:Hide()
+	end
 	-- update state(box)
 	if HM_TargetDir and HM_TargetList.bFocusState then
 		local dwIcon, szText
