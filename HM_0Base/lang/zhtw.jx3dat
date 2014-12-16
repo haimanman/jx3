@@ -509,6 +509,7 @@ data = {
 	["Maximum focus num [%d]"] = "焦點最大個數 [%d]",
 	["<Shift-Click to add focus>"] = "<Shift-點擊目標設焦點>",
 	["Monitor focus prepare via set target"] = "通過切換目標監控焦點讀條",
+	["Show skill CD on focus"] = "顯示焦點的技能 CD",
 	["Remove from HM focus"] = "解除海鰻焦點",
 	["Add to HM foucs"] = "加入海鰻焦點",
 	["Lock as single focus"] = "鎖定為獨立焦點",
