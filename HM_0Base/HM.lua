@@ -2283,7 +2283,7 @@ _HM.UI.Item = class(_HM.UI.Base)
 _HM.UI.tItemXML = {
 	["Text"] = "<text>w=150 h=30 valign=1 font=162 eventid=257 </text>",
 	["Image"] = "<image>w=100 h=100 eventid=257 </image>",
-	["Box"] = "<box>w=48 h=48 eventid=525311 </text>",
+	["Box"] = "<box>w=48 h=48 eventid=525311 </box>",
 	["Shadow"] = "<shadow>w=15 h=15 eventid=277 </shadow>",
 	["Handle"] = "<handle>w=10 h=10</handle>",
 	["Label"] = "<handle>w=150 h=30 eventid=257 <text>name=\"Text_Label\" w=150 h=30 font=162 valign=1 </text></handle>",
