@@ -14,7 +14,7 @@ HM_TargetList = {
 	bFocusTarget2 = false,	-- 显示焦点的目标
 	bFocusOld3 = false,		-- 使用旧版焦点界面
 	bAltFocus = true,		-- 启用 Shift-点击设焦点
-	bMonPrepare = true,	-- 通过切目标监控读条
+	--bMonPrepare = true,	-- 通过切目标监控读条
 	bFocusCD = true,			-- 是否显示焦点的 CD
 	----
 	--bShowList = true,		-- 显示目标列表
@@ -138,9 +138,9 @@ _HM_TargetList.GetFocusMenu = function()
 		}, { szOption = _L["<Shift-Click to add focus>"],
 			bCheck = true, bChecked = HM_TargetList.bAltFocus,
 			fnAction = function(d, b) HM_TargetList.bAltFocus = b end,
-		}, { szOption = _L["Monitor focus prepare via set target"],
-			bCheck = true, bChecked = HM_TargetList.bMonPrepare,
-			fnAction = function(d, b) HM_TargetList.bMonPrepare = b end,
+		--}, { szOption = _L["Monitor focus prepare via set target"],
+		--	bCheck = true, bChecked = HM_TargetList.bMonPrepare,
+		--	fnAction = function(d, b) HM_TargetList.bMonPrepare = b end,
 		}, { szOption = _L["Show skill CD on focus"],
 			bCheck = true, bChecked = HM_TargetList.bFocusCD,
 			fnAction = function(d, b) HM_TargetList.bFocusCD = b end,
@@ -384,11 +384,9 @@ end
 -- get skill prepare
 _HM_TargetList.GetSkillPrepareState = function(tar)
 	local _, dwSkillID, dwLevel, fP = tar.GetSkillPrepareState()
-	if not dwSkillID and HM_TargetList.bMonPrepare and (not IsPlayer(tar.dwID) or tar.GetOTActionState() == 1) then
-		local dwType, dwID = GetClientPlayer().GetTarget()
-		HM.SetInsTarget(tar.dwID)
-		_, dwSkillID, dwLevel, fP = tar.GetSkillPrepareState()
-		HM.SetTarget(dwType, dwID)
+	if (not dwSkillID or dwSkillID == 0) and IsPlayer(tar.dwID) and tar.GetOTActionState() == 1 then
+		fP = (GetLogicFrameCount() % 16) / 16
+		dwSkillID = 7
 	end
 	if dwSkillID and dwSkillID ~= 0 then
 		local szSkill = HM.GetSkillName(dwSkillID, dwLevel)
