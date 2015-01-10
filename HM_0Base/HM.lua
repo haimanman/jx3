@@ -2130,6 +2130,11 @@ function _HM.UI.Wnd:Text(szText, bDummy)
 		end
 		if self.type == "WndTabBox" then
 			self:AutoSize()
+		elseif self.type == "WndCheckBox" or self.type == "WndRadioBox" then
+			local nW, nH = txt:GetTextExtent()
+			txt:SetSize(nW + 26, nH)
+			self.handle:SetSize(nW + 26, nH)
+			self.handle:FormatAllItemPos()
 		end
 	end
 	return self
