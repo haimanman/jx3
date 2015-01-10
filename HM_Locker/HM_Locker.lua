@@ -7,6 +7,14 @@ HM_Locker = {
 	bLockFight = true,	-- 战斗中点地面不丢目标
 	bWhisperSel = true,	-- 密聊快速选择，密聊：11 速度选择此人（若在身边）
 	tSearchTarget = { OnlyPlayer = false, OnlyNearDis = true, MidAxisFirst = false, Weakness = false },
+	------------
+	bSelectEnemy = true,
+	bLowerNPC = true,
+	tLowerForce = { [21] = true },
+	bPriorHP = true,
+	bPriorDis = true,
+	bPriorAxis = true,
+	bPriorParty = true,
 }
 HM.RegisterCustomData("HM_Locker")
 
@@ -191,6 +199,183 @@ end
 _HM_Locker.AddLocker(_HM_Locker.CheckLockFight)
 
 -------------------------------------
+-- 目标策略选择
+-- 1. 备选目标 ：NPC 及50 尺以外的玩家
+-- 2. 降低某些职业的玩家
+-- 3. 综合优先血量、面向、距离
+-------------------------------------
+_HM_Locker.CalcFace = function(me, tar)
+	local nX = tar.nX - me.nX
+	local nY = tar.nY - me.nY
+	local nFace =  me.nFaceDirection / 256 * 360
+	local nDeg = 0
+	if nY == 0 then
+		if nX < 0 then
+			nDeg = 180
+		end
+	elseif nX == 0 then
+		if nY > 0 then
+			nDeg = 90
+		else
+			nDeg = 270
+		end
+	else
+		nDeg = math.deg(math.atan(nY / nX))
+		if nX < 0 then
+			nDeg = 180 + nDeg
+		elseif nY < 0 then
+			nDeg = 360 + nDeg
+		end
+	end
+	local nAngle = nFace - nDeg
+	if nAngle < -180 then
+		nAngle = nAngle + 360
+	elseif nAngle > 180 then
+		nAngle = nAngle - 360
+	end
+	if math.abs(nAngle) < 85 then
+		return 0
+	else
+		return 1
+	end
+end
+
+local tJustList = {}
+local nJustFrame = 0
+local LOWER_DIS = 50
+_HM_Locker.SelectTarget = function()
+	local nFrame = GetLogicFrameCount()
+	if (nFrame - nJustFrame) > 12 then
+		tJustList = {}
+	end
+	nJustFrame = nFrame
+	local me = GetClientPlayer()
+	local _, dwTarget = me.GetTarget()
+	-- load player
+	local tList, tList2 = {}, {}
+	for _, v in ipairs(HM.GetAllPlayer()) do
+		if v.dwID == dwTarget then
+			-- skip current target
+		elseif (HM_Locker.bSelectEnemy and IsEnemy(me.dwID, v.dwID))
+			or (not HM_Locker.bSelectEnemy and IsAlly(me.dwID, v.dwID))
+		then
+			local nDis = HM.GetDistance(v)
+			if  nDis > LOWER_DIS and not IsEmpty(tList) then
+				-- need not far target
+			else
+				local item = { dwID = v.dwID, nType = TARGET.PLAYER }
+				item.nSel = tJustList[v.dwID] or 0
+				if HM_Locker.tLowerForce[v.dwForceID] then
+					item.nForce = 1
+				else
+					item.nForce = 0
+				end
+				if HM_Locker.bPriorDis then
+					item.nDis = math.floor(nDis / 4)
+				end
+				if HM_Locker.bPriorHP then
+					item.nHP = math.floor(5 * v.nCurrentLife / math.max(1, v.nMaxLife))
+				end
+				if HM_Locker.bPriorAxis then
+					item.nFace = _HM_Locker.CalcFace(me, v)
+				end
+				if HM_Locker.bPriorParty then
+					if not HM_Locker.bSelectEnemy and IsParty(me.dwID, v.dwID) then
+						item.nParty = 0
+					else
+						item.nParty = 1
+					end
+				end
+				if item.nDis > LOWER_DIS then
+					table.insert(tList2, item)
+				else
+					table.insert(tList, item)
+				end
+			end
+		end
+	end
+	local bEmptyPlayer = IsEmpty(tList)
+	local bEmptyPlayer2 = IsEmpty(tList2)
+	-- load npc
+	if not HM_Locker.bLowerNPC or bEmptyPlayer then
+		for _, v in ipairs(HM.GetAllNpc()) do
+			if v.dwID == dwTarget then
+				-- skip current target
+			elseif (HM_Locker.bSelectEnemy and IsEnemy(me.dwID, v.dwID))
+				or (not HM_Locker.bSelectEnemy and IsAlly(me.dwID, v.dwID))
+			then
+				local nDis = HM.GetDistance(v)
+				if  nDis > LOWER_DIS and not IsEmpty(tList) then
+					-- need not far target
+				else
+					local item = { dwID = v.dwID, nType = TARGET.NPC }
+					item.nSel = tJustList[v.dwID] or 0
+					item.nForce = 1
+					if HM_Locker.bPriorDis then
+						item.nDis = math.floor(nDis / 4)
+					end
+					if HM_Locker.bPriorHP then
+						item.nHP = math.floor(5 * v.nCurrentLife / math.max(1, v.nMaxLife))
+					end
+					if HM_Locker.bPriorAxis then
+						item.nFace = _HM_Locker.CalcFace(me, v)
+					end
+					if HM_Locker.bPriorParty then
+						item.nParty = 1
+					end
+					if item.nDis > LOWER_DIS then
+						table.insert(tList2, item)
+					else
+						table.insert(tList, item)
+					end
+				end
+			end
+		end
+	end
+	-- sort list
+	if IsEmpty(tList) then
+		tList = tList2
+	end
+	table.sort(tList, function(a, b)
+		-- just list
+		if a.nSel ~= b.nSel then
+			return a.nSel < b.nSel
+		end
+		-- npc lower
+		if a.nType ~= b.nType then
+			return a.nType > b.nType
+		end
+		-- force lower
+		if a.nForce ~= b.nForce then
+			return a.nForce < b.nForce
+		end
+			-- face
+		if a.nFace and a.nFace ~= b.nFace then
+			return a.nFace < b.nFace
+		end
+		-- dist
+		if a.nDis and a.nDis ~= b.nDis then
+			return a.nDis < b.nDis
+		end
+		-- nHp
+		if a.nHp and a.nHp ~= b.nHp then
+			return a.nHp < b.nHp
+		end
+		-- party
+		if a.nParty then
+			return a.nParty < b.nParty
+		end
+		return false
+	end)
+	if not IsEmpty(tList) then
+		-- select firt target
+		local dwTarget = tList[1].dwID
+		tJustList[dwTarget] = 1
+		SetTarget(tList[1].nType, dwTarget)
+	end
+end
+
+-------------------------------------
 -- 设置界面
 -------------------------------------
 _HM_Locker.PS = {}
@@ -242,6 +427,49 @@ _HM_Locker.PS.OnPanelActive = function(frame)
 	:Text(_L["Select as target when you send 11 to around player"]):Click(function(bChecked)
 		HM_Locker.bWhisperSel = bChecked
 	end)
+	-- 智能选择目标（代替Tab）
+	ui:Append("Text", { txt = _L["Smart select target"], x = 0, y = 248, font = 27 })
+	nX = ui:Append("WndRadioBox", { x = 10, y = 276, checked = HM_Locker.bSelectEnemy, group = "tabs" })
+	:Text(_L["Enemy"]):Click(function(bChecked)
+		HM_Locker.bSelectEnemy = bChecked
+	end):Pos_()
+	nX = ui:Append("WndRadioBox", { x = nX + 20, y = 276, checked = not HM_Locker.bSelectEnemy, group = "tabs" })
+	:Text(_L["Ally"]):Click(function(bChecked)
+		HM_Locker.bSelectEnemy = not bChecked
+	end):Pos_()
+	nX = ui:Append("Text", { x = nX + 20, y = 271, txt = _L["("] .. _L["Hotkey"] }):Click(HM.SetHotKey):Pos_()
+	ui:Append("Text", { x = nX , y = 271, txt = HM.GetHotKey("SmartTarget") .. _L[")"] })
+	nX = ui:Append("WndCheckBox", { x = 10, y = 304, checked = HM_Locker.bLowerNPC })
+	:Text(_L["Lower select NPC"]):Click(function(bChecked)
+		HM_Locker.bLowerNPC = bChecked
+	end):Pos_()
+	nX = ui:Append("Text", { x = nX + 20, y = 304, txt = _L["Lower select special force"] }):Pos_()
+	ui:Append("WndComboBox", { x= nX + 10, y = 304, txt = _L["School force"] }):AutoSize():Menu(function()
+		local m0 = {}
+		for k, v in pairs(g_tStrings.tForceTitle) do
+			table.insert(m0, {
+				szOption = v, bCheck = true, bChecked = HM_Locker.tLowerForce[k] == true,
+				fnAction = function(d, b) HM_Locker.tLowerForce[k] = b end
+			})
+		end
+		return m0
+	end)
+	nX = ui:Append("WndCheckBox", { x = 10, y = 332, checked = HM_Locker.bPriorHP })
+	:Text(_L["Priority less HP"]):Click(function(bChecked)
+		HM_Locker.bPriorHP = bChecked
+	end):Pos_()
+	nX = ui:Append("WndCheckBox", { x = nX + 20, y = 332, checked = HM_Locker.bPriorDis })
+	:Text(_L["Priority closer"]):Click(function(bChecked)
+		HM_Locker.bPriorDis = bChecked
+	end):Pos_()
+	ui:Append("WndCheckBox", { x = nX + 20, y = 332, checked = HM_Locker.bPriorAxis })
+	:Text(_L["Priority less face angle"]):Click(function(bChecked)
+		HM_Locker.bPriorAxis = bChecked
+	end)
+	ui:Append("WndCheckBox", { x = 10, y = 360, checked = HM_Locker.bPriorParty })
+	:Text(_L["Priority party player"]):Click(function(bChecked)
+		HM_Locker.bPriorParty = bChecked
+	end)
 end
 
 -- player menu
@@ -269,6 +497,7 @@ HM.RegisterPanel(_L["Lock/Select"], 3353, _L["Target"], _HM_Locker.PS)
 
 -- hotkey
 HM.AddHotKey("OnlyPlayer", _L["TAB player only"],  _HM_Locker.SearchOnlyPlayer)
+HM.AddHotKey("SmartTarget", _L["Smart select target"], _HM_Locker.SelectTarget)
 
 -- public api
 HM_Locker.AddLocker = _HM_Locker.AddLocker
