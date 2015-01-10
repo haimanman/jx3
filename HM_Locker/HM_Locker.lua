@@ -242,7 +242,7 @@ end
 
 local tJustList = {}
 local nJustFrame = 0
-local LOWER_DIS = 50
+local LOWER_DIS = 35
 _HM_Locker.SelectTarget = function()
 	local nFrame = GetLogicFrameCount()
 	if (nFrame - nJustFrame) > 12 then
@@ -254,7 +254,7 @@ _HM_Locker.SelectTarget = function()
 	-- load player
 	local tList, tList2 = {}, {}
 	for _, v in ipairs(HM.GetAllPlayer()) do
-		if v.dwID == dwTarget then
+		if v.dwID == dwTarget or v.nMoveState == MOVE_STATE.ON_DEATH then
 			-- skip current target
 		elseif (HM_Locker.bSelectEnemy and IsEnemy(me.dwID, v.dwID))
 			or (not HM_Locker.bSelectEnemy and IsAlly(me.dwID, v.dwID))
@@ -299,7 +299,7 @@ _HM_Locker.SelectTarget = function()
 	-- load npc
 	if not HM_Locker.bLowerNPC or bEmptyPlayer then
 		for _, v in ipairs(HM.GetAllNpc()) do
-			if v.dwID == dwTarget then
+			if v.dwID == dwTarget or v.nMoveState == MOVE_STATE.ON_DEATH then
 				-- skip current target
 			elseif (HM_Locker.bSelectEnemy and IsEnemy(me.dwID, v.dwID))
 				or (not HM_Locker.bSelectEnemy and IsAlly(me.dwID, v.dwID))
@@ -349,7 +349,7 @@ _HM_Locker.SelectTarget = function()
 		if a.nForce ~= b.nForce then
 			return a.nForce < b.nForce
 		end
-			-- face
+		-- face
 		if a.nFace and a.nFace ~= b.nFace then
 			return a.nFace < b.nFace
 		end
