@@ -585,6 +585,8 @@ _HM_Camp.OnLoadingEnd = function()
 	else
 		UnRegisterMsgMonitor(_HM_Camp.OnNpcYell, { "MSG_NPC_YELL" })
 	end
+	-- remove unused
+	HM_Camp.tBossList[_n(36505)--[[¿âÍß²ìÄ·]]] = nil
 end
 
 -------------------------------------
