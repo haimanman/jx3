@@ -324,6 +324,10 @@ data = {
 	["Enable TAB select player only"] = "开启 Tab 只选玩家",
 	["Lock/Select"] = "目标锁定/选择",
 	["TAB player only"] = "TAB 只选玩家",
+	["Smart select target"] = "智能选目标",
+	["Lower select NPC"] = "降低选择 NPC 机率",
+	["Lower select special force"] = "降低选择某些",
+	["Priority party player"] = "优先选择队友",
 	-- HM_Marker.lua --
 	["Cloud"] = "云",
 	["Sword"] = "剑",
