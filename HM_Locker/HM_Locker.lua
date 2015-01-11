@@ -243,6 +243,7 @@ end
 local tJustList = {}
 local nJustFrame = 0
 local LOWER_DIS = 35
+local LOWER_DIS2 = 45
 _HM_Locker.SelectTarget = function()
 	local nFrame = GetLogicFrameCount()
 	if (nFrame - nJustFrame) > 12 then
@@ -274,12 +275,12 @@ _HM_Locker.SelectTarget = function()
 					item.nDis = math.floor(nDis / 4)
 				end
 				if HM_Locker.bPriorHP then
-					item.nHP = math.floor(5 * v.nCurrentLife / math.max(1, v.nMaxLife))
+					item.nHP = math.floor(10 * v.nCurrentLife / math.max(1, v.nMaxLife))
 				end
 				if HM_Locker.bPriorAxis then
 					item.nFace = _HM_Locker.CalcFace(me, v)
 				end
-				if (item.nDis == 0 or (item.nHP and item.nHP < 2)) and item.nFace == 0 then
+				if (item.nDis == 0 or (item.nHP and item.nHP < 4)) and item.nFace == 0 then
 					item.nForce = 0
 				end
 				if HM_Locker.bPriorParty then
@@ -289,7 +290,7 @@ _HM_Locker.SelectTarget = function()
 						item.nParty = 1
 					end
 				end
-				if item.nDis > LOWER_DIS then
+				if nDis > LOWER_DIS then
 					table.insert(tList2, item)
 				else
 					table.insert(tList, item)
@@ -302,18 +303,26 @@ _HM_Locker.SelectTarget = function()
 	-- load npc
 	if not HM_Locker.bLowerNPC or bEmptyPlayer then
 		for _, v in ipairs(HM.GetAllNpc()) do
-			if v.dwID == dwTarget or v.nMoveState == MOVE_STATE.ON_DEATH then
+			if v.dwID == dwTarget or v.nMoveState == MOVE_STATE.ON_DEATH or not v.IsSelectable() then
 				-- skip current target
 			elseif (HM_Locker.bSelectEnemy and IsEnemy(me.dwID, v.dwID))
 				or (not HM_Locker.bSelectEnemy and IsAlly(me.dwID, v.dwID))
+				or IsNeutrality(me.dwID, v.dwID)
 			then
 				local nDis = HM.GetDistance(v)
-				if  nDis > LOWER_DIS and not IsEmpty(tList) then
+				if  nDis > LOWER_DIS2 and not IsEmpty(tList) then
 					-- need not far target
 				else
 					local item = { dwID = v.dwID, nType = TARGET.NPC }
 					item.nSel = tJustList[v.dwID] or 0
 					item.nForce = 1
+					item.nNpc = 0
+					if not GetNpcIntensity(v) ~= 4 then
+						item.nNpc = item.nNpc + 1
+					end
+					if IsNeutrality(me.dwID, v.dwID) then
+						item.nNpc = item.nNpc + 1
+					end
 					if HM_Locker.bPriorDis then
 						item.nDis = math.floor(nDis / 4)
 					end
@@ -326,7 +335,7 @@ _HM_Locker.SelectTarget = function()
 					if HM_Locker.bPriorParty then
 						item.nParty = 1
 					end
-					if item.nDis > LOWER_DIS then
+					if nDis > LOWER_DIS2 then
 						table.insert(tList2, item)
 					else
 						table.insert(tList, item)
@@ -355,6 +364,10 @@ _HM_Locker.SelectTarget = function()
 		-- face
 		if a.nFace and a.nFace ~= b.nFace then
 			return a.nFace < b.nFace
+		end
+		-- npc
+		if a.nNpc and b.nNpc and a.nNpc ~= b.nNpc then
+			return a.nNpc < b.nNpc
 		end
 		-- dist
 		if a.nDis and a.nDis ~= b.nDis then
