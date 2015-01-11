@@ -59,9 +59,12 @@ _HM_Camp.tBossGF = {
 
 -- is care npc/boss
 _HM_Camp.IsCareNpc = function(v)
-	if not v then return false end
+	if not v or not v.IsSelectable() or not v.CanSeeName() then
+		return false
+	end
 	-- only in 22, 25, 27, 30 (camp fight map)
-	local dwMapID = GetClientPlayer().GetScene().dwMapID
+	local me = GetClientPlayer()
+	local dwMapID = me.GetScene().dwMapID
 	if dwMapID == 22 or dwMapID == 25 or dwMapID == 27 or dwMapID == 30 then
 		local n = _HM_Camp.tBossGF[v.szName]
 		if n then
@@ -75,8 +78,7 @@ _HM_Camp.IsCareNpc = function(v)
 	end
 	-- 28001 - 30300, 31001 -36001
 	if (v.dwTemplateID < 28001 or v.dwTemplateID > 36001 or (v.dwTemplateID > 30300 and v.dwTemplateID < 31001))
-		and IsEnemy(GetClientPlayer().dwID, v.dwID) and v.IsSelectable()
-		and (HM_Camp.tBossList[v.szName] or v.nMaxLife >= 200000000)
+		and IsEnemy(me.dwID, v.dwID) and (HM_Camp.tBossList[v.szName] or v.nMaxLife >= 200000000)
 	then
 		return true
 	end
