@@ -279,6 +279,9 @@ _HM_Locker.SelectTarget = function()
 				if HM_Locker.bPriorAxis then
 					item.nFace = _HM_Locker.CalcFace(me, v)
 				end
+				if (item.nDis == 0 or (item.nHP and item.nHP < 2)) and item.nFace == 0 then
+					item.nForce = 0
+				end
 				if HM_Locker.bPriorParty then
 					if not HM_Locker.bSelectEnemy and IsParty(me.dwID, v.dwID) then
 						item.nParty = 0
