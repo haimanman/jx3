@@ -39,6 +39,7 @@ sync-page:
 lang: HM_0Base/lang/zhtw.jx3dat
 
 sync:
+	git push
 	git push --tags
 	#$(MAKE) sync-page
 
@@ -75,9 +76,9 @@ alpha: clean-check
 beta: clean-check
 	$(PHP) dev/pre_release.php beta $(VERSION)
 	$(MAKE) archive
-	$(MAKE) sync
+	#$(MAKE) sync
 
 stable: clean-check
 	$(PHP) dev/pre_release.php stable $(VERSION)
 	$(MAKE) archive
-	$(MAKE) sync
+	#$(MAKE) sync
