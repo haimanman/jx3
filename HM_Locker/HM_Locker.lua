@@ -454,12 +454,22 @@ _HM_Locker.PS.OnPanelActive = function(frame)
 	:Text(_L["Ally"]):Click(function(bChecked)
 		HM_Locker.bSelectEnemy = not bChecked
 	end):Pos_()
-	nX = ui:Append("Text", { x = nX + 20, y = 271, txt = _L["("] .. _L["Hotkey"] }):Click(HM.SetHotKey):Pos_()
-	ui:Append("Text", { x = nX , y = 271, txt = HM.GetHotKey("SmartTarget") .. _L[")"] })
+	nX = ui:Append("Text", { x = nX + 20, y = 271, txt = _L["("] }):Pos_()
+	nX = ui:Append("Text", { x = nX, y = 271, txt = _L["Hotkey"] }):Click(HM.SetHotKey):Pos_()
+	ui:Append("Text", { x = nX, y = 271, txt = " " .. HM.GetHotKey("SmartTarget") .. " " .. _L[")"] })
 	nX = ui:Append("WndCheckBox", { x = 10, y = 304, checked = HM_Locker.bLowerNPC })
 	:Text(_L["Lower select NPC"]):Click(function(bChecked)
 		HM_Locker.bLowerNPC = bChecked
 	end):Pos_()
+	nX = ui:Append("WndCheckBox", { x = nX + 20, y = 304, checked = HM_Locker.bPriorParty })
+	:Text(_L["Priority party player"]):Click(function(bChecked)
+		HM_Locker.bPriorParty = bChecked
+	end):Pos_()
+	nX = ui:Append("WndCheckBox", { x = nX + 20, y = 304, checked = HM_Locker.bSelectNeutrality })
+	:Text(_L["Select neutral NPC"]):Click(function(bChecked)
+		HM_Locker.bSelectNeutrality = bChecked
+	end):Pos_()
+	--[[
 	nX = ui:Append("Text", { x = nX + 20, y = 304, txt = _L["Lower select special force"] }):Pos_()
 	ui:Append("WndComboBox", { x= nX + 10, y = 304, txt = _L["School force"] }):AutoSize():Menu(function()
 		local m0 = {}
@@ -475,10 +485,6 @@ _HM_Locker.PS.OnPanelActive = function(frame)
 	:Text(_L["Priority less HP"]):Click(function(bChecked)
 		HM_Locker.bPriorHP = bChecked
 	end):Pos_()
-	ui:Append("WndCheckBox", { x = nX + 20, y = 360, checked = HM_Locker.bSelectNeutrality })
-	:Text(_L["Select neutral NPC"]):Click(function(bChecked)
-		HM_Locker.bSelectNeutrality = bChecked
-	end)
 	nX = ui:Append("WndCheckBox", { x = nX + 20, y = 332, checked = HM_Locker.bPriorDis })
 	:Text(_L["Priority closer"]):Click(function(bChecked)
 		HM_Locker.bPriorDis = bChecked
@@ -487,10 +493,7 @@ _HM_Locker.PS.OnPanelActive = function(frame)
 	:Text(_L["Priority less face angle"]):Click(function(bChecked)
 		HM_Locker.bPriorAxis = bChecked
 	end)
-	ui:Append("WndCheckBox", { x = 10, y = 360, checked = HM_Locker.bPriorParty })
-	:Text(_L["Priority party player"]):Click(function(bChecked)
-		HM_Locker.bPriorParty = bChecked
-	end)
+	--]]
 end
 
 -- player menu
