@@ -41,6 +41,7 @@ local _HM = {
 	tClass = { _L["General"], _L["Target"], _L["Battle"] },
 	tItem = { {}, {}, {} },
 	tMenu = {},
+	tMenuTrace = {},
 	tEvent = {},
 	tHotkey = {},
 	tDelayCall = {},
@@ -411,9 +412,24 @@ end
 -------------------------------------
 -- 系统 HOOK
 -------------------------------------
+-- get main menu
+_HM.GetPlugMenu = function()
+	return {
+		szOption = _HM.szTitle,
+		fnAction = _HM.TogglePanel,
+		bCheck = true,
+		bChecked = _HM.frame and _HM.frame:IsVisible(),
+		szIcon = 'ui/Image/UICommon/CommonPanel2.UITex',
+		nFrame = 105,
+		nMouseOverFrame = 106,
+		szLayer = "ICON_RIGHT",
+		fnClickIcon = _HM.TogglePanel
+	}
+end
+
 -- get player menu
 _HM.GetPlayerMenu = function()
-	local m0, n = {  szOption = _HM.szTitle }, 0
+	local m0, n = _HM.GetPlugMenu(), 0
 	table.insert(m0, { szOption = _L("Current version: v%s", HM.GetVersion()), fnDisable = function() return true end })
 	table.insert(m0, { bDevide = true })
 	-- append
@@ -466,9 +482,25 @@ _HM.GetPlayerMenu = function()
 	return { m0 }
 end
 
--- hook player menu
+-- get trace menu
+_HM.GetTraceMenu = function()
+	local m0, n = _HM.GetPlugMenu(), 0
+	table.insert(m0, { szOption = _L("Current version: v%s", HM.GetVersion()), fnDisable = function() return true end })
+	table.insert(m0, { bDevide = true })
+	for _, v in ipairs(_HM.tMenuTrace) do
+		if type(v) == "function" then
+			table.insert(m0, v())
+		else
+			table.insert(m0, v)
+		end
+	end
+	return { m0 }
+end
+
+-- hook player menu, trace menu
 _HM.HookPlayerMenu = function()
 	Player_AppendAddonMenu({ _HM.GetPlayerMenu })
+	TraceButton_AppendAddonMenu({ _HM.GetTraceMenu })
 end
 
 -- shield sound from mock bg_talk
@@ -620,6 +652,13 @@ end
 -- menu 		-- 要添加的的菜单项或返回菜单项的函数
 HM.AppendPlayerMenu = function(menu)
 	table.insert(_HM.tMenu, menu)
+end
+
+-- 登记小板手菜单项目
+-- (void) HM.AppendTraceMenu(table menu | func fnMenu)
+-- menu 		-- 要添加的的菜单项或返回菜单项的函数
+HM.AppendTraceMenu = function(menu)
+	table.insert(_HM.tMenuTrace, menu)
 end
 
 -- 在聊天栏输出一段黄字（只有当前用户可见）
@@ -2232,17 +2271,25 @@ function _HM.UI.Wnd:Click(fnAction)
 			self:Check(not self:Check())
 		else
 			wnd.OnCheckBoxCheck = function()
-				if wnd.group then
+				if this.group then
 					local uis = this:GetParent().___uis or {}
 					for _, ui in pairs(uis) do
 						if ui:Group() == this.group and ui:Name() ~= this:GetName() then
+							ui.bCanUnCheck = true
 							ui:Check(false)
+							ui.bCanUnCheck = nil
 						end
 					end
 				end
 				fnAction(true)
 			end
-			wnd.OnCheckBoxUncheck = function() fnAction(false) end
+			wnd.OnCheckBoxUncheck = function()
+				if this.group and not self.bCanUnCheck and string.sub(this.group, 1, 1) ~= "-" then
+					self:Check(true)
+				else
+					fnAction(false)
+				end
+			end
 		end
 	else
 		if not fnAction then

@@ -475,13 +475,13 @@ for k, v in ipairs(_HM_Marker.tMarkName) do
 end
 
 -- tracebutton menu
-TraceButton_AppendAddonMenu({ function()
-	return {{
+HM.AppendTraceMenu(function()
+	return {
 		szOption = _L["HM marker bar"], bCheck = true,
 		bChecked = HM_Marker.bShow,
 		fnAction = _HM_Marker.SwitchPanel
-	}}
-end })
+	}
+end)
 
 -- public api
 HM_Marker.SwitchPanel = _HM_Marker.SwitchPanel
