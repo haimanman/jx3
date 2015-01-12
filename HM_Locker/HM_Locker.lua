@@ -508,13 +508,19 @@ end
 ---------------------------------------------------------------------
 -- 注册事件、初始化
 ---------------------------------------------------------------------
-HM.RegisterEvent("SYNC_ROLE_DATA_END", _HM_Locker.UpdateSearchTarget)
+HM.RegisterEvent("SYNC_ROLE_DATA_END", function()
+	_HM_Locker.UpdateSearchTarget()
+	HM_Locker.bSelectEnemy = HM.IsDps()
+end)
 HM.RegisterEvent("UPDATE_SELECT_TARGET",  _HM_Locker.OnUpdateTarget)
 HM.RegisterEvent("NPC_LEAVE_SCENE", _HM_Locker.OnLeave)
 HM.RegisterEvent("PLAYER_LEAVE_SCENE", _HM_Locker.OnLeave)
 HM.RegisterEvent("NPC_ENTER_SCENE", _HM_Locker.OnEnter)
 HM.RegisterEvent("PLAYER_ENTER_SCENE", _HM_Locker.OnEnter)
 HM.RegisterEvent("PLAYER_TALK", _HM_Locker.OnPlayerTalk)
+HM.RegisterEvent("SKILL_MOUNT_KUNG_FU", function()
+	HM_Locker.bSelectEnemy = HM.IsDps()
+end)
 
 -- add to HM panel
 HM.RegisterPanel(_L["Lock/Select"], 3353, _L["Target"], _HM_Locker.PS)
