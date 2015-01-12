@@ -328,6 +328,7 @@ data = {
 	["Lower select NPC"] = "降低選擇 NPC 機率",
 	["Lower select special force"] = "降低選擇某些",
 	["Priority party player"] = "優先選擇隊友",
+	["Select neutral NPC"] = "允許選中立 NPC",
 	-- HM_Marker.lua --
 	["Cloud"] = "云",
 	["Sword"] = "劍",

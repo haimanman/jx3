@@ -9,6 +9,7 @@ HM_Locker = {
 	tSearchTarget = { OnlyPlayer = false, OnlyNearDis = true, MidAxisFirst = false, Weakness = false },
 	------------
 	bSelectEnemy = true,
+	bSelectNeutrality = false,
 	bLowerNPC = true,
 	tLowerForce = { [21] = true },
 	bPriorHP = true,
@@ -307,7 +308,7 @@ _HM_Locker.SelectTarget = function()
 				-- skip current target
 			elseif (HM_Locker.bSelectEnemy and IsEnemy(me.dwID, v.dwID))
 				or (not HM_Locker.bSelectEnemy and IsAlly(me.dwID, v.dwID))
-				or IsNeutrality(me.dwID, v.dwID)
+				or (HM_Locker.bSelectNeutrality and IsNeutrality(me.dwID, v.dwID))
 			then
 				local nDis = HM.GetDistance(v)
 				if  nDis > LOWER_DIS2 and not IsEmpty(tList) then
@@ -474,6 +475,10 @@ _HM_Locker.PS.OnPanelActive = function(frame)
 	:Text(_L["Priority less HP"]):Click(function(bChecked)
 		HM_Locker.bPriorHP = bChecked
 	end):Pos_()
+	ui:Append("WndCheckBox", { x = nX + 20, y = 360, checked = HM_Locker.bSelectNeutrality })
+	:Text(_L["Select neutral NPC"]):Click(function(bChecked)
+		HM_Locker.bSelectNeutrality = bChecked
+	end)
 	nX = ui:Append("WndCheckBox", { x = nX + 20, y = 332, checked = HM_Locker.bPriorDis })
 	:Text(_L["Priority closer"]):Click(function(bChecked)
 		HM_Locker.bPriorDis = bChecked
