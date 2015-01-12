@@ -2329,13 +2329,13 @@ HM.AddHotKey("SelFocus", _L["Loop to select focus"],  _HM_TargetList.SelFocus)
 HM.AddHotKey("ShowTL", _L["Enable focus targetlist"],  _HM_TargetList.Switch)
 
 -- tracebutton menu
-TraceButton_AppendAddonMenu({ function()
-	return {{
+HM.AppendTraceMenu(function()
+	return {
 		szOption = _L["HM, focus targetlist"], bCheck = true,
 		bChecked = HM_TargetList.bShow,
 		fnAction = _HM_TargetList.Switch
-	}}
-end })
+	}
+end)
 
 -- shared with HM_Marker
 HM_TargetList.AddFocus = _HM_TargetList.AddFocus
