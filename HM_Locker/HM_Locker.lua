@@ -11,7 +11,7 @@ HM_Locker = {
 	bSelectEnemy = true,
 	bSelectNeutrality = false,
 	bLowerNPC = true,
-	tLowerForce = { [21] = true },
+	tLowerForce = {},
 	bPriorHP = true,
 	bPriorDis = true,
 	bPriorAxis = true,
@@ -192,6 +192,8 @@ _HM_Locker.OnPlayerTalk = function()
 					break
 				end
 			end
+		elseif #t == 1 and t[1].type == "text" and t[1].text == "66" and arg3 == me.szName then
+			HM_Locker.tLowerForce[21] = true
 		end
 	end
 end
@@ -267,7 +269,7 @@ _HM_Locker.SelectTarget = function()
 			else
 				local item = { dwID = v.dwID, nType = TARGET.PLAYER }
 				item.nSel = tJustList[v.dwID] or 0
-				if HM_Locker.tLowerForce[v.dwForceID] then
+				if HM_Locker.bSelectEnemy and HM_Locker.tLowerForce[v.dwForceID] then
 					item.nForce = 1
 				else
 					item.nForce = 0
