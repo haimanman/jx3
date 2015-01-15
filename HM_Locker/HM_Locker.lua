@@ -165,6 +165,8 @@ _HM_Locker.OnPlayerTalk = function()
 					break
 				end
 			end
+		elseif #t == 1 and t[1].type == "text" and t[1].text == "66" and arg3 == me.szName then
+			HM_Locker.tLowerForce[21] = true
 		end
 	end
 end
@@ -243,7 +245,7 @@ _HM_Locker.SearchTarget = function()
 			else
 				local item = { dwID = v.dwID, nType = TARGET.PLAYER }
 				item.nSel = tJustList[v.dwID] or 0
-				if HM_Locker.bSelectEnemy and (v.dwForceID == 21 or HM_Locker.tLowerForce[v.dwForceID]) then
+				if HM_Locker.bSelectEnemy and HM_Locker.tLowerForce[v.dwForceID] then
 					item.nForce = 1
 				else
 					item.nForce = 0
@@ -429,6 +431,7 @@ _HM_Locker.PS.OnPanelActive = function(frame)
 	nX = ui:Append("WndRadioBox", { x = 10, y = 212, checked = HM_Locker.bSelectEnemy, group = "tabs" })
 	:Text(_L["Enemy"]):Click(function(bChecked)
 		HM_Locker.bSelectEnemy = bChecked
+		ui:Fetch("Check_Party"):Enable(not bChecked)
 	end):Pos_()
 	nX = ui:Append("WndRadioBox", { x = nX + 20, y = 212, checked = not HM_Locker.bSelectEnemy, group = "tabs" })
 	:Text(_L["Ally"]):Click(function(bChecked)
@@ -442,8 +445,8 @@ _HM_Locker.PS.OnPanelActive = function(frame)
 	:Text(_L["Auto adjust by mounted kungfu"]):Click(function(bChecked)
 		HM_Locker.bSelectKungfu = bChecked
 	end)
-	nX = ui:Append("WndCheckBox", { x = nX + 20, y = 240, checked = HM_Locker.bPriorParty })
-	:Text(_L["Priority party player"]):Click(function(bChecked)
+	nX = ui:Append("WndCheckBox", "Check_Party", { x = nX + 20, y = 240, checked = HM_Locker.bPriorParty })
+	:Text(_L["Priority party player"]):Enable(not HM_Locker.bSelectEnemy):Click(function(bChecked)
 		HM_Locker.bPriorParty = bChecked
 	end):Pos_()
 	nX = ui:Append("WndCheckBox", { x = nX + 20, y = 240, checked = HM_Locker.bSelectNeutrality })
