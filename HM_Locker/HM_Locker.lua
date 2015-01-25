@@ -231,6 +231,7 @@ _HM_Locker.SearchTarget = function()
 	nJustFrame = nFrame
 	local me = GetClientPlayer()
 	local _, dwTarget = me.GetTarget()
+	local bBattle = IsInBattleField()
 	-- load player
 	local tList, tList2 = {}, {}
 	for _, v in ipairs(HM.GetAllPlayer()) do
@@ -280,7 +281,7 @@ _HM_Locker.SearchTarget = function()
 	local bEmptyPlayer = IsEmpty(tList)
 	local bEmptyPlayer2 = IsEmpty(tList2)
 	-- load npc
-	if not HM_Locker.bLowerNPC or bEmptyPlayer then
+	if not HM_Locker.bLowerNPC or bEmptyPlayer or bBattle then
 		for _, v in ipairs(HM.GetAllNpc()) do
 			if v.dwID == dwTarget or v.nMoveState == MOVE_STATE.ON_DEATH or not v.IsSelectable() then
 				-- skip current target
@@ -296,9 +297,21 @@ _HM_Locker.SearchTarget = function()
 					item.nSel = tJustList[v.dwID] or 0
 					item.nForce = 1
 					item.nNpc = 0
-					if not GetNpcIntensity(v) ~= 4 then
+					if GetNpcIntensity(v) ~= 4 then
 						item.nNpc = item.nNpc + 1
 					end
+					------
+					-- 战场内的 boss 与玩家具有同等优先级
+					-- 474=恶人谷密探，475=浩气盟密探，476=天一教尸将，6962/6963=丝绸的镖车
+					if bBattle and (v.dwTemplateID == 474 or v.dwTemplateID == 475 or v.dwTemplateID == 476
+						or v.dwTemplateID == 6962 or v.dwTemplateID == 6963)
+					then
+						item.nRealType = TARGET.NPC
+						item.nType = TARGET.PLAYER
+						item.nForce = 0
+						item.nNpc = 0
+					end
+					------
 					if IsNeutrality(me.dwID, v.dwID) then
 						item.nNpc = item.nNpc + 1
 					end
@@ -366,7 +379,7 @@ _HM_Locker.SearchTarget = function()
 		-- select firt target
 		local dwTarget = tList[1].dwID
 		tJustList[dwTarget] = 1
-		SetTarget(tList[1].nType, dwTarget)
+		SetTarget(tList[1].nRealType or tList[1].nType, dwTarget)
 	end
 end
 
