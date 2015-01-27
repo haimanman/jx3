@@ -166,7 +166,7 @@ _HM_Locker.OnPlayerTalk = function()
 				end
 			end
 		elseif #t == 1 and t[1].type == "text" and t[1].text == "66" and arg3 == me.szName then
-			HM_Locker.tLowerForce[21] = true
+			HM_Locker.tLowerForce[21] = not HM_Locker.tLowerForce[21]
 		end
 	end
 end
@@ -360,6 +360,10 @@ _HM_Locker.SearchTarget = function()
 		-- npc
 		if a.nNpc and b.nNpc and a.nNpc ~= b.nNpc then
 			return a.nNpc < b.nNpc
+		end
+		-- near(<16, hp dis >= 40%)
+		if a.nDis and a.nHp and a.nDis < 4 and b.nDis < 4 and math.abs(a.nDis - b.nDis) < 2 and math.abs(a.nHp - b.nHp) >= 2 then
+			return a.nHp < b.nHp
 		end
 		-- dist
 		if a.nDis and a.nDis ~= b.nDis then
