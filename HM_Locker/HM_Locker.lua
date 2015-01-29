@@ -7,6 +7,7 @@ HM_Locker = {
 	bLockFight = true,	-- 战斗中点地面不丢目标
 	bWhisperSel = true,	-- 密聊快速选择，密聊：11 速度选择此人（若在身边）
 	------------
+	bSmartTab = "nil",	-- 智能 TAB（默认关闭）
 	bSelectEnemy = true,
 	bSelectKungfu = true,
 	bSelectNeutrality = false,
@@ -440,6 +441,7 @@ _HM_Locker.PS.OnPanelActive = function(frame)
 	-- tab enhance
 	ui:Append("Text", { txt = _L["Enhanced target search (used to replace TAB)"], x = 0, y = 156, font = 27 })
 	nX = ui:Append("WndCheckBox", { x = 10, y = 184, txt = _L["Enable smart tab (but unable exclude invisible, "], checked = _HM_Locker.EnableSmartTab() }):Click(function(bChecked)
+		HM_Locker.bSmartTab = bChecked
 		_HM_Locker.EnableSmartTab(bChecked)
 		HM.OpenPanel(_L["Lock/Select"])	-- update hotkey
 	end):Pos_()
@@ -479,6 +481,15 @@ HM.RegisterEvent("SYNC_ROLE_DATA_END", function()
 	if HM_Locker.bSelectKungfu then
 		HM_Locker.bSelectEnemy = HM.IsDps()
 	end
+end)
+HM.RegisterEvent("LOADING_END", function()
+	HM.DelayCall(500, function()
+		if type(HM_Locker.bSmartTab) == "boolean" then
+			_HM_Locker.EnableSmartTab(HM_Locker.bSmartTab)
+		else
+			HM_Locker.bSmartTab = _HM_Locker.EnableSmartTab()
+		end
+	end)
 end)
 HM.RegisterEvent("UPDATE_SELECT_TARGET",  _HM_Locker.OnUpdateTarget)
 HM.RegisterEvent("NPC_LEAVE_SCENE", _HM_Locker.OnLeave)
