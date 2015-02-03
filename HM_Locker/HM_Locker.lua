@@ -213,7 +213,7 @@ _HM_Locker.CalcFace = function(me, tar, nDis)
 	nAngle = math.abs(nAngle)
 	if nAngle > 85 then
 		return 2
-	elseif nDis < 16 and nAngle < 40 then
+	elseif nDis < 11 and nAngle < 33 then
 		return 0
 	else
 		return 1
