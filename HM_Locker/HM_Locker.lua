@@ -181,6 +181,19 @@ _HM_Locker.AddLocker(_HM_Locker.CheckLockFight)
 -- 2. 降低某些职业的玩家
 -- 3. 综合优先血量、面向、距离
 -------------------------------------
+_HM_Locker.IsFarDps = function(me)
+	-- TC,MJ,CJ,GB
+	if me.dwForceID == 0 or me.dwForceID == 1 or me.dwForceID == 3 or me.dwForceID == 8 or me.dwForceID == 10 then
+		return false
+	end
+	-- JC
+	local mnt = me.GetKungfuMount()
+	if mnt and mnt.dwSkillID == 10015 then
+		return false
+	end
+	return HM.IsDps(me)
+end
+
 _HM_Locker.CalcFace = function(me, tar, nDis)
 	local nX = tar.nX - me.nX
 	local nY = tar.nY - me.nY
@@ -213,7 +226,7 @@ _HM_Locker.CalcFace = function(me, tar, nDis)
 	nAngle = math.abs(nAngle)
 	if nAngle > 85 then
 		return 2
-	elseif nDis < 11 and nAngle < 33 then
+	elseif nAngle < 30 and (nDis < 6 or (nDis < 15 and _HM_Locker.IsFarDps(me))) then
 		return 0
 	else
 		return 1
@@ -259,7 +272,15 @@ _HM_Locker.SearchTarget = function()
 					item.nHP = math.floor(10 * v.nCurrentLife / math.max(1, v.nMaxLife))
 				end
 				if HM_Locker.bPriorAxis then
-					item.nFace = _HM_Locker.CalcFace(me, v, nDis)
+					if v.szName == _L["HMM5"] then
+						if HM_Locker.bSelectEnemy then
+							item.nFace = 2
+						else
+							item.nFace = 0
+						end
+					else
+						item.nFace = _HM_Locker.CalcFace(me, v, nDis)
+					end
 				end
 				if (item.nDis == 0 or (item.nHP and item.nHP < 4)) and item.nFace == 0 then
 					item.nForce = 0
@@ -363,7 +384,7 @@ _HM_Locker.SearchTarget = function()
 			return a.nNpc < b.nNpc
 		end
 		-- near(<16, hp dis >= 40%)
-		if a.nDis and a.nHp and a.nDis < 4 and b.nDis < 4 and math.abs(a.nDis - b.nDis) < 2 and math.abs(a.nHp - b.nHp) >= 2 then
+		if a.nDis and a.nHp and a.nDis < 4 and b.nDis < 4 and math.abs(a.nDis - b.nDis) < 2 and math.abs(a.nHp - b.nHp) >= 3 then
 			return a.nHp < b.nHp
 		end
 		-- dist
