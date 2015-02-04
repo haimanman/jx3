@@ -275,8 +275,10 @@ _HM_Locker.SearchTarget = function()
 					if v.szName == _L["HMM5"] then
 						if HM_Locker.bSelectEnemy then
 							item.nFace = 2
-						else
+						elseif nDis < 15 then
 							item.nFace = 0
+						else
+							item.nFace = 1
 						end
 					else
 						item.nFace = _HM_Locker.CalcFace(me, v, nDis)
