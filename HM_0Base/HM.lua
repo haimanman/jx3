@@ -927,6 +927,10 @@ HM.Talk = function(nChannel, szText, bNoEmotion, bSaveDeny)
 	elseif nChannel == PLAYER_TALK_CHANNEL.RAID and me.GetScene().nType == MAP_TYPE.BATTLE_FIELD then
 		nChannel = PLAYER_TALK_CHANNEL.BATTLE_FIELD
 	end
+	-- filter non-party talk
+	if (nChannel == PLAYER_TALK_CHANNEL.RAID or nChannel == PLAYER_TALK_CHANNEL.TEAM) and not me.IsInParty() then
+		return
+	end
 	-- say body
 	local tSay = nil
 	if type(szText) == "table" then

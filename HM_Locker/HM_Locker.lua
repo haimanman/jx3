@@ -9,7 +9,6 @@ HM_Locker = {
 	------------
 	bSmartTab = "nil",	-- 智能 TAB（默认关闭）
 	bSelectEnemy = true,
-	bSelectKungfu = true,
 	bSelectNeutrality = false,
 	bLowerNPC = true,
 	tLowerForce = {},
@@ -464,7 +463,7 @@ _HM_Locker.PS.OnPanelActive = function(frame)
 	-- tab enhance
 	ui:Append("Text", { txt = _L["Enhanced target search (used to replace TAB)"], x = 0, y = 156, font = 27 })
 	nX = ui:Append("WndCheckBox", { x = 10, y = 184, txt = _L["Enable smart tab (but unable exclude invisible, "], checked = _HM_Locker.EnableSmartTab() }):Click(function(bChecked)
-		HM_Locker.bSmartTab = bChecked
+		HM_Locker.bSmartTab = bChecked or "nil"
 		_HM_Locker.EnableSmartTab(bChecked)
 		HM.OpenPanel(_L["Lock/Select"])	-- update hotkey
 	end):Pos_()
@@ -483,10 +482,6 @@ _HM_Locker.PS.OnPanelActive = function(frame)
 	:Text(_L["Lower select NPC"]):Click(function(bChecked)
 		HM_Locker.bLowerNPC = bChecked
 	end):Pos_()
-	ui:Append("WndCheckBox", { x = nX + 20, y = 212, checked = HM_Locker.bSelectKungfu })
-	:Text(_L["Auto adjust by mounted kungfu"]):Click(function(bChecked)
-		HM_Locker.bSelectKungfu = bChecked
-	end)
 	nX = ui:Append("WndCheckBox", "Check_Party", { x = nX + 20, y = 240, checked = HM_Locker.bPriorParty })
 	:Text(_L["Priority party player"]):Enable(not HM_Locker.bSelectEnemy):Click(function(bChecked)
 		HM_Locker.bPriorParty = bChecked
@@ -500,11 +495,6 @@ end
 ---------------------------------------------------------------------
 -- 注册事件、初始化
 ---------------------------------------------------------------------
-HM.RegisterEvent("SYNC_ROLE_DATA_END", function()
-	if HM_Locker.bSelectKungfu then
-		HM_Locker.bSelectEnemy = HM.IsDps()
-	end
-end)
 HM.RegisterEvent("LOADING_END", function()
 	HM.DelayCall(500, function()
 		if type(HM_Locker.bSmartTab) == "boolean" then
@@ -520,11 +510,6 @@ HM.RegisterEvent("PLAYER_LEAVE_SCENE", _HM_Locker.OnLeave)
 HM.RegisterEvent("NPC_ENTER_SCENE", _HM_Locker.OnEnter)
 HM.RegisterEvent("PLAYER_ENTER_SCENE", _HM_Locker.OnEnter)
 HM.RegisterEvent("PLAYER_TALK", _HM_Locker.OnPlayerTalk)
-HM.RegisterEvent("SKILL_MOUNT_KUNG_FU", function()
-	if HM_Locker.bSelectKungfu then
-		HM_Locker.bSelectEnemy = HM.IsDps()
-	end
-end)
 
 -- add to HM panel
 HM.RegisterPanel(_L["Lock/Select"], 3353, _L["Target"], _HM_Locker.PS)
