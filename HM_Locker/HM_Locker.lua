@@ -7,7 +7,6 @@ HM_Locker = {
 	bLockFight = true,	-- 战斗中点地面不丢目标
 	bWhisperSel = true,	-- 密聊快速选择，密聊：11 速度选择此人（若在身边）
 	------------
-	bSmartTab = "nil",	-- 智能 TAB（默认关闭）
 	bSelectEnemy = true,
 	bSelectNeutrality = false,
 	bLowerNPC = true,
@@ -16,6 +15,8 @@ HM_Locker = {
 	bPriorDis = true,
 	bPriorAxis = true,
 	bPriorParty = true,
+	--------
+	tSearchTarget = { OnlyPlayer = false, OnlyNearDis = true, MidAxisFirst = false, Weakness = false },
 }
 HM.RegisterCustomData("HM_Locker")
 
@@ -94,6 +95,33 @@ _HM_Locker.CheckLockFight = function(dwCurID, dwLastID)
 				return true
 			end
 		end
+	end
+end
+
+-- update enemy search options
+_HM_Locker.UpdateSearchTarget = function()
+	if not SearchTarget_IsOldVerion() then
+		for k, v in pairs(HM_Locker.tSearchTarget) do
+			SearchTarget_SetOtherSettting(k, v, "Enmey")
+			SearchTarget_SetOtherSettting(k, v, "Ally")
+		end
+	end
+end
+
+-- only search player
+_HM_Locker.SearchOnlyPlayer = function(bEnable)
+	if bEnable == nil then
+		bEnable = not  HM_Locker.tSearchTarget.OnlyPlayer
+		if _HM_Locker.OnlyPlayerBox then
+			return _HM_Locker.OnlyPlayerBox:Check(bEnable)
+		end
+	end
+	HM_Locker.tSearchTarget.OnlyPlayer = bEnable
+	_HM_Locker.UpdateSearchTarget()
+	if bEnable then
+		HM.Sysmsg(_L["Enable TAB only select player"])
+	else
+		HM.Sysmsg(_L["Disable TAB only select player"])
 	end
 end
 
@@ -411,6 +439,7 @@ _HM_Locker.SearchTarget = function()
 end
 
 -- 是否启用了插件 Tab
+--[[
 local KEY_TAB = 9
 _HM_Locker.EnableSmartTab = function(bEnable)
 	if bEnable == nil then
@@ -434,11 +463,17 @@ _HM_Locker.EnableSmartTab = function(bEnable)
 		end
 	end
 end
+--]]
 
 -------------------------------------
 -- 设置界面
 -------------------------------------
 _HM_Locker.PS = {}
+
+-- deinit panel
+_HM_Locker.PS.OnPanelDeactive = function(frame)
+	_HM_Locker.OnlyPlayerBox = nil
+end
 
 -- init panel
 _HM_Locker.PS.OnPanelActive = function(frame)
@@ -461,49 +496,69 @@ _HM_Locker.PS.OnPanelActive = function(frame)
 		HM_Locker.bWhisperSel = bChecked
 	end)
 	-- tab enhance
-	ui:Append("Text", { txt = _L["Enhanced target search (used to replace TAB)"], x = 0, y = 156, font = 27 })
-	nX = ui:Append("WndCheckBox", { x = 10, y = 184, txt = _L["Enable smart tab (but unable exclude invisible, "], checked = _HM_Locker.EnableSmartTab() }):Click(function(bChecked)
-		HM_Locker.bSmartTab = bChecked or "nil"
-		_HM_Locker.EnableSmartTab(bChecked)
-		HM.OpenPanel(_L["Lock/Select"])	-- update hotkey
-	end):Pos_()
+	local bNew, tOption = not SearchTarget_IsOldVerion(), HM_Locker.tSearchTarget
+	ui:Append("Text", { txt = _L["Offical TAB enhancement (must enable new target policy)"], x = 0, y = 156, font = 27 })
+	_HM_Locker.OnlyPlayerBox = ui:Append("WndCheckBox", { x = 10, y = 184, enable = bNew, checked = tOption.OnlyPlayer })
+	nX = _HM_Locker.OnlyPlayerBox:Text(_L["Player only (not NPC, "]):Click(_HM_Locker.SearchOnlyPlayer):Pos_()
 	nX = ui:Append("Text", { x = nX, y = 184, txt = _L["Hotkey"] }):Click(HM.SetHotKey):Pos_()
-	ui:Append("Text", { x = nX , y = 184, txt = HM.GetHotKey("SmartTarget") .._L[") "] })
-	nX = ui:Append("WndRadioBox", { x = 10, y = 212, checked = HM_Locker.bSelectEnemy, group = "tabs" })
+	ui:Append("Text", { x = nX , y = 184, txt = HM.GetHotKey("OnlyPlayer") .._L[") "] })
+	nX = ui:Append("WndRadioBox", { x = 10, y = 212, checked = tOption.Weakness, group = "-tab" })
+	:Text(_L["Priority less HP"]):Enable(bNew):Click(function(bChecked)
+		tOption.Weakness = bChecked
+		_HM_Locker.UpdateSearchTarget()
+	end):Pos_()
+	nX = ui:Append("WndRadioBox", { x = nX + 20, y = 212, checked = tOption.OnlyNearDis, group = "-tab" })
+	:Text(_L["Priority closer"]):Enable(bNew):Click(function(bChecked)
+		tOption.OnlyNearDis = bChecked
+		_HM_Locker.UpdateSearchTarget()
+	end):Pos_()
+	nX = ui:Append("WndRadioBox", { x = nX + 20, y = 212, checked = tOption.MidAxisFirst, group = "-tab" })
+	:Text(_L["Priority less face angle"]):Enable(bNew):Click(function(bChecked)
+		tOption.MidAxisFirst = bChecked
+		_HM_Locker.UpdateSearchTarget()
+	end):Pos_()
+	-- HM smart tab
+	ui:Append("Text", { txt = _L["HM target search (used to replace TAB)"], x = 0, y = 248, font = 27 })
+	nX = ui:Append("WndRadioBox", { x = 10, y = 276, checked = HM_Locker.bSelectEnemy, group = "tabs" })
 	:Text(_L["Enemy"]):Click(function(bChecked)
 		HM_Locker.bSelectEnemy = bChecked
 		ui:Fetch("Check_Party"):Enable(not bChecked)
 	end):Pos_()
-	nX = ui:Append("WndRadioBox", { x = nX + 20, y = 212, checked = not HM_Locker.bSelectEnemy, group = "tabs" })
+	nX = ui:Append("WndRadioBox", { x = nX + 10, y = 276, checked = not HM_Locker.bSelectEnemy, group = "tabs" })
 	:Text(_L["Ally"]):Click(function(bChecked)
 		HM_Locker.bSelectEnemy = not bChecked
 	end):Pos_()
-	nX = ui:Append("WndCheckBox", { x = 10, y = 240, checked = HM_Locker.bLowerNPC })
+	nX = ui:Append("Text", { x = nX + 20, y = 275, txt = _L["To use smart TAB, please set "] }):Pos_()
+	nX = ui:Append("Text", { x = nX, y = 275, txt = _L["Hotkey"] }):Click(HM.SetHotKey):Pos_()
+	ui:Append("Text", { x = nX , y = 275, txt = HM.GetHotKey("SmartTarget", true) })
+	nX = ui:Append("WndCheckBox", { x = 10, y = 304, checked = HM_Locker.bLowerNPC })
 	:Text(_L["Lower select NPC"]):Click(function(bChecked)
 		HM_Locker.bLowerNPC = bChecked
 	end):Pos_()
-	nX = ui:Append("WndCheckBox", "Check_Party", { x = nX + 20, y = 240, checked = HM_Locker.bPriorParty })
+	nX = ui:Append("WndCheckBox", "Check_Party", { x = nX + 20, y = 304, checked = HM_Locker.bPriorParty })
 	:Text(_L["Priority party player"]):Enable(not HM_Locker.bSelectEnemy):Click(function(bChecked)
 		HM_Locker.bPriorParty = bChecked
 	end):Pos_()
-	nX = ui:Append("WndCheckBox", { x = nX + 20, y = 240, checked = HM_Locker.bSelectNeutrality })
+	nX = ui:Append("WndCheckBox", { x = nX + 20, y = 304, checked = HM_Locker.bSelectNeutrality })
 	:Text(_L["Select neutral NPC"]):Click(function(bChecked)
 		HM_Locker.bSelectNeutrality = bChecked
 	end):Pos_()
 end
 
+-- player menu
+_HM_Locker.PS.OnPlayerMenu = function()
+	return {
+		szOption = _L["Enable TAB select player only"] .. HM.GetHotKey("OnlyPlayer", true),
+		bCheck = true, bChecked = HM_Locker.tSearchTarget.OnlyPlayer,
+		fnDisable = SearchTarget_IsOldVerion,
+		fnAction = function(d, b) _HM_Locker.SearchOnlyPlayer(b) end
+	}
+end
+
 ---------------------------------------------------------------------
 -- 注册事件、初始化
 ---------------------------------------------------------------------
-HM.RegisterEvent("LOADING_END", function()
-	HM.DelayCall(500, function()
-		if type(HM_Locker.bSmartTab) == "boolean" then
-			_HM_Locker.EnableSmartTab(HM_Locker.bSmartTab)
-		else
-			HM_Locker.bSmartTab = _HM_Locker.EnableSmartTab()
-		end
-	end)
-end)
+HM.RegisterEvent("SYNC_ROLE_DATA_END", _HM_Locker.UpdateSearchTarget)
 HM.RegisterEvent("UPDATE_SELECT_TARGET",  _HM_Locker.OnUpdateTarget)
 HM.RegisterEvent("NPC_LEAVE_SCENE", _HM_Locker.OnLeave)
 HM.RegisterEvent("PLAYER_LEAVE_SCENE", _HM_Locker.OnLeave)
@@ -516,6 +571,7 @@ HM.RegisterPanel(_L["Lock/Select"], 3353, _L["Target"], _HM_Locker.PS)
 
 -- hotkey
 HM.AddHotKey("SmartTarget", _L["Smart select target"], _HM_Locker.SearchTarget)
+HM.AddHotKey("OnlyPlayer", _L["TAB player only"],  _HM_Locker.SearchOnlyPlayer)
 
 -- public api
 HM_Locker.AddLocker = _HM_Locker.AddLocker
