@@ -124,7 +124,7 @@ end
 
 _HM_Taoguan.OnNpcEnter = function()
 	local npc = GetNpc(arg0)
-	if not npc or npc.szName ~= _HM_Taoguan.szName then
+	if not npc or npc.dwTemplateID ~= 6820 then
 		return
 	end
 	_HM_Taoguan.tListed[arg0] = true
@@ -285,7 +285,7 @@ _HM_Taoguan.PS.OnPanelActive = function(frame)
 	ui:Append("Text", { x = nX + 10, y = 140, txt = "（打勾的不捡，若还捡请关盒子的自动拾取）" })
 	-- begin
 	nX = ui:Append("WndButton", { x = 10, y = 176, txt = "开始/停止砸罐" }):AutoSize():Click(_HM_Taoguan.Switch):Pos_()
-	ui:Append("Text", { x = nX + 10, y = 176, txt = "（宏命令开关：/" .. _HM_Taoguan.szName .. _L[") "] })
+	--ui:Append("Text", { x = nX + 10, y = 176, txt = "（宏命令开关：/" .. _HM_Taoguan.szName .. _L[") "] })
 end
 
 ---------------------------------------------------------------------
