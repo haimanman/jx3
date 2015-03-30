@@ -168,7 +168,7 @@ _HM_TargetFace.PS.OnPanelActive = function(frame)
 	end)
 	nX = ui:Append("Text", { txt = _L["The sector radius"], x = 37, y = 112 }):Pos_()
 	ui:Append("WndTrackBar", { x = nX, y = 116, txt = _L[" feet"] })
-	:Range(1, 26, 25):Value(t.nSectorRadius):Change(function(nVal)
+	:Range(1, 26, 26):Value(t.nSectorRadius):Change(function(nVal)
 		t.nSectorRadius = nVal
 		_HM_TargetFace.bReRender = true
 	end)
@@ -207,7 +207,7 @@ _HM_TargetFace.PS.OnPanelActive = function(frame)
 	end)
 	nX = ui:Append("Text", { txt = _L["The foot shape radius"], x = 37, y = 228 }):Pos_()
 	ui:Append("WndTrackBar", { x = nX, y = 232, txt = "/2" .. _L[" feet"] })
-	:Range(1, 26, 25):Value(t.nShapeRadius):Change(function(nVal)
+	:Range(1, 26, 26):Value(t.nShapeRadius):Change(function(nVal)
 		t.nShapeRadius = nVal
 		_HM_TargetFace.bReRender = true
 	end)
