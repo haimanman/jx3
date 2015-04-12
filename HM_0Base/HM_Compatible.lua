@@ -664,7 +664,7 @@ function OutputNpcTip(dwNpcID, Rect)
 
 	--------------Ãû×Ö-------------------------
 
-	szTip = szTip.."<Text>text="..EncodeComponentsString(npc.szName.."\n").." font=80".." r="..r.." g="..g.." b="..b.." </text>"
+	szTip = szTip.."<Text>text="..EncodeComponentsString(HM.GetTargetName(npc).."\n").." font=80".." r="..r.." g="..g.." b="..b.." </text>"
 
 	-------------³ÆºÅ----------------------------
 	if npc.szTitle ~= "" then
