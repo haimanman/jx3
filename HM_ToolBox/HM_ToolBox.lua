@@ -1118,7 +1118,7 @@ end
 _HM_ToolBox.OnChatPanelOpen = function(i)
 	local h = Station.Lookup("Lowest2/ChatPanel" .. i .. "/Wnd_Message", "Handle_Message")
 	local ttl = Station.Lookup("Lowest2/ChatPanel" .. i .. "/CheckBox_Title", "Text_TitleName")
-	if h and (not ttl or ttl:GetText() ~= g_tStrings.CHANNEL_MENTOR) then
+	if h and (not ttl or ttl:GetText() ~= g_tStrings.CHANNEL_MENTOR) and not h.__AppendItemFromString then
 		h.__AppendItemFromString = h.__AppendItemFromString or h.AppendItemFromString
 		h.AppendItemFromString = _HM_ToolBox.AppendChatItem
 		if ttl and ttl:GetText() == g_tStrings.PRIVATE_TALK then
