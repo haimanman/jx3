@@ -21,7 +21,7 @@ HM_TargetList = {
 	nListMode = 6,			-- 列表模式
 	bListWhite = true,		-- 白色模式
 	bListImage = true,		-- 显示血条背景
-	tShowMode = {			-- 查看模式	
+	tShowMode = {			-- 查看模式
 		bLevel = false,			-- 显示等级
 		bDistance = false,	-- 显示距离
 		bForce = true,			-- 显示玩家职业
@@ -1444,7 +1444,7 @@ HM_TargetList.OnFrameCreate = function()
 	this:RegisterEvent("PLAYER_LEAVE_SCENE")
 	this:RegisterEvent("NPC_ENTER_SCENE")
 	this:RegisterEvent("NPC_LEAVE_SCENE")
-	this:RegisterEvent("UPDATE_SELECT_TARGET")
+	this:RegisterEvent("TARGET_CHANGE")
 	this:RegisterEvent("UI_SCALED")
 	-- adjust color of acct
 	this:Lookup("Wnd_Account", "Text_Enemy"):SetFontColor(255, 0, 0)
@@ -1521,7 +1521,7 @@ end
 HM_TargetList.OnEvent = function(event)
 	if event == "UI_SCALED" then
 		_HM_TargetList.UpdateAnchor()
-	elseif event == "UPDATE_SELECT_TARGET" then
+	elseif event == "TARGET_CHANGE" then
 		for _, v in ipairs({ "Target", "TargetTarget" }) do
 			local frm = Station.Lookup("Normal/" .. v)
 			if frm then
@@ -2024,7 +2024,7 @@ HM_SingleFocus.OnFrameCreate = function()
 	this.focus:SetRelPos(0, 0)
 	this.focus:Show()
 	local w, h = this.focus:GetSize()
-	local nS = 30	
+	local nS = 30
 	handle:AppendItemFromString("<handle>name=\"Handle_Buff\" handletype=3 x=0 y=" .. h .." w=" .. w .. " h=" .. nS .. " </handle>")
 	handle:AppendItemFromString("<handle>name=\"Handle_CD\" handletype=3 x=0 y=" .. (h + nS + 2) .. " w=" .. w .. "h=" .. nS .. " </handle>")
 	handle:SetSize(w, h + nS + nS + 2)
@@ -2076,7 +2076,7 @@ HM_SingleFocus.OnFrameBreathe = function()
 				hList.nIndex = 0
 				for _, v in ipairs(mBuff) do
 					local szTime, nFont = HM_TargetMon.GetLeftTime(v.buff.nEndFrame, true)
-					local box = HM_SingleFocus.GetListBox(hList, nS)					
+					local box = HM_SingleFocus.GetListBox(hList, nS)
 					box:SetObject(UI_OBJECT_NOT_NEED_KNOWN, v.buff.dwID)
 					box:SetObjectIcon(Table_GetBuffIconID(v.buff.dwID, v.buff.nLevel))
 					if v.buff.nStackNum > 1 then

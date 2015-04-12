@@ -217,7 +217,7 @@ data = {
 	-- HM_EngBar.lua --
 	["HM, energy bar"] = "海鰻職業能量條",
 	-- HM_Guding.lua --
-	["I have put the GUDING, hurry to eat if you lack of mana. *la la la*"] = "法寶 [仙王蠱鼎] 已祭出，沒藍的抓緊了，用海鰻插件看得見還能自動吃~#玫瑰#玫瑰~~",
+	["I have put the GUDING, hurry to eat if you lack of mana. *la la la*"] = "法寶 [仙王蠱鼎] 已祭出，沒藍的抓緊了，用海鰻插件看得見~#玫瑰#玫瑰~~",
 	["HM_Guding"] = "海鰻蠱鼎",
 	["Display GUDING of teammate, change color"] = "突出顯示團隊里的仙王蠱鼎，設置顏色",
 	["Auto talk in team channel after puting GUDING"] = "喊話提醒隊友來吃",
