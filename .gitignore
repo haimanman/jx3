@@ -2,6 +2,7 @@
 dist
 VERSION
 lab
+dev/x.patch
 */manifest.dat
 */manifest.key
 */publisher.key
