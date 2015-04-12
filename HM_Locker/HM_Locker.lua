@@ -35,7 +35,7 @@ local _HM_Locker = {
 	dwScoffer = 0,
 	nScoffFrame2 = 0,	-- 嘲讽 BUFF 帧次
 	dwScoffer2 = 0,	-- 嘲讽 BUFF 源
-	nLastCancel = 0,	-- 上次取消目标的时间 
+	nLastCancel = 0,	-- 上次取消目标的时间
 }
 
 -- sysmsg
@@ -559,7 +559,7 @@ end
 -- 注册事件、初始化
 ---------------------------------------------------------------------
 HM.RegisterEvent("SYNC_ROLE_DATA_END", _HM_Locker.UpdateSearchTarget)
-HM.RegisterEvent("UPDATE_SELECT_TARGET",  _HM_Locker.OnUpdateTarget)
+HM.RegisterEvent("TARGET_CHANGE",  _HM_Locker.OnUpdateTarget)
 HM.RegisterEvent("NPC_LEAVE_SCENE", _HM_Locker.OnLeave)
 HM.RegisterEvent("PLAYER_LEAVE_SCENE", _HM_Locker.OnLeave)
 HM.RegisterEvent("NPC_ENTER_SCENE", _HM_Locker.OnEnter)

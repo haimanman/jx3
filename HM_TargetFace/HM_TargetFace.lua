@@ -67,7 +67,7 @@ function HM_TargetFace.OnFrameCreate()
 		_HM_TargetFace["h" .. v]  = this:Lookup("", "Shadow_" .. v)
 	end
 	-- events
-	this:RegisterEvent("UPDATE_SELECT_TARGET")
+	this:RegisterEvent("TARGET_CHANGE")
 	this:RegisterEvent("HM_ADD_FOCUS_TARGET")
 	this:RegisterEvent("HM_DEL_FOCUS_TARGET")
 end
@@ -111,7 +111,7 @@ end
 
 -- event
 function HM_TargetFace.OnEvent(event)
-	if event == "UPDATE_SELECT_TARGET" then
+	if event == "TARGET_CHANGE" then
 		_HM_TargetFace.bReRender = true
 	elseif event == "HM_ADD_FOCUS_TARGET" and (arg1 or not _HM_TargetFace.bLockFocus) then
 		_HM_TargetFace.dwFocusID = arg0

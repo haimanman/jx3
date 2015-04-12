@@ -386,7 +386,7 @@ _HM_Target.UpdateBuffSize = function(frame, bTTarget)
 					-- clear time
 					box.szTime = nil
 					-- count dispel
-					if i == 0 and not bTTarget 
+					if i == 0 and not bTTarget
 						and ((frame.bIsEnemy and v == "Buff") or (not frame.bIsEnemy and v == "Debuff"))
 					then
 						nDispel = nDispel + 1
@@ -688,7 +688,7 @@ function HM_Target.OnFrameCreate()
 	_HM_Target.hTTConnect = this:Lookup("", "Shadow_TTConnect")
 	this:RegisterEvent("SYS_MSG")
 	this:RegisterEvent("DO_SKILL_CAST")
-	this:RegisterEvent("UPDATE_SELECT_TARGET")
+	this:RegisterEvent("TARGET_CHANGE")
 	this:RegisterEvent("PLAYER_ENTER_SCENE")
 end
 
@@ -706,7 +706,7 @@ function HM_Target.OnEvent(event)
 		_HM_Target.OnBuffUpdate()
 	elseif event == "NPC_STATE_UPDATE" or event == "PLAYER_STATE_UPDATE" then
 		_HM_Target.OnUpdateLM()
-	elseif event == "UPDATE_SELECT_TARGET" then
+	elseif event == "TARGET_CHANGE" then
 		_HM_Target.OnUpdateConnLine()
 	elseif event == "PLAYER_ENTER_SCENE" and arg0 == GetClientPlayer().dwID then
 		_HM_Target.OnUpdateConnLine()

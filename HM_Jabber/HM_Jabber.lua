@@ -379,13 +379,15 @@ _HM_Jabber.GetMsgSkillMenu = function()
 		{ szOption = _L["* New *"], fnAction = _HM_Jabber.EditMsgSkill },
 		{ bDevide = true, }
 	}
+
 	for k, v in pairs(HM_Jabber.tMessage.skill) do
-		local szOptionEx = " <" .. k .. ">"
+		local szOptionEx = k
 		if k == "default" then
 			szOptionEx = _L[" (default)"]
 		end
+		table.insert(m0, { szOption = szOptionEx })
 		for kk, vv in pairs(v) do
-			table.insert(m0, { szOption = kk .. szOptionEx, fnAction = function() _HM_Jabber.EditMsgSkill(k, kk) end })
+			table.insert(m0[#m0], { szOption = kk, fnAction = function() _HM_Jabber.EditMsgSkill(k, kk) end })
 		end
 		if IsEmpty(v) then
 			HM_Jabber.tMessage.skill[k] = nil
@@ -517,7 +519,7 @@ _HM_Jabber.InitReviveTalk = function()
 	if not me or HM_Jabber.tMessage.bRevived then
 		return
 	end
-	HM_Jabber.tMessage.bRevived = true 
+	HM_Jabber.tMessage.bRevived = true
 	local mnt = me.GetKungfuMount()
 	if mnt.dwMountType == 2 then			-- ÕÚª®
 		_HM_Jabber.RegisterReviveTalk(139)	-- ∑Ê’Î
