@@ -681,7 +681,7 @@ function OutputNpcTip(dwNpcID, Rect)
 	------------Ä£°æID-----------------------
 	if IsCtrlKeyDown() then
 		szTip = szTip.."<Text>text="..EncodeComponentsString(FormatString(g_tStrings.TIP_NPC_ID, npc.dwID)).."font=102 </text>"
-		szTip = szTip.."<Text>text="..EncodeComponentsString(FormatString(g_tStrings.TIP_TEMPLATE_ID_NPC_INTENSITY, npc.dwTemplateID, npc.nIntensity)).." font=102 </text>"
+		szTip = szTip.."<Text>text="..EncodeComponentsString(FormatString(g_tStrings.TIP_TEMPLATE_ID_NPC_INTENSITY, npc.dwTemplateID, GetNpcIntensity(npc))).." font=102 </text>"
 		szTip = szTip.."<Text>text="..EncodeComponentsString(FormatString(g_tStrings.TIP_REPRESENTID_ID, npc.dwModelID)).." font=102 </text>"
 		if IsShiftKeyDown() then
 			local tState = GetNpcQuestState(npc) or {}
@@ -731,7 +731,7 @@ function OutputPlayerTip(dwPlayerID, Rect)
 	end
 
 	-------------µÈ¼¶----------------------------
-	if player.nLevel - clientPlayer.nLevel > 10 and not clientPlayer.IsPlayerInMyParty(dwPlayerID) then 
+	if player.nLevel - clientPlayer.nLevel > 10 and not clientPlayer.IsPlayerInMyParty(dwPlayerID) then
 		szTip = szTip.."<Text>text="..EncodeComponentsString(g_tStrings.STR_PLAYER_H_UNKNOWN_LEVEL).." font=82 </text>"
 	else
 		szTip = szTip.."<Text>text="..EncodeComponentsString(FormatString(g_tStrings.STR_PLAYER_H_WHAT_LEVEL, player.nLevel)).." font=82 </text>"
@@ -757,8 +757,8 @@ function OutputPlayerTip(dwPlayerID, Rect)
 
 	if IsCtrlKeyDown() then
 		szTip = szTip.."<Text>text="..EncodeComponentsString(FormatString(g_tStrings.TIP_PLAYER_ID, player.dwID)).." font=102 </text>"
-		szTip = szTip.."<Text>text="
-		szTip = szTip..EncodeComponentsString(FormatString(g_tStrings.TIP_REPRESENTID_ID, player.dwModelID.." "..var2str(player.GetRepresentID()))).." font=102 </text>" 
+		-- szTip = szTip.."<Text>text="
+		-- szTip = szTip..EncodeComponentsString(FormatString(g_tStrings.TIP_REPRESENTID_ID, player.dwModelID.." "..var2str(player.GetRepresentID()))).." font=102 </text>"
 	end
 
 	OutputTip(szTip, 345, Rect)
