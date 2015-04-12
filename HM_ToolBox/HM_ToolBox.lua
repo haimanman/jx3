@@ -1111,14 +1111,18 @@ end
 -- chat time/copy
 _HM_ToolBox.OnChatPanelInit = function()
 	for i = 1, 10 do
-		local h = Station.Lookup("Lowest2/ChatPanel" .. i .. "/Wnd_Message", "Handle_Message")
-		local ttl = Station.Lookup("Lowest2/ChatPanel" .. i .. "/CheckBox_Title", "Text_TitleName")
-		if h and (not ttl or ttl:GetText() ~= g_tStrings.CHANNEL_MENTOR) then
-			h.__AppendItemFromString = h.__AppendItemFromString or h.AppendItemFromString
-			h.AppendItemFromString = _HM_ToolBox.AppendChatItem
-			if ttl and ttl:GetText() == g_tStrings.PRIVATE_TALK then
-				_HM_ToolBox.hWhisperMsg = h
-			end
+		_HM_ToolBox.OnChatPanelOpen(i)
+	end
+end
+
+_HM_ToolBox.OnChatPanelOpen = function(i)
+	local h = Station.Lookup("Lowest2/ChatPanel" .. i .. "/Wnd_Message", "Handle_Message")
+	local ttl = Station.Lookup("Lowest2/ChatPanel" .. i .. "/CheckBox_Title", "Text_TitleName")
+	if h and (not ttl or ttl:GetText() ~= g_tStrings.CHANNEL_MENTOR) and not h.__AppendItemFromString then
+		h.__AppendItemFromString = h.__AppendItemFromString or h.AppendItemFromString
+		h.AppendItemFromString = _HM_ToolBox.AppendChatItem
+		if ttl and ttl:GetText() == g_tStrings.PRIVATE_TALK then
+			_HM_ToolBox.hWhisperMsg = h
 		end
 	end
 end
@@ -1274,6 +1278,7 @@ HM.RegisterEvent("CHAT_PANEL_INIT", function()
 	_HM_ToolBox.PS.OnConflictCheck()
 	_HM_ToolBox.OnChatPanelInit()
 end)
+HM.RegisterEvent("CHAT_PANEL_OPEN", _HM_ToolBox.OnChatPanelOpen)
 -- 记录点名聊天
 RegisterMsgMonitor(_HM_ToolBox.OnRecordWhisperAt, {
 	"MSG_NORMAL", "MSG_MAP", "MSG_BATTLE_FILED", "MSG_PARTY", "MSG_SCHOOL",
