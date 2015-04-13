@@ -1296,7 +1296,7 @@ HM.RegisterEvent("CHAT_PANEL_INIT", function()
 	_HM_ToolBox.PS.OnConflictCheck()
 	_HM_ToolBox.OnChatPanelInit()
 end)
-HM.RegisterEvent("CHAT_PANEL_OPEN", _HM_ToolBox.HookChatPanel)
+HM.RegisterEvent("CHAT_PANEL_OPEN", function() _HM_ToolBox.HookChatPanel(arg0) end)
 HM.RegisterEvent("RELOAD_UI_ADDON_BEGIN", _HM_ToolBox.OnReloadUIAddon)
 -- 记录点名聊天
 RegisterMsgMonitor(_HM_ToolBox.OnRecordWhisperAt, {
