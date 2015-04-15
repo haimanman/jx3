@@ -56,6 +56,7 @@ local _HM = {
 	aPlayer = {},
 	aDoodad = {},
 	nDebug = 1,
+	tAnchor = {},
 }
 
 -------------------------------------
@@ -282,7 +283,14 @@ _HM.FetchMenuItem = function(tData, szOption)
 		end
 	end
 end
-
+_HM.UpdateAnchor = function(frame)
+	local a = _HM.tAnchor
+	if not IsEmpty(a) then
+		frame:SetPoint(a.s, 0, 0, a.r, a.x, a.y)
+	else
+		frame:SetPoint("CENTER", 0, 0, "CENTER", 0, 0)
+	end
+end
 -- callback of apply point
 _HM.tApplyPointKey = {}
 _HM.ApplyPointCallback = function(data, nX, nY)
@@ -2888,11 +2896,20 @@ HM.OnFrameCreate = function()
 	_HM.hTotal:Lookup("Text_Title"):SetText(szTitle)
 	-- position
 	this:SetPoint("CENTER", 0, 0, "CENTER", 0, 0)
+	this:RegisterEvent("UI_SCALED")
 	-- update list/detail
 	_HM.UpdateTabBox(this)
 	--_HM.UpdateDetail()
 end
-
+HM.OnEvent = function(szEvent)
+	if szEvent == "UI_SCALED" then
+		_HM.UpdateAnchor(this)
+	end
+end
+HM.OnFrameDragEnd = function()
+	this:CorrectPos()
+	_HM.tAnchor = GetFrameAnchor(this)
+end
 -- breathe
 HM.OnFrameBreathe = function()
 	-- run breathe calls
