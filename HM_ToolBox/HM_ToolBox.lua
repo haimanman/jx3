@@ -20,6 +20,7 @@ HM_ToolBox = {
 		[_i(69698)--[[金块]]] = true,
 		[_i(69699)--[[金砖]]] = true,
 		[_i(70471)--[[银叶子·试练之地]]] = true,
+		[_i(151712)--[[破碎的金玄玉]]] = true,
 	},
 	bBuyMore = true,		-- 买得更多
 	bDurability = true,			-- 显示装备耐久度
@@ -573,17 +574,17 @@ _HM_ToolBox.SortGuildBank = function()
 	end
 	-- compare func
 	local aGenre = {
-		[ITEM_GENRE.TASK_ITEM] = 1, 
-		[ITEM_GENRE.EQUIPMENT] = 2, 
-		[ITEM_GENRE.BOOK] = 3, 
-		[ITEM_GENRE.POTION] = 4, 
+		[ITEM_GENRE.TASK_ITEM] = 1,
+		[ITEM_GENRE.EQUIPMENT] = 2,
+		[ITEM_GENRE.BOOK] = 3,
+		[ITEM_GENRE.POTION] = 4,
 		[ITEM_GENRE.MATERIAL] = 5
 	}
 	local aSub = {
-		[EQUIPMENT_SUB.HORSE] = 1, 
-		[EQUIPMENT_SUB.PACKAGE] = 2, 
-		[EQUIPMENT_SUB.MELEE_WEAPON] = 3, 
-		[EQUIPMENT_SUB.RANGE_WEAPON] = 4, 
+		[EQUIPMENT_SUB.HORSE] = 1,
+		[EQUIPMENT_SUB.PACKAGE] = 2,
+		[EQUIPMENT_SUB.MELEE_WEAPON] = 3,
+		[EQUIPMENT_SUB.RANGE_WEAPON] = 4,
 	}
 	local fnCompare = function(A, B)
 		local a, b = A.item, B.item
@@ -987,7 +988,7 @@ _HM_ToolBox.AppendChatItem = function(h, szMsg)
 				break
 			end
 		end
-		
+
 		if r == 255 and g == 255 and b == 0 then
 			return
 		end
@@ -1249,7 +1250,7 @@ _HM_ToolBox.PS.OnPanelActive = function(frame)
 		HM_ToolBox.bDurability = bChecked
 		_HM_ToolBox.UpdateDurability()
 	end)
-	-- 
+	--
 	-- tong broadcast
 	ui:Append("Text", { txt = _L["Group whisper oline (Guild perm required)"], x = 0, y = 268, font = 27 })
 	ui:Append("WndEdit", "Edit_Msg", { x = 10, y = 296, limit = 1024, multi = true, h = 50, w = 480, txt = HM_ToolBox.szBroadText })
