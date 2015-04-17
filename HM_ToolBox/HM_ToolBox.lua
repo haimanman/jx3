@@ -250,6 +250,9 @@ end
 -- 替换上架函数
 _HM_ToolBox.AuctionPanel_AuctionSell = AuctionPanel.AuctionSell
 AuctionPanel.AuctionSell = function(...)
+	if not _HM_ToolBox.CheckUnLock() then  -- 没有解锁时 使用官方的函数判断解锁
+		return _HM_ToolBox.AuctionPanel_AuctionSell(...)
+	end
 	if IsShiftKeyDown() and HM_ToolBox.bShiftAuction then
 		_HM_ToolBox.AuctionSell(...)
 	else
@@ -1014,13 +1017,21 @@ _HM_ToolBox.OnOpenShop = function()
 	_HM_ToolBox.nShopNpcID = nNpcID
 end
 
+-- check unlock
+_HM_ToolBox.CheckUnLock = function()
+	local btn = Station.Lookup("Normal/TopMenu/WndContainer_List/Wnd_Lock/Btn_Lock")
+	if btn and btn:IsVisible() then
+		return false
+	end
+	return true
+end
+
 _HM_ToolBox.OnShopUpdateItem = function()
 	if not HM_ToolBox.bBuyMore then
 		return
 	end
 	-- 排除未解锁用户
-	local btn = Station.Lookup("Normal/TopMenu/WndContainer_List/Wnd_Lock/Btn_Lock")
-	if btn and btn:IsVisible() then
+	if not _HM_ToolBox.CheckUnLock() then
 		return
 	end
 	-- 由于 ShopPanel 的事件后注册，因此需要延迟一帧调用
