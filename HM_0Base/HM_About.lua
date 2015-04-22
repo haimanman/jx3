@@ -263,7 +263,7 @@ end
 HM.RegisterEvent("LOADING_END", function()
 	if not _HM_About.bChecked then
 		_HM_About.CheckLocalDeny()
-		_HM_About.CheckUpdate()
+		--_HM_About.CheckUpdate()
 	end
 end)
 HM.RegisterEvent("CALL_LUA_ERROR", function()
