@@ -312,7 +312,7 @@ _HM_Love.SetLover = function(dwID, nType)
 			HM.Talk(_HM_Love.szName, _L["Sorry, I decided to just a swordman, bye my plugin lover"])
 		elseif _HM_Love.nLoveType == 0 then	-- 单向只通知在线的
 			local aInfo = _HM_Love.GetFellowDataByID(_HM_Love.dwID)
-			if aInfo and aInfo.level ~= 0 then
+			if aInfo and aInfo.isonline then
 				HM.BgTalk(_HM_Love.szName, "HM_LOVE", "REMOVE0")
 			end
 		end
@@ -325,7 +325,7 @@ _HM_Love.SetLover = function(dwID, nType)
 	else
 		-- 设置成为情缘（在线好友）
 		local aInfo = _HM_Love.GetFellowDataByID(dwID)
-		if not aInfo or aInfo.level == 0 then
+		if not aInfo or not aInfo.isonline then
 			return HM.Alert(_L["Lover must be a online friend"])
 		end
 		if nType == 0 then
@@ -383,7 +383,7 @@ _HM_Love.GetLoverMenu = function(nType)
 			if vv.attraction >= 200 and (nType ~= 1 or vv.attraction >= 800) then
 				table.insert(m0, {
 					szOption = vv.name,
-					fnDisable = function() return vv.level == 0 end,
+					fnDisable = function() return not vv.isonline end,
 					fnAction = function()
 						HM.Confirm(_L("Do you want to love with [%s]?", vv.name), function()
 							_HM_Love.SetLover(vv.id, nType)
@@ -541,7 +541,7 @@ _HM_Love.OnFellowUpdate = function()
 		_HM_Love.nStartTime = tonumber(data[2]) or GetCurrentTime()
 		_HM_Love.PS.Refresh()
 		-- 上线提示
-		if not _HM_Love.bLoaded and aInfo.level ~= 0 then
+		if not _HM_Love.bLoaded and aInfo.isonline then
 			local szMsg = _L["Warm tip: Your "] .. _HM_Love.GetLoverType() .. _L("Lover <link0> is happy in [%s].\n", Table_GetMapName(aInfo.mapid))
 			_HM_Love.OnLoverMsg(szMsg)
 		end
