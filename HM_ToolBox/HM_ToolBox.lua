@@ -159,6 +159,14 @@ _HM_ToolBox.SendBroadCast = function()
 	local dwMapID, szText, nType = me.GetScene().dwMapID, HM_ToolBox.szBroadText, HM_ToolBox.nBroadType
 	HM.BgTalk(PLAYER_TALK_CHANNEL.TONG, "HM_BROAD", nType, dwMapID, szText)
 	HM.Sysmsg(_L["[Guild BC] "] .. szText)
+	-- UI简单限制: 1秒后按钮恢复正常，避免一直按导致无限刷屏。
+	local btn = this
+	btn:Enable(false)
+	HM.DelayCall(1000, function()
+		if btn and btn:IsValid() then
+			btn:Enable(true)
+		end
+	end)
 	--[[
 	local aPlayer = tong.GetMemberList(false, "name", false, -1, -1)
 	for _, v in pairs(aPlayer) do
