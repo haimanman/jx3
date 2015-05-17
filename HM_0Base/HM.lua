@@ -966,7 +966,7 @@ HM.Talk = function(nChannel, szText, szUUID, bNoEmotion, bSaveDeny)
 			type = "eventlink", name = "",
 			linkinfo = HM.JsonEncode({
 				via = "HM",
-				uuid = tostring(szUUID),
+				uuid = szUUID and tostring(szUUID),
 			}),
 		})
 	end
