@@ -923,7 +923,9 @@ _HM_ToolBox.CopyChatLine = function(hTime)
 				elseif szName =="designationlink" then
 					edit:InsertObj(szText, { type = "designation", text = szText, id = p.dwID, prefix = p.bPrefix })
 				elseif szName =="eventlink" then
-					edit:InsertObj(szText, { type = "eventlink", name = p.szName, linkinfo = p.szLinkInfo })
+					if szText and #szText > 0 then -- 过滤插件消息
+						edit:InsertObj(szText, { type = "eventlink", name = p.szName, linkinfo = p.szLinkInfo })
+					end
 				else
 					-- NPC 喊话特殊处理
 					if bBegin == nil then

@@ -909,15 +909,16 @@ end
 
 
 -- 发布聊天内容
--- (void) HM.Talk(string szTarget, string szText[, boolean bNoEmotion])
--- (void) HM.Talk([number nChannel, ] string szText[, boolean bNoEmotion])
--- szTarget			-- 密聊的目标角色名
--- szText				-- 聊天内容，（亦可为兼容 KPlayer.Talk 的 table）
--- nChannel			-- *可选* 聊天频道，PLAYER_TALK_CHANNLE.*，默认为近聊
+-- (void) HM.Talk(string szTarget, string szText[, string szUUID[, boolean bNoEmotion]])
+-- (void) HM.Talk([number nChannel, ] string szText[, string szUUID[, boolean bNoEmotion]])
+-- szTarget		-- 密聊的目标角色名
+-- szText		-- 聊天内容，（亦可为兼容 KPlayer.Talk 的 table）
+-- nChannel		-- *可选* 聊天频道，PLAYER_TALK_CHANNLE.*，默认为近聊
+-- szUUID		-- *可选* 消息唯一标识符（多人同时发送相同内容时用来标记消息唯一性重复性）
 -- bNoEmotion	-- *可选* 不解析聊天内容中的表情图片，默认为 false
 -- bSaveDeny	-- *可选* 在聊天输入栏保留不可发言的频道内容，默认为 false
 -- 特别注意：nChannel, szText 两者的参数顺序可以调换，战场/团队聊天频道智能切换
-HM.Talk = function(nChannel, szText, bNoEmotion, bSaveDeny)
+HM.Talk = function(nChannel, szText, szUUID, bNoEmotion, bSaveDeny)
 	local szTarget, me = "", GetClientPlayer()
 	-- channel
 	if not nChannel then
@@ -957,6 +958,18 @@ HM.Talk = function(nChannel, szText, bNoEmotion, bSaveDeny)
 	if not bNoEmotion then
 		tSay = _HM.ParseFaceIcon(tSay)
 	end
+	-- add addon msg header
+	if not tSay[1]
+	or tSay[1].name ~= ""
+	or tSay[1].type ~= "eventlink" then
+		table.insert(tSay, 1, {
+			type = "eventlink", name = "",
+			linkinfo = HM.JsonEncode({
+				via = "HM",
+				uuid = tostring(szUUID),
+			}),
+		})
+	end
 	me.Talk(nChannel, szTarget, tSay)
 	if bSaveDeny and not HM.CanTalk(nChannel) then
 		local edit = Station.Lookup("Lowest2/EditBox/Edit_Input")
@@ -974,8 +987,8 @@ HM.Talk = function(nChannel, szText, bNoEmotion, bSaveDeny)
 end
 
 -- 无法发言时保留文字在输入框
-HM.Talk2 = function(nChannel, szText, bNoEmotion)
-	HM.Talk(nChannel, szText, bNoEmotion, true)
+HM.Talk2 = function(nChannel, szText, szUUID, bNoEmotion)
+	HM.Talk(nChannel, szText, szUUID, bNoEmotion, true)
 end
 
 -- 发布后台聊天通讯
@@ -997,7 +1010,7 @@ HM.BgTalk = function(nChannel, ...)
 		end
 		table.insert(tSay, { type = "eventlink", name = "", linkinfo = tostring(v) })
 	end
-	HM.Talk(nChannel, tSay, true)
+	HM.Talk(nChannel, tSay, nil, true)
 end
 
 -- 读取后台聊天数据，在 ON_BG_CHANNEL_MSG 事件处理函数中使用才有意义
