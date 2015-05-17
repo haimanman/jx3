@@ -127,11 +127,12 @@
 
 23. `(string) HM.GetTargetName(userdata KNpc/KPlayer)` - 根据目标对像显示其名字，支持宠物属主等
 
-24. `(void) HM.Talk(string szTarget, string szText[, boolean bNoEmotion])`
-    `(void) HM.Talk([number nChannel, ] string szText[, boolean bNoEmotion])` - 发布聊天
+24. `(void) HM.Talk(string szTarget, string szText[, szUUID[, boolean bNoEmotion]])`
+    `(void) HM.Talk([number nChannel, ] string szText[, szUUID[, boolean bNoEmotion]])` - 发布聊天
 
 	> 参数 *szTarget* -- 密聊的目标角色名
-	> 可选 *nChannel* -- 聊天频道，PLAYER_TALK_CHANNLE.xxx，默认为近聊
+  > 可选 *nChannel* -- 聊天频道，PLAYER_TALK_CHANNLE.xxx，默认为近聊
+	> 可选 *szUUID* -- 消息唯一标识符（多人同时发送相同内容时用来标记消息唯一性重复性）
     > 参数 *szText* -- 聊天内容，（亦可为兼容 KPlayer.Talk 的 table）
     > 可选 *bNoEmotion* -- 不解析聊天内容中的表情图片，默认为 false
 	> **特别注意** `nChannel`, `szText` 两者的参数顺序可以调换，团队频道在战场会智能切换为战场频道
