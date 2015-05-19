@@ -1763,7 +1763,7 @@ end
 
 HM_TargetList.OnItemLButtonDown = function()
 	if this:GetName() == "Handle_ATotal" then
-		_HM_TargetList.ShowAcctInfo()
+		PopupMenu({{ szOption = _L["Publish nearby stats"], fnAction = _HM_TargetList.ShowAcctInfo }})
 	elseif this:GetName() == "Text_LCount" then
 		if HM_RedName and HM_TargetList.nListMode >= 4 then
 			HM_RedName.ShowAroundInfo()
@@ -1786,7 +1786,9 @@ HM_TargetList.OnItemLButtonDown = function()
 end
 
 HM_TargetList.OnItemRButtonDown = function()
-	if this:GetName() == "Text_LTitle" then
+	if this:GetName() == "Handle_ATotal" then
+		PopupMenu({{ szOption = _L["Publish nearby stats"], fnAction = _HM_TargetList.ShowAcctInfo }})
+	elseif this:GetName() == "Text_LTitle" then
 		local m0 = {}
 		table.insert(m0, _HM_TargetList.GetCustomMenu())
 		PopupMenu(m0)
