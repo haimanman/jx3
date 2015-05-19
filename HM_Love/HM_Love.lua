@@ -522,16 +522,21 @@ _HM_Love.AskOtherData = function(dwID)
 			return HM.Sysmsg("[" .. tar.szName .. "] " .. _L[" in fighting, no time for you"])
 		else
 			local frame = Station.Lookup("Normal/PlayerView")
-			local xC, yC
+			local xC, yC, fnAutoClose
 			if frame then
 				xC, yC = frame:GetAbsX() + frame:GetW() / 2, frame:GetAbsY() + frame:GetH() / 2
+				fnAutoClose = function()
+					local hFrame = Station.Lookup("Normal/PlayerView")
+					local hCheckBox = hFrame:Lookup("Page_Main/CheckBox_Love")
+					return not (hFrame and hFrame:IsVisible()) or (hCheckBox and not hCheckBox:IsCheckBoxChecked())
+				end
 			end
 			MessageBox({
 				x = xC, y = yC,
+				fnAutoClose = fnAutoClose,
 				szMessage = _L("[%s] is not in your party, do you want to send a request for accessing data?", tar.szName),
 				szName = "HM_LOVE_CONFIRM", {
 					szOption = g_tStrings.STR_HOTKEY_SURE,
-					fnAutoClose = function() return not Station.Lookup("Normal/PlayerView/Page_Main") end,
 					fnAction = function() HM.BgTalk(tar.szName, "HM_LOVE", "VIEW") end,
 				}, {
 					szOption = g_tStrings.STR_HOTKEY_CANCEL,
