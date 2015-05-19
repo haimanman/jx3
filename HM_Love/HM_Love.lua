@@ -521,7 +521,13 @@ _HM_Love.AskOtherData = function(dwID)
 			_HM_Love.bActiveLove = false
 			return HM.Sysmsg("[" .. tar.szName .. "] " .. _L[" in fighting, no time for you"])
 		else
+			local frame = Station.Lookup("Normal/PlayerView")
+			local xC, yC
+			if frame then
+				xC, yC = frame:GetAbsX() + frame:GetW() / 2, frame:GetAbsY() + frame:GetH() / 2
+			end
 			MessageBox({
+				x = xC, y = yC,
 				szMessage = _L("[%s] is not in your party, do you want to send a request for accessing data?", tar.szName),
 				szName = "HM_LOVE_CONFIRM", {
 					szOption = g_tStrings.STR_HOTKEY_SURE,
