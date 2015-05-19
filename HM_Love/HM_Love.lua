@@ -516,11 +516,26 @@ _HM_Love.AskOtherData = function(dwID)
 	end
 	_HM_Love.tOther = {}
 	_HM_Love.UpdatePage()
-	if tar.bFightState and not HM.IsParty(tar.dwID) then
-		_HM_Love.bActiveLove = false
-		return HM.Sysmsg("[" .. tar.szName .. "] " .. _L[" in fighting, no time for you"])
+	if not HM.IsParty(tar.dwID) then
+		if tar.bFightState then
+			_HM_Love.bActiveLove = false
+			return HM.Sysmsg("[" .. tar.szName .. "] " .. _L[" in fighting, no time for you"])
+		else
+			MessageBox({
+				szMessage = _L("[%s] is not in your party, do you want to send a request for accessing data?", tar.szName),
+				szName = "HM_LOVE_CONFIRM", {
+					szOption = g_tStrings.STR_HOTKEY_SURE,
+					fnAutoClose = function() return not Station.Lookup("Normal/PlayerView/Page_Main") end,
+					fnAction = function() HM.BgTalk(tar.szName, "HM_LOVE", "VIEW") end,
+				}, {
+					szOption = g_tStrings.STR_HOTKEY_CANCEL,
+					fnAction = function() _HM_Love.bActiveLove = false end,
+				},
+			})
+		end
+	else
+		HM.BgTalk(tar.szName, "HM_LOVE", "VIEW")
 	end
-	HM.BgTalk(tar.szName, "HM_LOVE", "VIEW")
 end
 
 -------------------------------------

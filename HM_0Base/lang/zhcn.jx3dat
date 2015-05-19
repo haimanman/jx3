@@ -818,6 +818,7 @@ data = {
 	["Strike up her"] = "勾搭她",
 	["Strike up him"] = "勾搭他",
 	[" in fighting, no time for you"] = "正在战斗中，无暇搭理你",
+	["[%s] is not in your party, do you want to send a request for accessing data?"] = "[%s] 不在你的队伍中，是否向TA请求查看情缘信息？",
 	["Warm tip: Your "] = "温馨提醒：你的",
 	["Lover <link0> is happy in [%s].\n"] = "情缘<link 0>正在[%s]HAPPY呢。\n",
 	["Lover"] = "情缘",
