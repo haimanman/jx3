@@ -960,7 +960,7 @@ HM.Talk = function(nChannel, szText, szUUID, bNoEmotion, bSaveDeny)
 	end
 	-- add addon msg header
 	if not tSay[1] or (
-		not (tSay[1].type == "text" and tSay[1].text == _L["Addon comm."]) -- bgmsg
+		not (tSay[1].type == "text" and (tSay[1].text == _L["Addon comm."] or tSay[1].text == "BG_CHANNEL_MSG")) -- bgmsg
 		and not (tSay[1].name == "" and tSay[1].type == "eventlink") -- header already added
 	) then
 		table.insert(tSay, 1, {
