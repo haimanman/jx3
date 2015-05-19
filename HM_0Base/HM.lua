@@ -959,9 +959,10 @@ HM.Talk = function(nChannel, szText, szUUID, bNoEmotion, bSaveDeny)
 		tSay = _HM.ParseFaceIcon(tSay)
 	end
 	-- add addon msg header
-	if not tSay[1]
-	or tSay[1].name ~= ""
-	or tSay[1].type ~= "eventlink" then
+	if not tSay[1] or (
+		not (tSay[1].type == "text" and tSay[1].text == _L["Addon comm."]) -- bgmsg
+		and not (tSay[1].name == "" and tSay[1].type == "eventlink") -- header already added
+	) then
 		table.insert(tSay, 1, {
 			type = "eventlink", name = "",
 			linkinfo = HM.JsonEncode({
