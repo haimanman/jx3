@@ -3062,14 +3062,6 @@ HM.RegisterEvent("CUSTOM_DATA_LOADED", function()
 		HM.nBuildDate = tonumber(_HM.szBuildDate)
 	end
 end)
-HM.RegisterEvent("PLAYER_TALK", function()
-	local me = GetClientPlayer()
-	if not me then return end
-	local t = me.GetTalkData()
-	if t and arg0 ~= me.dwID and #t> 1 and t[1].text == _L["Addon comm."] and t[2].type == "eventlink" then
-		FireUIEvent("ON_BG_CHANNEL_MSG", arg0, arg1, arg2, arg3)
-	end
-end)
 
 -- player menu
 HM.AppendPlayerMenu(function()
