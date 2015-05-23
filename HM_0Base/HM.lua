@@ -909,15 +909,16 @@ end
 
 
 -- 发布聊天内容
--- (void) HM.Talk(string szTarget, string szText[, boolean bNoEmotion])
--- (void) HM.Talk([number nChannel, ] string szText[, boolean bNoEmotion])
--- szTarget			-- 密聊的目标角色名
--- szText				-- 聊天内容，（亦可为兼容 KPlayer.Talk 的 table）
--- nChannel			-- *可选* 聊天频道，PLAYER_TALK_CHANNLE.*，默认为近聊
+-- (void) HM.Talk(string szTarget, string szText[, string szUUID[, boolean bNoEmotion]])
+-- (void) HM.Talk([number nChannel, ] string szText[, string szUUID[, boolean bNoEmotion]])
+-- szTarget		-- 密聊的目标角色名
+-- szText		-- 聊天内容，（亦可为兼容 KPlayer.Talk 的 table）
+-- nChannel		-- *可选* 聊天频道，PLAYER_TALK_CHANNLE.*，默认为近聊
+-- szUUID		-- *可选* 消息唯一标识符（多人同时发送相同内容时用来标记消息唯一性重复性）
 -- bNoEmotion	-- *可选* 不解析聊天内容中的表情图片，默认为 false
 -- bSaveDeny	-- *可选* 在聊天输入栏保留不可发言的频道内容，默认为 false
 -- 特别注意：nChannel, szText 两者的参数顺序可以调换，战场/团队聊天频道智能切换
-HM.Talk = function(nChannel, szText, bNoEmotion, bSaveDeny)
+HM.Talk = function(nChannel, szText, szUUID, bNoEmotion, bSaveDeny)
 	local szTarget, me = "", GetClientPlayer()
 	-- channel
 	if not nChannel then
@@ -957,6 +958,19 @@ HM.Talk = function(nChannel, szText, bNoEmotion, bSaveDeny)
 	if not bNoEmotion then
 		tSay = _HM.ParseFaceIcon(tSay)
 	end
+	-- add addon msg header
+	if not tSay[1] or (
+		not (tSay[1].type == "text" and (tSay[1].text == _L["Addon comm."] or tSay[1].text == "BG_CHANNEL_MSG")) -- bgmsg
+		and not (tSay[1].name == "" and tSay[1].type == "eventlink") -- header already added
+	) then
+		table.insert(tSay, 1, {
+			type = "eventlink", name = "",
+			linkinfo = HM.JsonEncode({
+				via = "HM",
+				uuid = szUUID and tostring(szUUID),
+			}),
+		})
+	end
 	me.Talk(nChannel, szTarget, tSay)
 	if bSaveDeny and not HM.CanTalk(nChannel) then
 		local edit = Station.Lookup("Lowest2/EditBox/Edit_Input")
@@ -974,8 +988,8 @@ HM.Talk = function(nChannel, szText, bNoEmotion, bSaveDeny)
 end
 
 -- 无法发言时保留文字在输入框
-HM.Talk2 = function(nChannel, szText, bNoEmotion)
-	HM.Talk(nChannel, szText, bNoEmotion, true)
+HM.Talk2 = function(nChannel, szText, szUUID, bNoEmotion)
+	HM.Talk(nChannel, szText, szUUID, bNoEmotion, true)
 end
 
 -- 发布后台聊天通讯
@@ -997,7 +1011,7 @@ HM.BgTalk = function(nChannel, ...)
 		end
 		table.insert(tSay, { type = "eventlink", name = "", linkinfo = tostring(v) })
 	end
-	HM.Talk(nChannel, tSay, true)
+	HM.Talk(nChannel, tSay, nil, true)
 end
 
 -- 读取后台聊天数据，在 ON_BG_CHANNEL_MSG 事件处理函数中使用才有意义
@@ -2038,12 +2052,22 @@ function _HM.UI.Wnd:Enable(bEnable)
 		return self.enable ~= false
 	end
 	if bEnable then
+		if self.type == "WndTrackBar" then
+			wnd:Lookup("Scroll_Track/Btn_Track"):Enable(1)
+		elseif self.type == "WndComboBox" then
+			wnd:Lookup("Btn_ComboBox"):Enable(1)
+		end
 		wnd:Enable(1)
 		if txt and self.font then
 			txt:SetFontScheme(self.font)
 		end
 		self.enable = true
 	else
+		if self.type == "WndTrackBar" then
+			wnd:Lookup("Scroll_Track/Btn_Track"):Enable(0)
+		elseif self.type == "WndComboBox" then
+			wnd:Lookup("Btn_ComboBox"):Enable(0)
+		end
 		wnd:Enable(0)
 		if txt and self.enable ~= false then
 			self.font = txt:GetFontScheme()
@@ -3036,14 +3060,6 @@ HM.RegisterEvent("CUSTOM_DATA_LOADED", function()
 			end
 		end
 		HM.nBuildDate = tonumber(_HM.szBuildDate)
-	end
-end)
-HM.RegisterEvent("PLAYER_TALK", function()
-	local me = GetClientPlayer()
-	if not me then return end
-	local t = me.GetTalkData()
-	if t and arg0 ~= me.dwID and #t> 1 and t[1].text == _L["Addon comm."] and t[2].type == "eventlink" then
-		FireUIEvent("ON_BG_CHANNEL_MSG", arg0, arg1, arg2, arg3)
 	end
 end)
 
