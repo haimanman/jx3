@@ -1062,6 +1062,8 @@ end
 -- (KBUFF) HM.GetBuff(tBuff, [nLevel[, KObject me]])
 -- int LuaGetIntervalFrame(Lua_State* L);
 -- int LuaGetEndTime(Lua_State* L);
+--[[
+-- hightman.050609: 目前还用不到此函数
 HM.GetBuff = function(dwID, nLevel, KObject)
 	local tBuff = {}
 	if type(dwID) == "table" then
@@ -1085,6 +1087,7 @@ HM.GetBuff = function(dwID, nLevel, KObject)
 		end
 	end
 end
+--]]
 
 -- 根据名称或 ID 获取 判断 BUFF 是否存在
 -- (boolean) HM.HasBuff(dwBuffID, [bCanCancel[, KPlayer me]])
@@ -1095,6 +1098,13 @@ HM.HasBuff = function(dwBuffID, bCanCancel, me)
 	end
 	me = me or GetClientPlayer()
 	if me then
+		if type(dwBuffID) == "number" then
+			local buff = me.GetBuff(dwBuffID, 0)
+			if buff and (bCanCancel == nil or buff.bCanCancel == bCanCancel) then
+				return true
+			end
+			return false
+		end
 		local nCount = me.GetBuffCount()
 		for i = 1, nCount do
 			local _dwID, _nLevel, _bCanCancel = me.GetBuff(i - 1)
