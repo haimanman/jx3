@@ -451,7 +451,7 @@ _HM_Target.UpdateLM = function(frame, bTTarget)
 			fM = tar.nCurrentRage / tar.nMaxRage
 			sM = _HM_Target.GetStateString(tar.nCurrentRage, tar.nMaxRage, bTTarget)
 		elseif frame.dwMountType == 18 then	-- CangYun
-			if HM.HasBuff(8299, nil, tar) then
+			if HM.GetBuff(8299, tar) then
 				nM = 84
 				fM = tar.nCurrentEnergy / math.max(tar.nMaxEnergy, 1)
 				sM = _HM_Target.GetStateString(tar.nCurrentEnergy, tar.nMaxEnergy, bTTarget)
