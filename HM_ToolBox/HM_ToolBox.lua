@@ -1028,30 +1028,9 @@ _HM_ToolBox.OnOpenShop = function()
 end
 
 -- check unlock
-local LOCK_STATE
-local function HM_Lock_State()
-	local btn = Station.Lookup("Normal/TopMenu/WndContainer_List/Wnd_Lock/Btn_Lock")
-	if btn and btn:IsVisible() then
-		return false
-	end
-	return true
-end
-if not Lock_State then
-	_HM_ToolBox.CheckUnLock = HM_Lock_State
-else
-	_HM_ToolBox.CheckUnLock = function()
-		if not LOCK_STATE then
-			local state = Lock_State()
-			if state == "NO_PASSWORD" or state == "PASSWORD_UNLOCK" then
-				LOCK_STATE = true
-				return true
-			else
-				return false
-			end
-		else
-			return true
-		end
-	end
+_HM_ToolBox.CheckUnLock = function()
+	local state = Lock_State()
+	return state == "NO_PASSWORD" or state == "PASSWORD_UNLOCK"
 end
 
 _HM_ToolBox.OnShopUpdateItem = function()
