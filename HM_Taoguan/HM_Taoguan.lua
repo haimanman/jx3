@@ -314,10 +314,10 @@ HM.BreatheCall("taoguan2", function()
 			_HM_Taoguan.bEnable = false
 		end
 	elseif _HM_Taoguan.bEnable and _HM_Taoguan.nPoint >= HM_Taoguan.nUseJX then
-		if not HM.HasBuff(1660) and not _HM_Taoguan.UseBagItem("如意香囊") then
+		if not HM.GetBuff(1660) and not _HM_Taoguan.UseBagItem("如意香囊") then
 			_HM_Taoguan.UseBagItem("幸运香囊")
 		end
-		if not HM.HasBuff(1661) and not _HM_Taoguan.UseBagItem("如意锦囊") then
+		if not HM.GetBuff(1661) and not _HM_Taoguan.UseBagItem("如意锦囊") then
 			_HM_Taoguan.UseBagItem("幸运锦囊")
 		end
     end
