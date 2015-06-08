@@ -1057,6 +1057,35 @@ HM.HasVipEmotion = function(nPage)
 	return _HM.tVipEmotion[nPage]
 end
 
+-- 根据BUFF ID 获得 KBUFF 对象 如不传 nLevel 或 nLevel 等于0 代表忽略 nLevel
+-- (KBUFF) HM.GetBuff(dwBuffID, [nLevel[, KObject me]])
+-- (KBUFF) HM.GetBuff(tBuff, [nLevel[, KObject me]])
+-- int LuaGetIntervalFrame(Lua_State* L);
+-- int LuaGetEndTime(Lua_State* L);
+HM.GetBuff = function(dwID, nLevel, KObject)
+	local tBuff = {}
+	if type(dwID) == "table" then
+		tBuff = dwID
+	elseif type(dwID) == "number" then
+		if type(nLevel) == "number" then
+			tBuff[dwID] = nLevel
+		else
+			tBuff[dwID] = 0
+		end
+	end
+	if type(nLevel) == "userdata" then
+		KObject = nLevel
+	else
+		KObject = KObject or GetClientPlayer()
+	end
+	for k, v in pairs(tBuff) do
+		local KBuff = KObject.GetBuff(k, v)
+		if KBuff then
+			return KBuff
+		end
+	end
+end
+
 -- 根据名称或 ID 获取 判断 BUFF 是否存在
 -- (boolean) HM.HasBuff(dwBuffID, [bCanCancel[, KPlayer me]])
 -- (boolean) HM.HasBuff(szBuffName, [bCanCancel[, KPlayer me]])
