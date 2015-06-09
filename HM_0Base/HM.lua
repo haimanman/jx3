@@ -1098,12 +1098,8 @@ HM.HasBuff = function(dwBuffID, bCanCancel, me)
 	end
 	me = me or GetClientPlayer()
 	if me then
-		if type(dwBuffID) == "number" then
-			local buff = me.GetBuff(dwBuffID, 0)
-			if buff and (bCanCancel == nil or buff.bCanCancel == bCanCancel) then
-				return true
-			end
-			return false
+		if type(dwBuffID) == "number" and bCanCancel == nil then
+			return me.GetBuff(dwBuffID, 0) ~= nil
 		end
 		local nCount = me.GetBuffCount()
 		for i = 1, nCount do
