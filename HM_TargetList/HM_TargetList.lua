@@ -1221,7 +1221,8 @@ _HM_TargetList.UpdateListItems = function(handle)
 		if k <= nCount then
 			h = handle:Lookup(k - 1)
 		else
-			h = handle:AppendItemFromIni(_HM_TargetList.szIniFile, "Handle_Lister", "List_" .. k)
+			-- h = handle:AppendItemFromIni(_HM_TargetList.szIniFile, "Handle_Lister", "List_" .. k)
+			h = handle:AppendItemFromData(this.hItem, "List_" .. k)
 			h:Show()
 		end
 		if HM_TargetList.tShowMode.bForce and nMode >= 4 then
@@ -1446,6 +1447,8 @@ HM_TargetList.OnFrameCreate = function()
 	this:RegisterEvent("NPC_LEAVE_SCENE")
 	this:RegisterEvent("TARGET_CHANGE")
 	this:RegisterEvent("UI_SCALED")
+	-- CreateItemData
+	this.hItem = this:CreateItemData(_HM_TargetList.szIniFile, "Handle_Lister")
 	-- adjust color of acct
 	this:Lookup("Wnd_Account", "Text_Enemy"):SetFontColor(255, 0, 0)
 	this:Lookup("Wnd_Account", "Text_Ally"):SetFontColor(0, 200, 72)
