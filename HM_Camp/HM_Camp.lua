@@ -384,9 +384,17 @@ _HM_Camp.OnNpcEnter = function()
 						local team = GetClientTeam()
 						local szMember = team.GetClientTeamMemberName(npc.dwDropTargetPlayerID)
 						local nGroup = team.GetMemberGroupIndex(npc.dwDropTargetPlayerID) + 1
-						HM.Talk(PLAYER_TALK_CHANNEL.RAID, _L("Well done! %s in %d group first to attack %s!!", nGroup, szMember, szName), nGroup .. szMember .. szName .. math.floor(GetLogicFrameCount() / GLOBAL.GAME_FPS / 5))
+						HM.Talk(
+							PLAYER_TALK_CHANNEL.RAID,
+							_L("Well done! %s in %d group first to attack %s!!", nGroup, szMember, szName),
+							"attack" .. nGroup .. szMember .. szName .. math.floor(GetCurrentTime() / 5)
+						)
 					else
-						HM.Talk(PLAYER_TALK_CHANNEL.RAID, _L("So sad, we did not attack %s first!!", szName), szName .. math.floor(GetLogicFrameCount() / GLOBAL.GAME_FPS / 5))
+						HM.Talk(
+							PLAYER_TALK_CHANNEL.RAID,
+							_L("So sad, we did not attack %s first!!", szName),
+							"missed" .. szName .. math.floor(GetCurrentTime() / 5)
+						)
 					end
 				end
 			end)
@@ -398,7 +406,11 @@ _HM_Camp.OnNpcEnter = function()
 			if not GetClientPlayer().IsInParty() then
 				nChannel = PLAYER_TALK_CHANNEL.NEARBY
 			end
-			HM.Talk(nChannel, _L("* Notice * [%s] appeared, hurried to attack it !!!", szName), szName .. math.floor(GetLogicFrameCount() / GLOBAL.GAME_FPS / 5))
+			HM.Talk(
+				nChannel,
+				_L("* Notice * [%s] appeared, hurried to attack it !!!", szName),
+				"appeared" .. szName .. math.floor(GetCurrentTime() / 5)
+			)
 		end
 	end
 end
@@ -423,7 +435,11 @@ _HM_Camp.OnBreathe = function()
 						if not me.IsInParty() then
 							nChannel = PLAYER_TALK_CHANNEL.NEARBY
 						end
-						HM.Talk(nChannel, _L("* Notice * [%s] will appears after %s !!!", k, at[2]), k .. at[2] .. math.floor(GetLogicFrameCount() / GLOBAL.GAME_FPS / 5))
+						HM.Talk(
+							nChannel,
+							_L("* Notice * [%s] will appears after %s !!!", k, at[2]),
+							"appearcount" .. k .. at[2] .. math.floor(GetCurrentTime() / 5)
+						)
 					end
 					table.remove(v.tFrame, 1)
 					if table.getn(v.tFrame) == 0 then
