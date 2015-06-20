@@ -216,7 +216,7 @@ _HM.tTalkChannelHeader = {
 	[PLAYER_TALK_CHANNEL.WORLD] = "/h ",
 }
 
--- parse faceicon in talking message
+-- parse emotion in talking message
 _HM.ParseFaceIcon = function(t)
 	if not _HM.tFaceIcon then
 		_HM.tFaceIcon = {}
@@ -228,7 +228,7 @@ _HM.ParseFaceIcon = function(t)
 	local t2 = {}
 	for _, v in ipairs(t) do
 		if v.type ~= "text" then
-			if v.type == "faceicon" then
+			if v.type == "emotion" then
 				v.type = "text"
 			end
 			table.insert(t2, v)
