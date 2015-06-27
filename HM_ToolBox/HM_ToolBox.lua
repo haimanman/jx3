@@ -269,12 +269,16 @@ AuctionPanel.AuctionSell = function(...)
 end
 
 -- 获取五行石数据
-_HM_ToolBox.GetDiamondData = function(box)
-	local d, item = {}, GetClientPlayer().GetItem(box.dwBox, box.dwX)
-	d.dwBox, d.dwX = box.dwBox, box.dwX
+_HM_ToolBox.GetDiamondData = function(dwBox, dwX)
+	if not dwX then
+		dwBox, dwX = select(2, dwBox:GetObjectData())
+	end
+	local d, item = {}, GetClientPlayer().GetItem(dwBox, dwX)
+	d.dwBox, d.dwX = dwBox, dwX
 	if item then
 		d.type, d.level = string.match(item.szName, _L["DiamondRegex"])
 		d.id, d.bind, d.num, d.detail = item.nUiId, item.bBind, item.nStackNum, item.nDetail
+		d.dwTabType, d.dwIndex = item.dwTabType, item.dwIndex
 	end
 	return d
 end
@@ -282,12 +286,12 @@ end
 -- 保存五行石精炼方案
 _HM_ToolBox.SaveDiamondFormula = function()
 	local t = {}
-	local handle = Station.Lookup("Normal/FEProducePanel", "")
-	local box, hL = handle:Lookup("Box_FE"), handle:Lookup("Handle_Item")
+	local handle = Station.Lookup("Normal/CastingPanel/PageSet_All/Page_Refine/Wnd_CommonRefine", "")
+	local box, hL = handle:Lookup("Box_Refine"), handle:Lookup("Handle_RefineExpend")
 	table.insert(t, _HM_ToolBox.GetDiamondData(box))
 	for i = 1, 16 do
-		local box = hL:Lookup("Box_Item" .. i)
-		if box.state == "main" then
+		local box = hL:Lookup("Box_RefineExpend_" .. i)
+		if box:IsObjectEnable() and box:GetObjectData() ~= -1 then
 			table.insert(t, _HM_ToolBox.GetDiamondData(box))
 		end
 	end
@@ -299,7 +303,7 @@ _HM_ToolBox.LoadBagDiamond = function()
 	local me, t = GetClientPlayer(), {}
 	for dwBox = 1, BigBagPanel_nCount do
 		for dwX = 0, me.GetBoxSize(dwBox) - 1 do
-			local d = _HM_ToolBox.GetDiamondData({ dwBox = dwBox, dwX = dwX })
+			local d = _HM_ToolBox.GetDiamondData(dwBox, dwX)
 			if not d.id or d.type then
 				for _, v in ipairs(_HM_ToolBox.dFormula) do
 					if v.dwBox == dwBox and v.dwX == dwX then
@@ -336,7 +340,7 @@ _HM_ToolBox.RestoreBagDiamond = function(d)
 	if item then
 		for k, v in ipairs(tBag) do
 			if not v.id then
-				local v2 = _HM_ToolBox.GetDiamondData(d)
+				local v2 = _HM_ToolBox.GetDiamondData(d.dwBox, d.dwX)
 				v2.dwBox, v2.dwX = v.dwBox, v.dwX
 				tBag[k] = v2
 				me.ExchangeItem(d.dwBox, d.dwX, v.dwBox, v.dwX)
@@ -1084,8 +1088,7 @@ end
 
 _HM_ToolBox.OnAutoConfirm = function()
 	if HM_ToolBox.bAutoDiamond2 then
-		local szName = "ProduceDiamondSure"
-		local frame = Station.Lookup("Topmost2/MB_" .. szName) or Station.Lookup("Topmost/MB_" .. szName)
+		local frame = Station.Lookup("Topmost/MB_CastingPanelConfirm")
 		if frame then
 			_HM_ToolBox.ProduceDiamond = frame:Lookup("Wnd_All/Btn_Option1").fnAction
 			_HM_ToolBox.SaveDiamondFormula()
@@ -1100,19 +1103,20 @@ _HM_ToolBox.OnDiamondUpdate = function()
 	if not HM_ToolBox.bAutoDiamond2 or not _HM_ToolBox.dFormula or arg0 ~= 1 then
 		return
 	end
-	local box = Station.Lookup("Normal/FEProducePanel", "Box_FE")
+	local box = Station.Lookup("Normal/CastingPanel/PageSet_All/Page_Refine/Wnd_CommonRefine", "Box_Refine")
 	if not box then
 		_HM_ToolBox.dFormula = nil
 		return
 	end
 	-- 移除加锁（延迟一帧）
 	HM.DelayCall(50, function()
-		RemoveUILockItem("FEProduce")
+		local dwBox, dwX = select(2, box:GetObjectData())
+		RemoveUILockItem("CastingPanel:" .. dwBox .. "," .. dwX)
 		box:SetObject(UI_OBJECT_NOT_NEED_KNOWN, 0)
 		box:SetObjectIcon(3388 - GetClientPlayer().nGender)
 	end)
 	-- 重新放入配方（延迟8帧执行，确保 unlock）
-	HM.DelayCall(500, function()
+	HM.DelayCall(200, function()
 		_HM_ToolBox.LoadBagDiamond()
 		for _, v in ipairs(_HM_ToolBox.dFormula) do
 			if not _HM_ToolBox.RestoreBagDiamond(v) then
@@ -1122,7 +1126,6 @@ _HM_ToolBox.OnDiamondUpdate = function()
 				return
 			end
 		end
-		box.nDetail = _HM_ToolBox.dFormula[1].detail
 		_HM_ToolBox.ProduceDiamond()
 	end)
 end
