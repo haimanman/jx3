@@ -41,9 +41,8 @@ _HM_Team.Debug = function(szMsg)
 end
 
 -- bg hear to submit leader
-_HM_Team.OnAskLeader = function()
-	local data = HM.BgHear("HM_TEAM_LEADER")
-	if data then
+_HM_Team.OnAskLeader = function(nChannel, dwID, szName, data, bSelf)
+	if not bSelf then
 		local me, team = GetClientPlayer(), GetClientTeam()
 		if me and me.IsInParty() and me.dwID == team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.LEADER) then
 			local dwID = tonumber(data[1])
@@ -473,8 +472,7 @@ end
 ---------------------------------------------------------------------
 -- 注册事件、初始化
 ---------------------------------------------------------------------
-HM.RegisterEvent("ON_BG_CHANNEL_MSG", _HM_Team.OnAskLeader)
-
+HM.RegisterBgMsg("HM_TEAM_LEADER", _HM_Team.OnAskLeader)
 -- add to HM collector
 HM.RegisterPanel(_L["Team save/marker"], 2147, nil, _HM_Team.PS)
 
