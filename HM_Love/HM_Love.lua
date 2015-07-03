@@ -699,18 +699,16 @@ _HM_Love.ReplyLove = function(bCancel)
 end
 
 -- 后台同步
-_HM_Love.OnBgTalk = function()
-	local data = HM.BgHear("HM_LOVE")
-	if data then
+_HM_Love.OnBgTalk = function(nChannel, dwID, szName, data, bSelf)
+	if not bSelf then
 		if data[1] == "VIEW" then
-			local dwTarget, szTarget = arg0, arg3
-			if HM.IsParty(dwTarget) then
-				_HM_Love.tViewer[dwTarget] = szTarget
+			if HM.IsParty(dwID) then
+				_HM_Love.tViewer[dwID] = szName
 				_HM_Love.ReplyLove()
 			elseif not GetClientPlayer().bFightState and not HM_Love.bQuiet then
-				_HM_Love.tViewer[dwTarget] = szTarget
+				_HM_Love.tViewer[dwID] = szName
 				HM.Confirm(
-					"[" .. szTarget .. "] " .. _L["want to see your lover info, OK?"],
+					"[" .. szName .. "] " .. _L["want to see your lover info, OK?"],
 					function() _HM_Love.ReplyLove() end,
 					function() _HM_Love.ReplyLove(true) end
 				)
@@ -723,20 +721,19 @@ _HM_Love.OnBgTalk = function()
 			OutputMessage("MSG_WHISPER", _L["[Mystery] quietly said:"] .. _HM_Love.tAutoSay[i] .. "\n")
 			PlaySound(SOUND.UI_SOUND,g_sound.Whisper)
 		elseif data[1] == "LOVE_ASK" then
-			local szTarget = arg3
 			-- 已有情缘直接拒绝
-			if _HM_Love.dwID ~= 0 and (_HM_Love.dwID ~= arg0 or _HM_Love.nLoveType == 1) then
-				return HM.BgTalk(szTarget, "HM_LOVE", "LOVE_ANS", "EXISTS")
+			if _HM_Love.dwID ~= 0 and (_HM_Love.dwID ~= dwID or _HM_Love.nLoveType == 1) then
+				return HM.BgTalk(szName, "HM_LOVE", "LOVE_ANS", "EXISTS")
 			end
 			-- 询问意见
-			HM.Confirm("[" .. szTarget .. "] " .. _L["want to mutual love with you, OK?"], function()
-				HM.BgTalk(szTarget, "HM_LOVE", "LOVE_ANS", "YES")
+			HM.Confirm("[" .. szName .. "] " .. _L["want to mutual love with you, OK?"], function()
+				HM.BgTalk(szName, "HM_LOVE", "LOVE_ANS", "YES")
 			end, function()
-				HM.BgTalk(szTarget, "HM_LOVE", "LOVE_ANS", "NO")
+				HM.BgTalk(szName, "HM_LOVE", "LOVE_ANS", "NO")
 			end)
 		elseif data[1] == "FIX1" then
-			if _HM_Love.dwID == 0 or (_HM_Love.dwID == arg0 and _HM_Love.nLoveType ~= 1) then
-				local aInfo = _HM_Love.GetFellowDataByID(arg0)
+			if _HM_Love.dwID == 0 or (_HM_Love.dwID == dwID and _HM_Love.nLoveType ~= 1) then
+				local aInfo = _HM_Love.GetFellowDataByID(dwID)
 				if aInfo then
 					HM.Confirm("[" .. aInfo.name .. "] " .. _L["want to repair love relation with you, OK?"], function()
 						_HM_Love.SaveLover(aInfo, 1, tonumber(data[2]))
@@ -744,7 +741,7 @@ _HM_Love.OnBgTalk = function()
 					end)
 				end
 			else
-				HM.BgTalk(arg3, "HM_LOVE", "LOVE_ANS", "EXISTS")
+				HM.BgTalk(szName, "HM_LOVE", "LOVE_ANS", "EXISTS")
 			end
 		elseif data[1] == "LOVE_ANS" then
 			if data[2] == "EXISTS" then
@@ -756,7 +753,7 @@ _HM_Love.OnBgTalk = function()
 				HM.Sysmsg(szMsg)
 				HM.Alert(szMsg)
 			elseif data[2] == "YES" then
-				local aInfo = _HM_Love.GetFellowDataByID(arg0)
+				local aInfo = _HM_Love.GetFellowDataByID(dwID)
 				local dwBox, dwX = _HM_Love.GetDoubleLoveItem(aInfo)
 				if dwBox then
 					local nNum = _HM_Love.GetBagItemNum(dwBox, dwX)
@@ -771,7 +768,7 @@ _HM_Love.OnBgTalk = function()
 					end)
 				end
 			elseif data[2] == "CONF" then
-				local aInfo = _HM_Love.GetFellowDataByID(arg0)
+				local aInfo = _HM_Love.GetFellowDataByID(dwID)
 				if aInfo then
 					_HM_Love.SaveLover(aInfo, 1)
 					HM.Sysmsg(_L("Congratulations, success to attach love with [%s]!", aInfo.name))
@@ -922,13 +919,12 @@ end
 ---------------------------------------------------------------------
 -- 注册事件、初始化
 ---------------------------------------------------------------------
-HM.RegisterEvent("ON_BG_CHANNEL_MSG", _HM_Love.OnBgTalk)
 HM.RegisterEvent("PEEK_OTHER_PLAYER", _HM_Love.OnPeekOtherPlayer)
 HM.RegisterEvent("PLAYER_FELLOWSHIP_LOGIN", _HM_Love.OnFriendLogin)
 HM.RegisterEvent("PLAYER_FELLOWSHIP_UPDATE", _HM_Love.OnFellowUpdate)
 HM.RegisterEvent("PLAYER_ENTER_SCENE", _HM_Love.OnPlayerEnter)
 HM.BreatheCall("HM_Love", _HM_Love.OnBreathe)
-
+HM.RegisterBgMsg("HM_LOVE", _HM_Love.OnBgTalk)
 -- add to HM collector
 HM.RegisterPanel(HM_Love.szTitle, 329, _L["Recreation"], _HM_Love.PS)
 

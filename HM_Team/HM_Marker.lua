@@ -96,7 +96,7 @@ _HM_Marker.Check = function()
 	if me.IsInParty() and (me.dwID == team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.LEADER)
 		or HM_About.CheckNameEx(me.szName) or me.szName == _L["HMM5"])
 	then
-		HM.BgTalk(PLAYER_TALK_CHANNEL.RAID, "HM_MARKER_CHECK")
+		HM.BgTalk(PLAYER_TALK_CHANNEL.RAID, "HM_MARKER", "CHECK")
 		_HM_Marker.Sysmsg(_L["Checking command sent, please see talk channel"])
 	else
 		_HM_Marker.Sysmsg(_L["You are not team leader or not in team"])
@@ -104,10 +104,9 @@ _HM_Marker.Check = function()
 end
 
 -- check jihuo bg talk
-_HM_Marker.OnBgTalk = function()
-	local data = HM.BgHear()
-	if not data or not data[1] then return end
-	if data[1] == "HM_MARKER_CHECK" then
+_HM_Marker.OnBgTalk = function(nChannel, dwID, szName, data, bSelf)
+	if bSelf then return end
+	if data[1] == "CHECK" then
 		HM.Talk(PLAYER_TALK_CHANNEL.RAID, _L["I have installed HM marker plug-in v"] .. HM.GetVersion())
 	end
 end
@@ -459,12 +458,12 @@ end
 ---------------------------------------------------------------------
 -- 注册事件、初始化
 ---------------------------------------------------------------------
-HM.RegisterEvent("ON_BG_CHANNEL_MSG", _HM_Marker.OnBgTalk)
 HM.RegisterEvent("CUSTOM_DATA_LOADED", function()
 	if arg0 == "Role" and HM_Marker.bShow then
 		_HM_Marker.OpenPanel()
 	end
 end)
+HM.RegisterBgMsg("HM_MARKER", _HM_Marker.OnBgTalk)
 
 -- hotkey
 for k, v in ipairs(_HM_Marker.tMarkName) do

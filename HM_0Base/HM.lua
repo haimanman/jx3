@@ -43,6 +43,7 @@ local _HM = {
 	tMenu = {},
 	tMenuTrace = {},
 	tEvent = {},
+	tBgMsgHandle = {},
 	tHotkey = {},
 	tDelayCall = {},
 	tBreatheCall = {},
@@ -511,22 +512,6 @@ _HM.HookPlayerMenu = function()
 	TraceButton_AppendAddonMenu({ _HM.GetTraceMenu })
 end
 
--- shield sound from mock bg_talk
-g_sound_Whisper = g_sound_Whisper or g_sound.Whisper
-g_sound.Whisper = nil
-setmetatable(g_sound, {
-	__index = function(tb, k)
-		if k ~= "Whisper" then
-			return nil
-		end
-		local t = GetClientPlayer().GetTalkData()
-		if t and #t > 1 and t[1].text == _L["Addon comm."] and t[2].type == "eventlink" then
-			return ""
-		end
-		return g_sound_Whisper
-	end
-})
-
 ---------------------------------------------------------------------
 -- 全局函数和变量（HM.xxx）
 ---------------------------------------------------------------------
@@ -960,7 +945,7 @@ HM.Talk = function(nChannel, szText, szUUID, bNoEmotion, bSaveDeny)
 	end
 	-- add addon msg header
 	if not tSay[1] or (
-		not (tSay[1].type == "text" and (tSay[1].text == _L["Addon comm."] or tSay[1].text == "BG_CHANNEL_MSG")) -- bgmsg
+		not (tSay[1].type == "eventlink" and tSay[1].name == "BG_CHANNEL_MSG") -- bgmsg
 		and not (tSay[1].name == "" and tSay[1].type == "eventlink") -- header already added
 	) then
 		table.insert(tSay, 1, {
@@ -993,47 +978,22 @@ HM.Talk2 = function(nChannel, szText, szUUID, bNoEmotion)
 end
 
 -- 发布后台聊天通讯
--- (void) HM.BgTalk(szTarget, ...)
--- (void) HM.BgTalk(nChannel, ...)
+-- (void) HM.BgTalk(szTarget, szKey, ...)
+-- (void) HM.BgTalk(nChannel, szKey, ...)
 -- szTarget			-- 密聊的目标角色名
--- nChannel			-- *可选* 聊天频道，PLAYER_TALK_CHANNLE.*，默认为近聊
--- ...						-- 若干个字符串参数组成，可原样被接收
-HM.BgTalk = function(nChannel, ...)
-	local tSay = { { type = "text", text = _L["Addon comm."] } }
+-- nChannel			-- 聊天频道，PLAYER_TALK_CHANNLE.*，默认为近聊
+-- szKey			-- BGTALK标识符。
+-- ...				-- 若干个字符串参数组成，可原样被接收
+HM.BgTalk = function(nChannel, szKey, ...)
+	local tSay = { { type = "eventlink", name = "BG_CHANNEL_MSG", linkinfo = szKey } }
 	local tArg = { ... }
-	-- compatiable with offcial bg channel msg of team
-	if nChannel == PLAYER_TALK_CHANNEL.RAID or nChannel == PLAYER_TALK_CHANNEL.TEAM then
-		tSay[1].text = "BG_CHANNEL_MSG"
-	end
 	for _, v in ipairs(tArg) do
 		if v == nil then
 			break
 		end
-		table.insert(tSay, { type = "eventlink", name = "", linkinfo = tostring(v) })
+		table.insert(tSay, { type = "eventlink", name = "", linkinfo = var2str(v) })
 	end
 	HM.Talk(nChannel, tSay, nil, true)
-end
-
--- 读取后台聊天数据，在 ON_BG_CHANNEL_MSG 事件处理函数中使用才有意义
--- (table) HM.BgHear([string szKey])
--- szKey			-- 通讯类型，也就是 HM.BgTalk 的第一数据参数，若不匹配则忽略
--- arg0: dwTalkerID, arg1: nChannel, arg2: bEcho, arg3: szName
-HM.BgHear = function(szKey)
-	local me = GetClientPlayer()
-	local tSay = me.GetTalkData()
-	if tSay and arg0 ~= me.dwID and #tSay > 1 and (tSay[1].text == _L["Addon comm."] or tSay[1].text == "BG_CHANNEL_MSG") and tSay[2].type == "eventlink" then
-		local tData, nOff = {}, 2
-		if szKey then
-			if tSay[nOff].linkinfo ~= szKey then
-				return nil
-			end
-			nOff = nOff + 1
-		end
-		for i = nOff, #tSay do
-			table.insert(tData, tSay[i].linkinfo)
-		end
-		return tData
-	end
 end
 
 -- (boolean) HM.IsDps([KPlayer tar])			-- 检查玩家是否为 DPS 内功，省略判断则判断自身
@@ -1444,6 +1404,12 @@ end
 -- (void) HM.UnRegisterEvent(string szEvent)
 HM.UnRegisterEvent = function(szEvent)
 	HM.RegisterEvent(szEvent, nil)
+end
+
+-- 注册/反注册BGTALK处理函数
+-- (void) HM.RegisterBgMsg(string szKey[, func fnAction])
+HM.RegisterBgMsg = function(szKey, fnAction)
+	_HM.tBgMsgHandle[szKey] = fnAction
 end
 
 -- 注册用户定义数据，支持全局变量数组遍历
@@ -3097,7 +3063,15 @@ HM.RegisterEvent("CUSTOM_DATA_LOADED", function()
 		HM.nBuildDate = tonumber(_HM.szBuildDate)
 	end
 end)
-
+-- szKey, nChannel, dwID, szName, aTable
+HM.RegisterEvent("ON_BG_CHANNEL_MSG", function()
+	if _HM.tBgMsgHandle[arg0] then
+		local res, err = pcall(_HM.tBgMsgHandle[arg0], arg1, arg2, arg3, arg4, arg2 == UI_GetClientPlayerID())
+		if not res then
+			HM.Sysmsg("BG_MSG#" .. arg0 .. "# ERROR:" .. err)
+		end
+	end
+end)
 -- player menu
 HM.AppendPlayerMenu(function()
 	return {

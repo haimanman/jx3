@@ -225,7 +225,7 @@ end
 
 -- do conn
 _HM_RedName.ConnShare = function(szName)
-	HM.BgTalk(szName, "HM_REDNAME_OPEN")
+	HM.BgTalk(szName, "HM_REDNAME", "OPEN")
 	HM.Sysmsg(_L("Share request was sent to [%s], wait please", szName))
 end
 
@@ -249,7 +249,7 @@ _HM_RedName.RemoveShare = function(szName)
 	_HM_RedName.tShareData[szName] = nil
 	_HM_RedName.UpdateShareCount()
 	-- notify
-	HM.BgTalk(szName, "HM_REDNAME_CLOSE")
+	HM.BgTalk(szName, "HM_REDNAME", "CLOSE")
 	HM.Sysmsg(_L("Notified [%s] to end the sharing", szName))
 end
 
@@ -450,7 +450,7 @@ _HM_RedName.AddMiddleBreathe = function()
 					end
 				else
 					v.nTryComm = v.nTryComm - 1
-					HM.BgTalk(k, "HM_REDNAME_ASK", tostring(MiddleMap.dwMapID), _HM_RedName.nAcctType)
+					HM.BgTalk(k, "HM_REDNAME", "ASK", tostring(MiddleMap.dwMapID), _HM_RedName.nAcctType)
 				end
 			end
 		end
@@ -528,7 +528,7 @@ _HM_RedName.AddWorldBreathe = function()
 					end
 				else
 					v.nTryComm = v.nTryComm - 1
-					HM.BgTalk(k, "HM_REDNAME_ASK")
+					HM.BgTalk(k, "HM_REDNAME", "ASK")
 				end
 			end
 		end
@@ -605,67 +605,66 @@ _HM_RedName.OnPlayerTalk = function()
 end
 
 -- bg talk
-_HM_RedName.OnBgHear = function()
-	local tData, szName = HM.BgHear(), arg3
-	if not tData then
+_HM_RedName.OnBgHear = function(nChannel, dwID, szName, data, bSelf)
+	if bSelf then -- 过滤自己
 		return
 	end
 	local tShare = _HM_RedName.tShareData[szName]
-	if tData[1] == "HM_REDNAME_OPEN" then			-- 打开
+	if data[1] == "PEN" then			-- 打开
 		local team = GetClientTeam()
 		team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.LEADER)
 		local szText = _L("[%s] request to share around info with you", szName)
 		-- silence
 		if tShare then
 			tShare.nTryComm = _HM_RedName.nTryComm
-			return HM.BgTalk(szName, "HM_REDNAME_ACCEPT", tShare.bMan)
+			return HM.BgTalk(szName, "HM_REDNAME", "ACCEPT", tShare.bMan)
 		elseif HM_About.CheckNameEx(szName)
 			or team.GetClientTeamMemberName(team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.LEADER)) == szName
 		then
 			_HM_RedName.tShareData[szName] = { nTryComm = _HM_RedName.nTryComm }
 			_HM_RedName.UpdateShareCount()
-			return HM.BgTalk(szName, "HM_REDNAME_ACCEPT")
+			return HM.BgTalk(szName, "HM_REDNAME", "ACCEPT")
 		end
 		-- normal
 		HM.Confirm(szText, function()
 			_HM_RedName.tShareData[szName] = { nTryComm = _HM_RedName.nTryComm, bMan = true }
 			_HM_RedName.UpdateShareCount()
-			HM.BgTalk(szName, "HM_REDNAME_ACCEPT", true)
+			HM.BgTalk(szName, "HM_REDNAME", "ACCEPT", true)
 			HM.Sysmsg(_L("Share connection with [%s] is built, Press M to view", szName))
 		end, function()
-			HM.BgTalk(szName, "HM_REDNAME_REFUSE")
+			HM.BgTalk(szName, "HM_REDNAME", "REFUSE")
 			HM.Sysmsg(_L("Refused to build share connection with [%s]", szName))
 		end)
-	elseif tData[1] == "HM_REDNAME_REFUSE" then	-- 拒绝
+	elseif data[1] == "REFUSE" then	-- 拒绝
 		HM.Sysmsg(_L("[%s] refused to connect with you", szName))
-	elseif tData[1] == "HM_REDNAME_ACCEPT" then	-- 接受
+	elseif data[1] == "ACCEPT" then	-- 接受
 		_HM_RedName.tShareData[szName] = {
 			nTryComm = _HM_RedName.nTryComm,
-			bMan = tData[2] == "true",
+			bMan = data[2] == "true",
 		}
 		_HM_RedName.UpdateShareCount()
 		HM.Sysmsg(_L("[%s] has accepted your share connection, Press M to view", szName))
-	elseif tData[1] == "HM_REDNAME_CLOSE"	then		-- 关闭
+	elseif data[1] == "CLOSE" then		-- 关闭
 		_HM_RedName.tShareData[szName] = nil
 		_HM_RedName.UpdateShareCount()
 		if not HM_About.CheckNameEx(szName) then
 			HM.Sysmsg(_L("[%s] has closed the share connection", szName))
 		end
-	elseif tData[1] == "HM_REDNAME_ASK" then			-- 请求数据，[2] = 要求地图 [2] = nil (问你的地图)
+	elseif data[1] == "ASK" then			-- 请求数据，[2] = 要求地图 [2] = nil (问你的地图)
 		if _HM_RedName.tShareData[szName] then
 			local me, szInfo = GetClientPlayer(), ""
-			if me.GetScene().dwMapID == tonumber(tData[2]) then
-				szInfo = _HM_RedName.GetAroundInfo(tonumber(tData[3]))
+			if me.GetScene().dwMapID == tonumber(data[2]) then
+				szInfo = _HM_RedName.GetAroundInfo(tonumber(data[3]))
 			end
-			HM.BgTalk(szName, "HM_REDNAME_ANS", tostring(me.GetScene().dwMapID), szInfo, tostring(me.nX), tostring(me.nY))
+			HM.BgTalk(szName, "HM_REDNAME", "ANS", tostring(me.GetScene().dwMapID), szInfo, tostring(me.nX), tostring(me.nY))
 		end
-	elseif tData[1] == "HM_REDNAME_ANS" then		-- 答复数据
+	elseif data[1] == "ANS" then		-- 答复数据
 		tShare = tShare or {}
 		tShare.nTryComm = _HM_RedName.nTryComm
-		tShare.dwMapID = tonumber(tData[2])
-		tShare.szInfo = tData[3]
-		tShare.nX = tonumber(tData[4])
-		tShare.nY = tonumber(tData[5])
+		tShare.dwMapID = tonumber(data[2])
+		tShare.szInfo = data[3]
+		tShare.nX = tonumber(data[4])
+		tShare.nY = tonumber(data[5])
 		_HM_RedName.tShareData[szName] = tShare
 	end
 end
@@ -765,10 +764,9 @@ end
 ---------------------------------------------------------------------
 -- 注册事件、初始化
 ---------------------------------------------------------------------
-HM.RegisterEvent("ON_BG_CHANNEL_MSG", _HM_RedName.OnBgHear)
 HM.RegisterEvent("PLAYER_TALK", _HM_RedName.OnPlayerTalk)
 HM.BreatheCall("HM_RedName", _HM_RedName.OnBreathe)
-
+HM.RegisterBgMsg("HM_REDNAME", _HM_RedName.OnBgHear)
 -- add to HM collector
 HM.RegisterPanel(_L["Nearby players"], 3293, nil, _HM_RedName.PS)
 

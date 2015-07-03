@@ -94,9 +94,8 @@ _HM_Guding.OnDoodadEnter = function()
 end
 
 -- notify
-_HM_Guding.OnSkillNotify = function()
-	local data = HM.BgHear("HM_GUDING_NOTIFY")
-	if data then
+_HM_Guding.OnSkillNotify = function(nChannel, dwID, szName, data, bSelf)
+	if not bSelf then
 		local dwID = tonumber(data[1])
 		if not _HM_Guding.tList[dwID] then
 			_HM_Guding.tList[dwID] = { dwCaster = tonumber(data[2]), dwTime = GetTime() }
@@ -114,7 +113,7 @@ function HM_Guding.OnFrameCreate()
 	this:RegisterEvent("SYS_MSG")
 	this:RegisterEvent("DO_SKILL_CAST")
 	this:RegisterEvent("DOODAD_ENTER_SCENE")
-	this:RegisterEvent("ON_BG_CHANNEL_MSG")
+	HM.RegisterBgMsg("HM_GUDING_NOTIFY", _HM_Guding.OnSkillNotify)
 end
 
 -- breathe
@@ -175,8 +174,6 @@ function HM_Guding.OnEvent(event)
 		_HM_Guding.OnSkillCast(arg0, arg1, arg2, event)
 	elseif event == "DOODAD_ENTER_SCENE" then
 		_HM_Guding.OnDoodadEnter()
-	elseif event == "ON_BG_CHANNEL_MSG" then
-		_HM_Guding.OnSkillNotify()
 	end
 end
 

@@ -977,10 +977,6 @@ end
 -- 插入聊天内容的 HOOK （过滤、加入时间 ）
 _HM_ToolBox.AppendChatItem = function(h, szMsg)
 	local i = h:GetItemCount()
-	-- filter addon comm.
-	if StringFindW(szMsg, "eventlink") and StringFindW(szMsg, _L["Addon comm."]) then
-		return
-	end
 	-- save emotion id into name
 	if HM_ToolBox.bChatTime and string.find(szMsg, "path=\"", 1, 1) then
 		szMsg = string.gsub(szMsg, "path=\"(.-)\"%s+disablescale=1%s+(%w+)=(%d+)", function(szFile, szType, nFrame)
@@ -1188,16 +1184,15 @@ _HM_ToolBox.OnRecordWhisperAt = function(szMsg)
 end
 
 -- 后台广播（via 帮会频道）：nType, dwMapID, szText
-_HM_ToolBox.OnBgBroad = function()
-	local tData, szName = HM.BgHear("HM_BROAD"), arg3
-	if not tData or not tData[3] then
+_HM_ToolBox.OnBgBroad = function(nChannel, dwID, szName, data, bSelf)
+	if not data or not data[3] or bSelf or nChannel ~= PLAYER_TALK_CHANNEL.TONG then
 		return
 	end
-	local me, dwMapID = GetClientPlayer(), tonumber(tData[2])
-	if tData[1] == "0" or (tData[1] == "1" and dwMapID ~= me.GetMapID()) or (tData[1] == "2" and dwMapID == me.GetMapID()) then
+	local me, dwMapID = GetClientPlayer(), tonumber(data[2])
+	if data[1] == 0 or (data[1] == 1 and dwMapID ~= me.GetMapID()) or (data[1] == 2 and dwMapID == me.GetMapID()) then
 		local szFont = GetMsgFontString("MSG_WHISPER")
 		local szMsg = "<text>text=" .. EncodeComponentsString("[" .. szName .. "]") .. szFont.." name=\"namelink\" eventid=515</text>"
-		szMsg = szMsg .. "<text>text=" .. EncodeComponentsString(g_tStrings.STR_TALK_HEAD_WHISPER .. _L["[Guild BC] "] .. tData[3] .. "\n") .. szFont .. "</text>"
+		szMsg = szMsg .. "<text>text=" .. EncodeComponentsString(g_tStrings.STR_TALK_HEAD_WHISPER .. _L["[Guild BC] "] .. data[3] .. "\n") .. szFont .. "</text>"
 		OutputMessage("MSG_WHISPER", szMsg, true)
 		PlaySound(SOUND.UI_SOUND, g_sound.Whisper)
 	end
@@ -1327,7 +1322,7 @@ RegisterMsgMonitor(_HM_ToolBox.OnRecordWhisperAt, {
 	"MSG_NORMAL", "MSG_MAP", "MSG_BATTLE_FILED", "MSG_PARTY", "MSG_SCHOOL",
 	"MSG_GUILD", "MSG_WORLD", "MSG_CAMP", "MSG_TEAM", "MSG_FRIEND"
 })
-HM.RegisterEvent("ON_BG_CHANNEL_MSG", _HM_ToolBox.OnBgBroad)
+HM.RegisterBgMsg("HM_BROAD", _HM_ToolBox.OnBgBroad)
 
 -- add to HM collector
 HM.RegisterPanel(_L["Misc toolbox"], 352, _L["Others"], _HM_ToolBox.PS)
