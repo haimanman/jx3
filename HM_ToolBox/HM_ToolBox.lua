@@ -1089,7 +1089,6 @@ _HM_ToolBox.OnAutoConfirm = function()
 			_HM_ToolBox.ProduceDiamond = frame:Lookup("Wnd_All/Btn_Option1").fnAction
 			_HM_ToolBox.SaveDiamondFormula()
 		end
-		HM.DoMessageBox(szName)
 	end
 	_HM_ToolBox.BindStackButton()
 end
