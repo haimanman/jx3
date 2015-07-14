@@ -610,7 +610,7 @@ _HM_RedName.OnBgHear = function(nChannel, dwID, szName, data, bSelf)
 		return
 	end
 	local tShare = _HM_RedName.tShareData[szName]
-	if data[1] == "PEN" then			-- 打开
+	if data[1] == "OPEN" then			-- 打开
 		local team = GetClientTeam()
 		team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.LEADER)
 		local szText = _L("[%s] request to share around info with you", szName)

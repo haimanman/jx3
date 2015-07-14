@@ -1164,14 +1164,12 @@ end
 ---------------------------------------------------------------------
 -- 注册事件、初始化
 ---------------------------------------------------------------------
-HM.RegisterEvent("CUSTOM_DATA_LOADED", function()
-	if arg0 == "Role" then
-		_HM_Target.UpdateDir()
-		-- show bufftime of 374
-		local buff = Table_GetBuff(374, 1)
-		if buff then
-			buff.bShowTime = 1
-		end
+HM.RegisterEvent("PLAYER_ENTER_GAME", function()
+	_HM_Target.UpdateDir()
+	-- show bufftime of 374
+	local buff = Table_GetBuff(374, 1)
+	if buff then
+		buff.bShowTime = 1
 	end
 end)
 HM.BreatheCall("HM_Target", function()

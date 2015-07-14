@@ -3053,15 +3053,13 @@ HM.RegisterEvent("NPC_LEAVE_SCENE", function() _HM.aNpc[arg0] = nil end)
 HM.RegisterEvent("DOODAD_ENTER_SCENE", function() _HM.aDoodad[arg0] = true end)
 HM.RegisterEvent("DOODAD_LEAVE_SCENE", function() _HM.aDoodad[arg0] = nil end)
 HM.RegisterEvent("ON_PLAYER_EMOTION_PACKAGE_UPDATE", function() _HM.tVipEmotion = nil end)
-HM.RegisterEvent("CUSTOM_DATA_LOADED", function()
-	if arg0 == "Role" then
-		for _, v in ipairs(_HM.tCustomUpdateCall) do
-			if not v.nDate or v.nDate > HM.nBuildDate then
-				v.fnAction()
-			end
+HM.RegisterEvent("PLAYER_ENTER_GAME", function()
+	for _, v in ipairs(_HM.tCustomUpdateCall) do
+		if not v.nDate or v.nDate > HM.nBuildDate then
+			v.fnAction()
 		end
-		HM.nBuildDate = tonumber(_HM.szBuildDate)
 	end
+	HM.nBuildDate = tonumber(_HM.szBuildDate)
 end)
 -- szKey, nChannel, dwID, szName, aTable
 HM.RegisterEvent("ON_BG_CHANNEL_MSG", function()
