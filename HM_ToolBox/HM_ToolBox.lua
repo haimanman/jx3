@@ -954,7 +954,7 @@ _HM_ToolBox.CopyChatLine = function(hTime)
 				end
 			end
 		elseif p:GetType() == "Image" or p:GetType() == "Animate" then
-			local dwFaceID = tonumber(p:GetName())
+			local dwFaceID = tonumber(string.sub(p:GetName(), 9))
 			if dwFaceID then
 				local szCmd, dwPage = _HM_ToolBox.GetEmotionCommand(dwFaceID)
 				if szCmd then
@@ -977,15 +977,6 @@ end
 -- 插入聊天内容的 HOOK （过滤、加入时间 ）
 _HM_ToolBox.AppendChatItem = function(h, szMsg)
 	local i = h:GetItemCount()
-	-- save emotion id into name
-	if HM_ToolBox.bChatTime and string.find(szMsg, "path=\"", 1, 1) then
-		szMsg = string.gsub(szMsg, "path=\"(.-)\"%s+disablescale=1%s+(%w+)=(%d+)", function(szFile, szType, nFrame)
-			local dwEmotion = _HM_ToolBox.GetEmotionID(szFile, szType, tonumber(nFrame))
-			if dwEmotion then
-				return "path=\"" .. szFile .. "\" disablescale=1 " .. szType .. "=" .. nFrame .. " name=\"" .. dwEmotion .. "\""
-			end
-		end)
-	end
 	-- normal append
 	h:__AppendItemFromString(szMsg)
 	-- add chat time

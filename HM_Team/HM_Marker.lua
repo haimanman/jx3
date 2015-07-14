@@ -458,8 +458,8 @@ end
 ---------------------------------------------------------------------
 -- 注册事件、初始化
 ---------------------------------------------------------------------
-HM.RegisterEvent("CUSTOM_DATA_LOADED", function()
-	if arg0 == "Role" and HM_Marker.bShow then
+HM.RegisterEvent("PLAYER_ENTER_GAME", function()
+	if HM_Marker.bShow then
 		_HM_Marker.OpenPanel()
 	end
 end)

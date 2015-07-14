@@ -2295,13 +2295,11 @@ end
 ---------------------------------------------------------------------
 -- 注册事件、初始化
 ---------------------------------------------------------------------
-HM.RegisterEvent("CUSTOM_DATA_LOADED", function()
-	if arg0 == "Role" then
-		_HM_TargetList.Switch(HM_TargetList.bShow)
-		_HM_TargetList.HookTargetMenu()
-		HM_SingleFocus.Switch(HM_SingleFocus.bEnable2)
-		HM_SplitFocus.Switch(HM_TargetList.bSplitFocus)
-	end
+HM.RegisterEvent("PLAYER_ENTER_GAME", function()
+	_HM_TargetList.Switch(HM_TargetList.bShow)
+	_HM_TargetList.HookTargetMenu()
+	HM_SingleFocus.Switch(HM_SingleFocus.bEnable2)
+	HM_SplitFocus.Switch(HM_TargetList.bSplitFocus)
 end)
 HM.RegisterEvent("LOADING_END", function()
 	_HM_TargetList.bInArena = IsInArena()
