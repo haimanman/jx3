@@ -988,9 +988,6 @@ HM.BgTalk = function(nChannel, szKey, ...)
 	local tSay = { { type = "eventlink", name = "BG_CHANNEL_MSG", linkinfo = szKey } }
 	local tArg = { ... }
 	for _, v in ipairs(tArg) do
-		if v == nil then
-			break
-		end
 		table.insert(tSay, { type = "eventlink", name = "", linkinfo = var2str(v) })
 	end
 	HM.Talk(nChannel, tSay, nil, true)
