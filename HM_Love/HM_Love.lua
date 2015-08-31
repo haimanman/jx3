@@ -482,7 +482,7 @@ _HM_Love.UpdatePage = function()
 	end
 	-- lover info
 	local inf = h:Lookup("Text_LoverInfo")
-	if t[5] and t[6] and dwAvatar ~= 0 then
+	if t[5] and t[6] then
 		local szText = _HM_Love.GetLoverType(tonumber(t[5]) or 0) .. "   " .. _HM_Love.GetLoverTime(tonumber(t[6]) or 0)
 		inf:SetText(szText)
 	else
