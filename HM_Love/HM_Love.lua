@@ -259,7 +259,7 @@ _HM_Love.ToLocalLover = function(aInfo)
 		_HM_Love.szName = aInfo.name
 		_HM_Love.dwAvatar = aInfo.miniavatar
 		_HM_Love.nRoleType = aInfo.roletype
-		if not aInfo.miniavatar or aInfo.miniavatar == 0 then
+		if aInfo.forceid and (not aInfo.miniavatar or aInfo.miniavatar == 0) then
 			_HM_Love.dwAvatar = 0 - aInfo.forceid
 		end
 	end
