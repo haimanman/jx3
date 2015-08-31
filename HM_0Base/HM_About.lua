@@ -4,7 +4,6 @@
 
 HM_About = {
 	bPlayOpen = true,	-- 播放开场音乐
-	bPlayOld = false,		-- 旧版开场音乐
 	szCheckDate = "",	-- 更新检测日期
 	nSkipAlert = 0,			-- 忽略更新提醒天数（取消后忽略7天）
 }
@@ -211,8 +210,6 @@ _HM_About.PS.OnPanelActive = function(frame)
 	:Text(_L["Play music on hourly first time to open panel"]):Click(function(bChecked) HM_About.bPlayOpen = bChecked end):Pos_()
 	ui:Append("WndCheckBox", { x = nX + 10, y = 292, checked = HM_About.bDebug == true })
 	:Text("Enable Debug"):Click(function(bChecked) HM_About.bDebug = bChecked end)
-	--ui:Append("WndCheckBox", { x = 0, y = 320, checked = HM_About.bPlayOld })
-	--:Text(_L["Use old version of background music"]):Click(function(bChecked) HM_About.bPlayOld = bChecked end)
 end
 
 -- author
@@ -232,7 +229,7 @@ _HM_About.PS.OnTaboxCheck = function(frame, nIndex, szTitle)
 	if nT > 720 and nT < 804 then
 		nF = 1
 	end
-	ui:Append("Image", { x = 0, y = 5, w = 532, h = 168 }):File(HM.GetCustomFile("image.UITEX", "interface\\HM\\HM_0Base\\image.UITEX"), nF):Click(function()
+	ui:Append("Image", { x = 0, y = 5, w = 532, h = 168 }):File(HM.GetCustomFile("image.UITEX", "interface\\HM\\HM_Resource\\image.UITEX"), nF):Click(function()
 		if nF == 1 and HM_Love then
 			HM.OpenPanel(HM_Love.szTitle)
 		end
@@ -242,7 +239,7 @@ _HM_About.PS.OnTaboxCheck = function(frame, nIndex, szTitle)
 	ui:Append("Text", { txt = _L["YY-group: 6685583"], x = 10, y = 280, font = 27 })
 	-- buttons
 	local nX = ui:Append("Text", { txt = _L["<Opening music>"], x = 10, y = 305, font = 27 }):Click(function()
-		local szSound = "interface\\HM\\HM_0Base\\opening" .. ((HM_About.bPlayOld and "2") or "") .. ".wav"
+		local szSound = "interface\\HM\\HM_Resource\\open" .. math.ceil(math.random() * 3) .. ".wav"
 		PlaySound(SOUND.UI_SOUND, HM.GetCustomFile("opening.wav", szSound))
 	end):Pos_()
 	nX = ui:Append("Text", { txt = _L["<About plug-in>"], x = nX + 10, y = 305, font = 27 }):Click(function()
