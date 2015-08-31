@@ -666,7 +666,7 @@ _HM_Love.ReplyLove = function(bCancel)
 			end
 		end
 		HM.BgTalk(v, "HM_LOVE", szName,
-			_HM_Love.dwAvatar, _HM_Love.szSign, _HM_Love.nRoleType,
+			_HM_Love.dwAvatar or 0, _HM_Love.szSign, _HM_Love.nRoleType or 0,
 			_HM_Love.nLoveType, _HM_Love.nStartTime)
 	end
 	_HM_Love.tViewer = {}

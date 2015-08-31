@@ -239,7 +239,7 @@ _HM_About.PS.OnTaboxCheck = function(frame, nIndex, szTitle)
 	ui:Append("Text", { txt = _L["YY-group: 6685583"], x = 10, y = 280, font = 27 })
 	-- buttons
 	local nX = ui:Append("Text", { txt = _L["<Opening music>"], x = 10, y = 305, font = 27 }):Click(function()
-		local szSound = "interface\\HM\\HM_Resource\\open" .. math.ceil(math.random() * 3) .. ".wav"
+		local szSound = "interface\\HM\\HM_Resource\\open" .. math.ceil(math.random() * 2) .. ".wav"
 		PlaySound(SOUND.UI_SOUND, HM.GetCustomFile("opening.wav", szSound))
 	end):Pos_()
 	nX = ui:Append("Text", { txt = _L["<About plug-in>"], x = nX + 10, y = 305, font = 27 }):Click(function()
