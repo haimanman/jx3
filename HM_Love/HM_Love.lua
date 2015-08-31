@@ -259,7 +259,7 @@ _HM_Love.ToLocalLover = function(aInfo)
 		_HM_Love.szName = aInfo.name
 		_HM_Love.dwAvatar = aInfo.miniavatar
 		_HM_Love.nRoleType = aInfo.roletype
-		if aInfo.miniavatar == 0 then
+		if not aInfo.miniavatar or aInfo.miniavatar == 0 then
 			_HM_Love.dwAvatar = 0 - aInfo.forceid
 		end
 	end
@@ -516,37 +516,11 @@ _HM_Love.AskOtherData = function(dwID)
 	end
 	_HM_Love.tOther = {}
 	_HM_Love.UpdatePage()
-	if not HM.IsParty(tar.dwID) then
-		if tar.bFightState then
-			_HM_Love.bActiveLove = false
-			return HM.Sysmsg("[" .. tar.szName .. "] " .. _L[" in fighting, no time for you"])
-		else
-			local frame = Station.Lookup("Normal/PlayerView")
-			local xC, yC, fnAutoClose
-			if frame then
-				xC, yC = frame:GetAbsX() + frame:GetW() / 2, frame:GetAbsY() + frame:GetH() / 2
-				fnAutoClose = function()
-					local hFrame = Station.Lookup("Normal/PlayerView")
-					local hCheckBox = hFrame:Lookup("Page_Main/CheckBox_Love")
-					return not (hFrame and hFrame:IsVisible()) or (hCheckBox and not hCheckBox:IsCheckBoxChecked())
-				end
-			end
-			MessageBox({
-				x = xC, y = yC,
-				fnAutoClose = fnAutoClose,
-				szMessage = _L("[%s] is not in your party, do you want to send a request for accessing data?", tar.szName),
-				szName = "HM_LOVE_CONFIRM", {
-					szOption = g_tStrings.STR_HOTKEY_SURE,
-					fnAction = function() HM.BgTalk(tar.szName, "HM_LOVE", "VIEW") end,
-				}, {
-					szOption = g_tStrings.STR_HOTKEY_CANCEL,
-					fnAction = function() _HM_Love.bActiveLove = false end,
-				},
-			})
-		end
-	else
-		HM.BgTalk(tar.szName, "HM_LOVE", "VIEW")
+	if tar.bFightState and not HM.IsParty(tar.dwID) then
+		_HM_Love.bActiveLove = false
+		return HM.Sysmsg("[" .. tar.szName .. "] " .. _L[" in fighting, no time for you"])
 	end
+	HM.BgTalk(tar.szName, "HM_LOVE", "VIEW")
 end
 
 -------------------------------------
@@ -686,7 +660,7 @@ _HM_Love.ReplyLove = function(bCancel)
 				_HM_Love.nRoleType = p.nRoleType
 				_HM_Love.nLoveType = 1
 				_HM_Love.nStartTime =  GetCurrentTime() - 1173600
-				if p.dwMiniAvatarID == 0 then
+				if not p.dwMiniAvatarID or p.dwMiniAvatarID == 0 then
 					_HM_Love.dwAvatar = 0 - p.dwForceID
 				end
 			end
@@ -831,7 +805,6 @@ _HM_Love.OnBreathe = function()
 	end
 	-- friendrank
 	local hL = Station.Lookup("Normal/FriendRank/Wnd_PRanking", "Handle_RankingMes")
-	
 end
 
 -- player enter
