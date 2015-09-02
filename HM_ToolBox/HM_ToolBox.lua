@@ -975,10 +975,10 @@ _HM_ToolBox.CopyChatLine = function(hTime)
 end
 
 -- 插入聊天内容的 HOOK （过滤、加入时间 ）
-_HM_ToolBox.AppendChatItem = function(h, szMsg, ...)
+_HM_ToolBox.AppendChatItem = function(h, szMsg, szChannel, dwTime, ...)
 	local i = h:GetItemCount()
 	-- normal append
-	h:__AppendItemFromString(szMsg, ...)
+	h:__AppendItemFromString(szMsg, szChannel, dwTime, ...)
 	-- add chat time
 	if HM_ToolBox.bChatTime then
 		-- get msg rgb
@@ -992,11 +992,10 @@ _HM_ToolBox.AppendChatItem = function(h, szMsg, ...)
 				break
 			end
 		end
-
 		if r == 255 and g == 255 and b == 0 then
 			return
 		end
-		local t =TimeToDate(GetCurrentTime())
+		local t = TimeToDate(dwTime or GetCurrentTime())
 		local szTime = GetFormatText(string.format("[%02d:%02d.%02d]", t.hour, t.minute, t.second), 10, r, g, b, 515, "this.OnItemLButtonDown=function() HM_ToolBox.CopyChatLine(this) end\nthis.OnItemRButtonDown=function() HM_ToolBox.RepeatChatLine(this) end", "timelink")
 		h:InsertItemFromString(i, false, szTime)
 	end
