@@ -322,7 +322,7 @@ _HM_Target.UpdateBuffTime = function(hBuffList, hTextList)
 				hBox.szTime = szTime
 				if not hTextList then
 					hBox:SetOverTextFontScheme(1, 16)
-					hBox:SetOverTextPosition(1, 3)
+					hBox:SetOverTextPosition(1, ITEM_POSITION.LEFT_TOP)
 					hBox:SetOverText(1, szTime)
 				else
 					local hText = hT:Lookup(j)
@@ -918,7 +918,7 @@ HM_TargetDir.OnFrameCreate = function()
 	box = this:Lookup("", "Box_Buff")
 	box:SetOverTextFontScheme(0, 15)
 	box:SetOverTextFontScheme(1, 16)
-	box:SetOverTextPosition(1, 3)
+	box:SetOverTextPosition(1, ITEM_POSITION.LEFT_TOP)
 	box:SetObject(UI_OBJECT_NOT_NEED_KNOWN, 0)
 	box.OnItemMouseEnter = function()
 		this:SetObjectMouseOver(1)

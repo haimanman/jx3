@@ -846,7 +846,7 @@ _HM_TargetMon.UpdateSkillBox = function(data, box, txt)
 	if not box.dwID then
 		txt:SetFontScheme(15)
 		box:SetOverTextFontScheme(0, 15)
-		box:SetOverTextPosition(1, 3)
+		box:SetOverTextPosition(1, ITEM_POSITION.LEFT_TOP)
 		box.OnItemMouseEnter = function()
 			this:SetObjectMouseOver(1)
 			local x, y = this:GetAbsPos()
@@ -884,7 +884,7 @@ end
 _HM_TargetMon.UpdateBuffBox = function(data, box, txt, szType)
 	if not box.dwID then
 		box:SetOverTextFontScheme(0, 15)
-		box:SetOverTextPosition(1, 3)
+		box:SetOverTextPosition(1, ITEM_POSITION.LEFT_TOP)
 		box.OnItemMouseEnter = function()
 			this:SetObjectMouseOver(1)
 			local dwOwner = this:GetParent().dwOwner
