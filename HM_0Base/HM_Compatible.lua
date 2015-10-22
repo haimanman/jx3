@@ -342,20 +342,20 @@ function HotkeyPanel_Open(szGroup)
 	-- update content scroll
 	hK:FormatAllItemPos()
 	local wAll, hAll = hK:GetAllItemSize()
-    local w, h = hK:GetSize()
-    local scroll = frame:Lookup("Scroll_Key")
-    local nCountStep = math.ceil((hAll - h) / 10)
-    scroll:SetStepCount(nCountStep)
+	local w, h = hK:GetSize()
+	local scroll = frame:Lookup("Scroll_Key")
+	local nCountStep = math.ceil((hAll - h) / 10)
+	scroll:SetStepCount(nCountStep)
 	scroll:SetScrollPos(0)
 	if nCountStep > 0 then
 		scroll:Show()
-    	scroll:GetParent():Lookup("Btn_Up"):Show()
-    	scroll:GetParent():Lookup("Btn_Down"):Show()
-    else
-    	scroll:Hide()
-    	scroll:GetParent():Lookup("Btn_Up"):Hide()
-    	scroll:GetParent():Lookup("Btn_Down"):Hide()
-    end
+		scroll:GetParent():Lookup("Btn_Up"):Show()
+		scroll:GetParent():Lookup("Btn_Down"):Show()
+	else
+		scroll:Hide()
+		scroll:GetParent():Lookup("Btn_Up"):Hide()
+		scroll:GetParent():Lookup("Btn_Down"):Hide()
+	end
 	-- update list scroll
 	local scroll = frame:Lookup("Scroll_List")
 	if scroll:GetStepCount() > 0 then
@@ -416,15 +416,15 @@ _HM_CombatText.NewText = function(dwCharacterID, szText, fScale, szName)
 	if not handle then
 		return
 	end
-    local text = _HM_CombatText.GetFreeText(handle)
+	local text = _HM_CombatText.GetFreeText(handle)
 	table.insert(_HM_CombatText.tTextQueue, text)
-    text:SetText(szText)
-    text:SetName(szName)
-    text:SetFontScheme(19)
-    text:SetFontScale(1.0)
+	text:SetText(szText)
+	text:SetName(szName)
+	text:SetFontScheme(19)
+	text:SetFontScale(1.0)
 	text:SetAlpha(0)
-    text:SetFontScale(fScale)
-    text:AutoSize()
+	text:SetFontScale(fScale)
+	text:AutoSize()
 	text.aScale = nil
 	text.Track = nil
 	text.Alpha = nil
@@ -514,9 +514,9 @@ _HM_CombatText.OnBreathe = function()
 	end
 	for nIndex = #_HM_CombatText.tTextQueue, 1, -1 do
 		local bRemove = false
-        local text = _HM_CombatText.tTextQueue[nIndex]
-        if text:IsValid() then
-            local nFrameCount = text.nFrameCount
+		local text = _HM_CombatText.tTextQueue[nIndex]
+		if text:IsValid() then
+			local nFrameCount = text.nFrameCount
 			local nX = text.Track.X[nFrameCount % _HM_CombatText.g_MaxTraceNumber + 1]
 			local nY = text.Track.Y[nFrameCount % _HM_CombatText.g_MaxTraceNumber + 1]
 			if nX and nY then
@@ -577,20 +577,20 @@ _HM_CombatText.OnBreathe = function()
 			else
 				bRemove = true
 			end
-        end
-        if bRemove then
+		end
+		if bRemove then
 			text.bFree = true
 			text:Hide()
 			handle.nUseCount = handle.nUseCount - 1
 			table.remove(_HM_CombatText.tTextQueue, nIndex)
-        end
-    end
+		end
+	end
 end
 
 -- functions
 if not OnCharacterHeadLog then
 function OnCharacterHeadLog(dwCharacterID, szTip, nFont, tColor, bMultiLine)
-    local text = _HM_CombatText.NewText(dwCharacterID, szTip, 1, "Scores")
+	local text = _HM_CombatText.NewText(dwCharacterID, szTip, 1, "Scores")
 	if text then
 		if nFont then
 			text:SetFontScheme(nFont)
@@ -611,7 +611,7 @@ end
 
 if not OnBowledCharacterHeadLog then
 function OnBowledCharacterHeadLog(dwCharacterID, szTip, nFont, tColor, bMultiLine)
-    local text = _HM_CombatText.NewText(dwCharacterID, szTip, 1, "Bowled")
+	local text = _HM_CombatText.NewText(dwCharacterID, szTip, 1, "Bowled")
 	if text then
 		text:SetFontScheme(nFont or 199)
 		if tColor then

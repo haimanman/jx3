@@ -1472,20 +1472,20 @@ end
 -- 根据名称获取弹出菜单数据，可调返回值中的 fnAction 执行操作
 -- (table) HM.GetPopupMenuItem(string szOption)
 HM.GetPopupMenuItem = function(szOption)
-    local frame = Station.Lookup("Topmost1/PopupMenuPanel")
-    if not frame or not frame:IsVisible() then
-        return
-    end
-    local hItemGroup = frame:Lookup("", ""):Lookup(0):Lookup("Handle_Item_Group")
-    for i = 0, hItemGroup:GetItemCount() - 1, 1 do
-        local hItem = hItemGroup:Lookup(i)
-        if hItem.tData then
-            local t = _HM.FetchMenuItem(hItem.tData, szOption)
-            if t then
-                return t
-            end
-        end
-    end
+	local frame = Station.Lookup("Topmost1/PopupMenuPanel")
+	if not frame or not frame:IsVisible() then
+		return
+	end
+	local hItemGroup = frame:Lookup("", ""):Lookup(0):Lookup("Handle_Item_Group")
+	for i = 0, hItemGroup:GetItemCount() - 1, 1 do
+		local hItem = hItemGroup:Lookup(i)
+		if hItem.tData then
+			local t = _HM.FetchMenuItem(hItem.tData, szOption)
+			if t then
+				return t
+			end
+		end
+	end
 end
 
 -- 自动执行弹出的确认框
@@ -3013,7 +3013,7 @@ HM.OnScrollBarPosChanged = function()
 	else
 		frame:Lookup("Btn_Down"):Enable(1)
 	end
-    handle:SetItemStartRelPos(0, - nPos * 10)
+	handle:SetItemStartRelPos(0, - nPos * 10)
 end
 
 -- web page complete

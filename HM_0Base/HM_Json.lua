@@ -14,7 +14,7 @@ local function unicode_codepoint_as_utf8(codepoint)
 	if codepoint <= 127 then
 		return string.char(codepoint)
 	elseif codepoint <= 2047 then
-		-- 110yyyxx 10xxxxxx         <-- useful notation from http://en.wikipedia.org/wiki/Utf8
+		-- 110yyyxx 10xxxxxx		 <-- useful notation from http://en.wikipedia.org/wiki/Utf8
 		local highpart = math.floor(codepoint / 0x40)
 		local lowpart  = codepoint - (0x40 * highpart)
 		return string.char(0xC0 + highpart, 0x80 + lowpart)
@@ -41,9 +41,9 @@ local function unicode_codepoint_as_utf8(codepoint)
 		-- 11110zzz 10zzyyyy 10yyyyxx 10xxxxxx
 		local highpart  = math.floor(codepoint / 0x40000)
 		local remainder = codepoint - 0x40000 * highpart
-		local midA      = math.floor(remainder / 0x1000)
-		remainder       = remainder - 0x1000 * midA
-		local midB      = math.floor(remainder / 0x40)
+		local midA	  = math.floor(remainder / 0x1000)
+		remainder	   = remainder - 0x1000 * midA
+		local midB	  = math.floor(remainder / 0x40)
 		local lowpart   = remainder - 0x40 * midB
 		return string.char(0xF0 + highpart, 0x80 + midA, 0x80 + midB, 0x80 + lowpart)
 	end
@@ -277,10 +277,10 @@ end
 
 local chars_to_be_escaped_in_JSON_string
 = '['
-..    '"'    -- class sub-pattern to match a double quote
-..    '%\\'  -- class sub-pattern to match a backslash
-..    '%z'   -- class sub-pattern to match a null
-..    '\001' .. '-' .. '\031' -- class sub-pattern to match control characters
+..	'"'	-- class sub-pattern to match a double quote
+..	'%\\'  -- class sub-pattern to match a backslash
+..	'%z'   -- class sub-pattern to match a null
+..	'\001' .. '-' .. '\031' -- class sub-pattern to match control characters
 .. ']'
 
 local function json_string_literal(value)
@@ -403,7 +403,7 @@ local function encode_value(value, parents, indent)
 					max_key_length = math.max(max_key_length, #encoded)
 					table.insert(KEYS, encoded)
 				end
-				local key_indent = indent .. "    "
+				local key_indent = indent .. "	"
 				local subtable_indent = indent .. string.rep(" ", max_key_length + 2 + 4)
 				local FORMAT = "%s%" .. string.format("%d", max_key_length) .. "s: %s"
 				local COMBINED_PARTS = {}

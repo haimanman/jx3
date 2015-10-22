@@ -181,9 +181,9 @@ end
 -- 一键上架交易行
 _HM_ToolBox.GetAuctionPrice = function(h, g, s, c)
 	local t = {}
-    t.nGold = tonumber(h:Lookup(g):GetText()) or 0
-    t.nSliver = tonumber(h:Lookup(s):GetText()) or 0
-    t.nCopper = tonumber(h:Lookup(c):GetText()) or 0
+	t.nGold = tonumber(h:Lookup(g):GetText()) or 0
+	t.nSliver = tonumber(h:Lookup(s):GetText()) or 0
+	t.nCopper = tonumber(h:Lookup(c):GetText()) or 0
 	return t
 end
 
@@ -198,61 +198,61 @@ _HM_ToolBox.GetSinglePrice = function(t, nNum)
 end
 
 _HM_ToolBox.IsSameItem = function(item, item2)
-    if not item2 or not item2.bCanTrade then
-        return false
-    end
+	if not item2 or not item2.bCanTrade then
+		return false
+	end
 	if GetItemNameByItem(item) == GetItemNameByItem(item2) and item.nGenre == item2.nGenre then
 		return true
 	end
-    if item.nGenre == ITEM_GENRE.BOOK and item2.nGenre == ITEM_GENRE.BOOK and item.nQuality == item2.nQuality then
-        return true
-    end
-    return false
+	if item.nGenre == ITEM_GENRE.BOOK and item2.nGenre == ITEM_GENRE.BOOK and item.nQuality == item2.nQuality then
+		return true
+	end
+	return false
 end
 
 _HM_ToolBox.AuctionSell = function(frame)
 	local wnd = frame:Lookup("PageSet_Totle/Page_Auction/Wnd_Sale")
-    local box = wnd:Lookup("", "Box_Item")
-    local szTime = wnd:Lookup("", "Text_Time"):GetText()
-    local nTime = tonumber(string.sub(szTime, 1, 2))
+	local box = wnd:Lookup("", "Box_Item")
+	local szTime = wnd:Lookup("", "Text_Time"):GetText()
+	local nTime = tonumber(string.sub(szTime, 1, 2))
 	-- check item
-    local me = GetClientPlayer()
-    local item = me.GetItem(box.dwBox, box.dwX)
-    if not item or item.szName ~= box.szName then
-        AuctionPanel.ClearBox(box)
-        AuctionPanel.UpdateSaleInfo(frame, true)
-        return RemoveUILockItem("Auction")
-    end
+	local me = GetClientPlayer()
+	local item = me.GetItem(box.dwBox, box.dwX)
+	if not item or item.szName ~= box.szName then
+		AuctionPanel.ClearBox(box)
+		AuctionPanel.UpdateSaleInfo(frame, true)
+		return RemoveUILockItem("Auction")
+	end
 	-- count price
-    box.tBidPrice = _HM_ToolBox.GetAuctionPrice(wnd, "Edit_OPGold", "Edit_OPSilver", "Edit_OPCopper")
-    box.tBuyPrice = _HM_ToolBox.GetAuctionPrice(wnd, "Edit_PGold", "Edit_PSilver", "Edit_PCopper")
-    box.szTime = szTime
+	box.tBidPrice = _HM_ToolBox.GetAuctionPrice(wnd, "Edit_OPGold", "Edit_OPSilver", "Edit_OPCopper")
+	box.tBuyPrice = _HM_ToolBox.GetAuctionPrice(wnd, "Edit_PGold", "Edit_PSilver", "Edit_PCopper")
+	box.szTime = szTime
 	local nStackNum = item.nStackNum
-    if not item.bCanStack then
-        nStackNum = 1
-    end
-    local tSBidPrice = _HM_ToolBox.GetSinglePrice(box.tBidPrice, nStackNum)
-    local tSBuyPrice = _HM_ToolBox.GetSinglePrice(box.tBuyPrice, nStackNum)
-    local AtClient = GetAuctionClient()
-    FireEvent("SELL_AUCTION_ITEM")
-    for i = 1, BigBagPanel_nCount do
-        if me.GetBoxSize(i) > 0 then
-            for j = 0, me.GetBoxSize(i) - 1 do
-                local item2 = me.GetItem(i, j)
-                if _HM_ToolBox.IsSameItem(item, item2) then
-                    local nNum = item2.nStackNum
-                    if not item2.bCanStack then
-                        nNum = 1
-                    end
-                    AtClient.Sell(AuctionPanel.dwTargetID, i, j,
+	if not item.bCanStack then
+		nStackNum = 1
+	end
+	local tSBidPrice = _HM_ToolBox.GetSinglePrice(box.tBidPrice, nStackNum)
+	local tSBuyPrice = _HM_ToolBox.GetSinglePrice(box.tBuyPrice, nStackNum)
+	local AtClient = GetAuctionClient()
+	FireEvent("SELL_AUCTION_ITEM")
+	for i = 1, BigBagPanel_nCount do
+		if me.GetBoxSize(i) > 0 then
+			for j = 0, me.GetBoxSize(i) - 1 do
+				local item2 = me.GetItem(i, j)
+				if _HM_ToolBox.IsSameItem(item, item2) then
+					local nNum = item2.nStackNum
+					if not item2.bCanStack then
+						nNum = 1
+					end
+					AtClient.Sell(AuctionPanel.dwTargetID, i, j,
 						math.floor(tSBidPrice.nGold * nNum), math.floor(tSBidPrice.nSliver * nNum),
 						math.floor(tSBidPrice.nCopper * nNum), math.floor(tSBuyPrice.nGold * nNum),
 						math.floor(tSBuyPrice.nSliver * nNum), math.floor(tSBuyPrice.nCopper * nNum), nTime)
-                end
-            end
-        end
-    end
-    PlaySound(SOUND.UI_SOUND, g_sound.Trade)
+				end
+			end
+		end
+	end
+	PlaySound(SOUND.UI_SOUND, g_sound.Trade)
 end
 
 -- 替换上架函数
@@ -768,7 +768,7 @@ _HM_ToolBox.UpdateDurability = function(dwPlayer)
 					if box then
 						local item = GetPlayerItem(me, INVENTORY_INDEX.EQUIP, kk)
 						if item then
-						    local dwDur = item.nCurrentDurability / item.nMaxDurability
+							local dwDur = item.nCurrentDurability / item.nMaxDurability
 							local nFont = 16
 							if dwDur < 0.33 then
 								nFont = 159

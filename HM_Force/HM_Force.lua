@@ -45,9 +45,9 @@ _HM_Force.OnRideHorse = function()
 			if mnt and (mnt.dwSkillID == 10026 or mnt.dwSkillID == 10062) then
 				local nPage = GetUserPreferences(1390, "c")
 				if me.bOnHorse and nPage < 3 then
-					SelectMainActionBarPage(nPage + 2)
+						(nPage + 2)
 				elseif not me.bOnHorse and nPage > 2 then
-					SelectMainActionBarPage(nPage - 2)
+						(nPage - 2)
 				end
 			end
 		end
@@ -156,18 +156,18 @@ end
 
 -- on wanted msg
 _HM_Force.OnMsgAnnounce = function(szMsg)
-    local _, _, sM, sN = string.find(szMsg, _L["Now somebody pay (%d+) gold to buy life of (.-)"])
+	local _, _, sM, sN = string.find(szMsg, _L["Now somebody pay (%d+) gold to buy life of (.-)"])
 	if sM and sN == GetClientPlayer().szName then
 		local fW = function()
 			OutputWarningMessage("MSG_WARNING_RED", _L("Congratulations, you offered a reward [%s] gold!", sM))
 			PlaySound(SOUND.UI_SOUND, g_sound.CloseAuction)
-        end
-        SceneObject_SetTitleEffect(TARGET.PLAYER, GetClientPlayer().dwID, 47)
-        fW()
-        HM.DelayCall(2000, fW)
+		end
+		SceneObject_SetTitleEffect(TARGET.PLAYER, GetClientPlayer().dwID, 47)
+		fW()
+		HM.DelayCall(2000, fW)
 		HM.DelayCall(4000, fW)
 		_HM_Force.bHasWanted = true
-    end
+	end
 end
 
 -- try to replace horse via UUID

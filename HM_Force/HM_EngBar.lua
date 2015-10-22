@@ -125,37 +125,37 @@ _HM_EngBar.UpdateCangJian = function(frame)
 	if not me or not hCangjian or not me.bCanUseBigSword then
 		return
 	end
-    local hImageShort = hCangjian:Lookup("Image_Short")
-    local hTextShort = hCangjian:Lookup("Text_Short")
-    local hAniShort = hCangjian:Lookup("Animate_Short")
-    local hImageLong = hCangjian:Lookup("Image_Long")
-    local hTextLong = hCangjian:Lookup("Text_Long")
-    local hAniLong = hCangjian:Lookup("Animate_Long")
-    local szShow = nil
-    if me.nMaxRage > 100 then
-	    hImageShort:Hide()
-	    hTextShort:Hide()
+	local hImageShort = hCangjian:Lookup("Image_Short")
+	local hTextShort = hCangjian:Lookup("Text_Short")
+	local hAniShort = hCangjian:Lookup("Animate_Short")
+	local hImageLong = hCangjian:Lookup("Image_Long")
+	local hTextLong = hCangjian:Lookup("Text_Long")
+	local hAniLong = hCangjian:Lookup("Animate_Long")
+	local szShow = nil
+	if me.nMaxRage > 100 then
+		hImageShort:Hide()
+		hTextShort:Hide()
    		hAniShort:Hide()
-	    hImageLong:Show()
-	    hTextLong:Show()
+		hImageLong:Show()
+		hTextLong:Show()
    		hAniLong:Show()
    		szShow = "Long"
-    else	    
-	    hImageShort:Show()
-	    hTextShort:Show()
-	    hAniShort:Show()
-	    hImageLong:Hide()
-	    hTextLong:Hide()
+	else		
+		hImageShort:Show()
+		hTextShort:Show()
+		hAniShort:Show()
+		hImageLong:Hide()
+		hTextLong:Hide()
    		hAniLong:Hide()
    		szShow = "Short"
-    end
-    if me.nMaxRage > 0 then
-    	hCangjian:Lookup("Image_" .. szShow):SetPercentage(me.nCurrentRage / me.nMaxRage)
-    	hCangjian:Lookup("Text_" .. szShow):SetText(me.nCurrentRage .. "/" .. me.nMaxRage)
+	end
+	if me.nMaxRage > 0 then
+		hCangjian:Lookup("Image_" .. szShow):SetPercentage(me.nCurrentRage / me.nMaxRage)
+		hCangjian:Lookup("Text_" .. szShow):SetText(me.nCurrentRage .. "/" .. me.nMaxRage)
 	else
-	    hCangjian:Lookup("Image_" .. szShow):SetPercentage(0)
-	    hCangjian:Lookup("Text_" .. szShow):SetText("")
-    end
+		hCangjian:Lookup("Image_" .. szShow):SetPercentage(0)
+		hCangjian:Lookup("Text_" .. szShow):SetText("")
+	end
 end
 
 _HM_EngBar.UpdateMingJiao = function(frame)
@@ -189,8 +189,8 @@ _HM_EngBar.UpdateCangYun = function(frame)
 	if not me or not hCangyun then
 		return
 	end
-    local hImageRang = hCangyun:Lookup("Image_Rang")
-    local hTextRang = hCangyun:Lookup("Text_Rang")
+	local hImageRang = hCangyun:Lookup("Image_Rang")
+	local hTextRang = hCangyun:Lookup("Text_Rang")
 	if me.nMaxRage > 0 then
 		hImageRang:SetPercentage(me.nCurrentRage / me.nMaxRage)
 		hTextRang:SetText(me.nCurrentRage .. "/" .. me.nMaxRage)
