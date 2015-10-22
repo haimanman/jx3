@@ -975,24 +975,26 @@ _HM_ToolBox.CopyChatLine = function(hTime)
 end
 
 -- 插入聊天内容的 HOOK （过滤、加入时间 ）
-_HM_ToolBox.AppendChatItem = function(h, szMsg, szChannel, dwTime, ...)
+_HM_ToolBox.AppendChatItem = function(h, szMsg, szChannel, dwTime, r, g, b, ...)
 	local i = h:GetItemCount()
 	-- normal append
-	h:__AppendItemFromString(szMsg, szChannel, dwTime, ...)
+	h:__AppendItemFromString(szMsg, szChannel, dwTime, r, g, b, ...)
 	-- add chat time
 	if HM_ToolBox.bChatTime then
 		-- get msg rgb
-		local r, g, b = 255, 255, 0
-		for j = i, h:GetItemCount() - 1 do
-			local h2 = h:Lookup(j)
-			if not h2 then
-				return
-			elseif h2:GetType() == "Text" and h2:GetName():sub(1, 8) ~= 'namelink' then
-				r, g, b = h2:GetFontColor()
-				break
+		if not r or not g or not b then
+			r, g, b = 255, 255, 0
+			for j = i, h:GetItemCount() - 1 do
+				local h2 = h:Lookup(j)
+				if not h2 then
+					return
+				elseif h2:GetType() == "Text" and h2:GetName():sub(1, 8) ~= 'namelink' then
+					r, g, b = h2:GetFontColor()
+					break
+				end
 			end
 		end
-		if r == 255 and g == 255 and b == 0 then
+		if szChannel == "MSG_SYS" then
 			return
 		end
 		local t = TimeToDate(dwTime or GetCurrentTime())
