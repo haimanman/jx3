@@ -239,16 +239,16 @@ end
 
 -- adjust buff position
 _HM_Target.InitBuffPos = function(frame, nSize)
-    local nY, tName = nil, { "Buff", "TextBuff", "Debuff", "TextDebuff" }
-    for _, v in ipairs(tName) do
-        local h = frame:Lookup("", "Handle_" .. v)
-        if h then
+	local nY, tName = nil, { "Buff", "TextBuff", "Debuff", "TextDebuff" }
+	for _, v in ipairs(tName) do
+		local h = frame:Lookup("", "Handle_" .. v)
+		if h then
 			local nW, nH = h:GetSize()
-            if not nY then
-                _, nY = h:GetRelPos()
-            else
-                local nX, _ = h:GetRelPos()
-                h:SetRelPos(nX, nY)
+			if not nY then
+				_, nY = h:GetRelPos()
+			else
+				local nX, _ = h:GetRelPos()
+				h:SetRelPos(nX, nY)
 				if v == "Debuff" then
 					if h:GetPosType() == 7 then
 						nX, _ = frame:Lookup("", "Handle_Buff"):GetRelPos()
@@ -258,22 +258,22 @@ _HM_Target.InitBuffPos = function(frame, nSize)
 					local h2 = frame:Lookup("", "Image_DebuffBG")
 					if h2 then h2:SetRelPos(nX, nY) end
 				end
-            end
-            if v == "Buff" or v == "Debuff" then
-                nY = nY + nSize + 5
-                if v == "Debuff" then
-                    local h2 = frame:Lookup("", "Handle_Bar")
-                    local nX, _ = h2:GetRelPos()
-                    h2:SetRelPos(nX, nY)
-                end
+			end
+			if v == "Buff" or v == "Debuff" then
+				nY = nY + nSize + 5
+				if v == "Debuff" then
+					local h2 = frame:Lookup("", "Handle_Bar")
+					local nX, _ = h2:GetRelPos()
+					h2:SetRelPos(nX, nY)
+				end
 				h:SetSize(nW, nSize + 5)
-            else
+			else
 				h:SetSize(nW, 20)
-                nY = nY + 20
-            end
-        end
-    end
-    frame:Lookup("", ""):FormatAllItemPos()
+				nY = nY + 20
+			end
+		end
+	end
+	frame:Lookup("", ""):FormatAllItemPos()
 	frame.bAdjustInit = true
 	frame.bIsEnemy = IsEnemy(GetClientPlayer().dwID, frame.dwID)
 end
@@ -281,25 +281,25 @@ end
 -- get buff left time
 _HM_Target.GetBuffTime = function(nEnd)
 	local nLeft = nEnd - GetLogicFrameCount()
-    local szTime, nFont = "", 162
-    local nH, nM, nS = GetTimeToHourMinuteSecond(nLeft, true)
-    if nH >= 1 then
+	local szTime, nFont = "", 162
+	local nH, nM, nS = GetTimeToHourMinuteSecond(nLeft, true)
+	if nH >= 1 then
 		if nH <= 99 then
 			if nM >= 1 or nS >= 1 then
 				nH = nH + 1
 			end
 			szTime = nH .. " "
 		end
-    elseif nM >= 1 then
-        if nS >= 1 then
-            nM = nM + 1
-        end
-        szTime = nM .. "'"
-    elseif nS >= 0 then
+	elseif nM >= 1 then
+		if nS >= 1 then
+			nM = nM + 1
+		end
+		szTime = nM .. "'"
+	elseif nS >= 0 then
 		szTime = nS .. "''"
 		nFont = 163
-    end
-    return szTime, nFont, nLeft
+	end
+	return szTime, nFont, nLeft
 end
 
 -- update buff time

@@ -320,7 +320,7 @@ HM.BreatheCall("taoguan2", function()
 		if not HM.HasBuff(1661) and not _HM_Taoguan.UseBagItem("хГрБ╫Удр") then
 			_HM_Taoguan.UseBagItem("пртк╫Удр")
 		end
-    end
+	end
 end, 1000)
 HM.RegisterEvent("NPC_ENTER_SCENE", _HM_Taoguan.OnNpcEnter)
 HM.RegisterEvent("LOOT_ITEM", _HM_Taoguan.OnLootItem)

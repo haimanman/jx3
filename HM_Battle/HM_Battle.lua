@@ -20,49 +20,49 @@ local _HM_Battle = {
 -- middle map replace
 _HM_Battle.ShowMap = MiddleMap.ShowMap
 MiddleMap.ShowMap = function(frame, dwMapID, nIndex)
-    _HM_Battle.ShowMap(frame, dwMapID, nIndex)
-    local hTotal = frame:Lookup("", "")
-    local ui = HM.UI(hTotal, "Handle_MapEx")
+	_HM_Battle.ShowMap(frame, dwMapID, nIndex)
+	local hTotal = frame:Lookup("", "")
+	local ui = HM.UI(hTotal, "Handle_MapEx")
 	if not dwMapID then
 		dwMapID = GetClientPlayer().GetMapID()
 	end
-    if HM_Battle.bMarkMap and (dwMapID == 48 or dwMapID == 50 or dwMapID == 135 or dwMapID == 186) and not ui then
-        ui = HM.UI.Append(hTotal, "Handle2", "Handle_MapEx", { x = 0, y = 0 })
-        hTotal:FormatAllItemPos()
-    end
-    if ui then
-        local fS = 0.9 / (Station.GetUIScale() / Station.GetMaxUIScale())
-        ui:Raw():Clear()
-        if dwMapID == 48 and HM_Battle.bMarkMap then
-            ui:Append("Text", { txt = _L["Northwest"], font = 199, x = 420 * fS, y = 320 * fS })
-            ui:Append("Text", { txt = _L["Northeast"], font = 199, x = 730 * fS, y = 320 * fS })
-            ui:Append("Text", { txt = _L["Southwest"], font = 199, x = 430 * fS, y = 670 * fS })
-            ui:Append("Text", { txt = _L["Southeast"], font = 199, x = 735 * fS, y = 670 * fS })
-            ui:Append("Text", { txt = _L["Center"], font = 199, x = 545 * fS, y = 500 * fS })
-            ui:Raw():FormatAllItemPos()
-        elseif dwMapID == 50 and HM_Battle.bMarkMap then
-            ui:Append("Text", { txt = _L["East"], font = 199, x = 710 * fS, y = 500 * fS })
-            ui:Append("Text", { txt = _L["South"], font = 199, x = 570 * fS, y = 690 * fS })
-            ui:Append("Text", { txt = _L["West"], font = 199, x = 415 * fS, y = 520 * fS })
-            ui:Append("Text", { txt = _L["North"], font = 199, x = 605 * fS, y = 315 * fS })
-            ui:Append("Text", { txt = _L["Center"], font = 199, x = 560 * fS, y = 480 * fS })
-            ui:Raw():FormatAllItemPos()
-        elseif dwMapID == 135 and HM_Battle.bMarkMap then
-            ui:Append("Text", { txt = _L["East"], font = 199, x = 725 * fS, y = 490 * fS })
-            ui:Append("Text", { txt = _L["South"], font = 199, x = 510 * fS, y = 650 * fS })
-            ui:Append("Text", { txt = _L["West"], font = 199, x = 385 * fS, y = 465 * fS })
-            ui:Append("Text", { txt = _L["North"], font = 199, x = 605 * fS, y = 325 * fS })
-            ui:Append("Text", { txt = _L["Center"], font = 199, x = 580 * fS, y = 460 * fS })
-            ui:Raw():FormatAllItemPos()
-		elseif dwMapID == 186 then
-            ui:Append("Text", { txt = _L["East"], font = 199, x = 590 * fS, y = 430 * fS })
-            ui:Append("Text", { txt = _L["South"], font = 199, x = 530 * fS, y = 550 * fS })
-            ui:Append("Text", { txt = _L["West"], font = 199, x = 435 * fS, y = 545 * fS })
-            ui:Append("Text", { txt = _L["North"], font = 199, x = 505 * fS, y = 385 * fS })
-            ui:Append("Text", { txt = _L["Center"], font = 199, x = 520 * fS, y = 460 * fS })
+	if HM_Battle.bMarkMap and (dwMapID == 48 or dwMapID == 50 or dwMapID == 135 or dwMapID == 186) and not ui then
+		ui = HM.UI.Append(hTotal, "Handle2", "Handle_MapEx", { x = 0, y = 0 })
+		hTotal:FormatAllItemPos()
+	end
+	if ui then
+		local fS = 0.9 / (Station.GetUIScale() / Station.GetMaxUIScale())
+		ui:Raw():Clear()
+		if dwMapID == 48 and HM_Battle.bMarkMap then
+			ui:Append("Text", { txt = _L["Northwest"], font = 199, x = 420 * fS, y = 320 * fS })
+			ui:Append("Text", { txt = _L["Northeast"], font = 199, x = 730 * fS, y = 320 * fS })
+			ui:Append("Text", { txt = _L["Southwest"], font = 199, x = 430 * fS, y = 670 * fS })
+			ui:Append("Text", { txt = _L["Southeast"], font = 199, x = 735 * fS, y = 670 * fS })
+			ui:Append("Text", { txt = _L["Center"], font = 199, x = 545 * fS, y = 500 * fS })
 			ui:Raw():FormatAllItemPos()
-        end
-    end
+		elseif dwMapID == 50 and HM_Battle.bMarkMap then
+			ui:Append("Text", { txt = _L["East"], font = 199, x = 710 * fS, y = 500 * fS })
+			ui:Append("Text", { txt = _L["South"], font = 199, x = 570 * fS, y = 690 * fS })
+			ui:Append("Text", { txt = _L["West"], font = 199, x = 415 * fS, y = 520 * fS })
+			ui:Append("Text", { txt = _L["North"], font = 199, x = 605 * fS, y = 315 * fS })
+			ui:Append("Text", { txt = _L["Center"], font = 199, x = 560 * fS, y = 480 * fS })
+			ui:Raw():FormatAllItemPos()
+		elseif dwMapID == 135 and HM_Battle.bMarkMap then
+			ui:Append("Text", { txt = _L["East"], font = 199, x = 725 * fS, y = 490 * fS })
+			ui:Append("Text", { txt = _L["South"], font = 199, x = 510 * fS, y = 650 * fS })
+			ui:Append("Text", { txt = _L["West"], font = 199, x = 385 * fS, y = 465 * fS })
+			ui:Append("Text", { txt = _L["North"], font = 199, x = 605 * fS, y = 325 * fS })
+			ui:Append("Text", { txt = _L["Center"], font = 199, x = 580 * fS, y = 460 * fS })
+			ui:Raw():FormatAllItemPos()
+		elseif dwMapID == 186 then
+			ui:Append("Text", { txt = _L["East"], font = 199, x = 590 * fS, y = 430 * fS })
+			ui:Append("Text", { txt = _L["South"], font = 199, x = 530 * fS, y = 550 * fS })
+			ui:Append("Text", { txt = _L["West"], font = 199, x = 435 * fS, y = 545 * fS })
+			ui:Append("Text", { txt = _L["North"], font = 199, x = 505 * fS, y = 385 * fS })
+			ui:Append("Text", { txt = _L["Center"], font = 199, x = 520 * fS, y = 460 * fS })
+			ui:Raw():FormatAllItemPos()
+		end
+	end
 end
 
 ---------------------------------------------------------------------
