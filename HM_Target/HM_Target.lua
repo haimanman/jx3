@@ -136,6 +136,23 @@ _HM_Target.UpdateName = function(frame, bRestore)
 	text:SetText(szName)
 end
 
+-- adjust buff pos
+_HM_Target.AdjustBuffPos = function(frame, delta)
+	local tName = { "Handle_Buff", "Handle_TextBuff", "Handle_Debuff", "Handle_TextDebuff", "Image_BuffBG", "Image_DebuffBG" }
+	local hTotal = frame:Lookup("", "")
+	for k, v in ipairs(tName) do
+		local h = hTotal:Lookup(v)
+		if h then
+			local nX, nY = h:GetRelPos()
+			if h.nRelPosY then
+				h.nRelPosY = h.nRelPosY + delta
+			end
+			h:SetRelPos(nX, nY + delta)
+		end
+	end
+	hTotal:FormatAllItemPos()
+end
+
 -- update action
 _HM_Target.UpdateAction = function(frame)
 	local tar = GetTargetHandle(frame.dwType, frame.dwID)
@@ -174,54 +191,29 @@ _HM_Target.UpdateAction = function(frame)
 	end
 	-- adjust pos
 	if HM_Target.bAdjustBar then
-		local nX, nY = handle:GetRelPos()
-		local _, nH = handle:GetSize()
-		local bShowBar = handle:IsVisible()
-		local tName = { "Buff", "TextBuff", "Debuff", "TextDebuff" }
-		if not frame.tOrigPos then
-			frame.tOrigPos = {}
-			frame.tOrigPos["Bar"] = { nX, nY }
+		if not handle.nOrigX then
+			handle.nOrigX, handle.nOrigY = handle:GetRelPos()
 		end
-		for k, v in ipairs(tName) do
-			local h = frame:Lookup("", "Handle_" .. v)
-			if h then
-				local oX, oY = h:GetRelPos()
-				if not frame.tOrigPos[v] then
-					frame.tOrigPos[v] = { oX, oY }
+		if not frame.bAdjustBar ~= not handle:IsVisible() then
+			local _, nH = handle:GetSize()
+			frame.bAdjustBar = handle:IsVisible()
+			if frame.bAdjustBar then
+				local hBuff = frame:Lookup("", "Handle_Buff")
+				if hBuff then
+					handle:SetRelPos(hBuff:GetRelPos())
 				end
-				if bShowBar then
-					if _HM_Target.AboutEqual(oY, frame.tOrigPos[v][2]) then
-						h:SetRelPos(oX, oY + nH)
-						if v == "Buff" or v == "Debuff" then
-							local h2 = frame:Lookup("", "Image_" .. v .. "BG")
-							if h2 then h2:SetRelPos(oX, oY + nH) end
-						end
-					else
-						break
-					end
-				else
-					if not _HM_Target.AboutEqual(oY, frame.tOrigPos[v][2]) then
-						h:SetRelPos(oX, oY - nH)
-						if v == "Buff" or v == "Debuff" then
-							local h2 = frame:Lookup("", "Image_" .. v .. "BG")
-							if h2 then h2:SetRelPos(oX, oY - nH) end
-						end
-					else
-						break
-					end
-				end
+				_HM_Target.AdjustBuffPos(frame, nH)
+			else
+				_HM_Target.AdjustBuffPos(frame, 0 - nH)
 			end
 		end
-		handle:SetRelPos(nX, frame.tOrigPos["Buff"][2])
-		frame:Lookup("", ""):FormatAllItemPos()
-	elseif frame.tOrigPos then
-		-- restore pos
-		for k, v in pairs(frame.tOrigPos) do
-			local h =frame:Lookup("", "Handle_" .. k)
-			h:SetRelPos(v[1], v[2])
+	elseif handle.nOrigX then
+		local _, nH = handle:GetSize()
+		handle:SetRelPos(handle.nOrigX, handle.nOrigY)
+		handle.nOrigX = nil
+		if handle:IsVisible() then
+			_HM_Target.AdjustBuffPos(frame, 0 - nH)
 		end
-		frame:Lookup("", ""):FormatAllItemPos()
-		frame.tOrigPos = nil
 	end
 end
 
@@ -245,17 +237,22 @@ _HM_Target.InitBuffPos = function(frame, nSize)
 			local nW, nH = h:GetSize()
 			if not nY then
 				_, nY = h:GetRelPos()
+				if h.nRelPosY then
+					nY = h.nRelPosY
+				end
 			else
 				local nX, _ = h:GetRelPos()
+				if h.nRelPosX then
+					nX = h.nRelPosX
+					h.nRelPosY = nY
+				end
 				h:SetRelPos(nX, nY)
 				if v == "Debuff" then
-					if h:GetPosType() == 7 then
-						nX, _ = frame:Lookup("", "Handle_Buff"):GetRelPos()
-						h:SetPosType(0)
-						h:SetRelPos(nX, nY)
-					end
 					local h2 = frame:Lookup("", "Image_DebuffBG")
-					if h2 then h2:SetRelPos(nX, nY) end
+					if h2 then
+						h2:SetRelPos(nX, nY)
+						h2.nRelPosY = nY
+					end
 				end
 			end
 			if v == "Buff" or v == "Debuff" then
