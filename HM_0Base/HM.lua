@@ -72,7 +72,7 @@ _HM.OpenPanel = function(bDisableSound)
 		if HM_About and HM_About.bPlayOpen
 			and (not _HM.nPlayOpen or (GetLogicFrameCount() - _HM.nPlayOpen) > 57600)
 		then
-			local szSound = "interface\\HM\\HM_0Base\\open" .. math.ceil(math.random() * 2) .. ".wav"
+			local szSound = "interface\\HM\\HM_0Base\\open" .. math.ceil(math.random() * 3) .. ".wav"
 			PlaySound(SOUND.UI_SOUND, HM.GetCustomFile("opening.wav", szSound))
 			_HM.nPlayOpen = GetLogicFrameCount()
 		else
