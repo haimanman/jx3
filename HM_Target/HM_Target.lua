@@ -40,8 +40,7 @@ local _HM_Target = {
 
 -- equal
 _HM_Target.AboutEqual = function(dw1, dw2)
-	local dw0 = dw1 - dw2
-	return dw0 > -2 and dw0 < 2
+	return math.abs(dw1 - dw2) < 3
 end
 
 -- get channel data
@@ -344,7 +343,6 @@ _HM_Target.UpdateBuffSize = function(frame, bTTarget)
 		_HM_Target.InitBuffPos(frame, nSize)
 	end
 	for _, v in ipairs({ "Buff", "Debuff" }) do
-		local nDispel = 0
 		local hBuff, hText = frame:Lookup("", "Handle_" .. v), frame:Lookup("", "Handle_Text" .. v)
 		for i = 0, 1 do
 			local nW = nSize + (1 - i) * 5
@@ -385,12 +383,6 @@ _HM_Target.UpdateBuffSize = function(frame, bTTarget)
 					end
 					-- clear time
 					box.szTime = nil
-					-- count dispel
-					if i == 0 and not bTTarget
-						and ((frame.bIsEnemy and v == "Buff") or (not frame.bIsEnemy and v == "Debuff"))
-					then
-						nDispel = nDispel + 1
-					end
 				end
 			end
 			hB:FormatAllItemPos()
@@ -615,7 +607,6 @@ _HM_Target.OnBuffUpdate = function()
 					local hI = hL:Lookup(i)
 					if hI then
 						if hT then
-							Output(hT:GetText())
 							hT:SetFontScheme(163)
 							break
 						end
