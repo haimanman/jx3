@@ -980,7 +980,7 @@ _HM_ToolBox.AppendChatItem = function(h, szMsg, szChannel, dwTime, r, g, b, ...)
 	-- normal append
 	h:__AppendItemFromString(szMsg, szChannel, dwTime, r, g, b, ...)
 	-- add chat time
-	if HM_ToolBox.bChatTime then
+	if HM_ToolBox.bChatTime and i ~= h:GetItemCount() then
 		-- get msg rgb
 		if not r or not g or not b then
 			r, g, b = 255, 255, 0
