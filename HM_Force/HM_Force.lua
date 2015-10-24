@@ -45,9 +45,9 @@ _HM_Force.OnRideHorse = function()
 			if mnt and (mnt.dwSkillID == 10026 or mnt.dwSkillID == 10062) then
 				local nPage = GetUserPreferences(1390, "c")
 				if me.bOnHorse and nPage < 3 then
-						(nPage + 2)
+					SelectMainActionBarPage(nPage + 2)
 				elseif not me.bOnHorse and nPage > 2 then
-						(nPage - 2)
+					SelectMainActionBarPage(nPage - 2)
 				end
 			end
 		end
