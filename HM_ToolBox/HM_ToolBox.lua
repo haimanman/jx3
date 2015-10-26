@@ -27,7 +27,7 @@ HM_ToolBox = {
 	bShiftAuction = true,	-- 按 shift 一键寄卖
 	bAutoStack = true,	-- 一键堆叠（背包+仓库）
 	bAutoDiamond2 = false,	-- 五行石精炼完成后自动再摆上次材料
-	bAnyDiamond = false,	-- 忽略五行石颜色，只考虑等级
+	-- bAnyDiamond = false,	-- 忽略五行石颜色，只考虑等级
 	bChatTime = true,		-- 聊天复制党
 	bWhisperAt = true,	-- 记录点名聊天
 	bSplitter2 = false,	-- 分组拆分
@@ -276,17 +276,23 @@ _HM_ToolBox.GetDiamondData = function(dwBox, dwX)
 	local d, item = {}, GetClientPlayer().GetItem(dwBox, dwX)
 	d.dwBox, d.dwX = dwBox, dwX
 	if item then
-		d.type, d.level = string.match(item.szName, _L["DiamondRegex"])
+		d.level = string.match(item.szName, _L["DiamondRegex"])
 		d.id, d.bind, d.num, d.detail = item.nUiId, item.bBind, item.nStackNum, item.nDetail
 		d.dwTabType, d.dwIndex = item.dwTabType, item.dwIndex
 	end
 	return d
 end
 
+-- get refine
+_HM_ToolBox.GetRefineHandle = function()
+	local handle = Station.Lookup("Normal/CastingPanel/PageSet_All/Page_Refine", "")
+	return assert(handle, "Can not find handle")
+end
+
 -- 保存五行石精炼方案
 _HM_ToolBox.SaveDiamondFormula = function()
 	local t = {}
-	local handle = Station.Lookup("Normal/CastingPanel/PageSet_All/Page_Refine/Wnd_CommonRefine", "")
+	local handle = _HM_ToolBox.GetRefineHandle()
 	local box, hL = handle:Lookup("Box_Refine"), handle:Lookup("Handle_RefineExpend")
 	table.insert(t, _HM_ToolBox.GetDiamondData(box))
 	for i = 1, 16 do
@@ -304,7 +310,7 @@ _HM_ToolBox.LoadBagDiamond = function()
 	for dwBox = 1, BigBagPanel_nCount do
 		for dwX = 0, me.GetBoxSize(dwBox) - 1 do
 			local d = _HM_ToolBox.GetDiamondData(dwBox, dwX)
-			if not d.id or d.type then
+			if not d.id or d.level then
 				for _, v in ipairs(_HM_ToolBox.dFormula) do
 					if v.dwBox == dwBox and v.dwX == dwX then
 						d = nil
@@ -356,21 +362,19 @@ _HM_ToolBox.RestoreBagDiamond = function(d)
 	-- group bag by type/bind: same type, same bind, ... others
 	local tBag2, nLeft = {}, d.num
 	for _, v in ipairs(tBag) do
-		if v.level == d.level
-			and (HM_ToolBox.bAnyDiamond or (v.type == d.type and (v.bind == d.bind or v.bind == false)))
-		then
+		if v.level == d.level and (v.bind == d.bind or v.bind == false) then
 			local vt = nil
 			for _, vv in ipairs(tBag2) do
-				if vv.type == v.type and vv.bind == v.bind then
+				if vv.bind == v.bind then
 					vt = vv
 					break
 				end
 			end
 			if not vt then
-				vt = { num = 0, type = v.type, bind = v.bind }
+				vt = { num = 0, bind = v.bind }
 				local vk = #tBag2 + 1
-				if vk > 1 and v.type == d.type then
-					if v.bind ~= d.bind and tBag2[1].type == d.type then
+				if vk > 1 then
+					if v.bind ~= d.bind then
 						vk = 2
 					else
 						vk = 1
@@ -1090,7 +1094,7 @@ _HM_ToolBox.OnDiamondUpdate = function()
 	if not HM_ToolBox.bAutoDiamond2 or not _HM_ToolBox.dFormula or arg0 ~= 1 then
 		return
 	end
-	local box = Station.Lookup("Normal/CastingPanel/PageSet_All/Page_Refine/Wnd_CommonRefine", "Box_Refine")
+	local box = _HM_ToolBox.GetRefineHandle():Lookup("Box_Refine")
 	if not box then
 		_HM_ToolBox.dFormula = nil
 		return
@@ -1226,10 +1230,10 @@ _HM_ToolBox.PS.OnPanelActive = function(frame)
 		_HM_ToolBox.dFormula = nil
 		ui:Fetch("Check_Any"):Enable(bChecked)
 	end)
-	ui:Append("WndCheckBox", "Check_Any", { txt = _L["Only consider diamond level"], x = nX + 10, y = 148, checked = HM_ToolBox.bAnyDiamond, enable = HM_ToolBox.bAutoDiamond2 })
-	:Click(function(bChecked)
-		HM_ToolBox.bAnyDiamond = bChecked
-	end)
+	-- ui:Append("WndCheckBox", "Check_Any", { txt = _L["Only consider diamond level"], x = nX + 10, y = 148, checked = HM_ToolBox.bAnyDiamond, enable = HM_ToolBox.bAutoDiamond2 })
+	-- :Click(function(bChecked)
+	-- 	HM_ToolBox.bAnyDiamond = bChecked
+	-- end)
 	-- split item
 	ui:Append("WndCheckBox", { txt = _L["Enable to split bag item into groups"], x = 10, y = 176, checked = HM_ToolBox.bSplitter2 })
 	:Click(function(bChecked)
