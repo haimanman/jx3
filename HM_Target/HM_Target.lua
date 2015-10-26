@@ -432,6 +432,8 @@ _HM_Target.UpdateLM = function(frame, bTTarget)
 	-- check mana/rage/energy
 	local hMana, hTextMana = frame:Lookup("", "Image_Mana"), frame:Lookup("", "Text_Mana")
 	local fM, sM, nM = nil, "", 87
+	-- hightman.20151026: removed in latest version
+	--[[
 	if frame.dwType == TARGET.PLAYER and frame.dwMountType then
 		if frame.dwMountType == 10 and tar.nMaxEnergy > 0 then	-- TM
 			fM = tar.nCurrentEnergy / tar.nMaxEnergy
@@ -467,6 +469,7 @@ _HM_Target.UpdateLM = function(frame, bTTarget)
 			sM = string.format("%d%%", fM * 100)
 		end
 	end
+	--]]
 	-- update mana image
 	if fM ~= nil then
 		hMana:SetFrame(nM)
