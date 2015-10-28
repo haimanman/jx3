@@ -1228,7 +1228,7 @@ _HM_ToolBox.PS.OnPanelActive = function(frame)
 	:Click(function(bChecked)
 		HM_ToolBox.bAutoDiamond2 = bChecked
 		_HM_ToolBox.dFormula = nil
-		ui:Fetch("Check_Any"):Enable(bChecked)
+		--ui:Fetch("Check_Any"):Enable(bChecked)
 	end)
 	-- ui:Append("WndCheckBox", "Check_Any", { txt = _L["Only consider diamond level"], x = nX + 10, y = 148, checked = HM_ToolBox.bAnyDiamond, enable = HM_ToolBox.bAutoDiamond2 })
 	-- :Click(function(bChecked)
