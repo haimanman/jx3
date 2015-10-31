@@ -62,6 +62,11 @@ _HM_Force.OnNpcEnter = function()
 			HM.DelayCall(500, function()
 				_HM_Force.UpdatePetMark(true)
 			end)
+		else
+			local npc = GetNpc(arg0)
+			if npc.dwTemplateID == 46297 and npc.dwEmployer == UI_GetClientPlayerID() then
+				SceneObject_SetTitleEffect(TARGET.NPC, npc.dwID, 13)
+			end
 		end
 	end
 end
