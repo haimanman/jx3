@@ -368,6 +368,12 @@ _HM_Area.DrawArea = function(tar)
 	elseif tar.dwTemplateID == 4976 and HM_Area.bBigTaiji then
 		nRadius = nRadius + 64
 	end
+	-- 15 (14835)
+	if tar.dwTemplateID == 4976 and tar.dwEmployer == UI_GetClientPlayerID() 
+		and GetClientPlayer().GetSkillLevel(14835) ~= 0
+	then
+		nRadius = 960
+	end
 	-- draw cake & circle
 	data.shape = data.shape or _HM_Area.pDraw:New()
 	if nRadius >= 256 and nDistance < 35 then
