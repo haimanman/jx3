@@ -997,7 +997,7 @@ end
 HM.IsDps = function(tar)
 	tar = tar or GetClientPlayer()
 	local mnt = tar.GetKungfuMount()
-	return not mnt or (mnt.dwSkillID ~= 10080 and mnt.dwSkillID ~= 10028 and mnt.dwSkillID ~= 10176)
+	return not mnt or (mnt.dwSkillID ~= 10080 and mnt.dwSkillID ~= 10028 and mnt.dwSkillID ~= 10176 and mnt.dwSkillID ~= 10448)
 end
 
 -- (boolean) HM.HasVipEmotion()		--  检查玩家是否有 VIP 表情库
