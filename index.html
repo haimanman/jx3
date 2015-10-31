@@ -6,7 +6,7 @@
 <meta name="keywords" content="海鳗,插件,剑三,剑网3,剑侠3,剑侠情缘3,剑3,剑网3插件,海鳗插件,新剑网3,PVP插件" />
 <meta name="description" content="《剑网3》海鳗插件: 开源免费、简单实用、专注于 PVP！提供最新插件和源代码下载！" />
 <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
-<title>《剑网3》海鳗插件(HM-2.3.5b3，最新版下载) - 剑侠情缘3/剑三最好用的 PVP 辅助插件！</title>
+<title>《剑网3》海鳗插件(最新版下载) - 最好用的 PVP 辅助插件！</title>
 <style type="text/css">
 body {
 	margin: 0;
@@ -76,13 +76,13 @@ sup {
 }
 
 #header .inner {
-	padding: 40px 10px 10px 10px;
+	padding: 20px 10px 10px 10px;
 }
 #header h1 {
-	color: #fff; font-size: 42px; font-weight: 700; margin: 0;
+	color: #fff; font-size: 36px; font-weight: 700; margin: 0;
 }
 #header h2 {
-	color: #fff; font-size: 28px; font-weight: 300; margin: 0;
+	color: #fff; font-size: 24px; font-weight: 300; margin: 0;
 }
 #header a {
 	display: block;
@@ -115,22 +115,20 @@ sup {
 }
 
 #qrcode {
-	position: absolute;
-	top: 205px;
-	right: 0px;
+  float: left;
 	background: #e1e2e6;
 	color: #717375;
 	padding: 10px;
+	margin: 0 20px 10px 0;
 	border-radius: 5px;
 	-webkit-border-radius: 5px; 
 	text-align: center;
 }
-#qrcode dt, dd {
-	padding: 0;
-	margin: 0;
-	font-size: 12px;
+#qrcode p {
+  font-size: 12px;
+  margin: 0;
 }
-#qrcode dt img {
+#qrcode img {
 	width: 147px;
 	height: 147px;
 }
@@ -142,13 +140,7 @@ sup {
 	color: #43adff;
 	text-shadow: #0090ff 0px 0px 2px;
 }
-#down-mm {
-	text-shadow: #ff0000 0px 0px 2px;
-}
-#fake-warn strong {
-	color: red;
-}
-#fake-warn code {
+.removed {
 	text-decoration: line-through;
 }
 </style>
@@ -163,25 +155,22 @@ sup {
 <div id="content">
 	<div class="inner">
 		<p>
-			<code>海鳗插件</code>是在剑侠情缘网络版叁（简称：剑网3）中使用的辅助插件，<br />
-			严格遵循官方白名单接口，遵循简单实用原则，侧重于 PVP 并且永远全部开源免费。
+			<code>海鳗插件</code>是剑侠情缘网络版叁（剑网3）官方认定许可的插件，
+      简单实用，偏向 PVP 并且全部开源免费。
 		</p>
-		<h2>下载</h2>
+		<h2>最新下载</h2>
 		<ul>
-			<li>最新版本：请从官方内置插件商店直接下载。</li>
-			<li>@海鳗鳗微博：<a href="http://weibo.com/haimanman">http://weibo.com/haimanman</a>
-			</li>
-			<li>用户交流<code>YY</code>群： <em>6685583</em>
-			</li>
+      <li>若在游戏内下载/更新失败，<a href="http://jx3.hightman.cn/down/HM-latest.zip">点此下载 HM-latest.zip</a>，查看<a href="#usage">解压说明</a>。</li>
+			<li>@海鳗鳗微博：<a href="http://weibo.com/haimanman">http://weibo.com/haimanman</a>，<code>YY</code>群： <em>6685583</em></li>
 		</ul>
-		<h2>WIKI & 文档</h2>
+		<h2>敬请关注微信号：海鳗插件</h2>
+    <div id="qrcode">
+			<img src="qrcode.jpg" alt="微信二维码">
+      <p>微信扫一扫<br>或搜索“海鳗插件”添加关注</p>
+		</div><!-- qrcode-->	
 		<ul>
-			<li><a href="https://github.com/haimanman/jx3/wiki/%E5%A6%82%E4%BD%95%E5%88%A0%E9%99%A4%E4%B8%8D%E5%BF%85%E8%A6%81%E7%9A%84%E5%8A%9F%E8%83%BD%E6%A8%A1%E5%9D%97">如何删除不必要的功能模块</a>
-			</li>
-			<li><a href="https://github.com/haimanman/jx3/wiki/%E5%A6%82%E4%BD%95%E5%90%AF%E7%94%A8%E8%8B%B1%E6%96%87%E7%95%8C%E9%9D%A2">如何启用英文界面</a>
-			</li>
-			<li><a href="https://github.com/haimanman/jx3/wiki/_pages">更多文档</a>
-			</li>
+      <li>提供各类游戏数据查询：技能/buff/装备大全，封宏名单，科举题库等；</li>
+      <li>提供有限程度的匿名秘密社区，各种吐槽/八卦/纠结，真情流露等。</li>
 		</ul>
 		<h2>主要功能</h2>
 		<ul>
@@ -198,11 +187,11 @@ sup {
 			<li>多焦点目标，目标列表筛选、排序等</li>
 			<li>娱乐聊天助手，发布个人数据，ROLL 点娱乐等</li>
 			<li>自动确认，商店买卖修装备，物品自动采集拾取等</li>
-			<li>PVE 宏扩展，丰富的判断和扩展，<a href="MACRO.txt">详细说明</a></li>
       <li>情缘剑侠3，设置情缘宣言，情缘对象</li>
-      <li>秘密/Secret，来自身边好友圈的秘密</li>
+			<li class="removed">PVE 宏扩展，丰富的判断和扩展，<a href="MACRO.txt">详细说明</a></li>
+      <li><span class="removed">秘密/Secret，来自身边好友圈的秘密；</span>通过微信号提供。</li>
 		</ul>
-		<h2>安装&amp;使用</h2>
+    <h2>安装&amp;使用<a name="usage"></a></h2>
 		<ul>
 			<li>解压下载的 <code>zip</code> 到 <em>JX3游戏目录</em> 下的 <code>bin/zhcn/interface</code> 目录</li>
 			<li>小退可在插件管理界面看到默认打勾的“海鳗插件”，保持打勾进入游戏</li>
@@ -212,10 +201,6 @@ sup {
 		</ul>
 		<h2>其它</h2>
 		<p>本插件开源免费，但您在使用本插件前，请务必详细阅读<a href="http://haimanchajian.com/LICENSE.txt">用户使用许可协议</a>。</p>
-		<dl id="qrcode">
-			<dt><img src="qrcode.jpg" alt="微信二维码" /></dt>
-			<dd>【剑三查询】<br />微信扫描即可添加关注</dd>
-		</dl><!-- qrcode-->		
 	</div><!-- inner -->
 </div><!-- content -->
 <div id="footer">
