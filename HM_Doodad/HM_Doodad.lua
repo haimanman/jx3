@@ -36,9 +36,11 @@ local _HM_Doodad = {
 		1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009,
 		1010, 1011, 1012, 1015, 1016, 1017, 1018, 1019, 2641,
 		2642, 2643, 3321, 3358, 3359, 3360, 3361, 4227, 4228,
+		5661, 5662,
 		0,	-- switch
 		1020, 1021, 1022, 1023, 1024, 1025, 1027, 2644, 2645,
-		4229, 4230,
+		4229, 4230, 5659, 5660,
+		
 	},
 	tDoodad = {},	-- 待处理的 doodad 列表
 	szIniFile = "interface\\HM\\HM_Doodad\\HM_Doodad.ini",
@@ -163,7 +165,7 @@ _HM_Doodad.TryAdd = function(dwID, bDelay)
 			end
 		elseif d.dwTemplateID == 4733 or d.dwTemplateID == 4734 and HM_Doodad.bQuest then
 			data = { craft = true }
-		elseif HM_Doodad.bShowAll2 and d.nKind ~= DOODAD_KIND.QUEST and d.IsSelectable() then
+		elseif HM_Doodad.bShowAll2 and CanSelectDoodad(d.dwID) then
 			data = { other = true }
 		end
 		if data then
