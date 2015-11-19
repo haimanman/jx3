@@ -608,6 +608,20 @@ _HM_Camp.OnLoadingEnd = function()
 end
 
 -------------------------------------
+-- 不同阵营玩家加入队伍发出提示
+-- 攻防地图 周末 全天提示
+-- 黑戈壁 南屏山 昆仑 PVP任务 全天提示
+-- 小攻防等找到规则补充
+-------------------------------------
+_HM_Camp.CheckCampMap = function(dwMapID)
+	local time = TimeToDate(GetCurrentTime())
+	if dwMapID == 217 or dwMapID == 22 or dwMapID == 30 then
+		return true
+	elseif (dwMapID == 25 or dwMapID == 27) and (time.weekday == 6 or time.weekday == 0) then
+		return true
+	end
+end
+-------------------------------------
 -- 忘记购物买物资
 -------------------------------------
 _HM_Camp.tTradeGoods = {
@@ -715,9 +729,8 @@ HM.RegisterEvent("NPC_ENTER_SCENE", _HM_Camp.OnNpcEnter)
 HM.RegisterEvent("NPC_LEAVE_SCENE", _HM_Camp.OnNpcLeave)
 HM.RegisterEvent("PARTY_ADD_MEMBER", function()
 	if HM_Camp.bPartyAlert then
-		local dwMapID = GetClientPlayer().GetScene().dwMapID
-		-- camp map list 22，25，27，30，104
-		if dwMapID == 22 or dwMapID == 25 or dwMapID == 27 or dwMapID == 30 or dwMapID == 104 then
+		local dwMapID = GetClientPlayer().GetMapID()
+		if _HM_Camp.CheckCampMap(dwMapID) then
 			_HM_Camp.tAddParty[arg1] = true
 		end
 	end
