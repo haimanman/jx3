@@ -74,6 +74,7 @@ _HM_TargetMon.tSkillList4 = {
 		[_s(2628)--[[Ô¨]]] = 45,
 		[_s(424)--[[¼²]]] = 25,
 	}, {	-- ´¿Ñô
+		[_s(2681)--[[×ÏÆø¶«À´]]] = 60,
 		[_s(363)--[[ÍÌÈÕÔÂ]]] = 10,
 		[_s(588)--[[ÈË½£ºÏÒ»]]] = 14,
 		[_s(310)--[[½£·É¾ªÌì]]] = 20,
@@ -128,13 +129,14 @@ _HM_TargetMon.tSkillList4 = {
 		[_s(1647)--[[¾ªÌÎ]]] = 12,
 		[_s(1649)--[[×íÔÂ]]] = 14,
 		[_s(1589)--[[ÃÎÈª»¢ÅÜ]]] = 28,
-		[_s(1596)--[[º×¹é¹ÂÉ½]]] = 20,
+		[_s(1596)--[[º×¹é¹ÂÉ½]]] = 16,
 		[_s(1613)--[[·å²åÔÆ¾°]]] = 15,
 		[_s(1668)--[[ÔÆÆÜËÉ]]] = 100,
 		[_s(1666)--[[ÈªÄýÔÂ]]] = 40,
 		[_s(1580)--[[ÓñÈªÓãÔ¾]]] = 30,
 		[_s(1655)--[[Ì½Ã·]]] = 20,
-		[_s(1665)--[[·ç´µºÉ ]]] = 20,
+		[_s(1665)--[[·ç´µºÉ]]] = 20,
+		[_s(1909)--[[ÕªÐÇ]]] = 20,
 	},  {	-- Ø¤°ï
 		[_s(5265)--[[¼ûÁúÔÚÌï]]] = 23,
 		[_s(5262)--[[ÁúÔ¾ÓÚÔ¨]]] = 9,
@@ -194,6 +196,11 @@ for k, v in pairs(g_tStrings.tForceTitle) do
 	end
 end
 
+-- ³äÄÜ¼¼ÄÜ
+_HM_TargetMon.tChongNeng = {
+	[_s(2681)--[[×ÏÆø¶«À´]]] = 3, -- ×ÏÆø¶«À´3¶Î³äÄÜ
+}
+
 --buff list (by type)
 _HM_TargetMon.tBuffList4 = {
 	{
@@ -219,7 +226,8 @@ _HM_TargetMon.tBuffList4 = {
 			_b(6015)--[[ÁúÔ¾ÓÚÔ¨]], _b(6369)--[[¾ÆÖÐÏÉ]], _b(6087)--[[Á÷»ð·ÉÐÇ]], _b(5754)--[[°ÔÌå]], _b(5950)--[[¹Æ³æÏ×¼À]],
 			_b(3275)--[[¾øÂ×ÒÝÈº]], _b(8247)--[[ÎÞ¾å]], _b(8265)--[[¶ÜÇ½]], _b(8293)--[[Ç§ÏÕ]], _b(8458)--[[Ë®ÔÂÎÞ¼ä]],
 			_b(8449)--[[½Ù»¯]], _b(8483)--[[¶ÜÒã]], _b(8716)--[[º´ÎÀ]], _b(9059)--[[ÇàµÙ]], _b(9068)--[[¾»¹û]], _b(9999)--[[µ·ÒÂ]],
-			_b(6284)--[[Ê¥·¨¹âÃ÷]], _b(9783)--[[ÈµÌ¤Ö¦]],
+			_b(6284)--[[Ê¥·¨¹âÃ÷]], _b(9783)--[[ÈµÌ¤Ö¦]], _b(9855)--[[ÒôÔÏ]], _b(9342)--[[Ê¯¼äÒâ]], _b(9294)--[[¹ÂÓ°]],
+			_b(9848)--[[Ì½Ã·]], _b(10245)--[[ÆÆÖØÎ§]],
 		},
 	}, {
 		szType = _L["Halt"],	-- 4
@@ -239,6 +247,7 @@ _HM_TargetMon.tBuffList4 = {
 			_b(2492)--[[°Ù×ãÃÔÐÄ]], _b(2547)--[[ÌìÖëÏ×¼À]], _b(1931)--[[ÍÂ¹ÊÄÉÐÂ]], _b(6364)--[[ÖÍ]], _b(4758)--[[½û¸¿]],
 			_b(5809)--[[Ì«ÒÒ]], _b(5764)--[[°Ù×ã]], _b(5694)--[[Ì«ÒõÖ¸]], _b(5793)--[[Ëé±ù]], _b(4436)--[[·üÒ¹¡¤²ø]],
 			_b(3359)--[[Ìú×¦]], _b(8251)--[[ÂäÑã]], _b(8327)--[[¶Ï½î]], _b(3216)--[[×êÐÄ´Ì¹Ç]], _b(9569)--[[½£¡¤Óð]],
+			_b(9730)--[[ÖÓÁÖØ¹Ðã]],
 		},
 	}, {
 		szType = _L["Freeze"],	-- 6
@@ -266,7 +275,7 @@ _HM_TargetMon.tBuffList4 = {
 			_b(6240)--[[ÐþË®¹Æ]], _b(5996)--[[Ð¦×í¿ñ]], _b(5810)--[[ÄÔ»§]], _b(6200)--[[ÁúÐ¥¾ÅÌì]], _b(6636)--[[Ê¥ÊÖÖ¯Ìì]],
 			_b(6262)--[[½ðÎÝ]], _b(2849)--[[µûÏ·Ë®]], _b(3315)--[[»¤Ìå]], _b(8279)--[[¶Ü±Ú]], _b(8300)--[[¶ÜÇ½]],
 			_b(8427)--[[ÈÙ»Ô]], _b(8291)--[[¶Ü»¤]], _b(8495)--[[º´ÎÀ]], _b(2983)--[[ÎÞÎÒ]], _b(10014)--[[¾ø¸è]],
-			_b(10051)--[[±­Ë®ÁôÓ°]], _b(10107)--[[Õð°Ë·½]],
+			_b(10051)--[[±­Ë®ÁôÓ°]], _b(10107)--[[Õð°Ë·½]], _b(9334)--[[Ã·»¨ÈýÅª]],
 		},
 	}, {
 		szType = _L["Dodge"],	-- 9
@@ -284,6 +293,7 @@ _HM_TargetMon.tBuffList4 = {
 		tName = {
 			_b(2774)--[[Åùö¨]], _b(3195)--[[´©ÐÄåó]], _b(3538)--[[´©ÐÄ]], _b(574)--[[ÎÞÏà]], _b(576)--[[ºãºÓ½ÙÉ³]],
 			_b(2496)--[[°Ù×ã¿Ý²Ð]], _b(2502)--[[Ð«ÕÝ]], _b(4030)--[[ÔÂ½Ù]], _b(6155)--[[ÉñÁú½µÊÀ]], _b(8487)--[[¶Ü»÷]],
+			_b(9514)--[[³þ¼Ã]],
 		},
 	}, {
 		szType = _L["Slower"],	-- 12
@@ -295,7 +305,7 @@ _HM_TargetMon.tBuffList4 = {
 			_b(2297)--[[Ç§Ë¿]], _b(3484)--[[±ù·â]], _b(3226)--[[¶¾ÝðÞ¼]], _b(4054)--[[Òµº£×ï¸¿]], _b(6275)--[[»ðÎè³¤¿Õ]],
 			_b(6259)--[[Ñ©ÖÐÐÐ]], _b(6191)--[[ÒµÁ¦]], _b(6162)--[[É½Õó]], _b(6130)--[[Âñ¹Ç]], _b(6078)--[[±©ÓêÀæ»¨Õë]],
 			_b(3466)--[[ë¾×ã]], _b(4435)--[[·üÒ¹¡¤»º]], _b(8299)--[[¶ÜÇ½]], _b(8398)--[[¾íÔÆ]], _b(8492)--[[ÄÑÐÐ]],
-			_b(9170)--[[½û¸¿]], _b(10001)--[[ºäÀ×]], _b(9507)--[[½£¡¤¹¬]],
+			_b(9170)--[[½û¸¿]], _b(10001)--[[ºäÀ×]], _b(9507)--[[½£¡¤¹¬]], _b(9217)--[[·çÈëËÉ]],
 		},
 	}, {
 		szType = _L["Others"],	-- 13
@@ -310,7 +320,8 @@ _HM_TargetMon.tBuffList4 = {
 			_b(6256)--[[ÎÖÍÁ]], _b(2542)--[[Óñó¸Ï×¼À]],  _b(2920)--[[¼±Çú]], _b(748)--[[µþÈÐ]], _b(6223)--[[»î¼À]],
 			_b(8451)--[[¿ñ¾ø]], _b(8391)--[[¶Ü·É]], _b(126)--[[ºÁÕë]], _b(8378)--[[»ºÉî]], _b(9175)--[[Ï¢ÁÆ]],
 			_b(9909)--[[ÈÕÔÂÆë¹â]], _b(10015)--[[Çå¸è]], _b(10121)--[[Ó³ÈÕ]], _b(9962)--[[Æ½óÆ]], _b(9263)--[[½­ÖðÔÂÌì]],
-			_b(4462)--[[³¬È»ÎïÍâ]], _b(9271)--[[Þ’¹â]], _b(9277)--[[Þ’ÃÎ]],
+			_b(4462)--[[³¬È»ÎïÍâ]], _b(9271)--[[Þ’¹â]], _b(9277)--[[Þ’ÃÎ]], _b(8491)--[[·Å¸è]], _b(10212)--[[ÑïìºÉ³³¡]],
+			_b(9395)--[[·çÈëËÉ]],
 		},
 	}, {
 		szType = _L["Silence2"],	-- 14
@@ -346,6 +357,7 @@ _HM_TargetMon.tBuffList4 = {
 		tName = {
 			_b(562,1)--[[ÍÌÈÕÔÂ]], _b(562,4)--[[Ç§Ë¿ÃÔÐÄ]], _b(562,5)--[[ÃÔ»Ã]], _b(562,7)--[[Éí·¦]], _b(562,8)--[[ÖÍÓ°]], _b(562,9)--[[çéÏÒ]],
 			_b(1939)--[[ÔÆ¾°]], _b(6074)--[[¶ñ¹·À¹Â·]], _b(4497)--[[»ÃÏà]], _b(535)--[[°ë²½µß]], _b(8257)--[[²½²Ð]],
+			_b(10246)--[[ÖØÎ§]],
 		},
 	}
 }
@@ -376,6 +388,7 @@ _HM_TargetMon.tFixedBuffEx = {
 	[_L("Entrap_%s", _b(5764)--[[°Ù×ã]])] = 5764,
 	[_L("Entrap_%s", _b(5793)--[[Ëé±ù]])] = 5793,
 	[_L("Entrap_%s", _b(8327)--[[¶Ï½î]])] = 8327,
+	[_L("Entrap_%s", _b(9730)--[[ÖÓÁÖØ¹Ðã]])] = 9730,
 	[_L("Slower_%s", _b(4758)--[[½û¸¿]])] = 4758,
 	[_L("Freeze_%s", _b(685)--[[°ø»¨ËæÁø]])] = 685,
 	[_L("Freeze_%s", _b(1936)--[[ç­´½ÖéÐä]])] = 1936,
@@ -398,6 +411,8 @@ _HM_TargetMon.tFixedBuffEx = {
 	[_L("Uncontrollable_%s", _b(8483)--[[¶ÜÒã]])] = 8483,
 	[_L("Uncontrollable_%s", _b(8716)--[[º´ÎÀ]])] = 8716,
 	[_L("Uncontrollable_%s", _b(9783)--[[ÈµÌ¤Ö¦]])] = 9783,
+	[_L("Uncontrollable_%s", _b(9294)--[[¹ÂÓ°]])] = 9294,
+	[_L("Uncontrollable_%s", _b(9848)--[[Ì½Ã·]])] = 9848,
 	[_L("Breakout_%s", _b(5994)--[[¾ÆÖÐÏÉ]])] = 5994,
 	[_L("Breakout_%s", _b(2779)--[[Ô¨]])] = 2779,
 	[_L("Slower_%s", _b(560)--[[ÉúÌ«¼«]])] = 560,
@@ -407,6 +422,7 @@ _HM_TargetMon.tFixedBuffEx = {
 	[_L("Slower_%s", _b(6078)--[[±©ÓêÀæ»¨Õë]])] = 6078,
 	[_L("Slower_%s", _b(8299)--[[¶ÜÇ½]])] = 8299,
 	[_L("Slower_%s", _b(9170)--[[½û¸¿]])] = 9170,
+	[_L("Slower_%s", _b(9217)--[[·çÈëËÉ]])] = 9217,
 	[_L("Halt_%s", _b(548)--[[Í»]])] = 548,
 	[_L("Halt_%s", _b(8329)--[[º³µØ]])] = 8329,
 	[_L("Dodge_%s", _b(5668)--[[·ç´µºÉ]])] = 5668,
@@ -435,6 +451,7 @@ _HM_TargetMon.tFixedBuffEx = {
 	[_L("Others_%s", _b(6425)--[[ÌìµØ¸ù]])] = 6425,
 	[_L("Others_%s", _b(2778)--[[Ô¨]])] = 2778,
 	[_L("Others_%s", _b(6256)--[[ÎÖÍÁ]])] = 6256,
+	[_L("Others_%s", _b(9395)--[[·çÈëËÉ]])] = 9395,
 }
 
 -- special skill alias
@@ -868,6 +885,7 @@ end
 
 -- update skill box
 _HM_TargetMon.UpdateSkillBox = function(data, box, txt)
+	local nChongNeng = _HM_TargetMon.tChongNeng[data.szName]
 	if not box.dwID then
 		txt:SetFontScheme(15)
 		box:SetOverTextFontScheme(0, 15)
@@ -896,11 +914,41 @@ _HM_TargetMon.UpdateSkillBox = function(data, box, txt)
 		else
 			txt:SetText(data.szName)
 		end
+		if nChongNeng then
+			-- ºÚÉ«ºÍºìÉ«µÄ±ß¿ò
+			box:SetExtentLayer(2, "ui\\image\\Common\\Box.UITex", 2)
+			box:SetExtentLayer(3, "ui\\image\\Common\\Box.UITex", 15)
+			box:SetExtentImageType(3, IMAGE.REVERSE_TIMER_SHOW)
+			box:SetExtentTimeStartAngle(3, math.pi * 135 / 180)
+		else
+			box:ClearExtentLayer(3)
+			box:ClearExtentLayer(2)
+			box:SetOverText(2, "")
+		end
 	end
-	local szTime, nFont = _HM_TargetMon.GetLeftTime(data.nEnd)
-	box:SetOverText(1, szTime)
-	box:SetOverTextFontScheme(1, nFont)
-	box:SetCoolDownPercentage(1 - (data.nEnd - GetLogicFrameCount()) / data.nTotal)
+	if nChongNeng then
+		local nLogicFrame = GetLogicFrameCount()
+		local nSec = _HM_TargetMon.GetSkillMonCD(data.szName)
+		local nLeftSec = (data.nEnd - nLogicFrame) / 16
+		if math.ceil(nLeftSec / nSec) == nChongNeng then -- ½øÈëCD×´Ì¬
+			box:SetObjectCoolDown(1)
+			box:SetCoolDownPercentage(1 - nLeftSec % nSec / nSec)
+		else -- ·ñÔò½øÈë³äÄÜ×´Ì¬
+			box:SetObjectCoolDown(0)
+		end
+		local szTime, nFont = _HM_TargetMon.GetLeftTime(data.nEnd - (math.floor(nLeftSec / nSec) * nSec * 16))
+		box:SetOverText(1, szTime)
+		box:SetOverTextFontScheme(1, nFont)
+		box:SetOverText(2, nChongNeng - math.ceil(nLeftSec / nSec)  .. " ") -- ÕâÀïÊý×Ö¿¿×îÓÒÁË²»ºÃ¿´ ÅäºÏUI¼Ó¸ö¿Õ¸ñ
+		box:SetOverTextFontScheme(2, 15)
+		box:SetOverTextPosition(2, ITEM_POSITION.BOTTOM_RIGHT)
+		box:SetExtentPercent(3, 1 - nLeftSec % nSec / nSec)
+	else
+		local szTime, nFont = _HM_TargetMon.GetLeftTime(data.nEnd)
+		box:SetOverText(1, szTime)
+		box:SetOverTextFontScheme(1, nFont)
+		box:SetCoolDownPercentage(1 - (data.nEnd - GetLogicFrameCount()) / data.nTotal)
+	end
 	box:Show()
 	txt:Show()
 end
@@ -1156,6 +1204,10 @@ _HM_TargetMon.OnSkillCast = function(dwCaster, dwSkillID, dwLevel, szEvent)
 	if not szName or szName == "" or dwIconID == 13 then
 		return
 	end
+	-- for chongnen
+	if _HM_TargetMon.tChongNeng[szName] and szEvent == "DO_SKILL_CAST" then
+		return
+	end
 	_HM_TargetMon.PurgeData()
 	if not HM_Jabber then
 		HM.Debug3("#" .. dwCaster .. "#" .. szEvent .. " (" .. szName .. "#" .. dwSkillID .. ", Lv" .. dwLevel .. ")")
@@ -1176,23 +1228,37 @@ _HM_TargetMon.OnSkillCast = function(dwCaster, dwSkillID, dwLevel, szEvent)
 	end
 	local nSec = _HM_TargetMon.GetSkillMonCD(szName)
 	if nSec then
+		local bAdd = true
+		local nTotal = nSec * 16
+		local nLogicFrameCount = GetLogicFrameCount()
+		local nEnd = nLogicFrameCount + nTotal
 		if not _HM_TargetMon.tCD[dwCaster] then
 			_HM_TargetMon.tCD[dwCaster] = {}
 		else
 			for k, v in ipairs(_HM_TargetMon.tCD[dwCaster]) do
 				if v.szName == szName then
-					table.remove(_HM_TargetMon.tCD[dwCaster], k)
+					local nChongNeng = _HM_TargetMon.tChongNeng[szName]
+					if nChongNeng then
+						if v.nEnd > nLogicFrameCount then
+							v.nEnd   = v.nEnd + nTotal
+							v.nTotal = v.nTotal + nTotal
+							bAdd = false
+						end
+					end
+					if bAdd then
+						table.remove(_HM_TargetMon.tCD[dwCaster], k)
+					end
 					break
 				end
 			end
 		end
-		local nTotal = nSec * 16
-		local nEnd = GetLogicFrameCount() + nTotal
-		table.insert(_HM_TargetMon.tCD[dwCaster], {
-			nEnd = nEnd, nTotal = nTotal,
-			dwSkillID = dwSkillID, dwLevel = dwLevel,
-			dwIconID = dwIconID, szName = szName
-		})
+		if bAdd then
+			table.insert(_HM_TargetMon.tCD[dwCaster], {
+				nEnd = nEnd, nTotal = nTotal,
+				dwSkillID = dwSkillID, dwLevel = dwLevel,
+				dwIconID = dwIconID, szName = szName
+			})
+		end
 	end
 end
 
