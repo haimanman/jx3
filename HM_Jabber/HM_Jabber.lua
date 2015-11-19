@@ -516,18 +516,20 @@ end
 -- init revive message (after loading)
 _HM_Jabber.InitReviveTalk = function()
 	local me = GetClientPlayer()
-	if not me or HM_Jabber.tMessage.bRevived then
+	if not me or HM_Jabber.tMessage.bRevived2 then
 		return
 	end
-	HM_Jabber.tMessage.bRevived = true
+	HM_Jabber.tMessage.bRevived2 = true
 	local mnt = me.GetKungfuMount()
-	if mnt.dwMountType == 2 then			-- 万花
-		_HM_Jabber.RegisterReviveTalk(139)	-- 锋针
-	elseif mnt.dwMountType == 4 then	-- 七秀
-		_HM_Jabber.RegisterReviveTalk(551)	-- 心鼓弦
-		_HM_Jabber.RegisterReviveTalk(3003)	-- 妙舞神扬
-	elseif mnt.dwMountType == 9 then	-- 五毒
-		_HM_Jabber.RegisterReviveTalk(2229)	-- 涅槃重生
+	if mnt.dwMountType == 2 then      -- 万花
+		_HM_Jabber.RegisterReviveTalk(139)   -- 锋针
+	elseif mnt.dwMountType == 4 then  -- 七秀
+		_HM_Jabber.RegisterReviveTalk(551)   -- 心鼓弦
+		_HM_Jabber.RegisterReviveTalk(3003)  -- 妙舞神扬
+	elseif mnt.dwMountType == 9 then  -- 五毒
+		_HM_Jabber.RegisterReviveTalk(2229)  -- 涅槃重生
+	elseif mnt.dwMountType == 19 then -- 长歌
+		_HM_Jabber.RegisterReviveTalk(14084) -- 杯水留影
 	end
 end
 
