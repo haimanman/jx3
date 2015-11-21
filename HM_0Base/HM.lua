@@ -126,7 +126,9 @@ _HM.Init = function()
 			OutputTip(szTip, 400, {nX, nY, nW, nH})
 		end
 		button.OnLButtonClick = _HM.TogglePanel
-		button.OnRButtonClick = _HM.TogglePanel
+		button.OnRButtonClick = function()
+			this:Destroy()
+		end
 		button:Show()
 	end
 	--  hide
