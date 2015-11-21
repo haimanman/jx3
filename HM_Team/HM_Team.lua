@@ -18,7 +18,7 @@ local _HM_Team = {
 	-- 0: 江湖，1：少林，2：万花，3：天策，4：纯阳，5：七秀，6：五毒，7：唐门，8：藏剑，9:丐帮，10：明教 --
 	tForceOrder = { 0, 5, 2, 6, 4, 7, 8, 1, 3, 9, 10 },
 	tRelation = { _L["Enemy"], _L["Ally"], _L["Neutral"] },
-	tMarkForce = { { ["z"] = true, [0] = true, [2] = true, [4] = true, [5] = true, [6] = true }, {}, {} },
+	tMarkForce = { { ["z"] = true, [0] = true, [2] = true, [4] = true, [5] = true, [6] = true, [21] = true, [22] = true }, {}, {} },
 	tMarkAlly = {},
 	nLastFrame = 0,
 }
