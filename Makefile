@@ -52,7 +52,7 @@ dist-zip:
 	git archive --prefix HM/ HEAD | tar -x
 	cp -f HM_0Base/HM.lua HM/HM_0Base/HM.lua
 	cp -f lab/HM_About.lua HM/HM_0Base/HM_About.lua
-	#zip -qrm9 dist/HM-`cat VERSION`.zip HM
+	zip -qrm9 dist/HM-`cat VERSION`.zip HM
 
 dist-zip2:
 	git archive --prefix HM/ HEAD | tar -x
