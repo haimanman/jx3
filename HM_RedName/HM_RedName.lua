@@ -546,7 +546,7 @@ MiddleMap.ShowMap = function(frame, ...)
 			ui:Fetch("Combo_AcctType"):Remove()
 		end
 		frame.szHM = tostring(HM)
-		local nX = ui:Append("WndCheckBox", "Check_AcctUser", { txt = "HM: " .. _L["Nearby players (middle map)"], checked = HM_RedName.bAcctUser, x = 700, y = 88 })
+		local nX = ui:Append("WndCheckBox", "Check_AcctUser", { txt = "HM: " .. _L["Nearby players (middle map)"], checked = HM_RedName.bAcctUser, x = 34, y = 88 })
 		:Click(function(bChecked)
 			HM_RedName.bAcctUser= bChecked
 		end):Pos_()
