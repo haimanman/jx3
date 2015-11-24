@@ -51,13 +51,13 @@ HM_0Base/lang/zhtw.jx3dat: HM_0Base/lang/zhcn.jx3dat
 dist-zip:
 	git archive --prefix HM/ HEAD | tar -x
 	cp -f HM_0Base/HM.lua HM/HM_0Base/HM.lua
-	cp -f lab/HM_About.lua HM/HM_0Base/HM_About.lua
+	#cp -f lab/HM_About.lua HM/HM_0Base/HM_About.lua
 	zip -qrm9 dist/HM-`cat VERSION`.zip HM
 
 dist-zip2:
 	git archive --prefix HM/ HEAD | tar -x
 	cp -f HM_0Base/HM.lua HM/HM_0Base/HM.lua
-	cp -f lab/HM_About.lua HM/HM_0Base/HM_About.lua
+	#cp -f lab/HM_About.lua HM/HM_0Base/HM_About.lua
 	sh -c 'fs=`find HM/ -name "*.lua"`; for f in $$fs; do luac -s -o $$f $$f; done'
 	zip -qrm9 dist/HM-`cat VERSION`.zip HM
 
