@@ -5,17 +5,19 @@
 HM_Area = {
 	bQichang = true,			-- 显示纯阳气场
 	bJiguan = true,			-- 显示唐门机关
+	bYinyu = true,				-- 显示长歌音域
 	bShowName = true,	-- 显示头顶名称
 	bBigTaiji = true,			-- 11 尺生太极
 	nAlpha = 40,				-- 显示效果的不透明度（越大越浓）
 	nMaxNum = 10,			-- 最多画出范围的个数
 	tColor = {},
-	tHide = {
+	tHide2 = {
 		[2] = {
 			[15959] = true,	-- 默认不显示别人的飞星
 		},
 		[3] = {
 			[15959] = true,	-- 默认不显示别人的飞星
+			[44765] = true,	-- 不显示敌人的云生结海
 		},
 		[4] = {
 			[0] = true,			-- 默认不显示任何其它人的气场、机关
@@ -103,6 +105,23 @@ _HM_Area.tSkill = {
 		dwTemplateID = 16177,
 		tOther = { [3368] = 16175, [3369] = 16176 },
 		nLeft = 10,
+	}, {
+	}, {
+		dwID = 14073,
+		dwTemplateID = 44734,
+		nLeft = 8,
+	}, {
+		dwID = 14074,
+		dwTemplateID = 44764,
+		nLeft = 8,
+	}, {
+		dwID = 14075,
+		dwTemplateID = 44765,
+		nLeft = 8,
+	}, {
+		dwID = 14154,
+		dwTemplateID = 44766,
+		nLeft = 8,
 	}
 }
 
@@ -167,6 +186,10 @@ _HM_Area.CheckTemplateID = function(dwTemplateID)
 		or dwTemplateID == 15994 or dwTemplateID == 15999 or dwTemplateID == 16000
 	then
 		return HM_Area.bJiguan
+	elseif dwTemplateID == 44734 or dwTemplateID == 44764
+		or dwTemplateID == 44765 or dwTemplateID == 44766
+	then
+		return HM_Area.bYinyu
 	else
 		for _, v in ipairs(_HM_Area.tSkill) do
 			if v.dwTemplateID == dwTemplateID then
@@ -208,7 +231,11 @@ _HM_Area.GetAreaRadius = function(dwTemplateID)
 		return 1600
 	elseif dwTemplateID == 16175 then	-- 连弩
 		return 1600
+	elseif dwTemplateID == 44734 or dwTemplateID == 44764 or dwTemplateID == 44765 then
+		-- 笑傲光阴/江追月天/云生结海
+		return 960
 	end
+	-- 迴梦逐光也是 10尺
 	return 640
 end
 
@@ -218,7 +245,7 @@ _HM_Area.GetHide = function(nRelation, dwTemplateID, bSelf)
 	if dwTemplateID == 16175 or dwTemplateID == 16176 then
 		dwTemplateID = 16177
 	end
-	local hide = HM_Area.tHide[nRelation]
+	local hide = HM_Area.tHide2[nRelation]
 	if hide and ((not bSelf and hide[0]) or hide[dwTemplateID]) then
 		return true
 	end
@@ -231,10 +258,10 @@ _HM_Area.SetHide = function(nRelation, dwTemplateID, bHide)
 	if dwTemplateID == 16175 or dwTemplateID == 16176 then
 		dwTemplateID = 16177
 	end
-	if not HM_Area.tHide[nRelation] then
-		HM_Area.tHide[nRelation] = {}
+	if not HM_Area.tHide2[nRelation] then
+		HM_Area.tHide2[nRelation] = {}
 	end
-	HM_Area.tHide[nRelation][dwTemplateID] = bHide
+	HM_Area.tHide2[nRelation][dwTemplateID] = bHide
 end
 
 -- get color, return (r, g, b)
@@ -415,7 +442,7 @@ _HM_Area.GetSkillMenu = function()
 			if not v.dwID then
 				m2 = { bDevide = true, }
 			else
-				m2 = { szOption = HM.GetSkillName(v.dwID), bCheck = true, bColorTable = true, bNotChangeSelfColor = false, }
+				m2 = { szOption = HM.GetSkillName((v.dwID == 3370 and 3109) or v.dwID), bCheck = true, bColorTable = true, bNotChangeSelfColor = false, }
 				m2.bChecked = not _HM_Area.GetHide(nRel, v.dwTemplateID, true)
 				m2.rgb = _HM_Area.GetColor(nRel, v.dwTemplateID)
 				m2.fnAction = function(data, bCheck) _HM_Area.SetHide(nRel, v.dwTemplateID, not bCheck) end
@@ -594,6 +621,10 @@ _HM_Area.PS.OnPanelActive = function(frame)
 	ui:Append("WndCheckBox", { txt = _L["Show the head name"], x = nX + 10, y = 56, checked = HM_Area.bShowName })
 	:Click(function(bChecked)
 		HM_Area.bShowName = bChecked
+	end)
+	ui:Append("WndCheckBox", { txt = _L["Display sound range of CG"], x = nX + 10, y = 28, checked = HM_Area.bYinyu })
+	:Click(function(bChecked)
+		HM_Area.bYinyu = bChecked
 	end)
 	ui:Append("WndCheckBox", "Check_Big", { txt = _L["Always display 11 feet range of SHENGTAIJI"], x = 10, y = 84, checked = HM_Area.bBigTaiji })
 	:Enable(HM_Area.bQichang):Click(function(bChecked)

@@ -53,6 +53,7 @@ data = {
 	["-"] = "·",
 	["Options"] = "功能选项",
 	["Display gas field range of CY"] = "显示纯阳气场范围",
+	["Display sound range of CG"] = "显示长歌音域",
 	["Display organ/trap range of TM"] = "显示唐门机关/陷阱范围",
 	["Always display 11 feet range of SHENGTAIJI"] = "统一显示 11 尺生太极范围",
 	["Show the head name"] = "显示头顶名称",
