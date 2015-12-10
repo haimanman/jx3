@@ -293,7 +293,7 @@ end
 _HM_ToolBox.SaveDiamondFormula = function()
 	local t = {}
 	local handle = _HM_ToolBox.GetRefineHandle()
-	local box, hL = handle:Lookup("Box_Refine"), handle:Lookup("Handle_RefineExpend")
+	local box, hL = handle:Lookup("Handle_BoxItem/Box_Refine"), handle:Lookup("Handle_RefineExpend")
 	table.insert(t, _HM_ToolBox.GetDiamondData(box))
 	for i = 1, 16 do
 		local box = hL:Lookup("Box_RefineExpend_" .. i)
@@ -1094,7 +1094,7 @@ _HM_ToolBox.OnDiamondUpdate = function()
 	if not HM_ToolBox.bAutoDiamond2 or not _HM_ToolBox.dFormula or arg0 ~= 1 then
 		return
 	end
-	local box = _HM_ToolBox.GetRefineHandle():Lookup("Box_Refine")
+	local box = _HM_ToolBox.GetRefineHandle():Lookup("Handle_BoxItem/Box_Refine")
 	if not box then
 		_HM_ToolBox.dFormula = nil
 		return
