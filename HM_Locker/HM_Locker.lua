@@ -264,6 +264,15 @@ local tJustList = {}
 local nJustFrame = 0
 local LOWER_DIS = 35
 local LOWER_DIS2 = 45
+local tLowerNpc = {
+	[12944] = true, -- 碧蝶
+	[9998]  = true, -- 灵蛇
+	[9999]  = true, -- 玉蟾
+	[9997]  = true, -- 天蛛
+	[9956]  = true, -- 圣蝎
+	[46140] = true, -- 长歌影子 清绝影歌
+	[46297] = true, -- 长歌影子 疏影横斜
+}
 _HM_Locker.SearchTarget = function()
 	local nFrame = GetLogicFrameCount()
 	if (nFrame - nJustFrame) > 12 then
@@ -346,7 +355,7 @@ _HM_Locker.SearchTarget = function()
 				else
 					local item = { dwID = v.dwID, nType = TARGET.NPC }
 					item.nSel = tJustList[v.dwID] or 0
-					item.nForce = 1
+					item.nForce = HM_Locker.bLowerNPC and 1 or 0
 					item.nNpc = 0
 					if GetNpcIntensity(v) ~= 4 then
 						item.nNpc = item.nNpc + 1
@@ -361,6 +370,9 @@ _HM_Locker.SearchTarget = function()
 						item.nType = TARGET.PLAYER
 						item.nForce = 0
 						item.nNpc = 0
+					end
+					if tLowerNpc[v.dwTemplateID] then -- 降到最低的NPC 五毒宠物唱歌影子之类的
+						item.nForce = 2
 					end
 					------
 					if IsNeutrality(me.dwID, v.dwID) then
@@ -397,7 +409,7 @@ _HM_Locker.SearchTarget = function()
 			return a.nSel < b.nSel
 		end
 		-- npc lower
-		if a.nType ~= b.nType then
+		if HM_Locker.bLowerNPC and a.nType ~= b.nType then
 			return a.nType > b.nType
 		end
 		-- force lower
