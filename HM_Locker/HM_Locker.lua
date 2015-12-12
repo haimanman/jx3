@@ -346,7 +346,7 @@ _HM_Locker.SearchTarget = function()
 				else
 					local item = { dwID = v.dwID, nType = TARGET.NPC }
 					item.nSel = tJustList[v.dwID] or 0
-					item.nForce = 1
+					item.nForce = HM_Locker.bLowerNPC and 1 or 0
 					item.nNpc = 0
 					if GetNpcIntensity(v) ~= 4 then
 						item.nNpc = item.nNpc + 1
@@ -397,7 +397,7 @@ _HM_Locker.SearchTarget = function()
 			return a.nSel < b.nSel
 		end
 		-- npc lower
-		if a.nType ~= b.nType then
+		if HM_Locker.bLowerNPC and a.nType ~= b.nType then
 			return a.nType > b.nType
 		end
 		-- force lower
