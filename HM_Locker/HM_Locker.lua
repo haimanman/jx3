@@ -5,6 +5,7 @@
 HM_Locker = {
 	bLockLeave = true,	-- 锁定脱离再回归视线的目标
 	bLockFight = true,	-- 战斗中点地面不丢目标
+	bLockDuel  = true, -- 锁定决斗的苍云
 	bWhisperSel = true,	-- 密聊快速选择，密聊：11 速度选择此人（若在身边）
 	------------
 	bSelectEnemy = true,
@@ -25,6 +26,7 @@ HM.RegisterCustomData("HM_Locker")
 ---------------------------------------------------------------------
 local _HM_Locker = {
 	bLeave = false,	-- 目标是否离开视线
+	bDuelBuff = false, -- 苍云决斗BUFF
 	nTigerFrame = 0,	-- 虎跑切目标的帧次
 	dwLastID = 0,		-- 最近的目标
 	dwPrevID = 0,		-- 上次的目标
@@ -98,6 +100,22 @@ _HM_Locker.CheckLockFight = function(dwCurID, dwLastID)
 	end
 end
 
+-- check cangyun duel
+_HM_Locker.CheckDuel = function(dwCurID, dwLastID)
+	if _HM_Locker.dwDuelID then
+		if HM.HasBuff(10212) then
+			if dwCurID ~= _HM_Locker.dwDuelID then
+				_HM_Locker.dwLastID = _HM_Locker.dwDuelID
+				_HM_Locker.Sysmsg(_L["Keep attack target in duel"])
+				return true
+			end
+		else
+			_HM_Locker.dwDuelID = nil
+			return false
+		end
+	end
+end
+
 -- update enemy search options
 _HM_Locker.UpdateSearchTarget = function()
 	if not SearchTarget_IsOldVerion() then
@@ -128,6 +146,13 @@ end
 -------------------------------------
 -- 事件函数
 -------------------------------------
+_HM_Locker.OnCheckDuel = function()
+	if arg0 == "UI_OME_SKILL_EFFECT_LOG" and arg2 == UI_GetClientPlayerID() and arg5 == 15196 then
+		_HM_Locker.dwDuelID = arg1
+		HM.SetTarget(TARGET.PLAYER, arg1)
+	end
+end
+
 -- update target
 _HM_Locker.OnUpdateTarget = function()
 	if TargetPanel_GetOpenState() then
@@ -201,7 +226,7 @@ end
 
 -- register locker
 _HM_Locker.AddLocker(_HM_Locker.CheckLockFight)
-
+_HM_Locker.AddLocker(_HM_Locker.CheckDuel)
 -------------------------------------
 -- 目标策略选择
 -- 1. 备选目标 ：NPC 及50 尺以外的玩家
@@ -273,6 +298,7 @@ local tLowerNpc = {
 	[46140] = true, -- 长歌影子 清绝影歌
 	[46297] = true, -- 长歌影子 疏影横斜
 }
+
 _HM_Locker.SearchTarget = function()
 	local nFrame = GetLogicFrameCount()
 	if (nFrame - nJustFrame) > 12 then
@@ -296,6 +322,9 @@ _HM_Locker.SearchTarget = function()
 			else
 				local item = { dwID = v.dwID, nType = TARGET.PLAYER }
 				item.nSel = tJustList[v.dwID] or 0
+				if v.dwID == _HM_Locker.dwDuelID then
+					item.nSel = -1
+				end
 				if HM_Locker.bSelectEnemy and HM_Locker.tLowerForce[v.dwForceID] then
 					item.nForce = 1
 				else
@@ -501,8 +530,12 @@ _HM_Locker.PS.OnPanelActive = function(frame)
 	:Text(_L["Keep current attack/heal target in fighting when click ground"]):Click(function(bChecked)
 		HM_Locker.bLockFight = bChecked
 	end)
+	ui:Append("WndCheckBox", { x = 10, y = 84, checked = HM_Locker.bLockDuel })
+	:Text(_L["Keep attack target in duel"]):Click(function(bChecked)
+		HM_Locker.bLockDuel = bChecked
+	end)
 	-- whisper select
-	ui:Append("Text", { txt = _L["Select target by whisper"], x = 0, y = 92, font = 27 })
+	--ui:Append("Text", { txt = _L["Select target by whisper"], x = 0, y = 92, font = 27 })
 	ui:Append("WndCheckBox", { x = 10, y = 120, checked = HM_Locker.bWhisperSel })
 	:Text(_L["Select as target when you send 11 to around player"]):Click(function(bChecked)
 		HM_Locker.bWhisperSel = bChecked
@@ -577,6 +610,7 @@ HM.RegisterEvent("PLAYER_LEAVE_SCENE", _HM_Locker.OnLeave)
 HM.RegisterEvent("NPC_ENTER_SCENE", _HM_Locker.OnEnter)
 HM.RegisterEvent("PLAYER_ENTER_SCENE", _HM_Locker.OnEnter)
 HM.RegisterEvent("PLAYER_TALK", _HM_Locker.OnPlayerTalk)
+HM.RegisterEvent("SYS_MSG", _HM_Locker.OnCheckDuel)
 
 -- add to HM panel
 HM.RegisterPanel(_L["Lock/Select"], 3353, _L["Target"], _HM_Locker.PS)
