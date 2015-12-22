@@ -295,8 +295,9 @@ local tLowerNpc = {
 	[9999]  = true, -- 玉蟾
 	[9997]  = true, -- 天蛛
 	[9956]  = true, -- 圣蝎
-	[46140] = true, -- 长歌影子 清绝影歌
+	-- [46140] = true, -- 长歌影子 清绝影歌
 	[46297] = true, -- 长歌影子 疏影横斜
+	[48049] = true, --五毒苗疆生物
 }
 
 _HM_Locker.SearchTarget = function()
@@ -393,7 +394,7 @@ _HM_Locker.SearchTarget = function()
 					-- 战场内的 boss 与玩家具有同等优先级
 					-- 474=恶人谷密探，475=浩气盟密探，476=天一教尸将，6962/6963=丝绸的镖车
 					if bBattle and (v.dwTemplateID == 474 or v.dwTemplateID == 475 or v.dwTemplateID == 476
-						or v.dwTemplateID == 6962 or v.dwTemplateID == 6963)
+						or v.dwTemplateID == 6962 or v.dwTemplateID == 6963 or v.dwTemplateID == 46140)
 					then
 						item.nRealType = TARGET.NPC
 						item.nType = TARGET.PLAYER
