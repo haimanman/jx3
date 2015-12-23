@@ -391,10 +391,11 @@ _HM_Locker.SearchTarget = function()
 						item.nNpc = item.nNpc + 1
 					end
 					------
-					-- 战场内的 boss 与玩家具有同等优先级
+					-- 战场内的 boss 与玩家具有同等优先级，清歌绝影的影子=46140
 					-- 474=恶人谷密探，475=浩气盟密探，476=天一教尸将，6962/6963=丝绸的镖车
-					if bBattle and (v.dwTemplateID == 474 or v.dwTemplateID == 475 or v.dwTemplateID == 476
-						or v.dwTemplateID == 6962 or v.dwTemplateID == 6963 or v.dwTemplateID == 46140)
+					if v.dwTemplateID == 46140
+						or (bBattle and (v.dwTemplateID == 474 or v.dwTemplateID == 475 or v.dwTemplateID == 476
+							or v.dwTemplateID == 6962 or v.dwTemplateID == 6963))
 					then
 						item.nRealType = TARGET.NPC
 						item.nType = TARGET.PLAYER
