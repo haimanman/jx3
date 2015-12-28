@@ -76,6 +76,10 @@ _HM_Camp.IsCareNpc = function(v)
 			return true
 		end
 	end
+	-- other filter
+	if v.dwTemplateID == 6394 then
+		return false
+	end
 	-- 28001 - 30300, 31001 -36001
 	if (v.dwTemplateID < 28001 or v.dwTemplateID > 36001 or (v.dwTemplateID > 30300 and v.dwTemplateID < 31001))
 		and IsEnemy(me.dwID, v.dwID) and (HM_Camp.tBossList[v.szName] or v.nMaxLife >= 200000000)
@@ -189,10 +193,30 @@ _HM_Camp.HideGF = function(bEnable, bNoSave)
 	-- combat
 	if not HM_Camp.tHideExclude[8] then
 		local frame = Station.Lookup("Lowest/CombatTextWnd")
-		if tHide[8] and frame then
-			Wnd.CloseWindow(frame)
-		elseif not tHide[8] and not frame then
-			Wnd.OpenWindow("CombatTextWnd")
+		local JH_Frame = Station.Lookup("Lowest/JH_CombatText")
+		local events = { "SKILL_EFFECT_TEXT", "COMMON_HEALTH_TEXT", "SKILL_MISS", "SKILL_DODGE", "SKILL_BUFF", "BUFF_IMMUNITY", "SYS_MSG" }
+		if tHide[8] then
+			if JH_CombatText and JH_CombatText.bEnable and JH_Frame then
+				for k, v in ipairs(events) do
+					JH_Frame:UnRegisterEvent(v)
+				end
+			else
+				for k, v in ipairs(events) do
+					frame:UnRegisterEvent(v)
+				end
+			end
+		else
+			if JH_CombatText and JH_CombatText.bEnable and JH_Frame then
+				for k, v in ipairs(events) do
+					JH_Frame:UnRegisterEvent(v)
+					JH_Frame:RegisterEvent(v)
+				end
+			else
+				for k, v in ipairs(events) do
+					frame:UnRegisterEvent(v)
+					frame:RegisterEvent(v)
+				end
+			end
 		end
 	end
 	-- skip auto hide HM things
