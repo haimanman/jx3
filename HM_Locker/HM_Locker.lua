@@ -314,7 +314,7 @@ _HM_Locker.SearchTarget = function()
 	for _, v in ipairs(HM.GetAllPlayer()) do
 		if v.dwID == dwTarget or v.nMoveState == MOVE_STATE.ON_DEATH then
 			-- skip current target
-		elseif (HM_Locker.bSelectEnemy and IsEnemy(me.dwID, v.dwID))
+		elseif (HM_Locker.bSelectEnemy and IsEnemy(me.dwID, v.dwID) and not me.IsPlayerInMyParty(v.dwID))
 			or (not HM_Locker.bSelectEnemy and IsAlly(me.dwID, v.dwID))
 		then
 			local nDis = HM.GetDistance(v)
