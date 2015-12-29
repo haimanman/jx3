@@ -52,7 +52,7 @@ local _HM_Love = {
 	szSign = "",			-- 情缘宣言（个性签名）
 	tOther = {},			-- 查看的情缘数据（[0] = szName, [1] = dwAvatar,  [2] = szSign, [3] = nRoletype, [4] = nLoveType）
 	tViewer = {},			-- 等候查看您的玩家列表
-	dwRoot = 2669320,		-- root user id
+	dwRoot = 2669320,		-- root user id: 8949795
 }
 
 -- 神秘表白语（单数：表白，双数：取消单恋通知）
@@ -120,7 +120,7 @@ _HM_Love.GetAvatarFile = function(dwAvatar, nRoleType)
 		end
 	end
 	-- force avatar
-	local tForce = { "shaolin", "wanhua", "tiance", "chunyang", "qixiu", "wudu", "tangmen", "cangjian", "gaibang", "mingjiao" }
+	local tForce = { "shaolin", "wanhua", "tiance", "chunyang", "qixiu", "wudu", "tangmen", "cangjian", "gaibang", "mingjiao", "cangyun", "changge" }
 	local szForce = tForce[0 - dwAvatar] or "jianghu"
 	return "ui\\Image\\PlayerAvatar\\" .. szForce .. ".tga", -2, false
 end
@@ -482,7 +482,7 @@ _HM_Love.UpdatePage = function()
 	end
 	-- lover info
 	local inf = h:Lookup("Text_LoverInfo")
-	if t[5] and t[6] then
+	if t[5] and t[6] and t[6] > 0 then
 		local szText = _HM_Love.GetLoverType(tonumber(t[5]) or 0) .. "   " .. _HM_Love.GetLoverTime(tonumber(t[6]) or 0)
 		inf:SetText(szText)
 	else
