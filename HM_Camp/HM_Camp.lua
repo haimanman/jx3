@@ -192,7 +192,7 @@ _HM_Camp.HideGF = function(bEnable, bNoSave)
 	end
 	-- combat
 	if not HM_Camp.tHideExclude[8] then
-		local frame = Station.Lookup("Lowest/CombatTextWnd")
+		local frame = Station.Lookup("Lowest/CombatText")
 		local JH_Frame = Station.Lookup("Lowest/JH_CombatText")
 		local events = { "SKILL_EFFECT_TEXT", "COMMON_HEALTH_TEXT", "SKILL_MISS", "SKILL_DODGE", "SKILL_BUFF", "BUFF_IMMUNITY", "SYS_MSG" }
 		if tHide[8] then
