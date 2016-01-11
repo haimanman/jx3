@@ -17,20 +17,18 @@ local _HM_CombatText = {
 -- set text replace
 _HM_CombatText.SetText = function(txt, szText)
 	txt:__SetText(szText)
-	if txt:GetName() == "SkillBuff" then
-		local tar = GetPlayer(arg0)
-		txt.arg0, txt.arg1 = 0, arg0
-		if tar then
-			for i = 1, tar.GetBuffCount() do
-				local dwID, nLevel, _, _, _, _, dwSkillSrcID = tar.GetBuff(i - 1)
-				if dwID == arg2 and nLevel == arg3 then
-					txt.arg0 = dwSkillSrcID or 0
-					break
-				end
+	txt.arg0, txt.arg1 = arg0, arg1
+	-- force to check buff
+	local tar = GetPlayer(arg0)
+	if tar then
+		for i = 1, tar.GetBuffCount() do
+			local dwID, nLevel, _, _, _, _, dwSkillSrcID = tar.GetBuff(i - 1)
+			if dwID == arg2 and nLevel == arg3 then
+				txt.arg0 = dwSkillSrcID or 0
+				txt.arg1 = tar.dwID
+				break
 			end
 		end
-	else
-		txt.arg0, txt.arg1 = arg0, arg1
 	end
 	if not HM_CombatText.bExcludeSelf or txt.arg0 ~= UI_GetClientPlayerID() then
 		table.insert(_HM_CombatText.tList, txt)
@@ -38,8 +36,8 @@ _HM_CombatText.SetText = function(txt, szText)
 end
 
 -- hook
-_HM_CombatText.Hook = function()
-	local handle = Station.Lookup("Lowest/CombatTextWnd", "")
+_HM_CombatText.Hook = function(nLevel)
+	local handle = Station.Lookup("Lowest/CombatText", "Handle_Level" .. nLevel)
 	if handle and not handle.bHookByHM then
 		handle.bHookByHM = true
 		for i = 0, handle:GetItemCount() - 1 do
@@ -58,8 +56,8 @@ _HM_CombatText.Hook = function()
 end
 
 -- unhook
-_HM_CombatText.UnHook = function()
-	local handle = Station.Lookup("Lowest/CombatTextWnd", "")
+_HM_CombatText.UnHook = function(nLevel)
+	local handle = Station.Lookup("Lowest/CombatText", "Handle_Level" .. nLevel)
 	if handle and handle.bHookByHM then
 		handle.bHookByHM = nil
 		handle.AppendItemFromString = handle.__AppendItemFromString
@@ -74,12 +72,13 @@ end
 
 -- breathe
 _HM_CombatText.OnBreathe = function()
-	_HM_CombatText.Hook()
+	_HM_CombatText.Hook(0)
+	_HM_CombatText.Hook(1)
 	if #_HM_CombatText.tList == 0 then
 		return
 	end
 	for _, v in ipairs(_HM_CombatText.tList) do
-		if not v.bFree and v.arg0 ~= 0 and v.arg1 == v.dwOwner and v:IsValid() then
+		if not v.bFree and v.arg0 ~= 0 and v.arg1 == v.dwCharacterID and v:IsValid() then
 			local tar = GetPlayer(v.arg0)
 			if tar then
 				v:__SetText(string.gsub(tar.szName, "@.*$", "") .. _L["-"] .. v:GetText())
@@ -97,7 +96,8 @@ HM_CombatText.Switch = function(bEnable)
 		bEnable = not HM_CombatText.bShowName
 	end
 	HM_CombatText.bShowName = bEnable
-	_HM_CombatText.UnHook()
+	_HM_CombatText.UnHook(0)
+	_HM_CombatText.UnHook(1)
 	if bEnable then
 		HM.BreatheCall("HM_CombatText", _HM_CombatText.OnBreathe)
 	else

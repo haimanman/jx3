@@ -52,7 +52,7 @@ local _HM_Love = {
 	szSign = "",			-- 情缘宣言（个性签名）
 	tOther = {},			-- 查看的情缘数据（[0] = szName, [1] = dwAvatar,  [2] = szSign, [3] = nRoletype, [4] = nLoveType）
 	tViewer = {},			-- 等候查看您的玩家列表
-	dwRoot = 2669320,		-- root user id: 8949795
+	dwRoot = 8949795,		-- root user id: 8949795
 }
 
 -- 神秘表白语（单数：表白，双数：取消单恋通知）

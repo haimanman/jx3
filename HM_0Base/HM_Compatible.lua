@@ -385,12 +385,14 @@ local _HM_CombatText = {
 _HM_CombatText.GetFreeText = function(handle)
 	local nItemCount = handle:GetItemCount()
 	local nIndex
+	local nTick = GetTickCount()
 	if handle.nUseCount < nItemCount then
 		local nEnd = nItemCount - 1
 		for i = 0, nEnd, 1 do
 			local hItem = handle:Lookup(i)
-			if hItem.bFree then
+			if hItem.bFree or (hItem.stime and hItem.stime < BigIntSub(nTick, 60000)) then
 				hItem.bFree = false
+				hItem.stime = nTick
 				handle.nUseCount = handle.nUseCount + 1
 				return hItem
 			end
@@ -399,6 +401,7 @@ _HM_CombatText.GetFreeText = function(handle)
 		handle:AppendItemFromString("<text> w=550 h=100 halign=1 valign=1 multiline=1 </text>")
 		local hItem = handle:Lookup(handle.nUseCount)
 		hItem.bFree = false
+		hItem.stime = nTick
 		handle.nUseCount = handle.nUseCount + 1
 		return hItem
 	end
@@ -406,7 +409,7 @@ end
 
 -- ªÒ»° handle
 _HM_CombatText.GetHandle = function()
-	local handle = Station.Lookup("Lowest/CombatTextWnd", "") or Station.Lookup("Lowest/CombatTextWndEx", "")
+	local handle = Station.Lookup("Lowest/CombatText", "Handle_Level1")
 	return handle
 end
 
