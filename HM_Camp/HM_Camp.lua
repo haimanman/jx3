@@ -76,8 +76,8 @@ _HM_Camp.IsCareNpc = function(v)
 			return true
 		end
 	end
-	-- other filter
-	if v.dwTemplateID == 6394 then
+	-- other filter£¬6394	Ììî¸ÎäÎÀ 6395	Ñ©Ä§ÎäÎÀ 6396	ÒşÔªÎäÎÀ
+	if v.dwTemplateID == 6394 or v.dwTemplateID == 6395 or v.dwTemplateID == 6396 then
 		return false
 	end
 	-- 28001 - 30300, 31001 -36001
