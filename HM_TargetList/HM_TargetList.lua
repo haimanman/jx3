@@ -1151,6 +1151,9 @@ _HM_TargetList.UpdateListItems = function(handle)
 		local t = TimeToDate(GetCurrentTime())
 		if (t.weekday == 2 or t.weekday == 4) and t.hour >= 19 and t.hour < 22 then
 			bXGF = true
+		elseif (t.weekday == 0 or t.weekday > 5) and ((t.hour >= 13 and t.hour <= 15) or (t.hour >= 19 and t.hour <= 21)) then
+			-- 大攻防也有战车了
+			bXGF = true
 		end
 		aList = HM.GetAllPlayer()
 	end
