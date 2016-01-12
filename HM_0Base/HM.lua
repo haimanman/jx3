@@ -196,7 +196,7 @@ _HM.SetTempTarget = function()
 				if not _HM.nOrigTarget then
 					_, _HM.nOrigTarget = me.GetTarget()
 				end
-				HM.Sysmsg(_L("Temporarily switch target [#%d]", tar.szName))
+				HM.Sysmsg(_L("Temporarily switch target [#%d]" .. tar.szName, tar.dwID))
 				HM.SetTarget(TARGET.PLAYER, tar.dwID)
 				break
 			end
