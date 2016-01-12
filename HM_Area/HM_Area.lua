@@ -13,11 +13,13 @@ HM_Area = {
 	tColor = {},
 	tHide2 = {
 		[2] = {
-			[15959] = true,	-- 默认不显示别人的飞星
+			[15959] = true,	-- 默认不显示队友的飞星
+			[44766] = true,	-- 不显示队友的回梦
 		},
 		[3] = {
 			[15959] = true,	-- 默认不显示别人的飞星
 			[44765] = true,	-- 不显示敌人的云生结海
+			[44766] = true,	-- 不显示敌人的回梦
 		},
 		[4] = {
 			[0] = true,			-- 默认不显示任何其它人的气场、机关
@@ -44,6 +46,7 @@ _HM_Area.tDefaultColor = {
 	{ 255, 255, 0 },	-- 3 黄：其它
 	{ 0, 255, 255 },	-- 4 青：突出友方
 	{ 255, 0, 255 },	-- 5 粉：突出敌方
+	{ 255, 128, 0}, 	-- 6 橙：敌方音域
 }
 
 -- relations
@@ -132,15 +135,15 @@ _HM_Area.Sysmsg = function(szMsg) HM.Sysmsg(szMsg, _L["HM_Area"]) end
 _HM_Area.Debug = function(szMsg) HM.Debug2(szMsg, _L["HM_Area"]) end
 
 -- get relation by caster
-_HM_Area.GetRelation = function(dwCaster)
-	if dwCaster ~= 0 then
+_HM_Area.GetRelation = function(dwCaster, tar)
+	if dwCaster ~= 0 or (tar and tar.dwID ~= 0) then
 		local myID = GetClientPlayer().dwID
 		if myID == dwCaster then
 			return 1
+		elseif IsEnemy(myID, dwCaster) or (tar and IsEnemy(myID, tar.dwID)) then
+			return 3
 		elseif HM.IsParty(dwCaster) then
 			return 2
-		elseif IsEnemy(myID, dwCaster) then
-			return 3
 		end
 	end
 	return 4
@@ -286,6 +289,8 @@ _HM_Area.GetColor = function(nRelation, dwTemplateID)
 				or dwTemplateID == 15999 or dwTemplateID == 16000
 			then
 				return default[5]
+			elseif dwTemplateID == 44734 or dwTemplateID == 44764 or dwTemplateID == 44765 or dwTemplateID == 44766 then
+				return default[6]
 			else
 				return default[2]
 			end
@@ -316,7 +321,7 @@ end
 _HM_Area.ShowName = function(tar)
 	local data = _HM_Area.tList[tar.dwID]
 	if not data then return end
-	local r, g, b = unpack(_HM_Area.GetColor(_HM_Area.GetRelation(data.dwCaster), tar.dwTemplateID))
+	local r, g, b = unpack(_HM_Area.GetColor(_HM_Area.GetRelation(data.dwCaster, tar), tar.dwTemplateID))
 	local szText = tar.szName
 	if data.dwCaster ~= 0 then
 		local player = GetPlayer(data.dwCaster)
@@ -387,11 +392,13 @@ end
 _HM_Area.DrawArea = function(tar)
 	local data = _HM_Area.tList[tar.dwID]
 	if not data then return end
-	local color =  _HM_Area.GetColor(_HM_Area.GetRelation(data.dwCaster), tar.dwTemplateID)
+	local color =  _HM_Area.GetColor(_HM_Area.GetRelation(data.dwCaster, tar), tar.dwTemplateID)
 	local nAlpha, nRadius = HM_Area.nAlpha, _HM_Area.GetAreaRadius(tar.dwTemplateID)
 	local nDistance = HM.GetDistance(tar)
 	if tar.dwTemplateID == 4982 then
 		nAlpha = math.ceil(nAlpha * 2)
+	elseif tar.dwTemplateID == 44764 then
+		nAlpha = math.ceil(nAlpha * 1.8)
 	elseif tar.dwTemplateID == 4976 and HM_Area.bBigTaiji then
 		nRadius = nRadius + 64
 	end
@@ -531,7 +538,7 @@ _HM_Area.OnNpcEnter = function()
 	-- check hide (force to record my target)
 	local _, tarID = GetClientPlayer().GetTarget()
 	if (tarID == 0 or tarID ~= dwCaster)
-		and _HM_Area.GetHide(_HM_Area.GetRelation(dwCaster), tar.dwTemplateID)
+		and _HM_Area.GetHide(_HM_Area.GetRelation(dwCaster, tar), tar.dwTemplateID)
 	then
 		return _HM_Area.Debug("ignore hidden [" .. tar.szName .. "]")
 	end
@@ -568,7 +575,7 @@ function HM_Area.OnFrameBreathe()
 		else
 			if not tar or nCount >= HM_Area.nMaxNum
 				or not _HM_Area.CheckTemplateID(tar.dwTemplateID)
-				or _HM_Area.GetHide(_HM_Area.GetRelation(v.dwCaster), tar.dwTemplateID)
+				or _HM_Area.GetHide(_HM_Area.GetRelation(v.dwCaster, tar), tar.dwTemplateID)
 			then
 				if v.shape then v.shape:Hide() end
 				if v.circle then v.circle:Hide() end
