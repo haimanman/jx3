@@ -1,5 +1,5 @@
 --
--- º£÷©²å¼ş£ººìÃû±ê¼Ç¡¢007 ĞÅÏ¢¹²Ïí
+-- æµ·é³—æ’ä»¶ï¼šçº¢åæ ‡è®°ã€007 ä¿¡æ¯å…±äº«
 --
 
 HM_RedName = {
@@ -13,7 +13,7 @@ HM_RedName = {
 HM.RegisterCustomData("HM_RedName")
 
 ---------------------------------------------------------------------
--- ±¾µØº¯ÊıºÍ±äÁ¿
+-- æœ¬åœ°å‡½æ•°å’Œå˜é‡
 ---------------------------------------------------------------------
 local _HM_RedName = {
 	nMiniFrame = 0,
@@ -122,54 +122,54 @@ end
 
 -- non boss npc
 _HM_RedName.tNonBoss = {
-	[_n(1134)--[[Ììè¯Ì³¾«Èñ»¤ÎÀ]]] = true,
-	[_n(1170)--[[ÕıÈÊÌÃ¾«Èñ»¤ÎÀ]]] = true,
-	[_n(1320)--[[ÕıÁ¦ÌÃ·ç»¤ÎÀ]]] = true,
-	[_n(4457)--[[ÕıÈÊÌÃÀ×»¤ÎÀ]]] = true,
-	[_n(4467)--[[ÕıÈÊÌÃ·ç»¤ÎÀ]]] = true,
-	[_n(3040)--[[Ñ©Ä§ÌÃÖ´ÊÂ]]] = true,
-	[_n(3041)--[[Ñ©Ä§ÌÃÖ´ÊÂ]]] = true,
-	[_n(3042)--[[Ñ©Ä§ÌÃÎÀ±ø]]] = true,
-	[_n(5197)--[[ÌìÈ¨Ì³»¤ÎÀ]]] = true,
-	[_n(5198)--[[ÌìÈ¨Ì³»¤ÎÀ]]] = true,
-	[_n(5199)--[[ÌìÊàÌ³»¤ÎÀ]]] = true,
-	[_n(5200)--[[ÌìÊàÌ³»¤ÎÀ]]] = true,
-	[_n(5201)--[[Ò¡¹âÌ³»¤ÎÀ]]] = true,
-	[_n(5202)--[[Ò¡¹âÌ³»¤ÎÀ]]] = true,
-	[_n(5203)--[[ÓñºâÌ³»¤ÎÀ]]] = true,
-	[_n(5204)--[[ÓñºâÌ³»¤ÎÀ]]] = true,
-	[_n(5205)--[[ÌìÊàÌ³¾«Èñ]]] = true,
-	[_n(5206)--[[ÌìÊàÌ³¾«Èñ]]] = true,
-	[_n(5207)--[[ÌìçáÌ³¾«Èñ]]] = true,
-	[_n(5208)--[[ÌìçáÌ³¾«Èñ]]] = true,
-	[_n(5324)--[[Ììî¸ÎÀ]]] = true,
-	[_n(5423)--[[¶ñÈË¹ÈÊØÎÀ]]] = true,
-	[_n(5973)--[[ÆßĞÇÎÀ]]] = true,
-	[_n(6240)--[[Ñ©Ä§ÌÃ»¤ÎÀ]]] = true,
-	[_n(6886)--[[ºÆÆøÃË»¤ÎÀ]]] = true,
-	[_n(6887)--[[¶ñÈË¹È»¤ÎÀ]]] = true,
-	[_n(6223)--[[ÕıÈÊÌÃ»¤ÎÀÁîË§]]] = true,
-	[_n(6224)--[[±ùÑª»¤·¨]]] = true,
-	[_n(6225)--[[ÕıµÀÌÃ»¤ÎÀÖ´Áî]]] = true,
-	[_n(6226)--[[ÌìÑÄÀË×Ó]]] = true,
-	[_n(6227)--[[ÕıÈÊÌÃ·çÖ´Áî]]] = true,
-	[_n(6228)--[[ÕıÈÊÌÃ·çÁîË§]]] = true,
-	[_n(6229)--[[ÕıÈÊÌÃ·çÁîË§]]] = true,
-	[_n(6230)--[[Ğ»ÑÌ¿Í]]] = true,
-	[_n(6231)--[[ÕıÈÊÌÃ¾«Èñ·ç»¤ÎÀ]]] = true,
-	[_n(6266)--[[ºÆÆøÃËÊØÎÀ]]] = true,
-	[_n(6394)--[[Ììî¸ÎäÎÀ]]] = true,
-	[_n(6395)--[[Ñ©Ä§ÎäÎÀ]]] = true,
-	[_n(6396)--[[ÒşÔªÎäÎÀ]]] = true,
-	[_n(13227)--[[ºÆÆøÃËÌìÊàÎäÎÀ]]] = true,
-	[_n(15915)--[[¿ªÑôÌ³ÇàÁúÎÀ]]] = true,
-	[_n(15916)--[[¿ªÑôÌ³°×»¢ÎÀ]]] = true,
-	[_n(15917)--[[¿ªÑôÌ³ÖìÈ¸ÎÀ]]] = true,
-	[_n(15918)--[[¿ªÑôÌ³ĞşÎäÎÀ]]] = true,
-	[_n(15919)--[[Ñ©Ä§ÌÃÇàÁúÎÀ]]] = true,
-	[_n(15920)--[[Ñ©Ä§ÌÃ°×»¢ÎÀ]]] = true,
-	[_n(15921)--[[Ñ©Ä§ÌÃÖìÈ¸ÎÀ]]] = true,
-	[_n(15922)--[[Ñ©Ä§ÌÃĞşÎäÎÀ]]] = true,
+	[_n(1134)--[[å¤©ç’‡å›ç²¾é”æŠ¤å«]]] = true,
+	[_n(1170)--[[æ­£ä»å ‚ç²¾é”æŠ¤å«]]] = true,
+	[_n(1320)--[[æ­£åŠ›å ‚é£æŠ¤å«]]] = true,
+	[_n(4457)--[[æ­£ä»å ‚é›·æŠ¤å«]]] = true,
+	[_n(4467)--[[æ­£ä»å ‚é£æŠ¤å«]]] = true,
+	[_n(3040)--[[é›ªé­”å ‚æ‰§äº‹]]] = true,
+	[_n(3041)--[[é›ªé­”å ‚æ‰§äº‹]]] = true,
+	[_n(3042)--[[é›ªé­”å ‚å«å…µ]]] = true,
+	[_n(5197)--[[å¤©æƒå›æŠ¤å«]]] = true,
+	[_n(5198)--[[å¤©æƒå›æŠ¤å«]]] = true,
+	[_n(5199)--[[å¤©æ¢å›æŠ¤å«]]] = true,
+	[_n(5200)--[[å¤©æ¢å›æŠ¤å«]]] = true,
+	[_n(5201)--[[æ‘‡å…‰å›æŠ¤å«]]] = true,
+	[_n(5202)--[[æ‘‡å…‰å›æŠ¤å«]]] = true,
+	[_n(5203)--[[ç‰è¡¡å›æŠ¤å«]]] = true,
+	[_n(5204)--[[ç‰è¡¡å›æŠ¤å«]]] = true,
+	[_n(5205)--[[å¤©æ¢å›ç²¾é”]]] = true,
+	[_n(5206)--[[å¤©æ¢å›ç²¾é”]]] = true,
+	[_n(5207)--[[å¤©ç‘å›ç²¾é”]]] = true,
+	[_n(5208)--[[å¤©ç‘å›ç²¾é”]]] = true,
+	[_n(5324)--[[å¤©ç½¡å«]]] = true,
+	[_n(5423)--[[æ¶äººè°·å®ˆå«]]] = true,
+	[_n(5973)--[[ä¸ƒæ˜Ÿå«]]] = true,
+	[_n(6240)--[[é›ªé­”å ‚æŠ¤å«]]] = true,
+	[_n(6886)--[[æµ©æ°”ç›ŸæŠ¤å«]]] = true,
+	[_n(6887)--[[æ¶äººè°·æŠ¤å«]]] = true,
+	[_n(6223)--[[æ­£ä»å ‚æŠ¤å«ä»¤å¸…]]] = true,
+	[_n(6224)--[[å†°è¡€æŠ¤æ³•]]] = true,
+	[_n(6225)--[[æ­£é“å ‚æŠ¤å«æ‰§ä»¤]]] = true,
+	[_n(6226)--[[å¤©æ¶¯æµªå­]]] = true,
+	[_n(6227)--[[æ­£ä»å ‚é£æ‰§ä»¤]]] = true,
+	[_n(6228)--[[æ­£ä»å ‚é£ä»¤å¸…]]] = true,
+	[_n(6229)--[[æ­£ä»å ‚é£ä»¤å¸…]]] = true,
+	[_n(6230)--[[è°¢çƒŸå®¢]]] = true,
+	[_n(6231)--[[æ­£ä»å ‚ç²¾é”é£æŠ¤å«]]] = true,
+	[_n(6266)--[[æµ©æ°”ç›Ÿå®ˆå«]]] = true,
+	[_n(6394)--[[å¤©ç½¡æ­¦å«]]] = true,
+	[_n(6395)--[[é›ªé­”æ­¦å«]]] = true,
+	[_n(6396)--[[éšå…ƒæ­¦å«]]] = true,
+	[_n(13227)--[[æµ©æ°”ç›Ÿå¤©æ¢æ­¦å«]]] = true,
+	[_n(15915)--[[å¼€é˜³å›é’é¾™å«]]] = true,
+	[_n(15916)--[[å¼€é˜³å›ç™½è™å«]]] = true,
+	[_n(15917)--[[å¼€é˜³å›æœ±é›€å«]]] = true,
+	[_n(15918)--[[å¼€é˜³å›ç„æ­¦å«]]] = true,
+	[_n(15919)--[[é›ªé­”å ‚é’é¾™å«]]] = true,
+	[_n(15920)--[[é›ªé­”å ‚ç™½è™å«]]] = true,
+	[_n(15921)--[[é›ªé­”å ‚æœ±é›€å«]]] = true,
+	[_n(15922)--[[é›ªé­”å ‚ç„æ­¦å«]]] = true,
 }
 
 -- say around info
@@ -182,7 +182,7 @@ _HM_RedName.ShowAroundInfo = function(nType)
 		szText = szText .. _L["-"] .. hName:GetText()
 	end
 	for _, v in ipairs(HM.GetAllNpc()) do
-		if v.szName == _n(14042) --[[ÀäÒí¶¾Éñ]]
+		if v.szName == _n(14042) --[[å†·ç¿¼æ¯’ç¥]]
 			or (GetNpcIntensity(v) >= 4 and not _HM_RedName.tNonBoss[v.szName])
 		then
 			szText = szText .. _L(" - nearby %s", v.szName)
@@ -276,7 +276,7 @@ _HM_RedName.GetShareMenu = function()
 end
 
 -------------------------------------
--- µØÍ¼º¯Êı HOOK
+-- åœ°å›¾å‡½æ•° HOOK
 -------------------------------------
 -- minimap breathe
 _HM_RedName.AddMiniMapBreathe = function()
@@ -293,7 +293,7 @@ _HM_RedName.AddMiniMapBreathe = function()
 				HM.UpdateMiniFlag(8, v, nF1, nF2)
 				if HM_RedName.bAlertOnce and _HM_RedName.bNeedAlert
 					and me.GetOTActionState() == 0 and v.szName ~= ""
-					and not HM.HasBuff(4052, true)	-- ÅÅ³ıÃ÷½ÌÒşÉíÖĞ (°µ³¾ÃÖÉ¢)
+					and not HM.HasBuff(4052, true)	-- æ’é™¤æ˜æ•™éšèº«ä¸­ (æš—å°˜å¼¥æ•£)
 				then
 					local nDis, tar = HM.GetDistance(v), GetTargetHandle(me.GetTarget())
 					if not tar or tar.nMoveState == MOVE_STATE.ON_DEATH or (not me.bFightState and HM.IsDps()) then
@@ -546,7 +546,7 @@ MiddleMap.ShowMap = function(frame, ...)
 			ui:Fetch("Combo_AcctType"):Remove()
 		end
 		frame.szHM = tostring(HM)
-		local nX = ui:Append("WndCheckBox", "Check_AcctUser", { txt = "HM: " .. _L["Nearby players (middle map)"], checked = HM_RedName.bAcctUser, x = 34, y = 88 })
+		local nX = ui:Append("WndCheckBox", "Check_AcctUser", { txt = "HM: " .. _L["Nearby players (middle map)"], checked = HM_RedName.bAcctUser, x = 700, y = 88 })
 		:Click(function(bChecked)
 			HM_RedName.bAcctUser= bChecked
 		end):Pos_()
@@ -583,7 +583,7 @@ MiddleMap.ShowMap = function(frame, ...)
 end
 
 -------------------------------------
--- ÊÂ¼ş´¦Àíº¯Êı
+-- äº‹ä»¶å¤„ç†å‡½æ•°
 -------------------------------------
 -- breathe
 _HM_RedName.OnBreathe = function()
@@ -593,7 +593,7 @@ _HM_RedName.OnBreathe = function()
 end
 
 -- player talk to quick select target
--- arg0£ºdwTalkerID£¬arg1£ºnChannel£¬arg2£ºbEcho£¬arg3£ºszName
+-- arg0ï¼šdwTalkerIDï¼Œarg1ï¼šnChannelï¼Œarg2ï¼šbEchoï¼Œarg3ï¼šszName
 _HM_RedName.OnPlayerTalk = function()
 	local me = GetClientPlayer()
 	if me and arg0 == me.dwID and arg1 == PLAYER_TALK_CHANNEL.WHISPER and arg2 == true then
@@ -606,11 +606,11 @@ end
 
 -- bg talk
 _HM_RedName.OnBgHear = function(nChannel, dwID, szName, data, bSelf)
-	if bSelf then -- ¹ıÂË×Ô¼º
+	if bSelf then -- è¿‡æ»¤è‡ªå·±
 		return
 	end
 	local tShare = _HM_RedName.tShareData[szName]
-	if data[1] == "OPEN" then			-- ´ò¿ª
+	if data[1] == "OPEN" then			-- æ‰“å¼€
 		local team = GetClientTeam()
 		team.GetAuthorityInfo(TEAM_AUTHORITY_TYPE.LEADER)
 		local szText = _L("[%s] request to share around info with you", szName)
@@ -635,22 +635,22 @@ _HM_RedName.OnBgHear = function(nChannel, dwID, szName, data, bSelf)
 			HM.BgTalk(szName, "HM_REDNAME", "REFUSE")
 			HM.Sysmsg(_L("Refused to build share connection with [%s]", szName))
 		end)
-	elseif data[1] == "REFUSE" then	-- ¾Ü¾ø
+	elseif data[1] == "REFUSE" then	-- æ‹’ç»
 		HM.Sysmsg(_L("[%s] refused to connect with you", szName))
-	elseif data[1] == "ACCEPT" then	-- ½ÓÊÜ
+	elseif data[1] == "ACCEPT" then	-- æ¥å—
 		_HM_RedName.tShareData[szName] = {
 			nTryComm = _HM_RedName.nTryComm,
 			bMan = data[2] == "true",
 		}
 		_HM_RedName.UpdateShareCount()
 		HM.Sysmsg(_L("[%s] has accepted your share connection, Press M to view", szName))
-	elseif data[1] == "CLOSE" then		-- ¹Ø±Õ
+	elseif data[1] == "CLOSE" then		-- å…³é—­
 		_HM_RedName.tShareData[szName] = nil
 		_HM_RedName.UpdateShareCount()
 		if not HM_About.CheckNameEx(szName) then
 			HM.Sysmsg(_L("[%s] has closed the share connection", szName))
 		end
-	elseif data[1] == "ASK" then			-- ÇëÇóÊı¾İ£¬[2] = ÒªÇóµØÍ¼ [2] = nil (ÎÊÄãµÄµØÍ¼)
+	elseif data[1] == "ASK" then			-- è¯·æ±‚æ•°æ®ï¼Œ[2] = è¦æ±‚åœ°å›¾ [2] = nil (é—®ä½ çš„åœ°å›¾)
 		if _HM_RedName.tShareData[szName] then
 			local me, szInfo = GetClientPlayer(), ""
 			if me.GetScene().dwMapID == tonumber(data[2]) then
@@ -658,7 +658,7 @@ _HM_RedName.OnBgHear = function(nChannel, dwID, szName, data, bSelf)
 			end
 			HM.BgTalk(szName, "HM_REDNAME", "ANS", tostring(me.GetScene().dwMapID), szInfo, tostring(me.nX), tostring(me.nY))
 		end
-	elseif data[1] == "ANS" then		-- ´ğ¸´Êı¾İ
+	elseif data[1] == "ANS" then		-- ç­”å¤æ•°æ®
 		tShare = tShare or {}
 		tShare.nTryComm = _HM_RedName.nTryComm
 		tShare.dwMapID = tonumber(data[2])
@@ -670,7 +670,7 @@ _HM_RedName.OnBgHear = function(nChannel, dwID, szName, data, bSelf)
 end
 
 -------------------------------------
--- ÉèÖÃ½çÃæ
+-- è®¾ç½®ç•Œé¢
 -------------------------------------
 _HM_RedName.PS = {}
 
@@ -762,7 +762,7 @@ _HM_RedName.PS.OnPlayerMenu = function()
 end
 
 ---------------------------------------------------------------------
--- ×¢²áÊÂ¼ş¡¢³õÊ¼»¯
+-- æ³¨å†Œäº‹ä»¶ã€åˆå§‹åŒ–
 ---------------------------------------------------------------------
 HM.RegisterEvent("PLAYER_TALK", _HM_RedName.OnPlayerTalk)
 HM.BreatheCall("HM_RedName", _HM_RedName.OnBreathe)
