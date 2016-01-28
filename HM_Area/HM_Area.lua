@@ -289,7 +289,7 @@ _HM_Area.GetColor = function(nRelation, dwTemplateID)
 				or dwTemplateID == 15999 or dwTemplateID == 16000
 			then
 				return default[5]
-			elseif dwTemplateID == 44734 or dwTemplateID == 44764 or dwTemplateID == 44765 or dwTemplateID == 44766 then
+			elseif dwTemplateID == 44764 then
 				return default[6]
 			else
 				return default[2]
