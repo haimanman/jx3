@@ -1381,7 +1381,7 @@ HM.RegisterEvent = function(szEvent, fnAction)
 	end
 	if not _HM.tEvent[szEvent] then
 		_HM.tEvent[szEvent] = {}
-		RegisterEvent(szEvent, function() _HM.EventHandler(szEvent) end)
+		RegisterEvent(szEvent, _HM.EventHandler)
 	end
 	local tEvent = _HM.tEvent[szEvent]
 	if fnAction then

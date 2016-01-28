@@ -38,6 +38,7 @@ local _HM_Locker = {
 	nScoffFrame2 = 0,	-- 嘲讽 BUFF 帧次
 	dwScoffer2 = 0,	-- 嘲讽 BUFF 源
 	nLastCancel = 0,	-- 上次取消目标的时间
+	nLastCancel2 = 0,
 }
 
 -- sysmsg
@@ -104,7 +105,14 @@ end
 _HM_Locker.CheckDuel = function(dwCurID, dwLastID)
 	if _HM_Locker.dwDuelID then
 		if HM.HasBuff(10212) then
-			if dwCurID ~= _HM_Locker.dwDuelID then
+			if dwCurID ~= _HM_Locker.dwDuelID and dwLastID == _HM_Locker.dwDuelID then
+				if dwCurID == 0 then
+					local nFrame = GetLogicFrameCount()
+					if nFrame > _HM_Locker.nLastCancel2 and (nFrame - _HM_Locker.nLastCancel2) < 9 then
+						return false
+					end
+					_HM_Locker.nLastCancel2 = nFrame
+				end
 				_HM_Locker.dwLastID = _HM_Locker.dwDuelID
 				_HM_Locker.Sysmsg(_L["Keep attack target in duel"])
 				return true
@@ -147,7 +155,7 @@ end
 -- 事件函数
 -------------------------------------
 _HM_Locker.OnCheckDuel = function()
-	if arg0 == "UI_OME_SKILL_EFFECT_LOG" and arg2 == UI_GetClientPlayerID() and arg5 == 15196 then
+	if HM_Locker.bLockDuel and arg0 == "UI_OME_SKILL_EFFECT_LOG" and arg2 == UI_GetClientPlayerID() and arg5 == 15196 then
 		_HM_Locker.dwDuelID = arg1
 		HM.SetTarget(TARGET.PLAYER, arg1)
 	end
