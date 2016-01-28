@@ -234,11 +234,11 @@ _HM_Area.GetAreaRadius = function(dwTemplateID)
 		return 1600
 	elseif dwTemplateID == 16175 then	-- 连弩
 		return 1600
-	elseif dwTemplateID == 44734 or dwTemplateID == 44764 or dwTemplateID == 44765 then
-		-- 笑傲光阴/江追月天/云生结海
+	elseif dwTemplateID == 44734 or dwTemplateID == 44765 then
+		-- 笑傲光阴/云生结海
 		return 960
 	end
-	-- 迴梦逐光也是 10尺
+	-- 江追月天/迴梦逐光也是 10尺
 	return 640
 end
 
