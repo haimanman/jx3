@@ -183,17 +183,16 @@ _HM_ToolBox.GetAuctionPrice = function(h, g, s, c)
 	local t = {}
 	t.nGold = tonumber(h:Lookup(g):GetText()) or 0
 	t.nSliver = tonumber(h:Lookup(s):GetText()) or 0
-	t.nCopper = tonumber(h:Lookup(c):GetText()) or 0
+	t.nGoldB = tonumber(h:Lookup(c):GetText()) or 0
 	return t
 end
 
 -- 转换为单价
 _HM_ToolBox.GetSinglePrice = function(t, nNum)
 	local t2 = {}
-	local nCopper = math.floor((t.nGold * 10000 + t.nSliver * 100 + t.nCopper)/nNum)
-	t2.nGold = math.floor(nCopper / 10000)
-	t2.nSliver = math.floor((nCopper % 10000) / 100)
-	t2.nCopper = nCopper % 100
+	local nSliver = math.floor((t.nGoldB * 1000000 + t.nGold * 100 + t.nSliver) / nNum)
+	t2.nGold = math.floor(nSliver / 100)
+	t2.nSliver = nSliver % 100
 	return t2
 end
 
@@ -224,8 +223,8 @@ _HM_ToolBox.AuctionSell = function(frame)
 		return RemoveUILockItem("Auction")
 	end
 	-- count price
-	box.tBidPrice = _HM_ToolBox.GetAuctionPrice(wnd, "Edit_OPGold", "Edit_OPSilver", "Edit_OPCopper")
-	box.tBuyPrice = _HM_ToolBox.GetAuctionPrice(wnd, "Edit_PGold", "Edit_PSilver", "Edit_PCopper")
+	box.tBidPrice = _HM_ToolBox.GetAuctionPrice(wnd, "Edit_OPGold", "Edit_OPSilver", "Edit_OPGoldB")
+	box.tBuyPrice = _HM_ToolBox.GetAuctionPrice(wnd, "Edit_PGold", "Edit_PSilver", "Edit_PGoldB")
 	box.szTime = szTime
 	local nStackNum = item.nStackNum
 	if not item.bCanStack then
@@ -245,9 +244,9 @@ _HM_ToolBox.AuctionSell = function(frame)
 						nNum = 1
 					end
 					AtClient.Sell(AuctionPanel.dwTargetID, i, j,
-						math.floor(tSBidPrice.nGold * nNum), math.floor(tSBidPrice.nSliver * nNum),
-						math.floor(tSBidPrice.nCopper * nNum), math.floor(tSBuyPrice.nGold * nNum),
-						math.floor(tSBuyPrice.nSliver * nNum), math.floor(tSBuyPrice.nCopper * nNum), nTime)
+						math.floor(tSBidPrice.nGold * nNum), math.floor(tSBidPrice.nSliver * nNum), 0,
+						math.floor(tSBuyPrice.nGold * nNum), math.floor(tSBuyPrice.nSliver * nNum), 0,
+						nTime)
 				end
 			end
 		end
