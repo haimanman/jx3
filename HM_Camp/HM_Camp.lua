@@ -200,7 +200,7 @@ _HM_Camp.HideGF = function(bEnable, bNoSave)
 				for k, v in ipairs(events) do
 					JH_Frame:UnRegisterEvent(v)
 				end
-			else
+			elseif frame then
 				for k, v in ipairs(events) do
 					frame:UnRegisterEvent(v)
 				end
@@ -211,7 +211,7 @@ _HM_Camp.HideGF = function(bEnable, bNoSave)
 					JH_Frame:UnRegisterEvent(v)
 					JH_Frame:RegisterEvent(v)
 				end
-			else
+			elseif frame then
 				for k, v in ipairs(events) do
 					frame:UnRegisterEvent(v)
 					frame:RegisterEvent(v)
