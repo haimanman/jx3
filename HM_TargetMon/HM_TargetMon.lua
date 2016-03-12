@@ -453,6 +453,7 @@ _HM_TargetMon.tFixedBuffEx = {
 	[_L("Reduce-injury_%s", _b(8495)--[[捍卫]])] = 8495,
 	[_L("Reduce-injury_%s", _b(10051)--[[杯水留影]])] = 10051,
 	[_L("Reduce-injury_%s", _b(9334)--[[梅花三弄]])] = 9334,
+	[_L("Reduce-injury_%s", _b(1802)--[[御天]])] = 1802,
 	[_L("BanSprint_%s", _b(562, 1)--[[吞日月]])] = 562,
 	[_L("BanSprint_%s", _b(562, 9)--[[玳弦]])] = 562,
 	[_L("BanSprint_%s", _b(6074)--[[恶狗拦路]])] = 6074,
