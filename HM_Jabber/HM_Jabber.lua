@@ -287,21 +287,21 @@ _HM_Jabber.EditMsgSkill = function(szName, szType)
 		-- type ÃüÖÐ£¬Æ«Àë£¬±»ÃüÖÐ£¬ÉÁ¶ã
 		frm = HM.UI.CreateFrame("HM_JABBER_SKILL", { close = false, w = 381, h = 420 })
 		frm:Append("Text", { txt = _L["Type"], x = 0, y = 0, font = 27 })
-		box = frm:Append("WndRadioBox", "Radio_1", { txt = _L["Hit"], x = 0, y = 28, group = "Radio" })
-		box:Click(function(bChecked) if bChecked then frm.szType = _L["Hit"] end end)
-		nX, _ = box:Pos_()
-		box = frm:Append("WndRadioBox", "Radio_2", { txt = _L["Miss"], x = nX + 5, y = 28, group = "Radio" })
-		box:Click(function(bChecked) if bChecked then frm.szType = _L["Miss"] end end)
-		nX, _ = box:Pos_()
-		box = frm:Append("WndRadioBox", "Radio_5", { txt = _L["Prepare"], x = nX + 5, y = 0, group = "Radio" })
-		box:Click(function(bChecked) if bChecked then frm.szType = _L["Prepare"] end end)
-		box = frm:Append("WndRadioBox", "Radio_3", { txt = _L["Be hit"], x = nX + 5, y = 28, group = "Radio" })
-		box:Click(function(bChecked) if bChecked then frm.szType = _L["Be hit"] end end)
-		nX, _ = box:Pos_()
-		box = frm:Append("WndRadioBox", "Radio_6", { txt = _L["Prepare broken"], x = nX + 5, y = 0, group = "Radio" })
-		box:Click(function(bChecked) if bChecked then frm.szType = _L["Prepare broken"] end end)
-		box = frm:Append("WndRadioBox", "Radio_4", { txt = _L["Be missed"], x = nX + 5, y = 28, group = "Radio" })
-		box:Click(function(bChecked) if bChecked then frm.szType = _L["Be missed"] end end)
+		frm:Append("WndComboBox", "Combo_Type", { x = 0, y = 28, w = 290, h = 25 }):Text(szType)
+		:Menu(function()
+			local tItems = { _L["Hit"], _L["Miss"], _L["Prepare"], _L["Be hit"], _L["Prepare broken"], _L["Be missed"], _L["Cast by target"] }
+			local m0 = {}
+			for _, v in ipairs(tItems) do
+				table.insert(m0, {
+					szOption = v, bMCheck = true, bChecked = v == frm.szType,
+					fnAction = function()
+						frm.szType = v
+						frm:Fetch("Combo_Type"):Text(v)
+					end
+				})
+			end
+			return m0
+		end)
 		-- tong
 		frm:Append("Text", { txt = _L["Skill name"], x = 0, y = 60, font = 27 })
 		frm:Append("WndEdit", "Edit_Name", { x = 0, y = 88, limit = 100, w = 290, h = 25 } )
@@ -335,39 +335,17 @@ _HM_Jabber.EditMsgSkill = function(szName, szType)
 	end
 	-- title
 	if not szName then
+		frm.szType = _L["Hit"]
 		frm:Title(_L["Add skill saying"])
 		frm:Fetch("Edit_Name"):Text(""):Enable(true)
 		frm:Fetch("Edit_Msg"):Text(_L["Hey, $mb, $jn fun or not?"]):Enable(true)
-		frm:Fetch("Radio_1"):Enable(true):Check(true)
-		frm:Fetch("Radio_2"):Enable(true)
-		frm:Fetch("Radio_3"):Enable(true)
-		frm:Fetch("Radio_4"):Enable(true)
-		frm:Fetch("Radio_5"):Enable(true)
-		frm:Fetch("Radio_6"):Enable(true)
+		frm:Fetch("Combo_Type"):Text(frm.szType):Enable(true)
 	else
 		frm:Title(_L["Edit skill saying"])
 		frm:Fetch("Edit_Name"):Text(szName):Enable(false)
 		frm:Fetch("Edit_Msg"):Text(tMessage[szName][szType]):Enable(true)
-		if szType == _L["Prepare broken"] then
-			frm:Fetch("Radio_6"):Check(true)
-		elseif szType == _L["Prepare"] then
-			frm:Fetch("Radio_5"):Check(true)
-		elseif szType == _L["Be missed"] then
-			frm:Fetch("Radio_4"):Check(true)
-		elseif szType == _L["Be hit"] then
-			frm:Fetch("Radio_3"):Check(true)
-		elseif szType == _L["Miss"] then
-			frm:Fetch("Radio_2"):Check(true)
-		else
-			frm:Fetch("Radio_1"):Check(true)
-		end
+		frm:Fetch("Combo_Type"):Text(szType):Enable(false)
 		frm.szType = szType
-		frm:Fetch("Radio_1"):Enable(false)
-		frm:Fetch("Radio_2"):Enable(false)
-		frm:Fetch("Radio_3"):Enable(false)
-		frm:Fetch("Radio_4"):Enable(false)
-		frm:Fetch("Radio_5"):Enable(false)
-		frm:Fetch("Radio_6"):Enable(false)
 	end
 	frm:Fetch("Btn_Delete"):Enable(szName ~= nil)
 	frm:Toggle(true)
@@ -556,7 +534,8 @@ _HM_Jabber.OnSkillHit = function(dwCaster, dwTarget, dwID, dwLevel, nType)
 	if HM_Jabber.nChannelSkill1 == 0 or not me then
 		return
 	end
-	if dwCaster ~= me.dwID and dwTarget ~= me.dwID then
+	local _, myTar = me.GetTarget()
+	if dwCaster ~= me.dwID and dwTarget ~= me.dwID and dwCaster ~= myTar then
 		return
 	end
 	local tMessage = HM_Jabber.tMessage.skill
@@ -583,6 +562,12 @@ _HM_Jabber.OnSkillHit = function(dwCaster, dwTarget, dwID, dwLevel, nType)
 				szMsg = tMessage[szName][_L["Be hit"]]
 			end
 		end
+		if not szMsg and dwCaster == myTar then
+			if not tar then
+				tar = HM.GetTarget(dwCaster)
+			end
+			szMsg = tMessage[szName][_L["Cast by target"]]
+		end
 		if szMsg and tar then
 			szMsg = string.gsub(szMsg, "%$mb", tar.szName)
 			szMsg = string.gsub(szMsg, "%$zj", me.szName)
@@ -600,13 +585,21 @@ _HM_Jabber.OnSkillMiss = function(dwCaster, dwTarget, dwID, dwLevel)
 	_HM_Jabber.OnSkillHit(dwCaster, dwTarget, dwID, dwLevel, 1)
 end
 
-_HM_Jabber.OnSkillPrepare = function(dwID, dwLevel, nType)
+_HM_Jabber.OnSkillPrepare = function(dwCaster, dwID, dwLevel, nType)
 	local me = GetClientPlayer()
+	if dwCaster ~= me.dwID then
+		local tar = HM.GetTarget()
+		if not tar or tar.dwID ~= dwCaster then
+			return
+		end
+		me = tar
+	end
 	local _, dwTarget = me.GetTarget()
 	if dwTarget == 0 then
 		dwTarget = me.dwID
 	end
-	_HM_Jabber.OnSkillHit(me.dwID, dwTarget, dwID, dwLevel, nType or 2)
+	_HM_Jabber.dwPrepareID, _HM_Jabber.dwPrepareLevel = arg2, arg3
+	_HM_Jabber.OnSkillHit(dwCaster, dwTarget, dwID, dwLevel, nType or 2)
 end
 
 _HM_Jabber.OnSkillPrepareBroken = function(dwID, dwLevel)
@@ -710,9 +703,8 @@ _HM_Jabber.OnCheckJabber = function()
 		_HM_Jabber.dwDuelID = nil
 	elseif arg0 == "UI_OME_START_DUEL" then
 		_HM_Jabber.dwDuelID = arg1
-	elseif arg0 == "UI_OME_SKILL_CAST_LOG" and arg1 == GetClientPlayer().dwID then
-		_HM_Jabber.OnSkillPrepare(arg2, arg3)
-		_HM_Jabber.dwPrepareID, _HM_Jabber.dwPrepareLevel = arg2, arg3
+	elseif arg0 == "UI_OME_SKILL_CAST_LOG" then
+		_HM_Jabber.OnSkillPrepare(arg1, arg2, arg3)
 	elseif arg0 == "UI_OME_SKILL_HIT_LOG" and arg3 == SKILL_EFFECT_TYPE.SKILL then
 		_HM_Jabber.OnSkillHit(arg1, arg2, arg4, arg5)
 	elseif arg0 == "UI_OME_SKILL_EFFECT_LOG" and arg4 == SKILL_EFFECT_TYPE.SKILL then

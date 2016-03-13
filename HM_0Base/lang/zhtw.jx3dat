@@ -259,6 +259,7 @@ data = {
 	["Be missed"] = "被閃躲",
 	["Prepare"] = "我讀條",
 	["Prepare broken"] = "中止讀條",
+	["Cast by target"] = "目標釋放",
 	["Skill name"] = "技能名稱",
 	["Skill name and talk msg can not be empty"] = "技能名稱/喊話內容均不能為空",
 	["Invalid skill name [%s]"] = "無效的技能名稱 [%s]",
