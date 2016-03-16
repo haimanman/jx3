@@ -326,6 +326,9 @@ _HM_EngBar.CopyHandle = function(frame)
 			hTotal:AppendItemFromString("<text>text=\"\" name=\"Text_Moon\" x=87 y=52 w=144 h=20 font=202 </text>")
 		end
 		local h = hTotal:Lookup(_HM_EngBar.szShow)
+		if _HM_EngBar.szShowSub == "CYUN" then
+			h:Lookup("SFX_Rang"):Hide()
+		end
 		h:SetRelPos(75, 25)
 		h:Show()
 	end
