@@ -508,6 +508,7 @@ _HM_Jabber.InitReviveTalk = function()
 		_HM_Jabber.RegisterReviveTalk(2229)  -- 涅槃重生
 	elseif mnt.dwMountType == 19 then -- 长歌
 		_HM_Jabber.RegisterReviveTalk(14084) -- 杯水留影
+		_HM_Jabber.RegisterReviveTalk(15092)	-- 歌尽影生
 	end
 end
 
