@@ -426,6 +426,7 @@ _HM_TargetMon.tFixedBuffEx = {
 	[_L("Uncontrollable_%s", _b(9294)--[[孤影]])] = 9294,
 	[_L("Uncontrollable_%s", _b(9848)--[[探梅]])] = 9848,
 	[_L("Uncontrollable_%s", _b(9068)--[[净果]])] = 9068,
+	[_L("Uncontrollable_%s", _b(6192)--[[菩提身]])] = 6192,
 	[_L("Breakout_%s", _b(5994)--[[酒中仙]])] = 5994,
 	[_L("Breakout_%s", _b(2779)--[[渊]])] = 2779,
 	[_L("Slower_%s", _b(560)--[[生太极]])] = 560,
