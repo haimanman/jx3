@@ -58,6 +58,7 @@ _HM_Area.tSkill = {
 		dwID = 6911,				-- 技能 ID 或 371
 		dwTemplateID = 4982,	-- 模板 ID
 		nLeft = 8,						-- 存在总时间，单位：秒
+		tOther = { [371] = 4982 },
 	}, {
 		dwID = 358,
 		dwTemplateID = 4976,
@@ -110,21 +111,25 @@ _HM_Area.tSkill = {
 		nLeft = 10,
 	}, {
 	}, {
-		dwID = 14073,
+		dwID = 14073,	-- 笑傲光阴
 		dwTemplateID = 44734,
 		nLeft = 8,
+		tOther = { [14222] = 44734 },
 	}, {
-		dwID = 14074,
+		dwID = 14074,	-- 江逐月天
 		dwTemplateID = 44764,
 		nLeft = 8,
+		tOther = { [14223] = 44764 },
 	}, {
-		dwID = 14075,
+		dwID = 14075,	-- 云生结海
 		dwTemplateID = 44765,
 		nLeft = 8,
+		tOther = { [14224] = 44765 },
 	}, {
-		dwID = 14154,
+		dwID = 14154,	-- 迴梦逐光
 		dwTemplateID = 44766,
 		nLeft = 8,
+		tOther = { [14225] = 44766 },
 	}
 }
 
@@ -152,7 +157,7 @@ end
 -- get template id by skill
 _HM_Area.GetTemplateID = function(dwID)
 	for _, v in ipairs(_HM_Area.tSkill) do
-		if v.dwID == dwID or (v.dwID == 6911 and dwID == 371) then
+		if v.dwID == dwID then
 			return v.dwTemplateID
 		elseif v.tOther then
 			for kk, vv in pairs(v.tOther) do
