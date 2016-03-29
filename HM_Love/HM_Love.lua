@@ -765,7 +765,7 @@ end
 
 -- 上线，下线通知：bOnLine, szName, bFoe
 _HM_Love.OnFriendLogin = function()
-	if not  arg2 and arg1 == _HM_Love.szName then
+	if not arg2 and arg1 == _HM_Love.szName and _HM_Love.szName ~= "" then
 		local szMsg = _L["Warm tip: Your "] .. _HM_Love.GetLoverType() .. _L["Lover <link0>"]
 		if arg0 then
 			szMsg = szMsg .. _L["online, hurry doing needy doing.\n"]

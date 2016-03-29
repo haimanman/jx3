@@ -147,10 +147,21 @@ _HM_Force.UpdateOTActionBar = function()
 		_HM_Force.nActionTotal = nil
 		nFrame = 0
 	end
-	local handle = frame:Lookup("", "Handle_Common")
-	local hText = handle:Lookup("Text_Name")
-	if not handle:IsVisible() then
-		hText = frame:Lookup("", "Handle_GaiBang"):Lookup("Text_GBName")
+	local hText
+	for _, v in ipairs({
+		{ "Handle_Common", "Text_Name" },
+		{ "Handle_GaiBang", "Text_GBName" },
+		{ "Handle_CangYun_Common", "Text_ProgressBar" },
+		{ "Handle_ChangGe", "Text_ProgressCg" },
+	}) do
+		local handle = frame:Lookup("", v[1])
+		if handle and handle:IsVisible() then
+			hText = handle:Lookup(v[2])
+			break
+		end
+	end
+	if not hText then
+		return
 	end
 	local szText = string.gsub(hText:GetText(), " %(.-%)$", "")
 	if not _HM_Force.bActionDec then
