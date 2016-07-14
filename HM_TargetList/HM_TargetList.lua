@@ -1533,8 +1533,7 @@ HM_TargetList.OnEvent = function(event)
 			if frm then
 				local hnd = frm:Lookup("", "")
 				if not hnd.OnItemLButtonUp then
-					hnd:RegisterEvent(0x07)
-					hnd.OnItemLButtonUp = function()
+					hnd.OnItemLButtonDown = function()
 						if IsShiftKeyDown() and HM_TargetList.bAltFocus then
 							_HM_TargetList.SwitchFocus(frm.dwID)
 						end
