@@ -1083,11 +1083,15 @@ HM.GetAllBuff = function(tar)
 	local aBuff = {}
 	local nCount = tar.GetBuffCount()
 	for i = 1, nCount, 1 do
-		local dwID, nLevel, bCanCancel, nEndFrame, nIndex, nStackNum, dwSkillSrcID, bValid = tar.GetBuff(i - 1)
+		local dwID, nLevel, bCanCancel, nEndFrame, nIndex, nStackNum, dwSkillSrcID, bValid, bIsStackable, nLeftFrame = tar.GetBuff(i - 1)
 		if dwID then
+			if nLeftFrame then
+				nEndFrame = GetLogicFrameCount() + nLeftFrame
+			end
 			table.insert(aBuff, {
 				dwID = dwID, nLevel = nLevel, bCanCancel = bCanCancel, nEndFrame = nEndFrame,
 				nIndex = nIndex, nStackNum = nStackNum, dwSkillSrcID = dwSkillSrcID, bValid = bValid,
+				bIsStackable = bIsStackable, nLeftFrame = nLeftFrame,
 			})
 		end
 	end
@@ -1095,7 +1099,7 @@ HM.GetAllBuff = function(tar)
 end
 
 -- Traversal buff
--- fnAction(dwID, nLevel, bCanCancel, nEndFrame, nIndex, nStackNum, dwSkillSrcID, bValid)
+-- fnAction(dwID, nLevel, bCanCancel, nEndFrame, nIndex, nStackNum, dwSkillSrcID, bValid, bIsStackable, nLeftFrame)
 -- return false to break
 HM.WalkAllBuff = function(tar, fnAction)
 	if type(tar) == "function" then
@@ -1104,9 +1108,9 @@ HM.WalkAllBuff = function(tar, fnAction)
 	end
 	local nCount = tar.GetBuffCount()
 	for i = 1, nCount, 1 do
-		local dwID, nLevel, bCanCancel, nEndFrame, nIndex, nStackNum, dwSkillSrcID, bValid = tar.GetBuff(i - 1)
+		local dwID, nLevel, bCanCancel, nEndFrame, nIndex, nStackNum, dwSkillSrcID, bValid, bIsStackable, nLeftFrame = tar.GetBuff(i - 1)
 		if dwID then
-			local res, ret = pcall(fnAction, dwID, nLevel, bCanCancel, nEndFrame, nIndex, nStackNum, dwSkillSrcID, bValid)
+			local res, ret = pcall(fnAction, dwID, nLevel, bCanCancel, nEndFrame, nIndex, nStackNum, dwSkillSrcID, bValid, bIsStackable, nLeftFrame)
 			if res == true and ret == false then
 				break
 			end

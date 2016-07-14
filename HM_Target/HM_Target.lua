@@ -24,7 +24,6 @@ HM_Target = {
 	bAdjustBuff = true,				-- 启用目标 BUFF 放大
 	nSizeBuff = 35,					-- 目标 BUFF 新尺寸
 	nSizeTTBuff = 30,				-- 目标的目标 BUFF 大小
-	bNoSpark = true,				-- 取消 BUFF 闪烁
 }
 HM.RegisterCustomData("HM_Target")
 
@@ -138,7 +137,7 @@ end
 
 -- adjust buff pos
 _HM_Target.AdjustBuffPos = function(frame, delta)
-	local tName = { "Handle_Buff", "Handle_TextBuff", "Handle_Debuff", "Handle_TextDebuff", "Image_BuffBG", "Image_DebuffBG" }
+	local tName = { "Handle_Buff", "Handle_Debuff" }
 	local hTotal = frame:Lookup("", "")
 	for k, v in ipairs(tName) do
 		local h = hTotal:Lookup(v)
@@ -298,38 +297,6 @@ _HM_Target.GetBuffTime = function(nEnd)
 	return szTime, nFont, nLeft
 end
 
--- update buff time
-_HM_Target.UpdateBuffTime = function(hBuffList, hTextList)
-	if not HM_Target.bNoSpark and hTextList then
-		return
-	end
-	for i = 0, 1 do
-		local hB, hT = hBuffList:Lookup(i), nil
-		if hTextList then
-			hT = hTextList:Lookup(i)
-		end
-		for j = 0, hB:GetItemCount() - 1, 1 do
-			local hBox = hB:Lookup(j)
-			local szTime, nFont, nLeft = _HM_Target.GetBuffTime(hBox.nEndFrame)
-			if not hBox.bShowTime2 and not hBox.bShowTime then
-				szTime = ""
-			end
-			if nLeft > 0 and szTime ~= hBox.szTime then
-				hBox.szTime = szTime
-				if not hTextList then
-					hBox:SetOverTextFontScheme(1, 16)
-					hBox:SetOverTextPosition(1, ITEM_POSITION.LEFT_TOP)
-					hBox:SetOverText(1, szTime)
-				else
-					local hText = hT:Lookup(j)
-					hText:SetText(szTime)
-					hText:SetFontScheme(nFont)
-				end
-			end
-		end
-	end
-end
-
 -- update buff size
 _HM_Target.UpdateBuffSize = function(frame, bTTarget)
 	if frame.bAdjustInit and not frame.bBuffUpdate and frame.dwID2 == frame.dwID then
@@ -340,20 +307,12 @@ _HM_Target.UpdateBuffSize = function(frame, bTTarget)
 		_HM_Target.InitBuffPos(frame, nSize)
 	end
 	for _, v in ipairs({ "Buff", "Debuff" }) do
-		local hBuff, hText = frame:Lookup("", "Handle_" .. v), frame:Lookup("", "Handle_Text" .. v)
+		local hBuff = frame:Lookup("", "Handle_" .. v)
 		for i = 0, 1 do
 			local nW = nSize + (1 - i) * 5
-			local hB, hT = hBuff:Lookup(i), nil
+			local hB = hBuff:Lookup(i)
 			if hB.boxW ~= nW then
 				hB.boxW, hB.boxH = nW, nW
-				if not bTTarget and i == 0 then
-					frame:Lookup("", "Image_BuffBG"):SetSize(0, nW)
-					frame:Lookup("", "Image_DebuffBG"):SetSize(0, nW)
-				end
-			end
-			if hText then
-				hT = hText:Lookup(i)
-				hT.textW = nW
 			end
 			for j = 0, hB:GetItemCount() - 1 do
 				local box = hB:Lookup(j)
@@ -361,22 +320,7 @@ _HM_Target.UpdateBuffSize = function(frame, bTTarget)
 					-- resize box
 					if box.nW ~= nW then
 						box:SetSize(nW, nW)
-						if box.nCount > 1 then
-							box:SetOverTextPosition(0, box:GetOverTextPosition(0))
-						end
 						box.nW = nW
-						-- adjust text
-						if hT then
-							local txt = hT:Lookup(j)
-							local _, nH = txt:GetSize()
-							txt:SetSize(nW, nH)
-						end
-					end
-					-- disable spark
-					if HM_Target.bNoSpark then
-						box.bSparking = false
-						box.bShowTime2 = Table_BuffNeedShowTime(box.dwBuffID, box.nLevel)
-						box.bShowTime = false
 					end
 					-- clear time
 					box.szTime = nil
@@ -550,12 +494,6 @@ _HM_Target.AddBreathe = function(frame, bTTarget)
 	if HM_Target.bAdjustBuff then
 		-- buffsize
 		_HM_Target.UpdateBuffSize(frame, bTTarget)
-		-- bufftime (ttarget/target)
-		if not frame.nBuffBreathe or (nFrame - frame.nBuffBreathe) >= 3 then
-			_HM_Target.UpdateBuffTime(frame:Lookup("", "Handle_Buff"), frame:Lookup("", "Handle_TextBuff"))
-			_HM_Target.UpdateBuffTime(frame:Lookup("", "Handle_Debuff"), frame:Lookup("", "Handle_TextDebuff"))
-			frame.nBuffBreathe = nFrame
-		end
 	end
 	-- update action(channel)
 	_HM_Target.UpdateAction(frame)
@@ -593,8 +531,8 @@ end
 
 -- buff update
 -- arg0：dwPlayerID，arg1：bDelete，arg2：nIndex，arg3：bCanCancel
--- arg4：dwBuffID，arg5：nStackNum，arg6：nEndFrame，arg7：？update all?
--- arg8：nLevel，arg9：dwSkillSrcID
+-- arg4：dwBuffID，arg5：nStackNum，arg6：nEndFrame，arg7：bInit
+-- arg8：nLevel，arg9：dwSkillSrcID, arg10：bIsValid, arg11：nLeftFrame
 _HM_Target.OnBuffUpdate = function()
 	for _, v in ipairs({ "Target", "TargetTarget" }) do
 		local frame = Station.Lookup("Normal/" .. v)
@@ -1059,10 +997,6 @@ _HM_Target.PS.OnPanelActive = function(frame)
 		end
 		return m0
 	end):Pos_()
-	ui:Append("WndCheckBox", "Check_Spark", { x = nX2 + 5, y = 56, checked = HM_Target.bNoSpark })
-	:Text(_L["Disable sparking"]):Click(function(bChecked)
-		HM_Target.bNoSpark= bChecked
-	end)
 	-- line
 	ui:Append("Text", { txt = _L["Target connect line"], x = 0, y = 92, font = 27 })
 	nX = ui:Append("WndCheckBox", { x = 10, y = 120, checked = HM_Target.bConnect })
