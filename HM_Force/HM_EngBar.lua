@@ -329,6 +329,7 @@ _HM_EngBar.CopyHandle = function(frame)
 		if _HM_EngBar.szShowSub == "CYUN" then
 			h:Lookup("SFX_Rang"):Hide()
 		end
+		h:ClearEvent()
 		h:SetRelPos(75, 25)
 		h:Show()
 	end

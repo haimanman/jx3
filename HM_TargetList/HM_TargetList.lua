@@ -1532,11 +1532,12 @@ HM_TargetList.OnEvent = function(event)
 			local frm = Station.Lookup("Normal/" .. v)
 			if frm then
 				local hnd = frm:Lookup("", "")
-				if not hnd.OnItemLButtonUp then
+				if not hnd.OnItemLButtonDown then
 					hnd.OnItemLButtonDown = function()
 						if IsShiftKeyDown() and HM_TargetList.bAltFocus then
 							_HM_TargetList.SwitchFocus(frm.dwID)
 						end
+						return 2
 					end
 					if v == "TargetTarget" then
 						hnd.OnItemRButtonDown = function()
@@ -1545,6 +1546,7 @@ HM_TargetList.OnEvent = function(event)
 							table.insert(menu, { szOption = _L["Set as persist focus"], fnAction = function() _HM_TargetList.SetPersistFocus(frm.dwID) end })
 							table.insert(menu, { szOption = _L["Lock as single focus"], fnAction = function() HM_SingleFocus.Lock(frm.dwID) end })
 							PopupMenu(menu)
+							return 2
 						end
 					end
 				end
