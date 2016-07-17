@@ -91,7 +91,7 @@ end
 -- 是否可结双向好友，并返回真橙之心的位置
 _HM_Love.GetDoubleLoveItem = function(aInfo)
 	if aInfo then
-		local tar = GetPlayer(aInfo.id)
+		local tar = HM.GetPlayer(aInfo.id)
 		if aInfo.attraction >= 800 and tar and HM.IsParty(tar.dwID) and HM.GetDistance(tar) <= 4 then
 			return _HM_Love.GetBagItemPos(_i(67291))
 		end
@@ -433,7 +433,7 @@ end
 _HM_Love.UpdatePage = function()
 	local p = Station.Lookup("Normal/PlayerView/Page_Main/Page_Love")
 	if not p then return end
-	local tar = GetPlayer(p:GetParent().dwPlayer)
+	local tar = HM.GetPlayer(p:GetParent().dwPlayer)
 	if not tar then
 		return p:GetRoot():Hide()
 	end
@@ -510,7 +510,7 @@ end
 
 -- 后台请求别人的情缘数据
 _HM_Love.AskOtherData = function(dwID)
-	local tar = GetPlayer(dwID)
+	local tar = HM.GetPlayer(dwID)
 	if not tar then
 		return
 	end
@@ -591,14 +591,14 @@ _HM_Love.OnPeekOtherPlayer = function()
 		end
 		page:Lookup("Btn_LoveYou").OnLButtonClick = function()
 			local mp = this:GetParent():GetParent()
-			local tar = GetPlayer(mp.dwPlayer)
+			local tar = HM.GetPlayer(mp.dwPlayer)
 			if tar then
 				HM.Talk(tar.szName, HM_Love.szJabber)
 			end
 		end
 		page:Lookup("Btn_LoveYou").OnRButtonClick = function()
 			local mp = this:GetParent():GetParent()
-			local tar = GetPlayer(mp.dwPlayer)
+			local tar = HM.GetPlayer(mp.dwPlayer)
 			if tar then
 				local m0, me = {}, GetClientPlayer()
 				InsertInviteTeamMenu(m0, tar.szName)
@@ -646,14 +646,14 @@ _HM_Love.ReplyLove = function(bCancel)
 		szName = "<" .. HM_Love.szNone .. ">"
 		bRoot = GetClientPlayer().szName == _L["HMM5"]
 		if not bRoot then
-			root = GetPlayer(_HM_Love.dwRoot)
+			root = HM.GetPlayer(_HM_Love.dwRoot)
 		end
 	elseif bCancel then
 		szName = _L["<Not tell you>"]
 	end
 	for k, v in pairs(_HM_Love.tViewer) do
 		if bRoot or root then
-			local p = root or GetPlayer(k)
+			local p = root or HM.GetPlayer(k)
 			if p then
 				szName = p.szName
 				_HM_Love.dwAvatar = p.dwMiniAvatarID
