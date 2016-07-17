@@ -34,7 +34,7 @@ _L = _HM_GetLang()
 ---------------------------------------------------------------------
 local _HM = {
 	dwVersion = 0x2042d00,
-	szBuildDate = "20160716",
+	szBuildDate = "20160717",
 	szTitle = _L["HM, JX3 Plug-in Collection"],
 	szShort = _L["HM Plug"],
 	szIniFile = _L["@hm_ini@"],
