@@ -19,7 +19,7 @@ _HM_CombatText.SetText = function(txt, szText)
 	txt:__SetText(szText)
 	txt.arg0, txt.arg1 = arg0, arg1
 	-- force to check buff
-	local tar = GetPlayer(arg0)
+	local tar = HM.GetPlayer(arg0)
 	if tar then
 		for i = 1, tar.GetBuffCount() do
 			local dwID, nLevel, _, _, _, _, dwSkillSrcID = tar.GetBuff(i - 1)

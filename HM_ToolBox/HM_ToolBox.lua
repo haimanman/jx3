@@ -753,7 +753,7 @@ _HM_ToolBox.tEquipBox = {
 _HM_ToolBox.UpdateDurability = function(dwPlayer)
 	local me, page
 	if dwPlayer then
-		me = GetPlayer(dwPlayer)
+		me = HM.GetPlayer(dwPlayer)
 		page = Station.Lookup("Normal/PlayerView/Page_Main/Page_Battle")
 	else
 		me = GetClientPlayer()

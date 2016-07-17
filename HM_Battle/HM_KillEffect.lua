@@ -85,7 +85,7 @@ _HM_KillEffect.OnKillHighestTitle = function()
 	end
 	-- replace text
 	if HM_KillEffect.bText then
-		local handle = Station.Lookup("Lowest/CombatText", "")
+		local handle = Station.Lookup("Lowest/CombatText", "Handle_Level0")
 		for i = 0, handle:GetItemCount() - 1, 1 do
 			local text = handle:Lookup(i)
 			if not text.bFree and text.dwOwner == me.dwID

@@ -33,8 +33,8 @@ _L = _HM_GetLang()
 -- 本地函数和变量
 ---------------------------------------------------------------------
 local _HM = {
-	dwVersion = 0x2042c00,
-	szBuildDate = "20160714",
+	dwVersion = 0x2042d00,
+	szBuildDate = "20160716",
 	szTitle = _L["HM, JX3 Plug-in Collection"],
 	szShort = _L["HM Plug"],
 	szIniFile = _L["@hm_ini@"],
@@ -175,7 +175,7 @@ _HM.SetTempTarget = function()
 		if dwType ~= TARGET.PLAYER then
 			bApply = true
 		else
-			local tar = GetPlayer(dwID)
+			local tar = HM.GetPlayer(dwID)
 			if not tar or tar.GetKungfuMount() ~= nil then
 				bApply = true
 			end
@@ -191,7 +191,7 @@ _HM.SetTempTarget = function()
 				end
 				break
 			end
-			local tar = GetPlayer(table.remove(_HM.tTempTarget, 1))
+			local tar = HM.GetPlayer(table.remove(_HM.tTempTarget, 1))
 			if tar and tar.GetKungfuMount() == nil then
 				if not _HM.nOrigTarget then
 					_, _HM.nOrigTarget = me.GetTarget()
@@ -821,7 +821,7 @@ HM.GetTarget = function(dwType, dwID)
 	if dwID <= 0 or dwType == TARGET.NO_TARGET then
 		return nil, TARGET.NO_TARGET
 	elseif dwType == TARGET.PLAYER then
-		return GetPlayer(dwID), TARGET.PLAYER
+		return HM.GetPlayer(dwID), TARGET.PLAYER
 	elseif dwType == TARGET.DOODAD then
 		return GetDoodad(dwID), TARGET.DOODAD
 	else
@@ -1126,12 +1126,22 @@ HM.IsParty = function(dwID)
 	return GetClientPlayer().IsPlayerInMyParty(dwID)
 end
 
+-- (KPlayer) HM.GetPlayer(number dwID[, bTemp])
+-- dwID 	-- 玩家 ID
+-- bTemp 	-- *可选* 是否返回不在身边的玩家的临时数据
+HM.GetPlayer = function(dwID, bTemp)
+	local p = GetPlayer(dwID)
+	if p and (bTemp or p.nX > 0) then
+		return p
+	end
+end
+
 -- (table) HM.GetAllPlayer([number nLimit])			-- 获取场景内的所有 玩家
 -- nLimit	-- 个数上限，默认不限
 HM.GetAllPlayer = function(nLimit)
 	local aPlayer = {}
 	for k, _ in pairs(_HM.aPlayer) do
-		local p = GetPlayer(k)
+		local p = HM.GetPlayer(k)
 		if not p then
 			_HM.aPlayer[k] = nil
 		elseif p.szName ~= "" then

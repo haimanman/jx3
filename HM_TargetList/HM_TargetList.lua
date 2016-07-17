@@ -1820,25 +1820,11 @@ HM_TargetList.OnItemRButtonDown = function()
 			InsertPlayerCommonMenu(m0, dwID, szName)
 			-- 查看装备，查看经脉，镇派，名剑队
 			table.insert(m0, { szOption = g_tStrings.STR_LOOKUP,
-				fnDisable = function() return not GetPlayer(dwID) end,
+				fnDisable = function() return not HM.GetPlayer(dwID) end,
 				fnAction = function() ViewInviteToPlayer(dwID) end
 			})
-			--[[
-			table.insert(m0, { szOption = g_tStrings.LOOKUP_CHANNEL,
-				fnDisable = function() return not GetPlayer(dwID) end,
-				fnAction = function() ViewOtherPlayerChannels(dwID) end
-			})
-			table.insert(m0, { szOption = g_tStrings.LOOKUP_TANLENT,
-				fnDisable = function()
-					local tar = GetPlayer(dwID)
-					-- FIXEME：IDENTITY.JIANG_HU = 0
-					return not tar or tar.dwForceID == 0
-				end,
-				fnAction = function() ViewOtherZhenPaiSkill(dwID) end
-			})
-			--]]
 			table.insert(m0, { szOption = g_tStrings.LOOKUP_CORPS,
-				fnDisable = function() return not GetPlayer(dwID) end,
+				fnDisable = function() return not HM.GetPlayer(dwID) end,
 				fnAction = function()
 					Wnd.CloseWindow("ArenaCorpsPanel")
 					OpenArenaCorpsPanel(true, dwID)
