@@ -321,7 +321,7 @@ _HM_TargetList.GetForceFontColor = function(tar, myID, bFocus, bAlone)
 		return 0, 200, 72
 	end
 	-- special PLAYER for ³ÇÕ½
-	if tar.nNpc and tar.nNpc > 0 then
+	if not bFocus and tar.nNpc and tar.nNpc > 0 then
 		if IsEnemy(myID, tar.dwID) then
 			return 255, 0, 255
 		end
@@ -481,7 +481,9 @@ _HM_TargetList.UpdateFocusItem = function(h, tar)
 	end
 	-- update camp image
 	hImg, nIconFrame = h:Lookup("Image_Camp"), nil
-	if tar.nCamp == CAMP.EVIL then
+	if not IsPlayer(tar.dwID) then
+		hImg:Hide()
+	elseif tar.nCamp == CAMP.EVIL then
 		nIconFrame = (tar.bCampFlag and 116) or 5
 	elseif tar.nCamp == CAMP.GOOD then
 		nIconFrame = (tar.bCampFlag and 117) or 7
