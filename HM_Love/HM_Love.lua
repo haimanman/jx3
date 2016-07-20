@@ -188,7 +188,7 @@ end
 -- 按键值保存数据到好友备注（成功 true，失败 false）
 -- FIXME：通过 ID 保存数据时可能会覆盖已有其它含义的数据！！！
 _HM_Love.SetFellowDataByKey = function(szKey, szData, dwID, bEnc)
-	local szKey, me, slot = "#HM#" .. szKey .. "#", GetClientPlayer(), nil
+	local szKey, me, slot, card = "#HM#" .. szKey .. "#", GetClientPlayer(), nil, nil
 	if not me then return Output("not me") end
 	local aGroup = me.GetFellowshipGroupInfo() or {}
 	table.insert(aGroup, 1, { id = 0, name = g_tStrings.STR_FRIEND_GOOF_FRIEND })
@@ -207,7 +207,14 @@ _HM_Love.SetFellowDataByKey = function(szKey, szData, dwID, bEnc)
 					if bEnc then
 						szData = _HM_Love.DecodeString(szData)
 					end
-					return szData, info
+					local fellowClient = GetFellowshipCardClient()
+					if fellowClient then
+						card = fellowClient.GetFellowshipCardInfo(info.id)
+						if not card or card.dwMapID == 0 then
+							fellowClient.ApplyFellowshipCard(255, {info.id})
+						end
+					end
+					return szData, info, card
 				end
 			elseif not dwID then
 				-- set by Key
@@ -229,13 +236,19 @@ _HM_Love.SetFellowDataByKey = function(szKey, szData, dwID, bEnc)
 			end
 		end
 	end
+	if slot then
+		local fellowClient = GetFellowshipCardClient()
+		if fellowClient then
+			card = fellowClient.GetFellowshipCardInfo(slot.id)
+		end
+	end
 	-- last result
 	if szData then
 		if slot then
 			_HM_Love.SaveFellowRemark(slot.id, szKey .. szData)
-			return true, slot
+			return true, slot, card
 		else
-			return false, nil
+			return false, nil, nil
 		end
 	end
 end
@@ -529,12 +542,12 @@ end
 -- 好友数据更新，随时检查情缘变化（删除好友改备注等）
 _HM_Love.OnFellowUpdate = function()
 	-- 载入情缘
-	local szData, aInfo = _HM_Love.GetFellowDataByKey("LOVER", true)
+	local szData, aInfo, aCard = _HM_Love.GetFellowDataByKey("LOVER", true)
 	if not szData and _HM_Love.dwID ~= 0 then
 		_HM_Love.ToLocalLover(nil)
 		_HM_Love.PS.Refresh()
 	end
-	if aInfo and _HM_Love.dwID ~= aInfo.id then
+	if aInfo and aCard and aCard.dwMapID ~= 0 and _HM_Love.dwID ~= aInfo.id then
 		local data = SplitString(szData, "#")
 		_HM_Love.ToLocalLover(aInfo)
 		_HM_Love.nLoveType = tonumber(data[1]) or 0
@@ -542,9 +555,11 @@ _HM_Love.OnFellowUpdate = function()
 		_HM_Love.PS.Refresh()
 		-- 上线提示
 		if not _HM_Love.bLoaded and aInfo.isonline then
-			local szMsg = _L["Warm tip: Your "] .. _HM_Love.GetLoverType() .. _L("Lover <link0> is happy in [%s].\n", Table_GetMapName(aInfo.mapid))
+			local szMsg = _L["Warm tip: Your "] .. _HM_Love.GetLoverType() .. _L("Lover <link0> is happy in [%s].\n", Table_GetMapName(aCard.dwMapID))
 			_HM_Love.OnLoverMsg(szMsg)
 		end
+	else
+		return
 	end
 	-- 第一次加载：签名
 	if not _HM_Love.bLoaded then
@@ -895,6 +910,8 @@ end
 HM.RegisterEvent("PEEK_OTHER_PLAYER", _HM_Love.OnPeekOtherPlayer)
 HM.RegisterEvent("PLAYER_FELLOWSHIP_LOGIN", _HM_Love.OnFriendLogin)
 HM.RegisterEvent("PLAYER_FELLOWSHIP_UPDATE", _HM_Love.OnFellowUpdate)
+HM.RegisterEvent("FELLOWSHIP_CARD_CHANGE", _HM_Love.OnFellowUpdate)
+HM.RegisterEvent("UPDATE_FELLOWSHIP_CARD", _HM_Love.OnFellowUpdate)
 HM.RegisterEvent("PLAYER_ENTER_SCENE", _HM_Love.OnPlayerEnter)
 HM.BreatheCall("HM_Love", _HM_Love.OnBreathe)
 HM.RegisterBgMsg("HM_LOVE", _HM_Love.OnBgTalk)
