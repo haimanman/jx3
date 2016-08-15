@@ -30,6 +30,10 @@ local function _d(dwID)
 	return GetDoodadTemplate(dwID).szName
 end
 
+local function IsAutoInteract()
+	return HM_Doodad.bInteract and not IsShiftKeyDown()
+end
+
 local _HM_Doodad = {
 	-- 草药、矿石列表
 	tCraft = {
@@ -278,7 +282,7 @@ _HM_Doodad.OnAutoDoodad = function()
 				_HM_Doodad.dwOpenID = k
 			end
 		elseif v.craft or d.HaveQuest(me.dwID) then		-- 任务和普通道具尝试 5 次
-			bIntr = not me.bFightState and not me.bOnHorse and HM_Doodad.bInteract
+			bIntr = not me.bFightState and not me.bOnHorse and IsAutoInteract()
 			bKeep = true
 		end
 		if not bKeep then
@@ -299,7 +303,7 @@ _HM_Doodad.OnOpenDoodad = function(dwID)
 	if d then
 		local bP, bClear, me = false, true, GetClientPlayer()
 		-- 如需庖丁，则不要过滤灰色
-		if HM_Doodad.bInteract and HM_Doodad.bCustom
+		if IsAutoInteract() and HM_Doodad.bCustom
 			and HM_Doodad.tCustom[d.szName] and GetDoodadTemplate(d.dwTemplateID).dwCraftID == 3
 		then
 			_HM_Doodad.tDoodad[dwID] = { craft = true }
