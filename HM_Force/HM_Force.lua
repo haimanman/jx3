@@ -253,10 +253,10 @@ _HM_Force.PS.OnPanelActive = function(frame)
 	---------------
 	ui:Append("Text", { txt = g_tStrings.tForceTitle[3], x = 0, y = 0, font = 27 })
 	-- switch actionbar page
-	ui:Append("WndCheckBox", { txt = _L["Auto swith actionbar page of horse states (for TC, bind to P.1/3)"], checked = HM_Force.bHorsePage })
+	ui:Append("WndCheckBox", { txt = _L["Auto swith actionbar page of horse states (for TC, bind to P.1/3)"], checked = HM_Force.bHorsePage, disabled })
 	:Pos(10, 28):Click(function(bChecked)
 		HM_Force.bHorsePage = bChecked
-	end)
+	end):Enable(false)
 	-- hungry
 	ui:Append("WndCheckBox", { txt = _L["Alert when horse is hungry"], checked = HM_Force.bFeedHorse })
 	:Pos(10, 56):Click(function(bChecked)
@@ -371,7 +371,7 @@ HM.RegisterEvent("LOADING_END", 	function()
 	end
 end)
 HM.RegisterEvent("SYNC_ROLE_DATA_END", function()
-	_HM_Force.OnRideHorse()
+	--_HM_Force.OnRideHorse()
 	if HM_Force.bAlertWanted then
 		RegisterMsgMonitor(_HM_Force.OnMsgAnnounce, {"MSG_GM_ANNOUNCE"})
 	end
@@ -379,7 +379,7 @@ HM.RegisterEvent("SYNC_ROLE_DATA_END", function()
 end)
 HM.RegisterEvent("PLAYER_STATE_UPDATE", function()
 	if arg0 == GetClientPlayer().dwID then
-		_HM_Force.OnRideHorse()
+		--_HM_Force.OnRideHorse()
 		if _HM_Force.bHasWanted then
 			SceneObject_SetTitleEffect(TARGET.PLAYER, arg0, 47)
 		end
