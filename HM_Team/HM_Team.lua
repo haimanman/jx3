@@ -6,6 +6,7 @@ HM_Team = {
 	bKeepMark = true,	-- 保留成员标记
 	bKeepForm = true,	-- 保留小队阵眼
 	bKeepAlly = true,		-- 清空标记时保留友方标记
+	tMarkForce = { { ["z"] = true, [0] = true, [2] = true, [4] = true, [5] = true, [6] = true, [21] = true, [22] = true }, {}, {} },
 }
 HM.RegisterCustomData("HM_Team")
 
@@ -18,7 +19,6 @@ local _HM_Team = {
 	-- 0: 江湖，1：少林，2：万花，3：天策，4：纯阳，5：七秀，6：五毒，7：唐门，8：藏剑，9:丐帮，10：明教 --
 	tForceOrder = { 0, 5, 2, 6, 4, 7, 8, 1, 3, 9, 10 },
 	tRelation = { _L["Enemy"], _L["Ally"], _L["Neutral"] },
-	tMarkForce = { { ["z"] = true, [0] = true, [2] = true, [4] = true, [5] = true, [6] = true, [21] = true, [22] = true }, {}, {} },
 	tMarkAlly = {},
 	nLastFrame = 0,
 }
@@ -229,7 +229,7 @@ _HM_Team.GetAllPlayer = function(nLimit)
 	local me, tAll = GetClientPlayer(), HM.GetAllPlayer()
 	local tList, nCount = {}, 0
 	local bArena = IsInArena()
-	local tMarkForce = _HM_Team.tMarkForce
+	local tMarkForce = HM_Team.tMarkForce
 	nLimit = nLimit or 50
 	for _, v in ipairs(tAll) do
 		local nRel = 3
@@ -238,7 +238,7 @@ _HM_Team.GetAllPlayer = function(nLimit)
 		elseif IsAlly(me.dwID, v.dwID) or me.dwID == v.dwID then
 			nRel = 2
 		end
-		local tForce = _HM_Team.tMarkForce[nRel]
+		local tForce = HM_Team.tMarkForce[nRel]
 		if (bArena and nRel == 1) or (tForce["z"] and tForce[v.dwForceID]) then
 			if not tList[v.dwForceID] then
 				tList[v.dwForceID] = {}
@@ -383,13 +383,13 @@ _HM_Team.GetForceMenu = function()
 	local m0 = {}
 	for nRel, szRel in ipairs(_HM_Team.tRelation) do
 		local m1 = { szOption = szRel .. _L[" relation"], bCheck = true, }
-		m1.bChecked = _HM_Team.tMarkForce[nRel]["z"] == true
-		m1.fnAction = function(data, bCheck) _HM_Team.tMarkForce[nRel]["z"] = bCheck  end
+		m1.bChecked = HM_Team.tMarkForce[nRel]["z"] == true
+		m1.fnAction = function(data, bCheck) HM_Team.tMarkForce[nRel]["z"] = bCheck  end
 		for _, v in ipairs(_HM_Team.tForceOrder) do
 			local m2 = { szOption = g_tStrings.tForceTitle[v], bCheck = true, }
-			m2.bChecked = _HM_Team.tMarkForce[nRel][v] == true
-			m2.fnDisable = function() return not _HM_Team.tMarkForce[nRel]["z"] end
-			m2.fnAction = function(data, bCheck) _HM_Team.tMarkForce[nRel][v] = bCheck  end
+			m2.bChecked = HM_Team.tMarkForce[nRel][v] == true
+			m2.fnDisable = function() return not HM_Team.tMarkForce[nRel]["z"] end
+			m2.fnAction = function(data, bCheck) HM_Team.tMarkForce[nRel][v] = bCheck  end
 			table.insert(m1, m2)
 		end
 		table.insert(m0, m1)
