@@ -219,6 +219,20 @@ _HM_EngBar.UpdateCangYun = function(frame)
 	end
 end
 
+-- badao
+_HM_EngBar.UpdateBaDao = function(frame)
+	local me, hBaDao = GetClientPlayer(), frame:Lookup("", _HM_EngBar.szShow)
+	if not me or not hBaDao then
+		return
+	end
+	if PlayerEnergyUI_Update then
+		PlayerEnergyUI_Update(_HM_EngBar.szShow, hBaDao, me)
+	else
+		hBaDao:Hide()
+	end
+end
+
+-- tangmen
 _HM_EngBar.GetBombCount = function()
 	if _HM_EngBar.nBombTime and (GetTime() - _HM_EngBar.nBombTime) < 1000 then
 		return _HM_EngBar.nBombCount
@@ -276,6 +290,8 @@ _HM_EngBar.Update = function(frame)
 		_HM_EngBar.UpdateMingJiao(frame)
 	elseif _HM_EngBar.szShow == "Handle_CangYun" then
 		_HM_EngBar.UpdateCangYun(frame)
+	elseif _HM_EngBar.szShow == "Handle_BaDao" then
+		_HM_EngBar.UpdateBaDao(frame)
 	end
 end
 
@@ -295,6 +311,8 @@ _HM_EngBar.UpdateHandleName = function()
 			szShow, szShowSub = "Handle_MingJiao", "MJ"
 		elseif mnt.dwMountType == 18 then
 			szShow, szShowSub = "Handle_CangYun", "CYUN"
+		elseif mnt.dwMountType == 20 then
+			szShow, szShowSub = "Handle_BaDao", "BaDao"
 		end
 	end
 	_HM_EngBar.szShow = szShow
@@ -396,6 +414,8 @@ HM_EngBar.OnEvent = function(event)
 			_HM_EngBar.UpdateMingJiao(this)
 		elseif _HM_EngBar.szShow == "Handle_CangYun" then
 			_HM_EngBar.UpdateCangYun(this)
+		elseif _HM_EngBar.szShow == "Handle_BaDao" then
+			_HM_EngBar.UpdateBaDao(this)
 		end
 	elseif event == "LOADING_END" then
 		_HM_EngBar.Update(this)

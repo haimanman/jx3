@@ -3,7 +3,7 @@
 --
 
 HM_Force = {
-	bHorsePage = true,	-- 上下马切换技能栏（仅天策）
+	bHorsePage2 = false,	-- 上下马切换技能栏（仅天策）
 	bAlertPet = true,			-- 五毒宠物消失提醒
 	bMarkPet = true,			-- 五毒宠物标记
 	bFeedHorse = true,	-- 提示喂马
@@ -38,7 +38,7 @@ end
 
 -- check horse page
 _HM_Force.OnRideHorse = function()
-	if HM_Force.bHorsePage then
+	if HM_Force.bHorsePage2 then
 		local me = GetClientPlayer()
 		if me then
 			local mnt = me.GetKungfuMount()
@@ -253,10 +253,10 @@ _HM_Force.PS.OnPanelActive = function(frame)
 	---------------
 	ui:Append("Text", { txt = g_tStrings.tForceTitle[3], x = 0, y = 0, font = 27 })
 	-- switch actionbar page
-	ui:Append("WndCheckBox", { txt = _L["Auto swith actionbar page of horse states (for TC, bind to P.1/3)"], checked = HM_Force.bHorsePage, disabled })
+	ui:Append("WndCheckBox", { txt = _L["Auto swith actionbar page of horse states (for TC, bind to P.1/3)"], checked = HM_Force.bHorsePage2 })
 	:Pos(10, 28):Click(function(bChecked)
-		HM_Force.bHorsePage = bChecked
-	end):Enable(false)
+		HM_Force.bHorsePage2 = bChecked
+	end)
 	-- hungry
 	ui:Append("WndCheckBox", { txt = _L["Alert when horse is hungry"], checked = HM_Force.bFeedHorse })
 	:Pos(10, 56):Click(function(bChecked)
@@ -349,7 +349,7 @@ end
 
 -- conflict check
 _HM_Force.PS.OnConflictCheck = function()
-	if Ktemp and HM_Force.bHorsePage then
+	if Ktemp and HM_Force.bHorsePage2 then
 		Ktemp.bchange = false
 	end
 	if OTAPlus and HM_Force.bActionTime then
