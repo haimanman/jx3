@@ -130,6 +130,14 @@ _HM_Area.tSkill = {
 		dwTemplateID = 44766,
 		nLeft = 8,
 		tOther = { [14225] = 44766 },
+	}, {
+		dwID = 16454,	-- 西楚悲歌
+		dwTemplateID = 53233,
+		nLeft = 4,
+	}, {
+		dwID = 16455,	-- 楚河汉界
+		dwTemplateID = 53803,
+		nLeft = 4,
 	}
 }
 
@@ -242,6 +250,8 @@ _HM_Area.GetAreaRadius = function(dwTemplateID)
 	elseif dwTemplateID == 44734 or dwTemplateID == 44765 then
 		-- 笑傲光阴/云生结海
 		return 960
+	elseif dwTemplateID == 53233 then	-- 霸刀气墙
+		return 0
 	end
 	-- 江追月天/迴梦逐光也是 10尺
 	return 640
@@ -397,8 +407,11 @@ end
 _HM_Area.DrawArea = function(tar)
 	local data = _HM_Area.tList[tar.dwID]
 	if not data then return end
-	local color =  _HM_Area.GetColor(_HM_Area.GetRelation(data.dwCaster, tar), tar.dwTemplateID)
 	local nAlpha, nRadius = HM_Area.nAlpha, _HM_Area.GetAreaRadius(tar.dwTemplateID)
+	if nRadius == 0 then
+		return
+	end
+	local color =  _HM_Area.GetColor(_HM_Area.GetRelation(data.dwCaster, tar), tar.dwTemplateID)
 	local nDistance = HM.GetDistance(tar)
 	if tar.dwTemplateID == 4982 then
 		nAlpha = math.ceil(nAlpha * 2)
