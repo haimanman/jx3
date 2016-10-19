@@ -43,7 +43,8 @@ _HM_Force.OnRideHorse = function()
 		if me then
 			local mnt = me.GetKungfuMount()
 			if mnt and (mnt.dwSkillID == 10026 or mnt.dwSkillID == 10062) then
-				local nPage = GetUserPreferences(1390, "c")
+				--local nPage = GetUserPreferences(1390, "c")
+				local nPage = tonumber(Station.Lookup("Lowest1/MainBarPanel", "Text_Page"):GetText())
 				if me.bOnHorse and nPage < 3 then
 					SelectMainActionBarPage(nPage + 2)
 				elseif not me.bOnHorse and nPage > 2 then
@@ -371,7 +372,7 @@ HM.RegisterEvent("LOADING_END", 	function()
 	end
 end)
 HM.RegisterEvent("SYNC_ROLE_DATA_END", function()
-	--_HM_Force.OnRideHorse()
+	_HM_Force.OnRideHorse()
 	if HM_Force.bAlertWanted then
 		RegisterMsgMonitor(_HM_Force.OnMsgAnnounce, {"MSG_GM_ANNOUNCE"})
 	end
@@ -379,7 +380,7 @@ HM.RegisterEvent("SYNC_ROLE_DATA_END", function()
 end)
 HM.RegisterEvent("PLAYER_STATE_UPDATE", function()
 	if arg0 == GetClientPlayer().dwID then
-		--_HM_Force.OnRideHorse()
+		_HM_Force.OnRideHorse()
 		if _HM_Force.bHasWanted then
 			SceneObject_SetTitleEffect(TARGET.PLAYER, arg0, 47)
 		end
