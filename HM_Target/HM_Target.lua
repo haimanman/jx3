@@ -704,7 +704,7 @@ HM_TargetDir.SetHeadImage = function(hImg, tar)
 		if IsPlayer(tar.dwID) then
 			local mnt = tar.GetKungfuMount()
 			if mnt and mnt.dwSkillID ~= 0 then
-				hImg:FromIconID(Table_GetSkillIconID(mnt.dwSkillID, 0))
+				hImg:FromIconID(Table_GetSkillIconID(mnt.dwSkillID, 1))
 			else
 				if not mnt then
 					local dwType, dwID = GetClientPlayer().GetTarget()
