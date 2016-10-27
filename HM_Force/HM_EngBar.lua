@@ -225,11 +225,7 @@ _HM_EngBar.UpdateBaDao = function(frame)
 	if not me or not hBaDao then
 		return
 	end
-	if PlayerEnergyUI_Update then
-		PlayerEnergyUI_Update(_HM_EngBar.szShow, hBaDao, me)
-	else
-		hBaDao:Hide()
-	end
+	PlayerEnergyUI_Update(_HM_EngBar.szShowSub, hBaDao, me)
 end
 
 -- tangmen

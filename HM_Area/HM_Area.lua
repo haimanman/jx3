@@ -250,7 +250,7 @@ _HM_Area.GetAreaRadius = function(dwTemplateID)
 	elseif dwTemplateID == 44734 or dwTemplateID == 44765 then
 		-- 笑傲光阴/云生结海
 		return 960
-	elseif dwTemplateID == 53233 then	-- 霸刀气墙
+	elseif dwTemplateID == 53233 or dwTemplateID == 53803 then	-- 霸刀气墙
 		return 0
 	end
 	-- 江追月天/迴梦逐光也是 10尺
