@@ -225,7 +225,7 @@ _HM_EngBar.UpdateBaDao = function(frame)
 	if not me or not hBaDao then
 		return
 	end
-	PlayerEnergyUI_Update(_HM_EngBar.szShowSub, hBaDao, me)
+	frame.nUpdateStatus = PlayerEnergyUI_Update(_HM_EngBar.szShowSub, hBaDao, me)
 end
 
 -- tangmen
@@ -364,6 +364,7 @@ HM_EngBar.OnFrameCreate = function()
 	this:RegisterEvent("ON_LEAVE_CUSTOM_UI_MODE")
 	this:RegisterEvent("UI_SCALED")
 	this:RegisterEvent("LOADING_END")
+	this:RegisterEvent("ON_CHARACTER_POSE_STATE_UPDATE")
 	UpdateCustomModeWindow(this, _L["HM, energy bar"])
 	_HM_EngBar.UpdateAnchor(this)
 	_HM_EngBar.CopyHandle(this)
@@ -413,6 +414,12 @@ HM_EngBar.OnEvent = function(event)
 		elseif _HM_EngBar.szShow == "Handle_BaDao" then
 			_HM_EngBar.UpdateBaDao(this)
 		end
+	elseif event == "ON_CHARACTER_POSE_STATE_UPDATE" then
+		if _HM_EngBar.szShow == "Handle_CangYun" then
+			_HM_EngBar.UpdateCangYun(this)
+		elseif _HM_EngBar.szShow == "Handle_BaDao" then
+			_HM_EngBar.UpdateBaDao(this)
+		end
 	elseif event == "LOADING_END" then
 		_HM_EngBar.Update(this)
 	end
@@ -421,6 +428,11 @@ end
 HM_EngBar.OnFrameBreathe = function()
 	if _HM_EngBar.szShowSub == "TM" and _HM_EngBar.nBombTime and _HM_EngBar.nBombTime < (GetTime() - 1000) then
 		_HM_EngBar.UpdateBomb(this)
+	end
+	if this.nUpdateStatus == 1 then
+		if _HM_EngBar.szShow == "Handle_BaDao" then
+			_HM_EngBar.UpdateBaDao(this)
+		end
 	end
 end
 
