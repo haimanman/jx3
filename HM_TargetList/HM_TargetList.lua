@@ -1169,6 +1169,7 @@ _HM_TargetList.UpdateListItems = function(handle)
 			}
 			if nMode <= 3 then
 				item.dwEmployer = v.dwEmployer
+				item.dwTemplateID = v.dwTemplateID
 			elseif bXGF == true or me.GetMapID() == 186 then
 				-- check 城战 BUFF：神机台-耐久=7816/ 无法移动=7360，神机车：摧城=7716，旗手：守卫据点=7561
 				-- 菌箱 BUFF：7867-浩气盟，7868-恶人谷
