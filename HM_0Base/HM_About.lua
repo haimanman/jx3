@@ -234,9 +234,17 @@ _HM_About.PS.OnTaboxCheck = function(frame, nIndex, szTitle)
 	--		HM.OpenPanel(HM_Love.szTitle)
 	--	end
 	--end)
+	local _, _, szLang = GetVersion()
 	ui:Append("Shadow", { x = 0, y = 5, w = 532, h = 168, alpha = 128 }):Color(128, 128, 128)
-	ui:Append("Text", { x = 0, y = 5, font = 239,  w = 532, h = 100, txt = "Empty color is the color that is empty." }):Align(1, 1)
-	ui:Append("Text", { x = 0, y = 85, font = 239,  w = 532, h = 68, txt = _L["<Weibo@haimanman>"] }):Align(1, 1)
+	if szLang == "zhcn" then
+		ui:Append("Text", { x = 0, y = 5, font = 239,  w = 532, h = 100, txt = "海鳗插件团队杭州招聘啦~" }):Align(1, 1)
+		ui:Append("Text", { x = 0, y = 70, font = 61,  w = 532, h = 25, txt = "PHP/iOS/前端/产品策划运营等，详见微博置顶" }):Align(1, 1)
+	else
+		ui:Append("Text", { x = 0, y = 5, font = 239,  w = 532, h = 100, txt = "Empty color is the color that is empty." }):Align(1, 1)
+	end
+	ui:Append("Text", { x = 0, y = 85, font = 239,  w = 532, h = 68, txt = _L["<Weibo@haimanman>"] }):Align(1, 1):Click(function()
+		OpenInternetExplorer("http://weibo.com/haimanman")
+	end)
 	ui:Append("Text", { txt = _L("%s are welcome to use HM plug-in", szName), x = 10, y = 190, font = 19 })
 	ui:Append("Text", { txt = _L["Free & open source, Utility, Focus on PVP!"], x = 10, y = 220, font = 19 })
 	ui:Append("Text", { txt = _L["YY-group: 6685583"], x = 10, y = 280, font = 27 })
