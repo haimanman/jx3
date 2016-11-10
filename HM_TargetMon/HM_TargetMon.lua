@@ -1271,6 +1271,10 @@ _HM_TargetMon.OnSkillCast = function(dwCaster, dwSkillID, dwLevel, szEvent)
 	if nChongNeng and szEvent == "DO_SKILL_CAST" then
 		return
 	end
+	-- for channel skill (skip effect log)
+	if HM.GetChannelSkillFrame(dwSkillID) and szEvent ~= "DO_SKILL_CAST" then
+		return
+	end
 	_HM_TargetMon.PurgeData()
 	if not HM_Jabber then
 		HM.Debug3("#" .. dwCaster .. "#" .. szEvent .. " (" .. szName .. "#" .. dwSkillID .. ", Lv" .. dwLevel .. ")")
