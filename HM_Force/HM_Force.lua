@@ -9,7 +9,7 @@ HM_Force = {
 	bFeedHorse = true,	-- 提示喂马
 	bWarningDebuff = false,	-- 警告  debuff 类型
 	nDebuffNum = 3,			-- debuff 类型达到几个时警告
-	bActionTime = true,	-- 显示读条动作计时
+	bActionTime2 = false,	-- 显示读条动作计时
 	bHorseReplace = true,	-- 战斗中智能替换战马
 	bAlertWanted = true,	-- 在线被悬赏时提醒自己
 	bEngBar = false,	-- 显示职业能量条
@@ -125,7 +125,7 @@ end
 
 -- record otaction
 _HM_Force.SaveOTAction = function(nTotal, bDec)
-	if HM_Force.bActionTime then
+	if HM_Force.bActionTime2 then
 		_HM_Force.nActionTotal = nTotal
 		_HM_Force.nActionEnd = GetLogicFrameCount() + nTotal
 		_HM_Force.bActionDec = bDec
@@ -134,7 +134,7 @@ end
 
 -- update otaction bar
 _HM_Force.UpdateOTActionBar = function()
-	if not HM_Force.bActionTime or not _HM_Force.nActionTotal then
+	if not HM_Force.bActionTime2 or not _HM_Force.nActionTotal then
 		return
 	end
 	local frame = Station.Lookup("Topmost/OTActionBar")
@@ -329,9 +329,9 @@ _HM_Force.PS.OnPanelActive = function(frame)
 		return m0
 	end)
 	-- otaction time
-	local nX2 = ui:Append("WndCheckBox", { txt = _L["Show time description of OTActionBar"], checked = HM_Force.bActionTime })
+	local nX2 = ui:Append("WndCheckBox", { txt = _L["Show time description of OTActionBar"], checked = HM_Force.bActionTime2 })
 	:Pos(10, 324):Click(function(bChecked)
-		HM_Force.bActionTime = bChecked
+		HM_Force.bActionTime2 = bChecked
 		if not bChecked then
 			_HM_Force.nActionTotal = nil
 		end
@@ -353,7 +353,7 @@ _HM_Force.PS.OnConflictCheck = function()
 	if Ktemp and HM_Force.bHorsePage2 then
 		Ktemp.bchange = false
 	end
-	if OTAPlus and HM_Force.bActionTime then
+	if OTAPlus and HM_Force.bActionTime2 then
 		OTAPlus.bTime = false
 	end
 end
