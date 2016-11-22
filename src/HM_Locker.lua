@@ -1,32 +1,32 @@
 --
--- º£÷©²å¼þ£ºÄ¿±êËø¶¨¡¢TAB ÔöÇ¿
+-- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½TAB ï¿½ï¿½Ç¿
 --
 
 HM_Locker = {
-	bLockLeave = true,	-- Ëø¶¨ÍÑÀëÔÙ»Ø¹éÊÓÏßµÄÄ¿±ê
-	bLockFight = true,	-- Õ½¶·ÖÐµãµØÃæ²»¶ªÄ¿±ê
-	bLockTiger = true,	-- »¢ÅÜÊ±Ëø¶¨Ä¿±ê
-	bWhisperSel = true,	-- ÃÜÁÄ¿ìËÙÑ¡Ôñ£¬ÃÜÁÄ£º11 ËÙ¶ÈÑ¡Ôñ´ËÈË£¨ÈôÔÚÉí±ß£©
+	bLockLeave = true,	-- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù»Ø¹ï¿½ï¿½ï¿½ï¿½ßµï¿½Ä¿ï¿½ï¿½
+	bLockFight = true,	-- Õ½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½æ²»ï¿½ï¿½Ä¿ï¿½ï¿½
+	bLockTiger = true,	-- ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½
+	bWhisperSel = true,	-- ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½11 ï¿½Ù¶ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½Ë£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß£ï¿½
 	tSearchTarget = { OnlyPlayer = false, OnlyNearDis = true, MidAxisFirst = false, Weakness = false },
-	bLockScoff = true,	-- ×Ô¶¯»¹Ô­Ä¿±ê
+	bLockScoff = true,	-- ï¿½Ô¶ï¿½ï¿½ï¿½Ô­Ä¿ï¿½ï¿½
 }
 HM.RegisterCustomData("HM_Locker")
 
 ---------------------------------------------------------------------
--- ±¾µØº¯ÊýºÍ±äÁ¿
+-- ï¿½ï¿½ï¿½Øºï¿½ï¿½ï¿½ï¿½Í±ï¿½ï¿½ï¿½
 ---------------------------------------------------------------------
 local _HM_Locker = {
-	bLeave = false,	-- Ä¿±êÊÇ·ñÀë¿ªÊÓÏß
-	nTigerFrame = 0,	-- »¢ÅÜÇÐÄ¿±êµÄÖ¡´Î
-	dwLastID = 0,		-- ×î½üµÄÄ¿±ê
-	dwPrevID = 0,		-- ÉÏ´ÎµÄÄ¿±ê
-	nLastFrame = 0,	-- ×î½üÄ¿±ê¸Ä±äÖ¡´Î
+	bLeave = false,	-- Ä¿ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ë¿ªï¿½ï¿½ï¿½ï¿½
+	nTigerFrame = 0,	-- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½Ö¡ï¿½ï¿½
+	dwLastID = 0,		-- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½
+	dwPrevID = 0,		-- ï¿½Ï´Îµï¿½Ä¿ï¿½ï¿½
+	nLastFrame = 0,	-- ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½Ä±ï¿½Ö¡ï¿½ï¿½
 	nLastSys = 0,
 	tLocker = {},
-	nScoffFrame = 0,	-- ±»¼¼ÄÜÃüÖÐµÄÖ¡´Î£¨¼¼ÄÜ£©
+	nScoffFrame = 0,	-- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½Ö¡ï¿½Î£ï¿½ï¿½ï¿½ï¿½Ü£ï¿½
 	dwScoffer = 0,
-	nScoffFrame2 = 0,	-- ³°·í BUFF Ö¡´Î
-	dwScoffer2 = 0,	-- ³°·í BUFF Ô´
+	nScoffFrame2 = 0,	-- ï¿½ï¿½ï¿½ï¿½ BUFF Ö¡ï¿½ï¿½
+	dwScoffer2 = 0,	-- ï¿½ï¿½ï¿½ï¿½ BUFF Ô´
 }
 
 -- sysmsg
@@ -142,7 +142,7 @@ _HM_Locker.SearchOnlyPlayer = function(bEnable)
 end
 
 -------------------------------------
--- ÊÂ¼þº¯Êý
+-- ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½
 -------------------------------------
 -- update target
 _HM_Locker.OnUpdateTarget = function()
@@ -202,7 +202,7 @@ _HM_Locker.OnSkillCast = function()
 end
 
 -- player talk to quick select target
--- arg0£ºdwTalkerID£¬arg1£ºnChannel£¬arg2£ºbEcho£¬arg3£ºszName
+-- arg0ï¿½ï¿½dwTalkerIDï¿½ï¿½arg1ï¿½ï¿½nChannelï¿½ï¿½arg2ï¿½ï¿½bEchoï¿½ï¿½arg3ï¿½ï¿½szName
 _HM_Locker.OnPlayerTalk = function()
 	if not HM_Locker.bWhisperSel then return end
 	local me = GetClientPlayer()
@@ -224,13 +224,13 @@ _HM_Locker.OnPlayerTalk = function()
 	end
 end
 
--- buff update£º
--- arg0£ºdwPlayerID£¬arg1£ºbDelete£¬arg2£ºnIndex£¬arg3£ºbCanCancel
--- arg4£ºdwBuffID£¬arg5£ºnStackNum£¬arg6£ºnEndFrame£¬arg7£º£¿update all?
--- arg8£ºnLevel£¬arg9£ºdwSkillSrcID
--- 512=¶¨¾ü£¬761=ÖÚ·ð£¬1488=Ö´ÃÔ£¬1729=·ç´µºÉ£¬2503=ó¸Ôê£¬
--- 2707=¹éÈ¥À´¹÷£¬4059=¼«ÀÖ£¬4198=´È±¯£¬4147=³¯Ê¥£¬4486=¼«ÀÖ
--- 5645=Ç¿ÖÆ£¬5753=Ì°Ä§Ìå
+-- buff updateï¿½ï¿½
+-- arg0ï¿½ï¿½dwPlayerIDï¿½ï¿½arg1ï¿½ï¿½bDeleteï¿½ï¿½arg2ï¿½ï¿½nIndexï¿½ï¿½arg3ï¿½ï¿½bCanCancel
+-- arg4ï¿½ï¿½dwBuffIDï¿½ï¿½arg5ï¿½ï¿½nStackNumï¿½ï¿½arg6ï¿½ï¿½nEndFrameï¿½ï¿½arg7ï¿½ï¿½ï¿½ï¿½update all?
+-- arg8ï¿½ï¿½nLevelï¿½ï¿½arg9ï¿½ï¿½dwSkillSrcID
+-- 512=ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½761=ï¿½Ú·ï¿½ï¿½ï¿½1488=Ö´ï¿½Ô£ï¿½1729=ï¿½ç´µï¿½É£ï¿½2503=ï¿½ï¿½ï¿½ê£¬
+-- 2707=ï¿½ï¿½È¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½4059=ï¿½ï¿½ï¿½Ö£ï¿½4198=ï¿½È±ï¿½ï¿½ï¿½4147=ï¿½ï¿½Ê¥ï¿½ï¿½4486=ï¿½ï¿½ï¿½ï¿½
+-- 5645=Ç¿ï¿½Æ£ï¿½5753=Ì°Ä§ï¿½ï¿½
 _HM_Locker.OnBuffUpdate = function()
 	local me = GetClientPlayer()
 	if arg0 == me.dwID and not arg1 and
@@ -249,10 +249,10 @@ _HM_Locker.OnBuffUpdate = function()
 end
 
 -- cast tigger switch --
--- 1665=·ç´µºÉ£¬402=¶¨¾ü£¬234=Íò·ð³¯×Ú£¬236=Ä¦Ú­ÎÞÁ¿£¬
--- 2476=ó¸Ôê£¬2589=¹éÈ¥À´¹÷£¬3982=´È±¯Ô¸£¬3985=³¯Ê¥ÑÔ£¬3971=¼«ÀÖÒý
--- 6719=Ì°Ä§Ìå£¬5692=²×ÔÂ£¬5919=Ä¦Ú­/Ö´ÃÔ²»·µ£¬5976=ÕòÄ§¼«µÀ£¬5990=ÖªÎÒ×ïÎÒ
--- 6009=¼«ÀÖÆÕ¶É£¬6518=ÊØÈçÉ½³°·í£¬6719=·¥Ä§âã×ï
+-- 1665=ï¿½ç´µï¿½É£ï¿½402=ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½234=ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú£ï¿½236=Ä¦Ú­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+-- 2476=ï¿½ï¿½ï¿½ê£¬2589=ï¿½ï¿½È¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½3982=ï¿½È±ï¿½Ô¸ï¿½ï¿½3985=ï¿½ï¿½Ê¥ï¿½Ô£ï¿½3971=ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+-- 6719=Ì°Ä§ï¿½å£¬5692=ï¿½ï¿½ï¿½Â£ï¿½5919=Ä¦Ú­/Ö´ï¿½Ô²ï¿½ï¿½ï¿½ï¿½ï¿½5976=ï¿½ï¿½Ä§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½5990=Öªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+-- 6009=ï¿½ï¿½ï¿½ï¿½ï¿½Õ¶É£ï¿½6518=ï¿½ï¿½ï¿½ï¿½É½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½6719=ï¿½ï¿½Ä§ï¿½ï¿½ï¿½ï¿½
 _HM_Locker.OnSkillHit = function(dwCaster, dwTarget, dwID, dwLevel)
 	if HM_Locker.bLockScoff and dwTarget == GetClientPlayer().dwID then
 		if dwID == 234 or dwID == 236 or dwID == 402 or dwID == 1665
@@ -263,7 +263,7 @@ _HM_Locker.OnSkillHit = function(dwCaster, dwTarget, dwID, dwLevel)
 			local _, tarID = GetClientPlayer().GetTarget()
 			_HM_Locker.Debug("be hit scoff skill [" .. HM.GetSkillName(dwID) .. "#" .. dwID .. "]")
 			if tarID == dwCaster then
-				-- FIXME£ºJJC ¿ÉÄÜ»áÒòÎª¼ì²â¶ÁÌõµ¼ÖÂÄ¿±êÇÐ»»²»Õý³£
+				-- FIXMEï¿½ï¿½JJC ï¿½ï¿½ï¿½Ü»ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				_HM_Locker.SetPrevTarget()
 			end
 			_HM_Locker.dwScoffer = dwCaster
@@ -279,7 +279,7 @@ _HM_Locker.AddLocker(_HM_Locker.CheckLockScoff)
 _HM_Locker.AddLocker(_HM_Locker.CheckLockScoff2)
 
 -------------------------------------
--- ÉèÖÃ½çÃæ
+-- ï¿½ï¿½ï¿½Ã½ï¿½ï¿½ï¿½
 -------------------------------------
 _HM_Locker.PS = {}
 
@@ -331,7 +331,7 @@ _HM_Locker.PS.OnPanelActive = function(frame)
 	-- whisper select
 	ui:Append("Text", { txt = _L["Select target by whisper"], x = 0, y = 212, font = 27 })
 	ui:Append("WndCheckBox", { x = 10, y = 240, checked = HM_Locker.bWhisperSel })
-	:Text(_L["Select as target when you send 11 to around player"]):Click(function(bChecked)
+	:Text(_L["Select as target when you send 11 to around player".."& Focus when send 33"]):Click(function(bChecked)
 		HM_Locker.bWhisperSel = bChecked
 	end)
 	-- scoff
@@ -352,7 +352,7 @@ _HM_Locker.PS.OnPlayerMenu = function()
 end
 
 ---------------------------------------------------------------------
--- ×¢²áÊÂ¼þ¡¢³õÊ¼»¯
+-- ×¢ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½
 ---------------------------------------------------------------------
 HM.RegisterEvent("SYNC_ROLE_DATA_END", _HM_Locker.UpdateSearchTarget)
 HM.RegisterEvent("UPDATE_SELECT_TARGET",  _HM_Locker.OnUpdateTarget)
