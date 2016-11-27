@@ -1857,6 +1857,46 @@ function _HM.UI.Frm:ctor(szName, bEmpty)
 	self.self, self.type = frm, "WndFrame"
 end
 
+-- 设置背景颜色及透明度，允许自由伸缩尺寸
+-- (self) Instance:BgColor(number nR, number nG, number nB, number nAlpha)
+function _HM.UI.Frm:BgColor(nR, nG, nB, nAlpha)
+	if not nR then
+		if not self.bg then
+			return 0, 0, 0, 0
+		end
+		local nR, nG, nB = self.bg:GetColorRGB()
+		local nAlpha = self.bg:GetAlpha()
+		return nR, nG, nB, nAlpha
+	end
+	-- set bgcolor
+	local hnd = self.self:Lookup("", "")
+	local bg = hnd:Lookup("Shadow_Bg")
+	if nAlpha == 0 then
+		self.bg = nil
+		bg:Hide()
+		for i = 1, 7 do
+			hnd:Lookup("Image_CBg" .. i):Show()
+		end
+		self:Size(self.self:GetSize())
+	else
+		bg:SetColorRGB(nR, nG, nB)
+		if nAlpha then
+			bg:SetAlpha(nAlpha)
+		end
+		if not self.bg then
+			bg:SetRelPos(0, 0)
+			bg:SetSize(self.self:GetSize())
+			bg:Show()
+			for i = 1, 7 do
+				hnd:Lookup("Image_CBg" .. i):Hide()
+			end
+			hnd:FormatAllItemPos()
+			self.bg = bg
+		end
+	end
+	return self
+end
+
 -- (number, number) Instance:Size()						-- 取得窗体宽和高
 -- (self) Instance:Size(number nW, number nH)	-- 设置窗体的宽和高
 -- 特别注意：窗体最小高度为 200，宽度自动按接近取  234/380/770 中的一个
@@ -1873,7 +1913,9 @@ function _HM.UI.Frm:Size(nW, nH)
 		return self
 	end
 	-- fix size
-	if nW > 400 then
+	if self.bg then
+		self.bg:SetSize(nW, nH)
+	elseif nW > 400 then
 		nW = 770
 		hnd:Lookup("Image_CBg1"):SetSize(385, 70)
 		hnd:Lookup("Image_CBg2"):SetSize(384, 70)
@@ -2744,6 +2786,7 @@ HM.UI.CreateFrame = function(szName, tArg)
 	tArg = tArg or {}
 	local ui = _HM.UI.Frm.new(szName, tArg.empty == true)
 	-- apply init setting
+	if tArg.bgcolor then ui:BgColor(unpack(tArg.bgcolor)) end
 	if tArg.w and tArg.h then ui:Size(tArg.w, tArg.h) end
 	if tArg.x and tArg.y then ui:Pos(tArg.x, tArg.y) end
 	if tArg.title then ui:Title(tArg.title) end

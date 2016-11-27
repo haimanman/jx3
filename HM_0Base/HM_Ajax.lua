@@ -1,12 +1,11 @@
 --
---  CURL wrapper in jQuery-style
+--  cUrl wrapper in jQuery-style
 -- @Author webster-jx3
 -- @Modifier hightman
 --
-local tRequest = {}
-local nReqestIndex = 1
-local Curl = {}
-
+local CLIENT_LANG = select(3, GetVersion())
+local nSerial = 1		-- 请求流水号
+local tRequest = {}	-- 请求回调映射表
 local tDefaultOption = {
 	charset = "utf8",
 	type = "get",
@@ -14,13 +13,13 @@ local tDefaultOption = {
 	dataType = "text",
 	timeout = 3,
 	done = function(res, opt)
-		HM.Sysmsg("success - " .. opt.url, "HM_Curl")
-	end,
+		HM.Debug("success - " .. opt.url, "HM_Ajax_" .. opt.type:upper())
+		end,
 	fail = function(res, opt)
-		HM.Sysmsg("error - " .. opt.url, "HM_Curl")
+		HM.Debug(" error - " .. opt.url, "HM_Ajax_" .. opt.type:upper())
 	end,
 	always = function(res, opt)
-		HM.Sysmsg("completed - " .. opt.url, "HM_Curl")
+		HM.Debug("completed - " .. opt.url, "HM_Ajax_" .. opt.type:upper())
 	end,
 }
 
@@ -29,10 +28,9 @@ local function ConvertToUTF8(data)
 		local t = {}
 		for k, v in pairs(data) do
 			if type(k) == "string" then
-				t[ConvertToUTF8(k)] = ConvertToUTF8(v)
-			else
-				t[k] = ConvertToUTF8(v)
+				k = AnsiToUTF8(k)
 			end
+			t[k] = ConvertToUTF8(v)
 		end
 		return t
 	elseif type(data) == "string" then
@@ -60,39 +58,41 @@ local function EncodePostData(data, prefix)
 	return table.concat(t, "&")
 end
 
-function Curl:ctor(option)
+local cUrl = {}
+function cUrl:ctor(option)
 	assert(option and option.url)
 	setmetatable(option, { __index = tDefaultOption })
 	
-	local szKey = "HM_Curl_" .. nReqestIndex
+	local szKey = "HM_Ajax_" .. nSerial
 	tRequest[szKey] = option
-	nReqestIndex = nReqestIndex + 1
+	nSerial = nSerial + 1
 	
-	local url, data = option.url, option.data
+	local url, data = option.url, option.data or {}
 	local bSSL = url:sub(1, 6) == "https:"
-	
-	if option.charset:lower() == "utf8" then
+	if option.charset:lower() == "utf8" and CLIENT_LANG == "zhcn" then
 		url  = ConvertToUTF8(url)
 		data = ConvertToUTF8(data)
 	end
+	
 	if option.type:lower() == "post" then
 		CURL_HttpPost(szKey, url, data, bSSL, option.timeout)
 	else
 		data = EncodePostData(data)
-		if not url:find("?") then
+		if data == "" then
+		elseif not url:find("?") then
 			url = url .. "?"
 		elseif url:sub(-1) ~= "&" then
 			url = url .. "&"
 		end
 		CURL_HttpRqst(szKey, url .. data,  bSSL, option.timeout)
 	end
-	
-	local t = setmetatable({}, { __index = Curl })
-	t.szKey = szKey
-	return t
+
+	local inst = setmetatable({}, { __index = cUrl })
+	inst.szKey = szKey
+	return inst
 end
 
-function Curl:done(func)
+function cUrl:done(func)
 	local option = tRequest[self.szKey]
 	if option then
 		option.done = func
@@ -100,7 +100,7 @@ function Curl:done(func)
 	return self
 end
 
-function Curl:fail(func)
+function cUrl:fail(func)
 	local option = tRequest[self.szKey]
 	if option then
 		option.fail = func
@@ -108,7 +108,7 @@ function Curl:fail(func)
 	return self
 end
 
-function Curl:always(func)
+function cUrl:always(func)
 	local option = tRequest[self.szKey]
 	if option then
 		option.always = func
@@ -117,19 +117,23 @@ function Curl:always(func)
 end
 
 -- arg0=szKey, arg1=bSuccess, arg2=szContent, arg3=dwBufferSize
-HM.RegisterEvent("CURL_REQUEST_RESULT.curl", function()
+HM.RegisterEvent("CURL_REQUEST_RESULT", function()
 	local szKey, bSuccess, szContent = arg0, arg1, arg2
 	local option = tRequest[szKey]
 	if not option then
 		return
 	end
 	tRequest[szKey] = nil
+	-- utf8 decode
+	if option.charset:lower() == "utf8" and CLIENT_LANG == "zhcn" then
+		szContent = UTF8ToAnsi(szContent)
+	end
 	-- json
 	if option.dataType == "json" then
 		local data, err = HM.JsonDecode(szContent)
 		if data == nil then
 			bSuccess = false
-			HM.Debug("CURL#JsonDecode ERROR: " .. err)
+			HM.Debug("cUrl#JsonDecode ERROR: " .. err)
 		else
 			szContent = data
 		end
@@ -137,39 +141,39 @@ HM.RegisterEvent("CURL_REQUEST_RESULT.curl", function()
 	-- always
 	local res, err = pcall(option.always, szContent, option)
 	if not res then
-		HM.Debug("CURL#always(" .. option.url .. ") ERROR: " .. err)
+		HM.Debug("cUrl#always(" .. option.url .. ") ERROR: " .. err)
 	end
 	-- done & fail
 	if bSuccess then
 		local res, err = pcall(option.done, szContent, option)
 		if not res then
-			HM.Debug("CURL#done(" .. option.url .. ") ERROR: " .. err)
+			HM.Debug("cUrl#done(" .. option.url .. ") ERROR: " .. err)
 		end
 	else
 		local res, err = pcall(option.fail, szContent, option)
 		if not res then
-			HM.Debug("CURL#fail(" .. option.url .. ") ERROR: " .. err)
+			HM.Debug("cUrl#fail(" .. option.url .. ") ERROR: " .. err)
 		end
 	end
 end)
 
 --
--- HM API
+-- Public API
 --
-HM.Curl = setmetatable({}, {
-	__call = function(me, ...) return Curl:ctor(...) end,
+HM.Ajax = setmetatable({}, {
+	__call = function(me, ...) return cUrl:ctor(...) end,
 	__newindex = function() end,
 	__metatable = true,
 })
 
--- (cURL) HM.Get(szUrl)
-HM.Get = function(szUrl) return HM.Curl({url = szUrl}) end
+-- (cUrl) HM.Get(szUrl[, data])
+HM.Get = function(szUrl, data) return HM.Ajax({url = szUrl, data = data}) end
 
--- (cURL) HM.Post(szUrl, data)
-HM.Post = function() return HM_Curl({url = szUrl, data = data or {}, type = "post"}) end
+-- (cUrl) HM.Post(szUrl[, data])
+HM.Post = function(szUrl, data) return HM.Ajax({url = szUrl, data = data, type = "post"}) end
 
--- (cURL) HM.GetJson(szUrl)
-HM.GetJson = function(szUrl) return HM.Curl({url = szUrl, dataType = "json"}) end
+-- (cUrl) HM.GetJson(szUrl[, data])
+HM.GetJson = function(szUrl, data) return HM.Ajax({url = szUrl, data = data, dataType = "json"}) end
 
--- (cURL) HM.PostJson(szUrl, data)
-HM.PostJson = function() return HM_Curl({url = szUrl, data = data or {}, type = "post", dataType = "json"}) end
+-- (cUrl) HM.PostJson(szUrl[, data])
+HM.PostJson = function(szUrl, data) return HM.Ajax({url = szUrl, data = data, type = "post", dataType = "json"}) end
