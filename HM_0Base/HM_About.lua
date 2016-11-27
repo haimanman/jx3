@@ -180,6 +180,17 @@ _HM_About.SyncData = function(t)
 	HM.RemoteRequest(szUrl)
 end
 
+-- insert keju tips
+_HM_About.AppendExampTip = function(frame)
+	local ui = HM.UI(frame)
+	ui:Append("Text", "Text_Tip", { txt = _L["Tip: answer by guess? It is better to get help from [HM-WeChat]."], w = 640, h = 27, x = 100, y = 482, font = 7 }):Hover(function()
+		local x, y = Cursor.GetPos()
+		OutputTip(GetFormatImage("interface\\HM\\HM_0Base\\image.UiTex", 2, 148, 148), 200, {x, y, 0, 0})
+	end, function()
+		HideTip()
+	end)
+end
+
 -------------------------------------
 -- …Ë÷√ΩÁ√Ê
 -------------------------------------
@@ -277,6 +288,11 @@ end)
 HM.RegisterEvent("CALL_LUA_ERROR", function()
 	if HM_About.bDebug then
 		OutputMessage("MSG_SYS", arg0)
+	end
+end)
+HM.RegisterEvent("ON_FRAME_CREATE.exam", function()
+	if arg0:GetName() == "ExaminationPanel" then
+		_HM_About.AppendExampTip(arg0)
 	end
 end)
 

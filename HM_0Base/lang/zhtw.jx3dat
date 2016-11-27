@@ -45,6 +45,7 @@ data = {
 	["Already up to date!"] = "已經是最新版本！",
 	["The new HM version: %s, Goto download page?"] = "發現 HM 新版本：%s，去下載頁面？",
 	["Check update"] = "更新檢查",
+	["Tip: answer by guess? It is better to get help from [HM-WeChat]."] = "小提示：答案靠猜？ 不如去微信公眾號【海鰻插件】獲取幫助。",
 	-- HM_Area.lua --
 	["Own"] = "自己",
 	["Team"] = "團隊",
