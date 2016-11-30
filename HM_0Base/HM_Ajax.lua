@@ -129,7 +129,7 @@ HM.RegisterEvent("CURL_REQUEST_RESULT", function()
 		szContent = UTF8ToAnsi(szContent)
 	end
 	-- json
-	if option.dataType == "json" then
+	if option.dataType == "json" and szContent ~= nil then
 		local data, err = HM.JsonDecode(szContent)
 		if data == nil then
 			bSuccess = false

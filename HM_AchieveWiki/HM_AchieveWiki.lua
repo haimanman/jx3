@@ -2,13 +2,14 @@
 -- 海鳗插件：成就百科，源于菊花插件
 --
 local ACHI_ANCHOR  = { s = "CENTER", r = "CENTER", x = 0, y = 0 }
-local ACHI_ROOT_URL = "http://dev.haimanchajian.com"
+local ACHI_ROOT_URL = "http://haimanchajian.com"
 local ACHI_CLIENT_LANG = select(3, GetVersion())
 local Achievement = {}
 local tinsert = table.insert
 
 HM_AchieveWiki = {
-	bAutoSync = false
+	bAutoSync = false,
+	nSyncPoint = 0,
 }
 HM.RegisterCustomData("HM_AchieveWiki")
 
@@ -332,16 +333,22 @@ end
 
 function Achievement.SyncUserData(fnCallBack)
 	local me = GetClientPlayer()
+	local nPoint = me.GetAchievementRecord()
 	HM.PostJson(ACHI_ROOT_URL .. "/api/wiki/data", {
 			gid = me.GetGlobalID(),
+			point = nPoint,
 			code = GetAchievementCode(),
 			name = GetUserRoleName(),
 			server = select(6, GetUserServer()),
-			point = me.GetAchievementRecord(),
 			school = me.dwForceID,
 			camp = me.nCamp,
 			__lang = ACHI_CLIENT_LANG,
-	}):done(fnCallBack)
+	}):done(function(res)
+		HM_AchieveWiki.nSyncPoint = nPoint
+		if fnCallBack then
+			fnCallBack(res)
+		end
+	end)
 end
 
 -------------------------------------
@@ -421,7 +428,10 @@ end)
 -- sync events
 HM.RegisterEvent("FIRST_LOADING_END", function()
 	if HM_AchieveWiki.bAutoSync then
-		Achievement.SyncUserData()
+		local nPoint = GetClientPlayer().GetAchievementRecord()
+		if HM_AchieveWiki.nSyncPoint ~= nPoint then
+			Achievement.SyncUserData()
+		end
 	end
 end)
 HM.RegisterEvent("UPDATE_ACHIEVEMENT_POINT", function()
