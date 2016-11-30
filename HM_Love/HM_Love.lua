@@ -259,7 +259,7 @@ _HM_Love.GetFellowDataByKey = function(szKey, bEnc)
 end
 
 -- 转换好友信息为情缘信息
-_HM_Love.ToLocalLover = function(aInfo)
+_HM_Love.ToLocalLover = function(aInfo, aCard)
 	if not aInfo then
 		_HM_Love.dwID = 0
 		_HM_Love.szName = ""
@@ -270,10 +270,10 @@ _HM_Love.ToLocalLover = function(aInfo)
 	else
 		_HM_Love.dwID = aInfo.id
 		_HM_Love.szName = aInfo.name
-		_HM_Love.dwAvatar = aInfo.miniavatar
-		_HM_Love.nRoleType = aInfo.roletype
-		if aInfo.forceid and (not aInfo.miniavatar or aInfo.miniavatar == 0) then
-			_HM_Love.dwAvatar = 0 - aInfo.forceid
+		_HM_Love.dwAvatar = aCard.dwMiniAvatarID
+		_HM_Love.nRoleType = aCard.nRoleType
+		if not aCard.dwMiniAvatarID or aCard.dwMiniAvatarID == 0 then
+			_HM_Love.dwAvatar = 0 - aCard.dwForceID
 		end
 	end
 end
@@ -309,8 +309,8 @@ end
 -- 保存情缘
 _HM_Love.SaveLover = function(aInfo, nType, nTime)
 	nTime = nTime or GetCurrentTime()
-	_HM_Love.SetFellowDataByKey("LOVER", nType .. "#" .. nTime, aInfo.id, true)
-	_HM_Love.ToLocalLover(aInfo)
+	local _, _, aCard = _HM_Love.SetFellowDataByKey("LOVER", nType .. "#" .. nTime, aInfo.id, true)
+	_HM_Love.ToLocalLover(aInfo, aCard or {})
 	_HM_Love.nLoveType = nType
 	_HM_Love.nStartTime = nTime
 	_HM_Love.PS.Refresh()
@@ -549,7 +549,7 @@ _HM_Love.OnFellowUpdate = function()
 	end
 	if aInfo and aCard and aCard.dwMapID ~= 0 and _HM_Love.dwID ~= aInfo.id then
 		local data = SplitString(szData, "#")
-		_HM_Love.ToLocalLover(aInfo)
+		_HM_Love.ToLocalLover(aInfo, aCard or {})
 		_HM_Love.nLoveType = tonumber(data[1]) or 0
 		_HM_Love.nStartTime = tonumber(data[2]) or GetCurrentTime()
 		_HM_Love.PS.Refresh()
@@ -843,6 +843,19 @@ _HM_Love.PS.Refresh = function()
 	end
 end
 
+-- get map
+_HM_Love.GetLoverMap = function()
+	local fellowClient = GetFellowshipCardClient()
+	if fellowClient then
+		local aInfo = _HM_Love.GetFellowDataByID(_HM_Love.dwID)
+		local aCard = fellowClient.GetFellowshipCardInfo(_HM_Love.dwID)
+		fellowClient.ApplyFellowshipCard(255, {_HM_Love.dwID})
+		if aInfo and aInfo.isonline and  aCard and aCard.dwMapID ~= 0 then
+			return Table_GetMapName(aCard.dwMapID)
+		end
+	end
+end
+
 -- init
 _HM_Love.PS.OnPanelActive = function(frame)
 	local ui, nX = HM.UI(frame), 0
@@ -860,9 +873,17 @@ _HM_Love.PS.OnPanelActive = function(frame)
 		:Menu(function() return _HM_Love.GetLoverMenu(0) end):Pos_()
 		ui:Append("Text", { txt = _L["(Online required, notify anonymous)"], x = nX + 5, y = 100 })
 	else
+		-- sync social data
+		Wnd.OpenWindow("SocialPanel")
+		Wnd.CloseWindow("SocialPanel")
 		-- show lover
-		ui:Append("Text", { txt = _HM_Love.szName, font = 19, x = 10, y = 36 })
-		:Color(255, 128, 255)
+		nX = ui:Append("Text", { txt = _HM_Love.szName, font = 19, x = 10, y = 36 }):Color(255, 128, 255):Pos_()
+		local szMap = _HM_Love.GetLoverMap()
+		if not szMap then
+			ui:Append("Text", { txt = "(" .. g_tStrings.STR_GUILD_OFFLINE .. ")", font = 62, x= nX + 10, y = 36 })
+		else
+			ui:Append("Text", { txt = "(" .. g_tStrings.STR_GUILD_ONLINE .. ": " .. szMap .. ")", font = 80, x= nX + 10, y = 36 })
+		end
 		nX = ui:Append("Text", { txt = _HM_Love.GetLoverType(), font = 2, x = 10, y = 72 }):Pos_()
 		nX = ui:Append("Text", { txt = _HM_Love.GetLoverTime(), font = 2, x = nX + 10, y = 72 }):Pos_()
 		nX = ui:Append("Text", { txt = _L["[Break love]"], x = nX + 10, y = 72 })
