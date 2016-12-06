@@ -1874,7 +1874,7 @@ function _HM.UI.Frm:BgColor(nR, nG, nB, nAlpha)
 	if nAlpha == 0 then
 		self.bg = nil
 		bg:Hide()
-		for i = 1, 7 do
+		for i = 1, 8 do
 			hnd:Lookup("Image_CBg" .. i):Show()
 		end
 		self:Size(self.self:GetSize())
@@ -1887,7 +1887,7 @@ function _HM.UI.Frm:BgColor(nR, nG, nB, nAlpha)
 			bg:SetRelPos(0, 0)
 			bg:SetSize(self.self:GetSize())
 			bg:Show()
-			for i = 1, 7 do
+			for i = 1, 8 do
 				hnd:Lookup("Image_CBg" .. i):Hide()
 			end
 			hnd:FormatAllItemPos()

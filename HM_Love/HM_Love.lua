@@ -41,6 +41,8 @@ HM_Love.szTitle = _L["Lover of JX3"]
 ---------------------------------------------------------------------
 -- 本地函数和变量
 ---------------------------------------------------------------------
+local ROOT_URL = "http://haimanchajian.com"
+local CLIENT_LANG = select(3, GetVersion())
 local _i = Table_GetItemName
 local _HM_Love = {
 	dwID = 0,				-- 情缘 ID
@@ -50,7 +52,7 @@ local _HM_Love = {
 	nLoveType = 0,	-- 情缘类型（单向：0，双向：1）
 	nStartTime = 0,	-- 情缘开始时间（单位：秒）
 	szSign = "",			-- 情缘宣言（个性签名）
-	tOther = {},			-- 查看的情缘数据（[0] = szName, [1] = dwAvatar,  [2] = szSign, [3] = nRoletype, [4] = nLoveType）
+	tOther = {},			-- 查看的情缘数据（[0] = szName, [1] = dwAvatar,  [2] = szSign, [3] = nRoleType, [4] = nLoveType）
 	tViewer = {},			-- 等候查看您的玩家列表
 	dwRoot = 8949795,		-- root user id: 8949795
 }
@@ -536,6 +538,66 @@ _HM_Love.AskOtherData = function(dwID)
 	HM.BgTalk(tar.szName, "HM_LOVE", "VIEW")
 end
 
+-- 下载恢复情缘
+_HM_Love.DownloadLover = function()
+	HM.GetJson(ROOT_URL .. "/api/data/lover/" .. GetClientPlayer().GetGlobalID()):done(function(res)
+		if not res or res.errcode ~= 0 then
+			HM.Alert(g_tStrings.tFellowshipErrorString[PLAYER_FELLOWSHIP_RESPOND.ERROR_INVALID_NAME])
+		else
+			local aInfo = _HM_Love.GetFellowDataByID(res.dwID)
+			if not aInfo then
+				HM.Alert(g_tStrings.tFellowshipErrorString[PLAYER_FELLOWSHIP_RESPOND.ERROR_NOT_FOUND])
+			else
+				HM.Confirm(_L("Are you sure restore love relation with [%s]?", aInfo.name), function()
+					_HM_Love.SaveLover(aInfo, res.nLoveType, res.nStartTime)
+				end)
+			end
+		end
+	end)
+end
+
+-- 上传情缘
+_HM_Love.UploadLover = function()
+	local me = GetClientPlayer()
+	local _, aInfo, aCard = _HM_Love.GetFellowDataByKey("LOVER", true)
+	if not aInfo or not aCard then
+		return
+	end
+	HM.PostJson(ROOT_URL .. "/api/data/lovers", {
+			gid = me.GetGlobalID(),
+			lover = HM.JsonEncode({
+				dwID = aInfo.id,
+				szName = aInfo.name,
+				dwAvatar = aCard.dwMiniAvatarID,
+				nRoletype = aCard.nRoleType,
+				dwForceID = aCard.dwForceID,
+				nLoveType = _HM_Love.nLoveType,
+				nStartTime = _HM_Love.nStartTime,
+			}),
+			name = GetUserRoleName(),
+			server = select(6, GetUserServer()),
+			school = me.dwForceID,
+			camp = me.nCamp,
+			__qrcode = "1",
+			__lang = CLIENT_LANG,
+	}):done(function(res)
+		if not res or res.errcode ~= 0 then
+			HM.Alert(res.errmsg)
+		elseif res.qrcode then
+			local w, h = 240, 240
+			local frm = HM.UI.CreateFrame("HM_ImageView", { w = w + 90, h = h + 90 + 20, bgcolor = {222, 210, 190, 240}, title = _L["Scan by wechat"], close = true })
+			frm:Append("Image", { x = 0, y = 0, w = w, h = h }):Raw():FromRemoteFile(res.qrcode:gsub("https:", "http:"), true)
+			frm:Append("Text", { x = 0, y = h + 10, w = w, h = 36, align = 1, font = 6, txt = _L["View cert"] })
+			frm:Raw():GetRoot():SetPoint("CENTER", 0, 0, "CENTER", 0, 0)
+		else
+			HM.Alert(g_tStrings.STR_MAIL_SUCCEED)
+		end
+	end)
+end
+
+-- 查看证书，等同于上传
+_HM_Love.ViewCert = _HM_Love.UploadLover
+
 -------------------------------------
 -- 事件处理
 -------------------------------------
@@ -917,6 +979,15 @@ _HM_Love.PS.OnPanelActive = function(frame)
 	ui:Append("Text", { txt = _L["1. Amuse only, both sides need to install this plug-in"], x = 10, y = 253 })
 	ui:Append("Text", { txt = _L["2. You can break love one-sided"], x = 10, y = 278 })
 	ui:Append("Text", { txt = _L["3. Non-party views need to confirm (enable quiet to avoid)"], x = 10, y = 303 })
+	if _HM_Love.dwID == 0 then
+		nX = ui:Append("Text", { txt = _L["4. If you have uploaded to remote server, you can"], x = 10, y = 331 }):Pos_()
+		ui:Append("WndButton", { txt = _L["Download lover"], x = nX + 5, y = 334 }):Color(255, 128, 255):AutoSize(8):Click(_HM_Love.DownloadLover)
+	else
+		nX = ui:Append("Text", { txt = _L["4. If you"], x = 10, y = 331 }):Pos_()
+		nX = ui:Append("WndButton", { txt = _L["Upload lover"], x = nX + 5, y = 334 }):Click(_HM_Love.UploadLover):AutoSize(8):Pos_()
+		nX = ui:Append("Text", { txt = _L["to remote server, you can"], x = nX + 5, y = 331 }):Pos_()
+		ui:Append("WndButton", { txt = _L["View cert"], x = nX + 5, y = 334 }):Color(255, 128, 255):AutoSize(8):Click(_HM_Love.ViewCert)
+	end
 	_HM_Love.ui = ui
 end
 

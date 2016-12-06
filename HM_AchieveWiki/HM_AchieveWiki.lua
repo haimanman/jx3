@@ -331,7 +331,7 @@ local function GetAchievementCode()
 	return table.concat(bitmap)
 end
 
-function Achievement.SyncUserData(fnCallBack)
+function Achievement.SyncUserData(fnCallBack, __qrcode)
 	local me = GetClientPlayer()
 	local nPoint = me.GetAchievementRecord()
 	HM.PostJson(ACHI_ROOT_URL .. "/api/wiki/data", {
@@ -342,6 +342,7 @@ function Achievement.SyncUserData(fnCallBack)
 			server = select(6, GetUserServer()),
 			school = me.dwForceID,
 			camp = me.nCamp,
+			__qrcode = __qrcode,
 			__lang = ACHI_CLIENT_LANG,
 	}):done(function(res)
 		HM_AchieveWiki.nSyncPoint = nPoint
@@ -386,11 +387,37 @@ function PS.OnPanelActive(frame)
 				local box = ui:Fetch("Check_Sync")
 				box:Enable(false)
 				Achievement.SyncUserData(function()
-					GetUserInput(_L["Synchronization completed, please copy the global id."], nil, nil, nil, nil, gid);
+					--GetUserInput(_L["Synchronization completed, please copy the global id."], nil, nil, nil, nil, gid);
 					box:Enable(true)
 					ui:Fetch("Text_Time"):Text(FormatTime("%Y/%m/%d %H:%M:%S", GetCurrentTime()))
 				end)
 			end
+		end):Pos_()
+		-- manual
+		nX = ui:Append("WndButton", "Btn_Manual", { x = 5, y =  nY + 8, txt = _L["Manual sync"] }):AutoSize(8):Click(function()
+			local btn = ui:Fetch("Btn_Manual")
+			btn:Enable(false)
+			Achievement.SyncUserData(function()
+				btn:Enable(true)
+				ui:Fetch("Text_Time"):Text(FormatTime("%Y/%m/%d %H:%M:%S", GetCurrentTime()))
+			end)
+		end):Pos_()
+		-- wechat
+		nX, nY = ui:Append("WndButton", "Btn_Wechat", { x = nX + 10, y = nY + 8, txt = _L["View in wechat"] }):AutoSize(8):Click(function()
+			local btn = ui:Fetch("Btn_Wechat")
+			btn:Enable(false)
+			Achievement.SyncUserData(function(res)
+				btn:Enable(true)
+				ui:Fetch("Text_Time"):Text(FormatTime("%Y/%m/%d %H:%M:%S", GetCurrentTime()))
+				if res and res.qrcode then
+					local w, h = 240, 240
+					local frm = HM.UI.CreateFrame("HM_ImageView", { w = w + 90, h = h + 90 + 20, bgcolor = {222, 210, 190, 240}, title = _L["Scan by wechat"], close = true })
+					frm:Append("Image", { x = 0, y = 0, w = w, h = h }):Raw():FromRemoteFile(res.qrcode:gsub("https:", "http:"), true)
+					frm:Append("Text", { x = 0, y = h + 10, w = w, h = 36, align = 1, font = 6, txt = _L["View your achievements"] })
+					frm:Raw():GetRoot():SetPoint("CENTER", 0, 0, "CENTER", 0, 0)
+					ui:Fetch("Image_Wechat"):Toggle(false)
+				end
+			end, 1)
 		end):Pos_()
 		nY = nY + 8
 	end
@@ -399,7 +426,7 @@ function PS.OnPanelActive(frame)
 	nX, nY = ui:Append("WndEdit", { x = 120, y = nY + 10 , txt = ACHI_ROOT_URL .. "/wiki" }):Pos_()
 	nX = ui:Append("Text", { x = 10, y = nY + 5 , txt = _L["Global ID"], color = { 255, 255, 200 } }):Pos_()
 	nX, nY = ui:Append("WndEdit", { x = 120, y = nY + 5 , txt = gid }):Pos_()
-	ui:Append("Image", { x = 340, y = nY - 150, h = 150, w = 150 }):File(HM.GetCustomFile("image.UiTeX", "interface\\HM\\HM_0Base\\image.UiTex"), 2)
+	ui:Append("Image", "Image_Wechat", { x = 360, y = nY - 150, h = 150, w = 150 }):File(HM.GetCustomFile("image.UiTeX", "interface\\HM\\HM_0Base\\image.UiTex"), 2)
 end
 
 -- add to HM panel
