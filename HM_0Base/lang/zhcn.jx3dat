@@ -859,6 +859,13 @@ data = {
 	["2. You can break love one-sided"] = "2. 情缘可以单方面删除，双向情缘会通过密聊告知对方",
 	["3. Non-party views need to confirm (enable quiet to avoid)"] = "3. 非队友查看情缘时目会弹出确认框（可开启免打扰屏蔽）",
 	["View love info"] = "查看情缘信息",
+	["Are you sure restore love relation with [%s]?"] = "确定要恢复与 [%s] 的情缘关系吗？",
+	["4. If you have uploaded to remote server, you can"] = "4. 如果您曾把情缘上传到云端，您可以",
+	["Download lover"] = "下载情缘",
+	["4. If you"] = "4. 如果您",
+	["Upload lover"] = "上传情缘",
+	["to remote server, you can"] = "到云端，您还可以",
+	["View cert"] = "查看证书",
 	-- HM_AchieveWiki.lua --
 	["Achievepedia"] = "成就百科",
 	["About the achievepedia."] = "成就百科源自菊花插件，是一个内容自由、人人都可以参与的协作计划。目标是建立一个完整有效的成就百科全书，让您快速找到所需的成就攻略、玩家经验。\n\n请您直接打开隐元秘鉴界面点击对应的成就图标来查看攻略！",
@@ -878,4 +885,8 @@ data = {
 	["Last modification"] = "最后修订时间",
 	["Link(Open URL):%s"] = "链接(点击打开)：%s",
 	["For user experience, game inline editing has been canceld.\nPlease click the link at the bottom for editing, thank you!"] = "为保证可读性，游戏内编辑功能已经取消。\n请点击左下角链接打开网页进行编辑，谢谢！",
+	["Manual sync"] = "手动同步",
+	["View in wechat"] = "在微信查看",
+	["Scan by wechat"] = "微信扫一扫",
+	["View your achievements"] = "查看您的成就完成情况",
 }
