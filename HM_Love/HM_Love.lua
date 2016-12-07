@@ -335,6 +335,7 @@ _HM_Love.SetLover = function(dwID, nType)
 		HM.Talk(PLAYER_TALK_CHANNEL.TONG, _L("A blade and cut, no longer meet with [%s]", _HM_Love.szName))
 		_HM_Love.SaveFellowRemark(_HM_Love.dwID, "")
 		_HM_Love.ToLocalLover(nil)
+		_HM_Love.DeleteRemote()
 		_HM_Love.PS.Refresh()
 		HM.Sysmsg(_L["Congratulations, do not repeat the same mistakes ah"])
 	else
@@ -556,8 +557,17 @@ _HM_Love.DownloadLover = function()
 	end)
 end
 
+-- 删除远程情缘 (post used)
+_HM_Love.DeleteRemote = function()
+	HM.PostJson(ROOT_URL .. "/api/data/lovers", {
+			gid = GetClientPlayer().GetGlobalID(),
+			__delete = 1,
+			__lang = CLIENT_LANG,
+	})
+end
+
 -- 上传情缘
-_HM_Love.UploadLover = function()
+_HM_Love.UploadRemote = function(__qrcode)
 	local me = GetClientPlayer()
 	local _, aInfo, aCard = _HM_Love.GetFellowDataByKey("LOVER", true)
 	if not aInfo or not aCard then
@@ -578,7 +588,7 @@ _HM_Love.UploadLover = function()
 			server = select(6, GetUserServer()),
 			school = me.dwForceID,
 			camp = me.nCamp,
-			__qrcode = "1",
+			__qrcode = __qrcode or "0",
 			__lang = CLIENT_LANG,
 	}):done(function(res)
 		if not res or res.errcode ~= 0 then
@@ -596,7 +606,9 @@ _HM_Love.UploadLover = function()
 end
 
 -- 查看证书，等同于上传
-_HM_Love.ViewCert = _HM_Love.UploadLover
+_HM_Love.ViewCert = function()
+	return _HM_Love.UploadRemote("1")
+end
 
 -------------------------------------
 -- 事件处理
@@ -984,7 +996,7 @@ _HM_Love.PS.OnPanelActive = function(frame)
 		ui:Append("WndButton", { txt = _L["Download lover"], x = nX + 5, y = 334 }):Color(255, 128, 255):AutoSize(8):Click(_HM_Love.DownloadLover)
 	else
 		nX = ui:Append("Text", { txt = _L["4. If you"], x = 10, y = 331 }):Pos_()
-		nX = ui:Append("WndButton", { txt = _L["Upload lover"], x = nX + 5, y = 334 }):Click(_HM_Love.UploadLover):AutoSize(8):Pos_()
+		nX = ui:Append("WndButton", { txt = _L["Upload lover"], x = nX + 5, y = 334 }):Click(_HM_Love.UploadRemote):AutoSize(8):Pos_()
 		nX = ui:Append("Text", { txt = _L["to remote server, you can"], x = nX + 5, y = 331 }):Pos_()
 		ui:Append("WndButton", { txt = _L["View cert"], x = nX + 5, y = 334 }):Color(255, 128, 255):AutoSize(8):Click(_HM_Love.ViewCert)
 	end
