@@ -607,10 +607,12 @@ _HM_Jabber.OnSkillPrepareBroken = function(dwID, dwLevel)
 	_HM_Jabber.OnSkillPrepare(dwID, dwLevel, 3)
 end
 
-_HM_Jabber.OnPlayerDeath = function(dwID, szKiller, nFrame)
+_HM_Jabber.OnPlayerDeath = function(dwID, dwKiller)
 	if not IsPlayer(dwID) then return end
 	local me, szTong, nChannel, szMsg = GetClientPlayer(), "", 0, nil
 	local tar, tMessage = GetTargetHandle(me.GetTarget()), HM_Jabber.tMessage.kill
+	local killer = (IsPlayer(dwKiller) and GetPlayer(dwKiller)) or (not IsPlayer(dwKiller) and GetNpc(dwKiller))
+	local szKiller = killer and killer.szName or ""
 	if me.dwID == dwID then
 		-- be killed
 		tar = me
@@ -716,7 +718,7 @@ _HM_Jabber.OnCheckJabber = function()
 	then
 		_HM_Jabber.OnSkillMiss(arg1, arg2, arg4, arg5)
 	elseif arg0 == "UI_OME_DEATH_NOTIFY" then
-		_HM_Jabber.OnPlayerDeath(arg1, arg3, arg2)
+		_HM_Jabber.OnPlayerDeath(arg1, arg2)
 	end
 end
 
