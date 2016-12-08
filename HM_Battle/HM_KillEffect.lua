@@ -99,11 +99,11 @@ _HM_KillEffect.OnKillHighestTitle = function()
 end
 
 -- 死亡通知：要求玩家并且不是最高战阶
-_HM_KillEffect.OnDeathNotify = function(dwID, szKiller)
+_HM_KillEffect.OnDeathNotify = function(dwID, dwKiller)
 	if not IsPlayer(dwID) then return end
 	local me, tar = GetClientPlayer(), GetPlayer(dwID)
 	-- clear data on self-death
-	if me.szName == szKiller and tar then
+	if me.dwID == dwKiller and tar then
 		local szTitle, szSound = _HM_KillEffect.GetKillEffect()
 		if not szTitle then
 			return
@@ -130,6 +130,6 @@ end
 HM.RegisterEvent("KILL_PLAYER_HIGHEST_TITLE", _HM_KillEffect.OnKillHighestTitle)
 HM.RegisterEvent("SYS_MSG", function()
 	if arg0 == "UI_OME_DEATH_NOTIFY" then
-		_HM_KillEffect.OnDeathNotify(arg1, arg3)
+		_HM_KillEffect.OnDeathNotify(arg1, arg2)
 	end
 end)
