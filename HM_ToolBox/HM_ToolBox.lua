@@ -1279,8 +1279,8 @@ end
 
 -- conflict
 _HM_ToolBox.PS.OnConflictCheck = function()
-	if MY_Chat and HM_ToolBox.bChatTime then
-		MY_Chat.bChatTime = false
+	if MY_ChatCopy and HM_ToolBox.bChatTime then
+		MY_ChatCopy.bChatTime = false
 	end
 	_HM_ToolBox.InitFaceIcon()
 	HM_Splitter.Switch(HM_ToolBox.bSplitter2)
