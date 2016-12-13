@@ -342,6 +342,8 @@ function Achievement.SyncUserData(fnCallBack, __qrcode)
 			server = select(6, GetUserServer()),
 			school = me.dwForceID,
 			camp = me.nCamp,
+			body = me.nRoleType,
+			avatar = me.dwMiniAvatarID,
 			__qrcode = __qrcode,
 			__lang = ACHI_CLIENT_LANG,
 	}):done(function(res)

@@ -588,6 +588,8 @@ _HM_Love.UploadRemote = function(__qrcode)
 			server = select(6, GetUserServer()),
 			school = me.dwForceID,
 			camp = me.nCamp,
+			body = me.nRoleType,
+			avatar = me.dwMiniAvatarID,
 			__qrcode = __qrcode or "0",
 			__lang = CLIENT_LANG,
 	}):done(function(res)
