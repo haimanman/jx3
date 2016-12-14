@@ -164,7 +164,7 @@ _HM_Marker.UpdateAvatar = function(marker, tar)
 	if IsPlayer(tar.dwID) then
 		local mnt = tar.GetKungfuMount()
 		if mnt and mnt.dwSkillID ~= 0 then
-			img:FromIconID(Table_GetSkillIconID(mnt.dwSkillID, 0))
+			img:FromIconID(Table_GetSkillIconID(mnt.dwSkillID, 1))
 			return
 		end
 		img.dwID = nil
