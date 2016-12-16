@@ -415,6 +415,21 @@ _HM_Love.GetLoverMenu = function(nType)
 	return m0
 end
 
+-- 获取查看目标
+_HM_Love.GetPlayer = function(dwID)
+	local tar = HM.GetPlayer(dwID)
+	if not tar then
+		local aCard = GetFellowshipCardClient().GetFellowshipCardInfo(dwID)
+		if aCard and aCard.bExist then
+			tar = { dwID = dwID, szName = aCard.szName, nGender = 1 }
+			if aCard.nRoleType == 2 or aCard.nRoleType == 4 or aCard.nRoleType == 6 then
+				tar.nGender = 2
+			end
+		end
+	end
+	return tar
+end
+
 -- 保存签名
 _HM_Love.SetSign = function(szSign)
 	szSign = HM.Trim(szSign)
@@ -449,7 +464,7 @@ end
 _HM_Love.UpdatePage = function()
 	local p = Station.Lookup("Normal/PlayerView/Page_Main/Page_Love")
 	if not p then return end
-	local tar = HM.GetPlayer(p:GetParent().dwPlayer)
+	local tar = _HM_Love.GetPlayer(p:GetParent().dwPlayer)
 	if not tar then
 		return p:GetRoot():Hide()
 	end
@@ -526,7 +541,7 @@ end
 
 -- 后台请求别人的情缘数据
 _HM_Love.AskOtherData = function(dwID)
-	local tar = HM.GetPlayer(dwID)
+	local tar = _HM_Love.GetPlayer(dwID)
 	if not tar then
 		return
 	end
@@ -682,14 +697,14 @@ _HM_Love.OnPeekOtherPlayer = function()
 		end
 		page:Lookup("Btn_LoveYou").OnLButtonClick = function()
 			local mp = this:GetParent():GetParent()
-			local tar = HM.GetPlayer(mp.dwPlayer)
+			local tar = _HM_Love.GetPlayer(mp.dwPlayer)
 			if tar then
 				HM.Talk(tar.szName, HM_Love.szJabber)
 			end
 		end
 		page:Lookup("Btn_LoveYou").OnRButtonClick = function()
 			local mp = this:GetParent():GetParent()
-			local tar = HM.GetPlayer(mp.dwPlayer)
+			local tar = _HM_Love.GetPlayer(mp.dwPlayer)
 			if tar then
 				local m0, me = {}, GetClientPlayer()
 				InsertInviteTeamMenu(m0, tar.szName)
