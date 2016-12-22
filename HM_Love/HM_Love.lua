@@ -122,7 +122,7 @@ _HM_Love.GetAvatarFile = function(dwAvatar, nRoleType)
 		end
 	end
 	-- force avatar
-	local tForce = { "shaolin", "wanhua", "tiance", "chunyang", "qixiu", "wudu", "tangmen", "cangjian", "gaibang", "mingjiao", "cangyun", "changge" }
+	local tForce = { "shaolin", "wanhua", "tiance", "chunyang", "qixiu", "wudu", "tangmen", "cangjian", "gaibang", "mingjiao", "cangyun", "changge", "badao" }
 	local szForce = tForce[0 - dwAvatar] or "jianghu"
 	return "ui\\Image\\PlayerAvatar\\" .. szForce .. ".tga", -2, false
 end
