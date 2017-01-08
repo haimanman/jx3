@@ -913,6 +913,21 @@ _HM_Love.OnBreathe = function()
 	local hL = Station.Lookup("Normal/FriendRank/Wnd_PRanking", "Handle_RankingMes")
 end
 
+-- Ω˚÷π tips œ‘ æ
+_HM_Love.OnFriendTipCreate = function(frame)
+	local hT = frame:Lookup("", "Text_Remark")
+	if hT and not hT._SetText then
+		hT._SetText = hT.SetText
+		hT.SetText = function(h, szText)
+			if string.sub(szText, 1, 4) == "#HM#" then
+				h:_SetText("")
+			else
+				h:_SetText(szText)
+			end
+		end
+	end
+end
+
 -- player enter
 _HM_Love.OnPlayerEnter = function()
 	if HM_Love.bAutoFocus and arg0 == _HM_Love.dwID then
@@ -1036,6 +1051,11 @@ HM.RegisterEvent("UPDATE_FELLOWSHIP_CARD", _HM_Love.OnFellowUpdate)
 HM.RegisterEvent("PLAYER_ENTER_SCENE", _HM_Love.OnPlayerEnter)
 HM.BreatheCall("HM_Love", _HM_Love.OnBreathe)
 HM.RegisterBgMsg("HM_LOVE", _HM_Love.OnBgTalk)
+HM.RegisterEvent("ON_FRAME_CREATE", function()
+	if arg0:GetName() == "FriendTip" then
+		_HM_Love.OnFriendTipCreate(arg0)
+	end
+end)
 -- add to HM collector
 HM.RegisterPanel(HM_Love.szTitle, 329, _L["Recreation"], _HM_Love.PS)
 
