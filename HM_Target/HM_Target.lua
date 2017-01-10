@@ -6,7 +6,7 @@ HM_Target = {
 	bEnable = true,				-- 是否增强显示目标
 	bEnableTTarget = false,	-- 是否增强显示目标的目标
 	bEnableLM = true,			-- 是否增强血蓝精简
-	bConnect = true,				-- 启用目标追踪线
+	bConnect2 = false,				-- 启用目标追踪线
 	bTTConnect = false,		-- 显示目标与目标的目标连接线
 	bConnFoot = false,			-- 显示在脚上（默认头上）
 	nConnWidth = 1,				-- 连接线宽度
@@ -587,7 +587,7 @@ _HM_Target.OnUpdateConnLine = function()
 	local a = HM_Target.nConnAlpha
 	-- me <-> tar
 	local sha = _HM_Target.hConnect
-	if HM_Target.bConnect and tar then
+	if HM_Target.bConnect2 and tar then
 		sha:SetTriangleFan(GEOMETRY_TYPE.LINE, HM_Target.nConnWidth * 3)
 		sha:ClearTriangleFanPoint()
 		sha:AppendCharacterID(me.dwID, bTop, r, g, b, a)
@@ -601,7 +601,7 @@ _HM_Target.OnUpdateConnLine = function()
 	sha:Hide()
 	if HM_Target.bTTConnect and tar then
 		local ttar = GetTargetHandle(tar.GetTarget())
-		if ttar and ttar.dwID ~= tar.dwID and (not HM_Target.bConnect or ttar.dwID ~= me.dwID) then
+		if ttar and ttar.dwID ~= tar.dwID and (not HM_Target.bConnect2 or ttar.dwID ~= me.dwID) then
 			sha:SetTriangleFan(GEOMETRY_TYPE.LINE, HM_Target.nConnWidth * 3)
 			sha:ClearTriangleFanPoint()
 			sha:AppendCharacterID(tar.dwID, bTop, r, g, b, a)
@@ -999,9 +999,9 @@ _HM_Target.PS.OnPanelActive = function(frame)
 	end):Pos_()
 	-- line
 	ui:Append("Text", { txt = _L["Target connect line"], x = 0, y = 92, font = 27 })
-	nX = ui:Append("WndCheckBox", { x = 10, y = 120, checked = HM_Target.bConnect })
+	nX = ui:Append("WndCheckBox", { x = 10, y = 120, checked = HM_Target.bConnect2 })
 	:Text(_L["Draw line from target to you"]):Click(function(bChecked)
-		HM_Target.bConnect = bChecked
+		HM_Target.bConnect2 = bChecked
 		_HM_Target.OnUpdateConnLine()
 		ui:Fetch("Combo_Conn"):Enable(bChecked)
 		ui:Fetch("Check_Foot"):Enable(bChecked)
@@ -1065,7 +1065,7 @@ end
 -- check conflict
 _HM_Target.PS.OnConflictCheck = function()
 	-- copatiable with box
-	if TargetLine and HM_Target.bConnect then
+	if TargetLine and HM_Target.bConnect2 then
 		TargetLine.btargetline = false
 	end
 	if TargetEx then

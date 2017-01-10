@@ -195,6 +195,9 @@ end
 
 -- check hide for template
 _HM_Area.CheckTemplateID = function(dwTemplateID)
+	if HM.IsDunegon() then
+		return false
+	end
 	if dwTemplateID == 16175 or dwTemplateID == 16176 then
 		dwTemplateID = 16177
 	end
@@ -632,14 +635,15 @@ _HM_Area.PS = {}
 -- init
 _HM_Area.PS.OnPanelActive = function(frame)
 	local ui = HM.UI(frame)
+	local bCopy = HM.IsDunegon()
 	-- feature
 	ui:Append("Text", { txt = _L["Options"], font = 27 })
-	ui:Append("WndCheckBox", { txt = _L["Display gas field range of CY"], x = 10, y = 28, checked = HM_Area.bQichang })
+	ui:Append("WndCheckBox", { txt = _L["Display gas field range of CY"], x = 10, y = 28, checked = HM_Area.bQichang, enable = not bCopy })
 	:Click(function(bChecked)
 		HM_Area.bQichang = bChecked
 		ui:Fetch("Check_Big"):Enable(bChecked)
 	end)
-	local nX = ui:Append("WndCheckBox", { txt = _L["Display organ/trap range of TM"], x = 10, y = 56, checked = HM_Area.bJiguan })
+	local nX = ui:Append("WndCheckBox", { txt = _L["Display organ/trap range of TM"], x = 10, y = 56, checked = HM_Area.bJiguan, enable = not bCopy })
 	:Click(function(bChecked)
 		HM_Area.bJiguan = bChecked
 	end):Pos_()
@@ -647,7 +651,7 @@ _HM_Area.PS.OnPanelActive = function(frame)
 	:Click(function(bChecked)
 		HM_Area.bShowName = bChecked
 	end)
-	ui:Append("WndCheckBox", { txt = _L["Display sound range of CG"], x = nX + 10, y = 28, checked = HM_Area.bYinyu })
+	ui:Append("WndCheckBox", { txt = _L["Display sound range of CG"], x = nX + 10, y = 28, checked = HM_Area.bYinyu, enable = not bCopy })
 	:Click(function(bChecked)
 		HM_Area.bYinyu = bChecked
 	end)
@@ -675,9 +679,6 @@ end
 
 -- conflict
 _HM_Area.PS.OnConflictCheck = function()
-	if QiChang and HM.bQichang then
-		QiChang.bEnable = false
-	end
 end
 
 ---------------------------------------------------------------------
