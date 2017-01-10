@@ -1002,6 +1002,27 @@ HM.IsDps = function(tar)
 	return not mnt or (mnt.dwSkillID ~= 10080 and mnt.dwSkillID ~= 10028 and mnt.dwSkillID ~= 10176 and mnt.dwSkillID ~= 10448)
 end
 
+-- (boolean) HM.IsDungeon([dwMapID])			-- 检查当前是否在10/25人团队副本中
+HM.IsDunegon = function(dwMapID, dwClassID)
+	if not _HM.tDunegon then
+		_HM.tDunegon = {}
+	end
+	if not dwMapID then
+		local me = GetClientPlayer()
+		if not me then
+			return false
+		end
+		dwMapID = me.GetMapID()
+	end
+	if _HM.tDunegon[dwMapID] ~= nil then
+		return _HM.tDunegon[dwMapID]
+	end
+	local tLine = g_tTable.DungeonInfo:Search(dwMapID)
+	local bRes = tLine and tLine.dwClassID == 3
+	_HM.tDunegon[dwMapID] = bRes
+	return bRes
+end
+
 -- (boolean) HM.HasVipEmotion()		--  检查玩家是否有 VIP 表情库
 HM.HasVipEmotion = function(nPage)
 	if not _HM.tVipEmotion then

@@ -3,7 +3,7 @@
 --
 
 HM_TargetList = {
-	bShow = true,				-- 开启功能
+	bShow2 = false,				-- 开启功能
 	bJihuo = true,				-- 开启双击集火（要求 HM_Marker）
 	bAutoArena = true,		-- 开启竞技场模式（自动全部焦点对方）
 	bAutoBigBoss = true,	-- 自动焦点攻防/计时 BOSS
@@ -1290,10 +1290,10 @@ _HM_TargetList.Switch = function(bShow)
 		if _HM_TargetList.ui then
 			return _HM_TargetList.ui:Fetch("Check_Show"):Check(not HM_TargetList.bShow)
 		end
-		HM_TargetList.bShow = not HM_TargetList.bShow
+		HM_TargetList.bShow2 = not HM_TargetList.bShow2
 	end
 	local frame = Station.Lookup("Normal/HM_TargetList")
-	if HM_TargetList.bShow then
+	if HM_TargetList.bShow2 then
 		if not frame then
 			frame = Wnd.OpenWindow(_HM_TargetList.szIniFile, "HM_TargetList")
 		end
@@ -1405,7 +1405,7 @@ _HM_TargetList.UpdateAnchor = function()
 end
 
 _HM_TargetList.UpdateSize = function(bFocusOnly)
-	if not HM_TargetList.bShow then return end
+	if not HM_TargetList.bShow2 then return end
 	local frame, nY, nH = _HM_TargetList.frame, 30, 30
 	local nW, _ = frame:Lookup("", "Image_Bg"):GetSize()
 	local wFocus, wList, wAcct = frame:Lookup("Wnd_Focus"), frame:Lookup("Wnd_List"), frame:Lookup("Wnd_Account")
@@ -2210,9 +2210,9 @@ end
 _HM_TargetList.PS.OnPanelActive = function(frame)
 	local ui, nX = HM.UI(frame), 0
 	ui:Append("Text", { x = 0, y = 0, txt = _L["Feature setting"], font = 27 })
-	nX = ui:Append("WndCheckBox", "Check_Show", { x = 10, y = 28, checked = HM_TargetList.bShow })
+	nX = ui:Append("WndCheckBox", "Check_Show", { x = 10, y = 28, checked = HM_TargetList.bShow2 })
 	:Text(_L["Enable focus/target list ("]):Click(function(bChecked)
-		HM_TargetList.bShow = bChecked
+		HM_TargetList.bShow2 = bChecked
 		ui:Fetch("Check_Focus"):Enable(bChecked)
 		ui:Fetch("Check_List"):Enable(bChecked)
 		_HM_TargetList.Switch(bChecked)
@@ -2220,12 +2220,12 @@ _HM_TargetList.PS.OnPanelActive = function(frame)
 	nX = ui:Append("Text", { txt = _L["Hotkey"], x = nX, y = 27 }):Click(HM.SetHotKey):Pos_()
 	ui:Append("Text", { txt = HM.GetHotKey("ShowTL", false) .. _L[") "], x = nX, y = 27 })
 	ui:Append("WndCheckBox", "Check_Focus", { x = 10, y = 56, checked = HM_TargetList.bShowFocus })
-	:Enable(HM_TargetList.bShow):Text(_L("Show focus target (up to %d)", HM_TargetList.nMaxFocus)):Click(function(bChecked)
+	:Enable(HM_TargetList.bShow2):Text(_L("Show focus target (up to %d)", HM_TargetList.nMaxFocus)):Click(function(bChecked)
 		HM_TargetList.bShowFocus = bChecked
 		_HM_TargetList.UpdateSize(true)
 	end)
 	ui:Append("WndCheckBox", "Check_List", { x = 10, y = 84, checked = HM_TargetList.bShowList })
-	:Enable(HM_TargetList.bShow):Text(_L["Show target list"]):Click(function(bChecked)
+	:Enable(HM_TargetList.bShow2):Text(_L["Show target list"]):Click(function(bChecked)
 		HM_TargetList.bShowList = bChecked
 		_HM_TargetList.UpdateSize()
 	end)
@@ -2269,7 +2269,7 @@ end
 _HM_TargetList.PS.OnPlayerMenu = function()
 	return {
 		szOption = _L["Enable focus targetlist"] .. HM.GetHotKey("ShowTL", true),
-		bCheck = true, bChecked = HM_TargetList.bShow, fnAction = _HM_TargetList.Switch
+		bCheck = true, bChecked = HM_TargetList.bShow2, fnAction = _HM_TargetList.Switch
 	}
 end
 
@@ -2289,7 +2289,7 @@ end
 -- 注册事件、初始化
 ---------------------------------------------------------------------
 HM.RegisterEvent("PLAYER_ENTER_GAME", function()
-	_HM_TargetList.Switch(HM_TargetList.bShow)
+	_HM_TargetList.Switch(HM_TargetList.bShow2)
 	_HM_TargetList.HookTargetMenu()
 	HM_SingleFocus.Switch(HM_SingleFocus.bEnable2)
 	HM_SplitFocus.Switch(HM_TargetList.bSplitFocus)
@@ -2328,7 +2328,7 @@ HM.AddHotKey("ShowTL", _L["Enable focus targetlist"],  _HM_TargetList.Switch)
 HM.AppendTraceMenu(function()
 	return {
 		szOption = _L["HM, focus targetlist"], bCheck = true,
-		bChecked = HM_TargetList.bShow,
+		bChecked = HM_TargetList.bShow2,
 		fnAction = _HM_TargetList.Switch
 	}
 end)
