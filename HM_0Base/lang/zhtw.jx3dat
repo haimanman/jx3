@@ -87,6 +87,7 @@ data = {
 	["Auto broadcast in battle channel (1min/30s/10s)"] = "自動在戰場頻道報時 (1分鐘/30秒/10秒各一次)",
 	["Manual show"] = "手動播報",
 	["Show the orientation of some battlefield maps (newbie necessary)"] = "顯示九宮/絲綢地圖方位標記 (新手必備)",
+	["Mark player who carrying special battle item"] = "標記背負戰場特殊物資的玩家",
 	["Battle/Arean"] = "戰場/競技助手",
 	-- HM_Camp.lua --
 	["Shield NPC"] = "屏蔽NPC",

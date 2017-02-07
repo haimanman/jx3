@@ -6,6 +6,7 @@ HM_Battle = {
 	bFormArean = true,		-- 在竞技场自动交出阵眼
 	bAlarmJG2 = false,		-- 九宫自动报时
 	bMarkMap = true,		-- 战场地图方向标记
+	bMarkCarry = true,		-- 在战场中突出显示背负物资、菌箱的玩家
 }
 HM.RegisterCustomData("HM_Battle")
 
@@ -15,6 +16,7 @@ HM.RegisterCustomData("HM_Battle")
 local _HM_Battle = {
 	bBeginJG = false,
 	nTimeJG = 180,
+	tCarrier = {},
 }
 
 -- middle map replace
@@ -165,6 +167,43 @@ end
 -------------------------------------
 -- 事件处理
 -------------------------------------
+-- 浮香丘菌箱 BUFF：7867-浩气盟，7868-恶人谷
+-- 神农洇背负物资 BUFF：11594
+_HM_Battle.OnPlayerUpdate = function()
+	if not HM_Battle.bMarkCarry then
+		return
+	end
+	local tar = GetPlayer(arg0)
+	if not tar then
+		return
+	end
+	local dwEffect = nil
+	if HM.HasBuff(7867, nil, tar) or HM.HasBuff(7868, nil, tar) or HM.HasBuff(11594, nil, tar) then
+		dwEffect = HM.IsParty(tar.dwID) and 53 or 48
+		_HM_Battle.tCarrier[tar.dwID] = true
+		if dwEffect == 48 and HM_TargetList and HM.IsDps() then
+			HM_TargetList.AddFocus(tar.dwID)
+		end
+		if dwEffect == 53 and HM_TargetList and not HM.IsDps() then
+			HM_TargetList.AddFocus(tar.dwID)
+		end
+	elseif _HM_Battle.tCarrier[tar.dwID] then
+		local tMark = GetClientTeam().GetTeamMark() or {}
+		if tMark[k] then
+			dwEffect = tMark[k] + 6
+		else
+			dwEffect = 0
+		end
+		_HM_Battle.tCarrier[tar.dwID] = nil
+		if HM_TargetList then
+			HM_TargetList.DelFocus(tar.dwID)
+		end
+	end
+	if dwEffect ~= nil then
+		SceneObject_SetTitleEffect(TARGET.PLAYER, tar.dwID, dwEffect)
+	end
+end
+ 
 -- check formdation
 _HM_Battle.OnShiftForm = function()
 	local me, team = GetClientPlayer(), GetClientTeam()
@@ -231,21 +270,25 @@ _HM_Battle.PS.OnPanelActive = function(frame)
 	:Text(_L["Show the orientation of some battlefield maps (newbie necessary)"]):Click(function(bChecked)
 		HM_Battle.bMarkMap = bChecked
 	end)
+	ui:Append("WndCheckBox", { x = 10, y = 214, checked = HM_Battle.bMarkCarry })
+	:Text(_L["Mark player who carrying special battle item"]):Click(function(bChecked)
+		HM_Battle.bMarkCarry = bChecked
+	end)
 	-- kill effect
-	ui:Append("Text", { txt = _L["PVP kill effect"], x = 0, y = 222, font = 27 })
-	ui:Append("WndCheckBox", { txt = _L["Play sound after killing"], x = 10, y = 250, checked = HM_KillEffect.bSound })
+	ui:Append("Text", { txt = _L["PVP kill effect"], x = 0, y = 250, font = 27 })
+	ui:Append("WndCheckBox", { txt = _L["Play sound after killing"], x = 10, y = 278, checked = HM_KillEffect.bSound })
 	:Click(function(bChecked)
 		HM_KillEffect.bSound = bChecked
 	end)
-	ui:Append("WndCheckBox", { txt = _L["Show red text after killing"], x = 10, y = 278, checked = HM_KillEffect.bText })
+	ui:Append("WndCheckBox", { txt = _L["Show red text after killing"], x = 10, y = 306, checked = HM_KillEffect.bText })
 	:Click(function(bChecked)
 		HM_KillEffect.bText = bChecked
 	end)
-	local nX = ui:Append("WndCheckBox", { txt = _L["Show caster name of float combat text"], x = 10, y = 306, checked = HM_CombatText.bShowName })
+	local nX = ui:Append("WndCheckBox", { txt = _L["Show caster name of float combat text"], x = 10, y = 334, checked = HM_CombatText.bShowName })
 	:Click(function(bChecked)
 		HM_CombatText.Switch(bChecked)
 	end):Pos_()
-	ui:Append("WndCheckBox", { txt = _L["Exclude self"], x = nX + 10, y = 306, checked = HM_CombatText.bExcludeSelf })
+	ui:Append("WndCheckBox", { txt = _L["Exclude self"], x = nX + 10, y = 334, checked = HM_CombatText.bExcludeSelf })
 	:Click(function(bChecked)
 		HM_CombatText.bExcludeSelf = bChecked
 	end)
@@ -262,6 +305,15 @@ HM.RegisterEvent("SYS_MSG", _HM_Battle.OnSysMsg)
 HM.RegisterEvent("LOADING_END", function()
 	_HM_Battle.BeginJG()
 	HM_CombatText.Switch(HM_CombatText.bShowName)
+	-- carrier
+	local dwMapID = GetClientPlayer().GetMapID()
+	if dwMapID == 38 or dwMapID == 186 then
+		HM.RegisterEvent("PLAYER_STATE_UPDATE.battle", _HM_Battle.OnPlayerUpdate)
+		HM.RegisterEvent("PLAYER_ENTER_SCENE.battle", _HM_Battle.OnPlayerUpdate)
+	else
+		HM.RegisterEvent("PLAYER_STATE_UPDATE.battle", nil)
+		HM.RegisterEvent("PLAYER_ENTER_SCENE.battle", nil)
+	end
 end)
 HM.RegisterEvent("BATTLE_FIELD_NOTIFY", _HM_Battle.OnBattleNotify)
 HM.RegisterEvent("ARENA_NOTIFY", _HM_Battle.OnAreanNotify)
