@@ -80,6 +80,10 @@ _HM_Camp.IsCareNpc = function(v)
 	if v.dwTemplateID == 6394 or v.dwTemplateID == 6395 or v.dwTemplateID == 6396 then
 		return false
 	end
+	-- 6787	∫∆∆¯√À ÿŒ¿ 6788	∂Ò»Àπ» ÿŒ¿
+	if v.szName == Table_GetNpcTemplateName(6787) or v.szName == Table_GetNpcTemplateName(6788) then
+		return false
+	end
 	-- 28001 - 30300, 31001 -36001
 	if (v.dwTemplateID < 28001 or v.dwTemplateID > 36001 or (v.dwTemplateID > 30300 and v.dwTemplateID < 31001))
 		and IsEnemy(me.dwID, v.dwID) and (HM_Camp.tBossList[v.szName] or v.nMaxLife >= 200000000)
