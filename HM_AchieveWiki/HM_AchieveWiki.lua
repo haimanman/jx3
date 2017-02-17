@@ -355,6 +355,7 @@ function PS.OnPanelActive(frame)
 	ui:Append("Text", { x = 0, y = 28, w = 520, h = 100 , multi = true, txt = _L["About the achievepedia."] })
 	-- zhcn 版本可用
 	nY = 134
+	PS.active = true
 	if ACHI_CLIENT_LANG == "zhcn" then
 		nX, nY = ui:Append("Text", { x = 0, y = nY, txt = _L["Sync game info"], font = 27 }):Pos_()
 		-- name
@@ -364,12 +365,18 @@ function PS.OnPanelActive(frame)
 		nX, nY = ui:Append("Text", "Text_Time", { x = nX + 5, y = nY + 5 , txt = _L["Loading..."] }):Pos_()
 		-- /api/wiki/data/{gid}
 		HM.GetJson(ACHI_ROOT_URL .. "/api/wiki/data/" .. gid):done(function(res)
+			if not PS.active then
+				return
+			end
 			if res.time_update then
 				ui:Fetch("Text_Time"):Text(FormatTime("%Y/%m/%d %H:%M:%S", res.time_update))
 			else
 				ui:Fetch("Text_Time"):Text(res.errmsg or _L["No record"])
 			end
 		end):fail(function()
+			if not PS.active then
+				return
+			end
 			ui:Fetch("Text_Time"):Text(_L["Request failed"]):Color(255, 0, 0)
 		end)
 		nX, nY = ui:Append("WndCheckBox", "Check_Sync", { x = 5, y = nY + 12, txt = _L["Auto-sync achievement"], checked = HM_AchieveWiki.bAutoSync }):Click(function(bCheck)
@@ -418,6 +425,10 @@ function PS.OnPanelActive(frame)
 	nX = ui:Append("Text", { x = 10, y = nY + 5 , txt = _L["Global ID"], color = { 255, 255, 200 } }):Pos_()
 	nX, nY = ui:Append("WndEdit", { x = 120, y = nY + 5 , txt = gid }):Pos_()
 	ui:Append("Image", "Image_Wechat", { x = 360, y = nY - 150, h = 150, w = 150 }):File(HM.GetCustomFile("image.UiTeX", "interface\\HM\\HM_0Base\\image.UiTex"), 2)
+end
+
+function PS.OnPanelDeactive()
+	PS.active = nil
 end
 
 -- add to HM panel
