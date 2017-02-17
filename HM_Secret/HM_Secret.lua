@@ -3,6 +3,7 @@
 --
 HM_Secret = {
 	bShowButton = true,
+	bAutoSync = false,
 }
 HM.RegisterCustomData("HM_Secret")
 
@@ -444,7 +445,7 @@ end
 -------------------------------------
 -- 事件处理
 -------------------------------------
-local ROOT_URL = "https://haimanchajian.com"
+local ROOT_URL = "https://dev.haimanchajian.com"
 local CLIENT_LANG = select(3, GetVersion())
 
 -------------------------------------
@@ -476,6 +477,7 @@ _HM_Secret.PS.OnPanelActive = function(frame)
 			data.gid = GetClientPlayer().GetGlobalID()
 			data.isOpenVerify = "0"
 			HM.PostJson(ROOT_URL .. "/api/data/roles", data):done(function(res)
+				HM_Secret.bAutoSync = false
 				HM.OpenPanel(_HM_Secret.szName)
 			end)
 		end)
@@ -488,6 +490,7 @@ _HM_Secret.PS.OnPanelActive = function(frame)
 		data.__qrcode = "1"
 		btn:Enable(false)
 		HM.PostJson(ROOT_URL .. "/api/data/roles", data):done(function(res)
+			HM_Secret.bAutoSync = true
 			if res and res.qrcode then
 				local w, h = 240, 240
 				local frm = HM.UI.CreateFrame("HM_ImageView", { w = w + 90, h = h + 90 + 20, bgcolor = {222, 210, 190, 240}, title = _L["Scan by wechat"], close = true })
@@ -502,7 +505,11 @@ _HM_Secret.PS.OnPanelActive = function(frame)
 		end)
 	end):Pos_()
 	-- /api/data/roles/{gid}
+	_HM_Secret.PS.active = true
 	HM.GetJson(ROOT_URL .. "/api/data/roles/" .. GetClientPlayer().GetGlobalID()):done(function(res)
+		if not _HM_Secret.PS.active then
+			return
+		end
 		if res.verify then
 			local szText = res.verify .. " (" .. FormatTime("%Y/%m/%d %H:%M", res.time_update) .. ")"
 			ui:Fetch("Text_Verify"):Text(szText)
@@ -514,6 +521,9 @@ _HM_Secret.PS.OnPanelActive = function(frame)
 			ui:Fetch("Text_Verify"):Text(res.errmsg or "<未认证>"):Color(255, 0, 0)
 		end
 	end):fail(function()
+		if not _HM_Secret.PS.active then
+			return
+		end
 		ui:Fetch("Text_Verify"):Text(_L["Request failed"]):Color(255, 0, 0)
 	end)
 	do return end
@@ -557,6 +567,9 @@ _HM_Secret.PS.OnPanelActive = function(frame)
 	--]]
 end
 
+_HM_Secret.PS.OnPanelDeactive = function()
+	_HM_Secret.PS.active = nil
+end
 --[[
 -- deinit
 _HM_Secret.PS.OnPanelDeactive = function(frame)
@@ -614,6 +627,14 @@ HM.RegisterEvent("LOADING_END", function()
 	end)
 end)
 --]]
+
+-- sync events
+HM.RegisterEvent("FIRST_LOADING_END", function()
+	if HM_Secret.bAutoSync then
+		local data = HM_About.GetSyncData()
+		HM.PostJson(ROOT_URL .. "/api/data/roles", data)
+	end
+end)
 
 -- add to HM collector
 HM.RegisterPanel(_HM_Secret.szName, 2, _L["Recreation"], _HM_Secret.PS)
