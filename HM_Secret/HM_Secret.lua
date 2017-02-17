@@ -445,7 +445,7 @@ end
 -------------------------------------
 -- 事件处理
 -------------------------------------
-local ROOT_URL = "https://dev.haimanchajian.com"
+local ROOT_URL = "https://haimanchajian.com"
 local CLIENT_LANG = select(3, GetVersion())
 
 -------------------------------------
