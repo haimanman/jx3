@@ -33,8 +33,8 @@ _L = _HM_GetLang()
 -- 本地函数和变量
 ---------------------------------------------------------------------
 local _HM = {
-	dwVersion = 0x2043a00,
-	szBuildDate = "20170208",
+	dwVersion = 0x2043b00,
+	szBuildDate = "20170217",
 	szTitle = _L["HM, JX3 Plug-in Collection"],
 	szShort = _L["HM Plug"],
 	szIniFile = _L["@hm_ini@"],
