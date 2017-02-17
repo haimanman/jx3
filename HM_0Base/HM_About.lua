@@ -28,6 +28,47 @@ _HM_About.CheckLocalDeny = function()
 	end
 end
 
+-- get sync data
+_HM_About.GetSyncData = function()
+	local me = GetClientPlayer()
+	local data = {
+		gid = me.GetGlobalID(),
+		name = GetUserRoleName(),
+		server = select(6, GetUserServer()),
+		school = me.dwForceID,
+		camp = me.nCamp,
+		body = me.nRoleType,
+		-- rank
+		avatar = me.dwMiniAvatarID,
+		pet = me.GetAcquiredFellowPetScore(),
+		score = me.GetTotalEquipScore(),
+		point = me.GetAchievementRecord(),
+		-- weapon, horse
+		__lang = select(3, GetVersion()),
+	}
+	-- weapon
+	local item = me.GetItem(INVENTORY_INDEX.EQUIP, EQUIPMENT_INVENTORY.MELEE_WEAPON)
+	if item then
+		data.weapon = item.szName
+	end
+	if me.dwForceID == 8 then
+		local item = me.GetItem(INVENTORY_INDEX.EQUIP, EQUIPMENT_INVENTORY.BIG_SWORD)
+		if item then
+			if not data.weapon then
+				data.weapon = item.szName
+			else
+				data.weapon = data.weapon .. ";" .. item.szName
+			end
+		end
+	end
+	-- horse
+	local item = me.GetEquippedHorse()
+	if item then
+		data.horse = item.szName
+	end
+	return data
+end
+
 -------------------------------------
 -- 特殊名字处理
 -------------------------------------
@@ -248,13 +289,13 @@ _HM_About.PS.OnTaboxCheck = function(frame, nIndex, szTitle)
 	local _, _, szLang = GetVersion()
 	ui:Append("Shadow", { x = 0, y = 5, w = 532, h = 168, alpha = 128 }):Color(128, 128, 128)
 	if szLang == "zhcn" then
-		ui:Append("Text", { x = 0, y = 5, font = 239,  w = 532, h = 100, txt = "海鳗插件团队杭州招聘啦~" }):Align(1, 1)
-		ui:Append("Text", { x = 0, y = 70, font = 61,  w = 532, h = 25, txt = "PHP/iOS/前端/产品策划运营等，详见微博置顶" }):Align(1, 1)
+		ui:Append("Text", { x = 0, y = 5, font = 239,  w = 532, h = 100, txt = "海鳗团队杭州招聘啦~" }):Align(1, 1)
+		ui:Append("Text", { x = 0, y = 70, font = 61,  w = 532, h = 25, txt = "PHP/iOS/前端/产品运营等，详见微博置顶" }):Align(1, 1)
 	else
 		ui:Append("Text", { x = 0, y = 5, font = 239,  w = 532, h = 100, txt = "Empty color is the color that is empty." }):Align(1, 1)
 	end
 	ui:Append("Text", { x = 0, y = 85, font = 239,  w = 532, h = 68, txt = _L["<Weibo@haimanman>"] }):Align(1, 1):Click(function()
-		OpenInternetExplorer("http://weibo.com/haimanman")
+		OpenInternetExplorer("https://weibo.com/haimanman")
 	end)
 	ui:Append("Text", { txt = _L("%s are welcome to use HM plug-in", szName), x = 10, y = 190, font = 19 })
 	ui:Append("Text", { txt = _L["Free & open source, Utility, Focus on PVP!"], x = 10, y = 220, font = 19 })
@@ -272,7 +313,7 @@ _HM_About.PS.OnTaboxCheck = function(frame, nIndex, szTitle)
 	--end):Pos_()
 	nX = ui:Append("Text", { txt = _L["<Set hotkeys>"], x = nX + 10, y = 305, font = 27 }):Click(HM.SetHotKey):Pos_()
 	nX = ui:Append("Text", { txt = _L["<Weibo@haimanman>"], x = nX + 10, y = 305, font = 27 }):Click(function()
-		OpenInternetExplorer("http://weibo.com/haimanman")
+		OpenInternetExplorer("https://weibo.com/haimanman")
 	end):Pos_()
 end
 
@@ -312,5 +353,6 @@ local _About = {
 	OnPanelActive = _HM_About.PS.OnTaboxCheck,
 	GetAuthorInfo = _HM_About.PS.GetAuthorInfo,
 	SyncData = _HM_About.SyncData,
+	GetSyncData = _HM_About.GetSyncData,
 }
 setmetatable(HM_About, { __metatable = true, __index = _About, __newindex = function() end } )
