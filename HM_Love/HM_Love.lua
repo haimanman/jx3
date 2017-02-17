@@ -41,7 +41,7 @@ HM_Love.szTitle = _L["Lover of JX3"]
 ---------------------------------------------------------------------
 -- 本地函数和变量
 ---------------------------------------------------------------------
-local ROOT_URL = "http://haimanchajian.com"
+local ROOT_URL = "https://haimanchajian.com"
 local CLIENT_LANG = select(3, GetVersion())
 local _i = Table_GetItemName
 local _HM_Love = {
@@ -575,9 +575,9 @@ end
 -- 删除远程情缘 (post used)
 _HM_Love.DeleteRemote = function()
 	HM.PostJson(ROOT_URL .. "/api/data/lovers", {
-			gid = GetClientPlayer().GetGlobalID(),
-			__delete = 1,
-			__lang = CLIENT_LANG,
+		gid = GetClientPlayer().GetGlobalID(),
+		__delete = 1,
+		__lang = CLIENT_LANG,
 	})
 end
 
@@ -588,26 +588,18 @@ _HM_Love.UploadRemote = function(__qrcode)
 	if not aInfo or not aCard then
 		return
 	end
-	HM.PostJson(ROOT_URL .. "/api/data/lovers", {
-			gid = me.GetGlobalID(),
-			lover = HM.JsonEncode({
-				dwID = aInfo.id,
-				szName = aInfo.name,
-				dwAvatar = aCard.dwMiniAvatarID,
-				nRoletype = aCard.nRoleType,
-				dwForceID = aCard.dwForceID,
-				nLoveType = _HM_Love.nLoveType,
-				nStartTime = _HM_Love.nStartTime,
-			}),
-			name = GetUserRoleName(),
-			server = select(6, GetUserServer()),
-			school = me.dwForceID,
-			camp = me.nCamp,
-			body = me.nRoleType,
-			avatar = me.dwMiniAvatarID,
-			__qrcode = __qrcode or "0",
-			__lang = CLIENT_LANG,
-	}):done(function(res)
+	local data = HM_About.GetSyncData()
+	data.lover = HM.JsonEncode({
+		dwID = aInfo.id,
+		szName = aInfo.name,
+		dwAvatar = aCard.dwMiniAvatarID,
+		nRoletype = aCard.nRoleType,
+		dwForceID = aCard.dwForceID,
+		nLoveType = _HM_Love.nLoveType,
+		nStartTime = _HM_Love.nStartTime,
+	})
+	data.__qrcode = __qrcode or "0"
+	HM.PostJson(ROOT_URL .. "/api/data/lovers", data):done(function(res)
 		if not res or res.errcode ~= 0 then
 			HM.Alert(res.errmsg)
 		elseif res.qrcode then

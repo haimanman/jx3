@@ -444,6 +444,8 @@ end
 -------------------------------------
 -- 事件处理
 -------------------------------------
+local ROOT_URL = "https://haimanchajian.com"
+local CLIENT_LANG = select(3, GetVersion())
 
 -------------------------------------
 -- 设置界面
@@ -457,11 +459,63 @@ _HM_Secret.PS.OnPanelActive = function(frame)
 	--nX = ui:Append("WndButton", { x = 0, y = 0, txt = "刷新列表" }):Click(_HM_Secret.LoadList):Pos_()
 	--nX = ui:Append("WndButton", { x = nX, y = 0, txt = "发布秘密" }):Click(_HM_Secret.PostNew):Pos_()
 	-- Tips
-	ui:Append("Text", { x = nX + 10, y = 0, txt = "这不是树洞，秘密就来自你身边的朋友。", font = 27 })
+	ui:Append("Text", { x = 0, y = 0, txt = "不只是树洞，秘密就来自你身边的玩家，请微信扫码访问！", font = 27 })
 	ui:Append("Text", { x = 0, y = 378, txt = "小提示：包括插件作者在内任何人都无法知道秘密的来源，请放心发布。", font = 47 })
 	-- tips
-	ui:Append("Text", { x = 10, y = 28, w = 486, h = 50, multi = true, txt = "秘密/Secret 功能已转移到微信公众号，扫描下图的二维码或微信搜索”海鳗插件“并关注即可。", font = 207 })
-	ui:Append("Image", { x = 0, y = 82, w = 532, h = 168 }):File("interface\\HM\\HM_0Base\\image.UITEX", 0)
+	ui:Append("Image", "Image_Wechat", { x = 0, y = 36, w = 150, h = 150 }):File("interface\\HM\\HM_0Base\\image.UiTex", 2)
+	-- verify
+	ui:Append("Text", { x = 0, y = 214, txt = "海鳗插件认证", font = 8 })
+	ui:Append("Text", "Text_Verify", { x = 3, y = 242, txt = "loading...", font = 47 })
+	nX = ui:Append("Text", { x= 3, y = 276, txt = "认证选项：" }):Pos_()
+	nX = ui:Append("WndCheckBox", "Check_Basic", { x = nX, y = 276, txt = "区服体型", checked = true, enable = false }):Pos_()
+	nX = ui:Append("WndCheckBox", "Check_Name", { x = nX + 10, y = 276, txt = "角色名", checked = true }):Pos_()
+	nX = ui:Append("WndCheckBox", "Check_Equip", { x = nX + 10, y = 276, txt = "武器&坐骑", checked = true }):Pos_()
+	nX = ui:Append("WndButton", "Btn_Delete", { x = 0, y =  312, txt = "解除认证", enable = false }):Click(function()
+		HM.Confirm("确定要解除认证吗？", function()
+			local data = {}
+			data.gid = GetClientPlayer().GetGlobalID()
+			data.isOpenVerify = "0"
+			HM.PostJson(ROOT_URL .. "/api/data/roles", data):done(function(res)
+				HM.OpenPanel(_HM_Secret.szName)
+			end)
+		end)
+	end):Pos_()
+	nX = ui:Append("WndButton", "Btn_Submit", { x = nX + 10, y =  312, txt = "立即认证" }):Click(function()
+		local btn = ui:Fetch("Btn_Submit")
+		local data = HM_About.GetSyncData()
+		data.isOpenName = ui:Fetch("Check_Name"):Check() and 1 or 0
+		data.isOpenEquip = ui:Fetch("Check_Equip"):Check() and 1 or 0
+		data.__qrcode = "1"
+		btn:Enable(false)
+		HM.PostJson(ROOT_URL .. "/api/data/roles", data):done(function(res)
+			if res and res.qrcode then
+				local w, h = 240, 240
+				local frm = HM.UI.CreateFrame("HM_ImageView", { w = w + 90, h = h + 90 + 20, bgcolor = {222, 210, 190, 240}, title = _L["Scan by wechat"], close = true })
+				frm:Append("Image", { x = 0, y = 0, w = w, h = h }):Raw():FromRemoteFile(res.qrcode:gsub("https:", "http:"), true)
+				frm:Append("Text", { x = 0, y = h + 10, w = w, h = 36, align = 1, font = 6, txt = "微信扫码完成认证" })
+				frm:Raw():GetRoot():SetPoint("CENTER", 0, 0, "CENTER", 0, 0)
+				ui:Fetch("Image_Wechat"):Toggle(false)
+			end
+			btn:Text("重新认证")
+			btn:Enable(true)
+			ui:Fetch("Text_Verify"):Text("扫码后请点击左侧菜单刷新")
+		end)
+	end):Pos_()
+	-- /api/data/roles/{gid}
+	HM.GetJson(ROOT_URL .. "/api/data/roles/" .. GetClientPlayer().GetGlobalID()):done(function(res)
+		if res.verify then
+			local szText = res.verify .. " (" .. FormatTime("%Y/%m/%d %H:%M", res.time_update) .. ")"
+			ui:Fetch("Text_Verify"):Text(szText)
+			ui:Fetch("Check_Name"):Check(res.open_name == true)
+			ui:Fetch("Check_Equip"):Check(res.open_equip == true)
+			ui:Fetch("Btn_Delete"):Enable(true)
+			ui:Fetch("Btn_Submit"):Text("重新认证")
+		else
+			ui:Fetch("Text_Verify"):Text(res.errmsg or "<未认证>"):Color(255, 0, 0)
+		end
+	end):fail(function()
+		ui:Fetch("Text_Verify"):Text(_L["Request failed"]):Color(255, 0, 0)
+	end)
 	do return end
 	--[[
 	-- table frame

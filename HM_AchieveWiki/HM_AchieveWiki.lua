@@ -2,7 +2,7 @@
 -- 海鳗插件：成就百科，源于菊花插件
 --
 local ACHI_ANCHOR  = { s = "CENTER", r = "CENTER", x = 0, y = 0 }
-local ACHI_ROOT_URL = "http://haimanchajian.com"
+local ACHI_ROOT_URL = "https://haimanchajian.com"
 local ACHI_CLIENT_LANG = select(3, GetVersion())
 local Achievement = {}
 local tinsert = table.insert
@@ -332,22 +332,11 @@ local function GetAchievementCode()
 end
 
 function Achievement.SyncUserData(fnCallBack, __qrcode)
-	local me = GetClientPlayer()
-	local nPoint = me.GetAchievementRecord()
-	HM.PostJson(ACHI_ROOT_URL .. "/api/wiki/data", {
-			gid = me.GetGlobalID(),
-			point = nPoint,
-			code = GetAchievementCode(),
-			name = GetUserRoleName(),
-			server = select(6, GetUserServer()),
-			school = me.dwForceID,
-			camp = me.nCamp,
-			body = me.nRoleType,
-			avatar = me.dwMiniAvatarID,
-			__qrcode = __qrcode,
-			__lang = ACHI_CLIENT_LANG,
-	}):done(function(res)
-		HM_AchieveWiki.nSyncPoint = nPoint
+	local data = HM_About.GetSyncData()
+	data.code = GetAchievementCode()
+	data.__qrcode = __qrcode
+	HM.PostJson(ACHI_ROOT_URL .. "/api/wiki/data", data):done(function(res)
+		HM_AchieveWiki.nSyncPoint = GetClientPlayer().GetAchievementRecord()
 		if fnCallBack then
 			fnCallBack(res)
 		end
