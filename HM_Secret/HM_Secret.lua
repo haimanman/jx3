@@ -460,18 +460,18 @@ _HM_Secret.PS.OnPanelActive = function(frame)
 	--nX = ui:Append("WndButton", { x = 0, y = 0, txt = "刷新列表" }):Click(_HM_Secret.LoadList):Pos_()
 	--nX = ui:Append("WndButton", { x = nX, y = 0, txt = "发布秘密" }):Click(_HM_Secret.PostNew):Pos_()
 	-- Tips
-	ui:Append("Text", { x = 0, y = 0, txt = "不只是树洞，秘密就来自你身边的玩家，请微信扫码访问！", font = 27 })
+	ui:Append("Text", { x = 0, y = 0 + 164, txt = "不只是树洞，秘密就来自你身边的玩家，请微信扫码访问！", font = 27 })
 	ui:Append("Text", { x = 0, y = 378, txt = "小提示：包括插件作者在内任何人都无法知道秘密的来源，请放心发布。", font = 47 })
 	-- tips
-	ui:Append("Image", "Image_Wechat", { x = 0, y = 36, w = 150, h = 150 }):File("interface\\HM\\HM_0Base\\image.UiTex", 2)
+	ui:Append("Image", "Image_Wechat", { x = 0, y = 36 + 164, w = 150, h = 150 }):File("interface\\HM\\HM_0Base\\image.UiTex", 2)
 	-- verify
-	ui:Append("Text", { x = 0, y = 214, txt = "海鳗插件认证", font = 8 })
-	ui:Append("Text", "Text_Verify", { x = 3, y = 242, txt = "loading...", font = 47 })
-	nX = ui:Append("Text", { x= 3, y = 276, txt = "认证选项：" }):Pos_()
-	nX = ui:Append("WndCheckBox", "Check_Basic", { x = nX, y = 276, txt = "区服体型", checked = true, enable = false }):Pos_()
-	nX = ui:Append("WndCheckBox", "Check_Name", { x = nX + 10, y = 276, txt = "角色名", checked = true }):Pos_()
-	nX = ui:Append("WndCheckBox", "Check_Equip", { x = nX + 10, y = 276, txt = "武器&坐骑", checked = true }):Pos_()
-	nX = ui:Append("WndButton", "Btn_Delete", { x = 0, y =  312, txt = "解除认证", enable = false }):Click(function()
+	ui:Append("Text", { x = 0, y = 214 - 214, txt = "海鳗插件认证", font = 8 })
+	ui:Append("Text", "Text_Verify", { x = 3, y = 242 - 214, txt = "loading...", font = 47 })
+	nX = ui:Append("Text", { x= 3, y = 276 - 214, txt = "认证选项：" }):Pos_()
+	nX = ui:Append("WndCheckBox", "Check_Basic", { x = nX, y = 276 - 214, txt = "区服体型", checked = true, enable = false }):Pos_()
+	nX = ui:Append("WndCheckBox", "Check_Name", { x = nX + 10, y = 276 - 214, txt = "角色名", checked = true }):Pos_()
+	nX = ui:Append("WndCheckBox", "Check_Equip", { x = nX + 10, y = 276 - 214, txt = "武器&坐骑", checked = true }):Pos_()
+	nX = ui:Append("WndButton", "Btn_Delete", { x = 0, y =  312 - 214, txt = "解除认证", enable = false }):Click(function()
 		HM.Confirm("确定要解除认证吗？", function()
 			local data = {}
 			data.gid = GetClientPlayer().GetGlobalID()
@@ -482,26 +482,35 @@ _HM_Secret.PS.OnPanelActive = function(frame)
 			end)
 		end)
 	end):Pos_()
-	nX = ui:Append("WndButton", "Btn_Submit", { x = nX + 10, y =  312, txt = "立即认证" }):Click(function()
+	nX = ui:Append("WndButton", "Btn_Submit", { x = nX + 10, y =  312 - 214, txt = "立即认证" }):Click(function()
 		local btn = ui:Fetch("Btn_Submit")
 		local data = HM_About.GetSyncData()
 		data.isOpenName = ui:Fetch("Check_Name"):Check() and 1 or 0
 		data.isOpenEquip = ui:Fetch("Check_Equip"):Check() and 1 or 0
 		data.__qrcode = "1"
 		btn:Enable(false)
+		if GetClientPlayer().nLevel < 95 then
+			return HM.Alert(g_tStrings.tCraftResultString[CRAFT_RESULT_CODE.TOO_LOW_LEVEL])
+		end
 		HM.PostJson(ROOT_URL .. "/api/data/roles", data):done(function(res)
 			HM_Secret.bAutoSync = true
-			if res and res.qrcode then
+			if not res then
+				-- unknown error
+			elseif res.errcode ~= 0 then
+				ui:Fetch("Text_Verify"):Text(res.errmsg):Color(255, 0, 0)
+			elseif res.qrcode then
 				local w, h = 240, 240
 				local frm = HM.UI.CreateFrame("HM_ImageView", { w = w + 90, h = h + 90 + 20, bgcolor = {222, 210, 190, 240}, title = _L["Scan by wechat"], close = true })
 				frm:Append("Image", { x = 0, y = 0, w = w, h = h }):Raw():FromRemoteFile(res.qrcode:gsub("https:", "http:"), true)
 				frm:Append("Text", { x = 0, y = h + 10, w = w, h = 36, align = 1, font = 6, txt = "微信扫码完成认证" })
 				frm:Raw():GetRoot():SetPoint("CENTER", 0, 0, "CENTER", 0, 0)
 				ui:Fetch("Image_Wechat"):Toggle(false)
+				ui:Fetch("Text_Verify"):Text("扫码后请点击左侧菜单刷新")
+			elseif res.errcode ~= 0 then
+				ui:Fetch("Text_Verify"):Text(res.errmsg):Color(255, 0, 0)
 			end
 			btn:Text("重新认证")
 			btn:Enable(true)
-			ui:Fetch("Text_Verify"):Text("扫码后请点击左侧菜单刷新")
 		end)
 	end):Pos_()
 	-- /api/data/roles/{gid}
@@ -517,8 +526,9 @@ _HM_Secret.PS.OnPanelActive = function(frame)
 			ui:Fetch("Check_Equip"):Check(res.open_equip == true)
 			ui:Fetch("Btn_Delete"):Enable(true)
 			ui:Fetch("Btn_Submit"):Text("重新认证")
+			HM_Secret.bAutoSync = true
 		else
-			ui:Fetch("Text_Verify"):Text(res.errmsg or "<未认证>"):Color(255, 0, 0)
+			ui:Fetch("Text_Verify"):Text("<未认证>"):Color(255, 0, 0)
 		end
 	end):fail(function()
 		if not _HM_Secret.PS.active then

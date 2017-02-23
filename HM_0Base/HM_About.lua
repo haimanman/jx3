@@ -40,12 +40,19 @@ _HM_About.GetSyncData = function()
 		body = me.nRoleType,
 		-- rank
 		avatar = me.dwMiniAvatarID,
-		pet = me.GetAcquiredFellowPetScore(),
+		pet = me.GetAcquiredFellowPetScore() + me.GetAcquiredFellowPetMedalScore(),
 		score = me.GetTotalEquipScore(),
 		point = me.GetAchievementRecord(),
 		-- weapon, horse
 		__lang = select(3, GetVersion()),
 	}
+	-- back cloak
+	if me.dwBackCloakItemIndex and me.dwBackCloakItemIndex > 0 then
+		local info = GetItemInfo(ITEM_TABLE_TYPE.CUST_TRINKET, me.dwBackCloakItemIndex)
+		if info then
+			data.cloak = info.szName
+		end
+	end
 	-- weapon
 	local item = me.GetItem(INVENTORY_INDEX.EQUIP, EQUIPMENT_INVENTORY.MELEE_WEAPON)
 	if item then
@@ -65,6 +72,18 @@ _HM_About.GetSyncData = function()
 	local item = me.GetEquippedHorse()
 	if item then
 		data.horse = item.szName
+	end
+	-- sign
+	data.__sum = 0
+	for _, v in ipairs({"gid", "name", "server", "school", "camp", "body", "avatar", "pet", "score", "point", "cloak", "weapon", "horse" }) do
+		if data[v] then
+			local n = 0
+			local s = v .. "=" .. data[v]
+			for i = 1, string.len(s) do
+				n = (n + string.byte(s, i)) % 0x7fff
+			end
+			data.__sum = (data.__sum + n) % 0x7fffff
+		end
 	end
 	return data
 end
