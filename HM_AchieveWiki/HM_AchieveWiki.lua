@@ -413,7 +413,7 @@ function PS.OnPanelActive(frame)
 					frm:Append("Image", { x = 0, y = 0, w = w, h = h }):Raw():FromRemoteFile(res.qrcode:gsub("https:", "http:"), true)
 					frm:Append("Text", { x = 0, y = h + 10, w = w, h = 36, align = 1, font = 6, txt = _L["View your achievements"] })
 					frm:Raw():GetRoot():SetPoint("CENTER", 0, 0, "CENTER", 0, 0)
-					ui:Fetch("Image_Wechat"):Toggle(false)
+					--ui:Fetch("Image_Wechat"):Toggle(false)
 				end
 			end, 1)
 		end):Pos_()
@@ -424,7 +424,7 @@ function PS.OnPanelActive(frame)
 	nX, nY = ui:Append("WndEdit", { x = 120, y = nY + 10 , txt = ACHI_ROOT_URL .. "/wiki" }):Pos_()
 	nX = ui:Append("Text", { x = 10, y = nY + 5 , txt = _L["Global ID"], color = { 255, 255, 200 } }):Pos_()
 	nX, nY = ui:Append("WndEdit", { x = 120, y = nY + 5 , txt = gid }):Pos_()
-	ui:Append("Image", "Image_Wechat", { x = 360, y = nY - 150, h = 150, w = 150 }):File(HM.GetCustomFile("image.UiTeX", "interface\\HM\\HM_0Base\\image.UiTex"), 2)
+	--ui:Append("Image", "Image_Wechat", { x = 360, y = nY - 150, h = 150, w = 150 }):File(HM.GetCustomFile("image.UiTeX", "interface\\HM\\HM_0Base\\image.UiTex"), 2)
 end
 
 function PS.OnPanelDeactive()
