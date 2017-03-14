@@ -583,22 +583,23 @@ end
 
 -- 上传情缘
 _HM_Love.UploadRemote = function(__qrcode)
-	local me = GetClientPlayer()
-	local _, aInfo, aCard = _HM_Love.GetFellowDataByKey("LOVER", true)
-	if not aInfo or not aCard then
-		return
-	end
 	local data = HM_About.GetSyncData()
-	data.lover = HM.JsonEncode({
-		dwID = aInfo.id,
-		szName = aInfo.name,
-		dwAvatar = aCard.dwMiniAvatarID,
-		nRoletype = aCard.nRoleType,
-		dwForceID = aCard.dwForceID,
-		nLoveType = _HM_Love.nLoveType,
-		nStartTime = _HM_Love.nStartTime,
-	})
 	data.__qrcode = __qrcode or "0"
+	if data.__qrcode ~= "2" then
+		local _, aInfo, aCard = _HM_Love.GetFellowDataByKey("LOVER", true)
+		if not aInfo or not aCard then
+			return
+		end
+		data.lover = HM.JsonEncode({
+			dwID = aInfo.id,
+			szName = aInfo.name,
+			dwAvatar = aCard.dwMiniAvatarID,
+			nRoletype = aCard.nRoleType,
+			dwForceID = aCard.dwForceID,
+			nLoveType = _HM_Love.nLoveType,
+			nStartTime = _HM_Love.nStartTime,
+		})
+	end
 	HM.PostJson(ROOT_URL .. "/api/data/lovers", data):done(function(res)
 		if not res or res.errcode ~= 0 then
 			HM.Alert(res.errmsg)
@@ -606,7 +607,7 @@ _HM_Love.UploadRemote = function(__qrcode)
 			local w, h = 240, 240
 			local frm = HM.UI.CreateFrame("HM_ImageView", { w = w + 90, h = h + 90 + 20, bgcolor = {222, 210, 190, 240}, title = _L["Scan by wechat"], close = true })
 			frm:Append("Image", { x = 0, y = 0, w = w, h = h }):Raw():FromRemoteFile(res.qrcode:gsub("https:", "http:"), true)
-			frm:Append("Text", { x = 0, y = h + 10, w = w, h = 36, align = 1, font = 6, txt = _L["View cert"] })
+			frm:Append("Text", { x = 0, y = h + 10, w = w, h = 36, align = 1, font = 6, txt = _L["view cert"] })
 			frm:Raw():GetRoot():SetPoint("CENTER", 0, 0, "CENTER", 0, 0)
 		else
 			HM.Alert(g_tStrings.STR_MAIL_SUCCEED)
@@ -617,6 +618,11 @@ end
 -- 查看证书，等同于上传
 _HM_Love.ViewCert = function()
 	return _HM_Love.UploadRemote("1")
+end
+
+-- 单身证书
+_HM_Love.SingleCert = function()
+	return _HM_Love.UploadRemote("2")
 end
 
 -------------------------------------
@@ -960,7 +966,8 @@ _HM_Love.PS.OnPanelActive = function(frame)
 	ui:Append("Text", { txt = _L["Heart lover"], x = 0, y = 0, font = 27 })
 	-- lover info
 	if _HM_Love.dwID == 0 then
-		ui:Append("Text", { txt = _L["No lover :-("], font = 19, x = 10, y = 36 })
+		nX = ui:Append("Text", { txt = _L["No lover :-("], font = 19, x = 10, y = 36 }):Pos_()
+		ui:Append("Text", { txt = _L["[single cert]"], x = nX + 20, y = 36 }):Click(_HM_Love.SingleCert, { 128, 255, 255 }, { 0, 255, 255 })
 		-- create lover
 		nX = ui:Append("Text", { txt = _L["Mutual love friend Lv.6: "], x = 10, y = 72 }):Pos_()
 		nX = ui:Append("WndComboBox", { txt = _L["- Select plz -"], x = nX + 5, y = 72, w = 200, h = 25 })
@@ -1012,17 +1019,14 @@ _HM_Love.PS.OnPanelActive = function(frame)
 	ui:Append("WndEdit", { x = nX + 5, y = 192, limit = 42, w = 340, h = 48, multi = true, txt = _HM_Love.szSign }):Change(_HM_Love.SetSign)
 	-- tips
 	ui:Append("Text", { txt = _L["Tips"], x = 0, y = 228, font = 27 })
-	ui:Append("Text", { txt = _L["1. Amuse only, both sides need to install this plug-in"], x = 10, y = 253 })
-	ui:Append("Text", { txt = _L["2. You can break love one-sided"], x = 10, y = 278 })
-	ui:Append("Text", { txt = _L["3. Non-party views need to confirm (enable quiet to avoid)"], x = 10, y = 303 })
+	ui:Append("Text", { txt = _L["1. You can break love one-sided"], x = 10, y = 253 })
+	ui:Append("Text", { txt = _L["2. Lover data saved in friend remark, DO NOT modifiy"], x = 10, y = 278 })
 	if _HM_Love.dwID == 0 then
-		nX = ui:Append("Text", { txt = _L["4. If you have uploaded to remote server, you can"], x = 10, y = 331 }):Pos_()
-		ui:Append("WndButton", { txt = _L["Download lover"], x = nX + 5, y = 334 }):Color(255, 128, 255):AutoSize(8):Click(_HM_Love.DownloadLover)
+		nX = ui:Append("Text", { txt = _L["3. If you lost your lover, please try"], x = 10, y = 303 }):Pos_()
+		ui:Append("WndButton", { txt = _L["download lover"], x = nX + 5, y = 306 }):Color(255, 128, 255):AutoSize(8):Click(_HM_Love.DownloadLover)
 	else
-		nX = ui:Append("Text", { txt = _L["4. If you"], x = 10, y = 331 }):Pos_()
-		nX = ui:Append("WndButton", { txt = _L["Upload lover"], x = nX + 5, y = 334 }):Click(_HM_Love.UploadRemote):AutoSize(8):Pos_()
-		nX = ui:Append("Text", { txt = _L["to remote server, you can"], x = nX + 5, y = 331 }):Pos_()
-		ui:Append("WndButton", { txt = _L["View cert"], x = nX + 5, y = 334 }):Color(255, 128, 255):AutoSize(8):Click(_HM_Love.ViewCert)
+		nX = ui:Append("Text", { txt = _L["3. You can upload lover to remote server and "], x = 10, y = 303 }):Pos_()
+		ui:Append("WndButton", { txt = _L["view cert"], x = nX + 5, y = 306 }):Color(255, 128, 255):AutoSize(8):Click(_HM_Love.ViewCert)
 	end
 	_HM_Love.ui = ui
 end
