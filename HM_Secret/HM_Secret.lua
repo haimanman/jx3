@@ -11,7 +11,7 @@ HM.RegisterCustomData("HM_Secret")
 -- 本地函数和变量
 ---------------------------------------------------------------------
 local _HM_Secret = {
-	szName = "秘密/Secret",
+	szName = "海鳗官网",
 	szIniFile = "interface\\HM\\HM_Secret\\HM_Secret.ini",
 }
 
@@ -460,26 +460,34 @@ _HM_Secret.PS.OnPanelActive = function(frame)
 	--nX = ui:Append("WndButton", { x = 0, y = 0, txt = "刷新列表" }):Click(_HM_Secret.LoadList):Pos_()
 	--nX = ui:Append("WndButton", { x = nX, y = 0, txt = "发布秘密" }):Click(_HM_Secret.PostNew):Pos_()
 	-- Tips
-	ui:Append("Text", { x = 0, y = 0, txt = "海鳗秘密", font = 27 })
-	nX = ui:Append("Text", { x = 0, y = 28, txt = "树洞、吐槽、趣事分享，关注微信公众号【" }):Pos_()
-	nX = ui:Append("Text", { x = nX, y = 28, txt = "海鳗插件", font = 51 }):Hover(function()
+	ui:Append("Text", { x = 0, y = 0, txt = "关于官网", font = 27 })
+	ui:Append("Text", { x = 0, y = 28, txt = "海鳗插件官网由海鳗鳗及其团队开发并维护，与剑网3游戏官方无关。在游戏之外及手机端提供相关辅助功能，包括数据查询、成就百科、科举答题、开服监控、日常提醒、情缘证书、玩家交流等。", multi = true, w = 520, h = 70 })
+	nX = ui:Append("Text", { x = 0, y = 100, font = 214, txt = "<https://haimanchajian.com>" }):Click(function()
+		OpenInternetExplorer("https://haimanchajian.com")
+	end, {6, 204, 178}):Pos_()
+	ui:Append("Text", {x = nX + 5,  y = 100, txt = "或公众号【海鳗插件】"}):Color(6, 204, 178)
+	local bY = 142
+	ui:Append("Text", { x = 0, y = bY, txt = "海鳗茶馆", font = 27 })
+	nX = ui:Append("Text", { x = 0, y = bY + 28, txt = "投稿或倾听树洞故事、独家评论，请关注微信公众号【" }):Pos_()
+	nX = ui:Append("Text", { x = nX, y = bY + 28, txt = "海鳗茶馆", font = 51 }):Hover(function()
 		local x, y = Cursor.GetPos()
-		OutputTip(GetFormatImage("interface\\HM\\HM_0Base\\image.UiTex", 2, 148, 148), 200, {x, y, 0, 0})
+		OutputTip(GetFormatImage("interface\\HM\\HM_0Base\\qrcode_tea.tga", nil, 148, 148), 200, {x, y, 0, 0})
 	end, function()
 		HideTip()
 	end):Pos_()
-	ui:Append("Text", { x = nX, y = 0 + 28, txt = "】后访问。" })
+	ui:Append("Text", { x = nX, y = bY + 28, txt = "】" })
 	--ui:Append("Text", { x = 0, y = 378, txt = "小提示：包括插件作者在内任何人都无法知道秘密的来源，请放心发布。", font = 47 })
 	-- tips
 	--ui:Append("Image", "Image_Wechat", { x = 0, y = 36 + 164, w = 150, h = 150 }):File("interface\\HM\\HM_0Base\\image.UiTex", 2)
 	-- verify
-	ui:Append("Text", { x = 0, y = 214 - 134, txt = "海鳗插件认证", font = 27 })
-	ui:Append("Text", "Text_Verify", { x = 0, y = 242 - 134, txt = "loading...", font = 47 })
-	nX = ui:Append("Text", { x= 0, y = 276 - 134, txt = "认证选项：" }):Pos_()
-	nX = ui:Append("WndCheckBox", "Check_Basic", { x = nX, y = 276 - 134, txt = "区服体型", checked = true, enable = false }):Pos_()
-	nX = ui:Append("WndCheckBox", "Check_Name", { x = nX + 10, y = 276 - 134, txt = "角色名", checked = true }):Pos_()
-	nX = ui:Append("WndCheckBox", "Check_Equip", { x = nX + 10, y = 276 - 134, txt = "武器&坐骑", checked = true }):Pos_()
-	nX = ui:Append("WndButton", "Btn_Delete", { x = 0, y =  312 - 134, txt = "解除认证", enable = false }):Click(function()
+	bY = 212
+	ui:Append("Text", { x = 0, y = bY, txt = "海鳗认证", font = 27 })
+	ui:Append("Text", "Text_Verify", { x = 0, y = bY + 28, txt = "loading...", font = 47 }):Color(6, 204, 178)
+	nX = ui:Append("Text", { x= 0, y = bY + 56, txt = "认证选项：" }):Pos_()
+	nX = ui:Append("WndCheckBox", "Check_Basic", { x = nX, y = bY + 56, txt = "区服体型", checked = true, enable = false }):Pos_()
+	nX = ui:Append("WndCheckBox", "Check_Name", { x = nX + 10, y = bY + 56, txt = "角色名", checked = true }):Pos_()
+	nX = ui:Append("WndCheckBox", "Check_Equip", { x = nX + 10, y = bY + 56, txt = "武器&坐骑", checked = true }):Pos_()
+	nX = ui:Append("WndButton", "Btn_Delete", { x = 0, y =  bY + 90, txt = "解除认证", enable = false }):Click(function()
 		HM.Confirm("确定要解除认证吗？", function()
 			local data = {}
 			data.gid = GetClientPlayer().GetGlobalID()
@@ -490,7 +498,7 @@ _HM_Secret.PS.OnPanelActive = function(frame)
 			end)
 		end)
 	end):Pos_()
-	nX = ui:Append("WndButton", "Btn_Submit", { x = nX + 10, y =  312 - 134, txt = "立即认证" }):Click(function()
+	nX = ui:Append("WndButton", "Btn_Submit", { x = nX + 10, y =  bY + 90, txt = "立即认证" }):Click(function()
 		local btn = ui:Fetch("Btn_Submit")
 		local data = HM_About.GetSyncData()
 		data.isOpenName = ui:Fetch("Check_Name"):Check() and 1 or 0
@@ -655,4 +663,4 @@ HM.RegisterEvent("FIRST_LOADING_END", function()
 end)
 
 -- add to HM collector
-HM.RegisterPanel(_HM_Secret.szName, 2, _L["Recreation"], _HM_Secret.PS)
+HM.RegisterPanel(_HM_Secret.szName, 656, _L["Recreation"], _HM_Secret.PS)

@@ -310,6 +310,7 @@ _HM_About.PS.OnTaboxCheck = function(frame, nIndex, szTitle)
 	if szLang == "zhcn" then
 		ui:Append("Text", { x = 5, y = 5, font = 239,  w = 532, h = 100, txt = "海鳗插件官网" }):Align(1, 1):Click(function()
 			if szLang == "zhcn" then
+				HM.OpenPanel("海鳗官网")
 				HM.Sysmsg("https://haimanchajian.com 或微信公众号【海鳗插件】")
 				HM.Sysmsg("https://haimanchajian.com 或微信公众号【海鳗插件】")
 			end
