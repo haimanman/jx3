@@ -26,6 +26,8 @@ function HM_AchieveWiki.OnFrameCreate()
 	this.title = handle:Lookup("Text_Title")
 	this.desc = handle:Lookup("Text_Desc")
 	this.box = handle:Lookup("Box_Icon")
+	this.warn = handle:Lookup("Text_Warn")
+	this.view = this:Lookup("Btn_View")
 	this:Lookup("Btn_Edit"):Lookup("", "Text_Edit"):SetText(_L["Edit"])
 	Achievement.UpdateAnchor(this)
 end
@@ -46,7 +48,7 @@ function HM_AchieveWiki.OnItemMouseEnter()
 	elseif szName == "Image_Wechat" then
 		local x, y = this:GetAbsPos()
 		local w, h = this:GetSize()
-		OutputTip(GetFormatImage(HM.GetCustomFile("image.UiTeX", "interface\\HM\\HM_0Base\\image.UiTex"), 2, 150, 150), 200, { x, y, w, h })
+		--OutputTip(GetFormatImage(HM.GetCustomFile("image.UiTeX", "interface\\HM\\HM_0Base\\image.UiTex"), 2, 150, 150), 200, { x, y, w, h })
 	end
 end
 
@@ -78,6 +80,22 @@ function HM_AchieveWiki.OnLButtonClick()
 		Achievement.ClosePanel()
 	elseif szName == "Btn_Edit" then
 		HM.Alert(_L["For user experience, game inline editing has been canceld.\nPlease click the link at the bottom for editing, thank you!"])
+	elseif szName == "Btn_View" then
+		local frame = Achievement.GetFrame()
+		frame.warn:Hide()
+		frame.view:Hide()
+		frame.pedia:AppendItemFromString(GetFormatText(_L["Loading..."], 6))
+		frame.pedia:FormatAllItemPos()
+		HM.GetJson(ACHI_ROOT_URL .. "/api/wiki/" .. frame.dwAchievement .. "?__lang=" .. ACHI_CLIENT_LANG):done(function(res)
+			frame:Lookup("Btn_Edit"):Enable(true)
+			if res.aid then
+				Achievement.UpdateEncyclopedia(res)
+			elseif res.errmsg then
+				HM.Alert(res.errmsg)
+			end
+		end):fail(function()
+			HM.Sysmsg(_L["Request failed"])
+		end)
 	end
 end
 
@@ -243,19 +261,9 @@ function Achievement.OpenEncyclopedia(dwID, dwIcon, szTitle, szDesc)
 	frame.pedia:Clear()
 	frame.link:SetText(_L("Link(Open URL):%s", ACHI_ROOT_URL .. "/wiki/view/" .. dwID))
 	frame.link:AutoSize()
-	frame.pedia:AppendItemFromString(GetFormatText(_L["Loading..."], 6))
-	frame.pedia:FormatAllItemPos()
 	PlaySound(SOUND.UI_SOUND, g_sound.OpenFrame)
-	HM.GetJson(ACHI_ROOT_URL .. "/api/wiki/" .. dwID .. "?__lang=" .. ACHI_CLIENT_LANG):done(function(res)
-		frame:Lookup("Btn_Edit"):Enable(true)
-		if res.aid then
-			Achievement.UpdateEncyclopedia(res)
-		elseif res.errmsg then
-			HM.Alert(res.errmsg)
-		end
-	end):fail(function()
-		HM.Sysmsg(_L["Request failed"])
-	end)
+	frame.warn:Show()
+	frame.view:Show()
 end
 
 function Achievement.AppendBoxEvent(handle)

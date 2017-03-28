@@ -69,15 +69,15 @@ _HM.OpenPanel = function(bDisableSound)
 	frame:Show()
 	frame:BringToTop()
 	if not bDisableSound then
-		if HM_About and HM_About.bPlayOpen
+		--[[if HM_About and HM_About.bPlayOpen
 			and (not _HM.nPlayOpen or (GetLogicFrameCount() - _HM.nPlayOpen) > 57600)
 		then
 			local szSound = "interface\\HM\\HM_0Base\\open" .. math.ceil(math.random() * 3) .. ".wav"
 			PlaySound(SOUND.UI_SOUND, HM.GetCustomFile("opening.wav", szSound))
 			_HM.nPlayOpen = GetLogicFrameCount()
-		else
+		else--]]
 			PlaySound(SOUND.UI_SOUND, g_sound.OpenFrame)
-		end
+		--end
 	end
 	return frame
 end

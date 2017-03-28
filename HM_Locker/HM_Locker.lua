@@ -214,7 +214,7 @@ _HM_Locker.OnPlayerTalk = function()
 	local me = GetClientPlayer()
 	if me and arg0 == me.dwID and arg1 == PLAYER_TALK_CHANNEL.WHISPER and arg2 == true then
 		local t = me.GetTalkData()
-		if #t == 1 and t[1].type == "text" and (t[1].text == "11" or (HM_TargetList and t[1].text == "33")) then
+		if t and #t == 1 and t[1].type == "text" and (t[1].text == "11" or (HM_TargetList and t[1].text == "33")) then
 			local szName = arg3
 			for _, v in ipairs(HM.GetAllPlayer()) do
 				if v.szName == arg3 then
