@@ -598,7 +598,7 @@ _HM_RedName.OnPlayerTalk = function()
 	local me = GetClientPlayer()
 	if me and arg0 == me.dwID and arg1 == PLAYER_TALK_CHANNEL.WHISPER and arg2 == true then
 		local t = me.GetTalkData()
-		if #t == 1 and t[1].type == "text" and t[1].text == "22" then
+		if t and #t == 1 and t[1].type == "text" and t[1].text == "22" then
 			if _HM_RedName.tShareData[arg3] then
 				_HM_RedName.RemoveShare(arg3)
 			else

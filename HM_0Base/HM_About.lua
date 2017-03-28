@@ -277,9 +277,9 @@ _HM_About.PS.OnPanelActive = function(frame)
 	ui:Append("Text", { x = 0, y = 216, w = 500, h = 20, multi = true }):Align(0, 0):Text(_L["A pure PVP TianCe player of evil camp. Third-class operation, but first-class crazy and lazy!"])
 	-- other
 	ui:Append("Text", { txt = _L["Others"], x = 0, y = 244, font = 27 })
-	nX = ui:Append("WndCheckBox", { x = 0, y = 272, checked = HM_About.bPlayOpen })
-	:Text(_L["Play music on hourly first time to open panel"]):Click(function(bChecked) HM_About.bPlayOpen = bChecked end):Pos_()
-	ui:Append("WndCheckBox", { x = nX + 10, y = 272, checked = HM_About.bDebug == true })
+	--nX = ui:Append("WndCheckBox", { x = 0, y = 272, checked = HM_About.bPlayOpen })
+	--:Text(_L["Play music on hourly first time to open panel"]):Click(function(bChecked) HM_About.bPlayOpen = bChecked end):Pos_()
+	ui:Append("WndCheckBox", { x = 0, y = 272, checked = HM_About.bDebug == true })
 	:Text("Enable Debug"):Click(function(bChecked) HM_About.bDebug = bChecked end)
 end
 
@@ -310,9 +310,12 @@ _HM_About.PS.OnTaboxCheck = function(frame, nIndex, szTitle)
 	if szLang == "zhcn" then
 		ui:Append("Text", { x = 5, y = 5, font = 239,  w = 532, h = 100, txt = "海鳗插件官网" }):Align(1, 1):Click(function()
 			if szLang == "zhcn" then
-				HM.OpenPanel("海鳗官网")
-				HM.Sysmsg("https://haimanchajian.com 或微信公众号【海鳗插件】")
-				HM.Sysmsg("https://haimanchajian.com 或微信公众号【海鳗插件】")
+				if HM_Secret then
+					HM.OpenPanel("海鳗官网")
+				else
+					HM.Sysmsg("https://haimanchajian.com 或微信公众号【海鳗插件】")
+					HM.Sysmsg("https://haimanchajian.com 或微信公众号【海鳗插件】")
+				end
 			end
 		end)
 		ui:Append("Text", { x = 5, y = 90, font = 61,  w = 532, h = 20, txt = "游戏辅助  资料查询  科举题库" }):Align(1, 1)
@@ -320,14 +323,17 @@ _HM_About.PS.OnTaboxCheck = function(frame, nIndex, szTitle)
 	else
 		ui:Append("Text", { x = 0, y = 5, font = 239,  w = 532, h = 100, txt = "Empty color is the color that is empty." }):Align(1, 1)
 	end
-	ui:Append("Text", { txt = _L("%s are welcome to use HM plug-in", szName), x = 10, y = 200, font = 19 })
-	ui:Append("Text", { txt = _L["Free & open source, Utility, Focus on PVP!"], x = 10, y = 230, font = 19 })
+	ui:Append("Text", { txt = _L("%s are welcome to use HM plug-in", szName), x = 10, y = 200, font = 239 })
+	ui:Append("Text", { txt = _L["Free & open source, Utility, Focus on PVP!"], x = 10, y = 230, font = 239 })
 	ui:Append("Text", { txt = _L["QQ-group: 54516791"], x = 10, y = 280, font = 27 })
 	-- buttons
-	local nX = ui:Append("Text", { txt = _L["<Opening music>"], x = 10, y = 305, font = 27 }):Click(function()
+	local nX = 0
+	--[[
+	ui:Append("Text", { txt = _L["<Opening music>"], x = 10, y = 305, font = 27 }):Click(function()
 		local szSound = "interface\\HM\\HM_0Base\\open" .. math.ceil(math.random() * 3) .. ".wav"
 		PlaySound(SOUND.UI_SOUND, HM.GetCustomFile("opening.wav", szSound))
 	end):Pos_()
+	--]]
 	nX = ui:Append("Text", { txt = _L["<About plug-in>"], x = nX + 10, y = 305, font = 27 }):Click(function()
 		HM.OpenPanel(_L["About plug-in"])
 	end):Pos_()

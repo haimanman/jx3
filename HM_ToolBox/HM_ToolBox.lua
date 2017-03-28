@@ -29,7 +29,7 @@ HM_ToolBox = {
 	bAutoDiamond2 = false,	-- 五行石精炼完成后自动再摆上次材料
 	-- bAnyDiamond = false,	-- 忽略五行石颜色，只考虑等级
 	bChatTime = true,		-- 聊天复制党
-	bWhisperAt = true,	-- 记录点名聊天
+	--bWhisperAt = true,	-- 记录点名聊天
 	bSplitter2 = false,	-- 分组拆分
 	bGuildBankSort = true,	-- 帮会仓库排序
 	nBroadType = 0,
@@ -1250,7 +1250,7 @@ _HM_ToolBox.PS.OnPanelActive = function(frame)
 		HM_ToolBox.bChatTime = bChecked
 	end)
 	-- record
-	ui:Append("WndCheckBox", { txt = _L["Record @message into whisper panel"], x = nX + 10, y = 204, checked = HM_ToolBox.bWhisperAt })
+	ui:Append("WndCheckBox", { txt = _L["Record @message into whisper panel"], x = nX + 10, y = 204, checked = HM_ToolBox.bWhisperAt, enable = false })
 	:Click(function(bChecked)
 		HM_ToolBox.bWhisperAt = bChecked
 	end)
