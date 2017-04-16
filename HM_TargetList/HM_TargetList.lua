@@ -2320,6 +2320,19 @@ HM.RegisterEvent("LOADING_END", function()
 	end
 end)
 
+-- quick focus use "33"
+HM.RegisterPmCmd("33", function(szName)
+	for _, v in ipairs(HM.GetAllPlayer()) do
+		if v.szName == szName then
+			if _HM_TargetList.IsFocus(v.dwID) then
+				 _HM_TargetList.DelFocus(v.dwID)
+			else
+				_HM_TargetList.AddFocus(v.dwID)
+			end
+		end
+	end
+end)
+
 -- add to HM panel
 HM.RegisterPanel(_L["Focus/TargetList"], 299, _L["Target"], _HM_TargetList.PS)
 

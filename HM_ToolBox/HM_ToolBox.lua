@@ -1312,10 +1312,10 @@ HM.RegisterEvent("CHAT_PANEL_OPEN", function() _HM_ToolBox.HookChatPanel(arg0) e
 HM.RegisterEvent("RELOAD_UI_ADDON_BEGIN", _HM_ToolBox.OnReloadUIAddon)
 HM.RegisterEvent("RELOAD_UI_ADDON_END", _HM_ToolBox.OnChatPanelInit)
 -- 记录点名聊天
-RegisterMsgMonitor(_HM_ToolBox.OnRecordWhisperAt, {
-	"MSG_NORMAL", "MSG_MAP", "MSG_BATTLE_FILED", "MSG_PARTY", "MSG_SCHOOL",
-	"MSG_GUILD", "MSG_WORLD", "MSG_CAMP", "MSG_TEAM", "MSG_FRIEND"
-})
+--RegisterMsgMonitor(_HM_ToolBox.OnRecordWhisperAt, {
+--	"MSG_NORMAL", "MSG_MAP", "MSG_BATTLE_FILED", "MSG_PARTY", "MSG_SCHOOL",
+--	"MSG_GUILD", "MSG_WORLD", "MSG_CAMP", "MSG_TEAM", "MSG_FRIEND"
+--})
 HM.RegisterBgMsg("HM_BROAD", _HM_ToolBox.OnBgBroad)
 
 -- add to HM collector

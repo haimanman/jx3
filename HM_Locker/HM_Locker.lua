@@ -207,31 +207,6 @@ _HM_Locker.OnEnter = function()
 	end
 end
 
--- player talk to quick select target
--- arg0£ºdwTalkerID£¬arg1£ºnChannel£¬arg2£ºbEcho£¬arg3£ºszName
-_HM_Locker.OnPlayerTalk = function()
-	if not HM_Locker.bWhisperSel then return end
-	local me = GetClientPlayer()
-	if me and arg0 == me.dwID and arg1 == PLAYER_TALK_CHANNEL.WHISPER and arg2 == true then
-		local t = me.GetTalkData()
-		if t and #t == 1 and t[1].type == "text" and (t[1].text == "11" or (HM_TargetList and t[1].text == "33")) then
-			local szName = arg3
-			for _, v in ipairs(HM.GetAllPlayer()) do
-				if v.szName == arg3 then
-					if t[1].text == "11" then
-						HM.SetTarget(TARGET.PLAYER, v.dwID)
-					else
-						HM_TargetList.AddFocus(v.dwID)
-					end
-					break
-				end
-			end
-		elseif #t == 1 and t[1].type == "text" and t[1].text == "66" and arg3 == me.szName then
-			HM_Locker.tLowerForce[21] = not HM_Locker.tLowerForce[21]
-		end
-	end
-end
-
 -- register locker
 _HM_Locker.AddLocker(_HM_Locker.CheckLockFight)
 _HM_Locker.AddLocker(_HM_Locker.CheckDuel)
@@ -619,7 +594,6 @@ HM.RegisterEvent("NPC_LEAVE_SCENE", _HM_Locker.OnLeave)
 HM.RegisterEvent("PLAYER_LEAVE_SCENE", _HM_Locker.OnLeave)
 HM.RegisterEvent("NPC_ENTER_SCENE", _HM_Locker.OnEnter)
 HM.RegisterEvent("PLAYER_ENTER_SCENE", _HM_Locker.OnEnter)
-HM.RegisterEvent("PLAYER_TALK", _HM_Locker.OnPlayerTalk)
 HM.RegisterEvent("SYS_MSG", _HM_Locker.OnCheckDuel)
 
 -- add to HM panel
@@ -628,6 +602,15 @@ HM.RegisterPanel(_L["Lock/Select"], 3353, _L["Target"], _HM_Locker.PS)
 -- hotkey
 HM.AddHotKey("SmartTarget", _L["Smart select target"], _HM_Locker.SearchTarget)
 HM.AddHotKey("OnlyPlayer", _L["TAB player only"],  _HM_Locker.SearchOnlyPlayer)
+
+-- quick target use "11"
+HM.RegisterPmCmd("11", function(szName)
+	for _, v in ipairs(HM.GetAllPlayer()) do
+		if v.szName == szName then
+			return HM.SetTarget(TARGET.PLAYER, v.dwID)
+		end
+	end
+end)
 
 -- public api
 HM_Locker.AddLocker = _HM_Locker.AddLocker
