@@ -471,6 +471,9 @@ end
 _HM_TargetList.UpdateFocusItem = function(h, tar)
 	local me = GetClientPlayer()
 	-- update mark image
+	if not _HM_TargetList.tPartyMark then
+		_HM_TargetList.tPartyMark = {}
+	end
 	local hImg, nIconFrame = h:Lookup("Image_Mark"), _HM_TargetList.tPartyMark[tar.dwID]
 	if nIconFrame then
 		nIconFrame = PARTY_MARK_ICON_FRAME_LIST[nIconFrame]
