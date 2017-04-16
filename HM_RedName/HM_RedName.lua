@@ -592,22 +592,6 @@ _HM_RedName.OnBreathe = function()
 	_HM_RedName.AddWorldBreathe()
 end
 
--- player talk to quick select target
--- arg0：dwTalkerID，arg1：nChannel，arg2：bEcho，arg3：szName
-_HM_RedName.OnPlayerTalk = function()
-	local me = GetClientPlayer()
-	if me and arg0 == me.dwID and arg1 == PLAYER_TALK_CHANNEL.WHISPER and arg2 == true then
-		local t = me.GetTalkData()
-		if t and #t == 1 and t[1].type == "text" and t[1].text == "22" then
-			if _HM_RedName.tShareData[arg3] then
-				_HM_RedName.RemoveShare(arg3)
-			else
-				_HM_RedName.ConnShare(arg3)
-			end
-		end
-	end
-end
-
 -- bg talk
 _HM_RedName.OnBgHear = function(nChannel, dwID, szName, data, bSelf)
 	if bSelf then -- 过滤自己
@@ -768,7 +752,6 @@ end
 ---------------------------------------------------------------------
 -- 注册事件、初始化
 ---------------------------------------------------------------------
-HM.RegisterEvent("PLAYER_TALK", _HM_RedName.OnPlayerTalk)
 HM.BreatheCall("HM_RedName", _HM_RedName.OnBreathe)
 HM.RegisterBgMsg("HM_REDNAME", _HM_RedName.OnBgHear)
 -- add to HM collector
@@ -776,6 +759,15 @@ HM.RegisterPanel(_L["Nearby players"], 3293, nil, _HM_RedName.PS)
 
 -- hotkey
 HM.AddHotKey("AroundInfo", _L["Publish nearby stats"],  _HM_RedName.ShowAroundInfo)
+
+-- quick share use "22"
+HM.RegisterPmCmd("22", function(szName)
+	if _HM_RedName.tShareData[arg3] then
+		_HM_RedName.RemoveShare(arg3)
+	else
+		_HM_RedName.ConnShare(arg3)
+	end
+end)
 
 -- public api
 HM_RedName.ShowAroundInfo = _HM_RedName.ShowAroundInfo

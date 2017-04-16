@@ -44,6 +44,7 @@ local _HM = {
 	tMenuTrace = {},
 	tEvent = {},
 	tBgMsgHandle = {},
+	tPmCmdHandle = {},
 	tHotkey = {},
 	tDelayCall = {},
 	tBreatheCall = {},
@@ -1444,6 +1445,12 @@ end
 -- (void) HM.RegisterBgMsg(string szKey[, func fnAction])
 HM.RegisterBgMsg = function(szKey, fnAction)
 	_HM.tBgMsgHandle[szKey] = fnAction
+end
+
+-- 注册/反注册简易的密聊指令
+-- (void) HM.RegisterPmCmd(string szCmd[,  funcfnAction])
+HM.RegisterPmCmd = function(szCmd, fnAction)
+	_HM.tPmCmdHandle[szCmd] = fnAction
 end
 
 -- 注册用户定义数据，支持全局变量数组遍历
@@ -3155,6 +3162,20 @@ HM.AppendPlayerMenu(function()
 		fnAction = _HM.TogglePanel
 	}
 end)
+-- private msg command
+RegisterMsgMonitor(function(szMsg)
+	local szPrefix = "<text>text=" .. EncodeComponentsString(g_tStrings.STR_TALK_HEAD_WHISPER_REPLY)
+	if string.sub(szMsg, 1, string.len(szPrefix)) == szPrefix then
+		for k, v in pairs(_HM.tPmCmdHandle) do
+			if StringFindW(szMsg, "text=" .. EncodeComponentsString(k)) then
+				local szName = string.match(szMsg, "text=\"%[(.-)%]\"")
+				if szName then
+					return pcall(v, szName, k)
+				end
+			end
+		end
+	end
+end, {"MSG_WHISPER"})
 
 -- Load skill extend data
 _HM.tSkillEx = LoadLUAData("interface\\HM\\HM_0Base\\skill_ex.jx3dat") or {}
