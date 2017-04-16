@@ -276,11 +276,21 @@ _HM_About.PS.OnPanelActive = function(frame)
 	ui:Append("Text", { txt = _L["About HMM"], x = 0, y = 188, font = 27 })
 	ui:Append("Text", { x = 0, y = 216, w = 500, h = 20, multi = true }):Align(0, 0):Text(_L["A pure PVP TianCe player of evil camp. Third-class operation, but first-class crazy and lazy!"])
 	-- other
+	nX = 0
 	ui:Append("Text", { txt = _L["Others"], x = 0, y = 244, font = 27 })
 	--nX = ui:Append("WndCheckBox", { x = 0, y = 272, checked = HM_About.bPlayOpen })
 	--:Text(_L["Play music on hourly first time to open panel"]):Click(function(bChecked) HM_About.bPlayOpen = bChecked end):Pos_()
-	ui:Append("WndCheckBox", { x = 0, y = 272, checked = HM_About.bDebug == true })
-	:Text("Enable Debug"):Click(function(bChecked) HM_About.bDebug = bChecked end)
+	nX = ui:Append("WndCheckBox", { x = nX, y = 272, checked = HM_About.bDebug == true }):Text("Enable Debug"):Click(function(bChecked)
+		HM_About.bDebug = bChecked
+	end):Pos_()
+	ui:Append("Text", { x = nX + 10, y = 272, txt = "<" .. _L["Haiman Site"] .. ">" }):Click(function()
+		if HM_Secret then
+			HM.OpenPanel(_L["Haiman Site"])
+		else
+			HM.Sysmsg("https://haimanchajian.com 或微信公众号【海鳗插件】")
+			HM.Sysmsg("https://haimanchajian.com 或微信公众号【海鳗插件】")
+		end
+	end)	
 end
 
 -- author
@@ -311,7 +321,7 @@ _HM_About.PS.OnTaboxCheck = function(frame, nIndex, szTitle)
 		ui:Append("Text", { x = 5, y = 5, font = 239,  w = 532, h = 100, txt = "海鳗插件官网" }):Align(1, 1):Click(function()
 			if szLang == "zhcn" then
 				if HM_Secret then
-					HM.OpenPanel("海鳗官网")
+					HM.OpenPanel(_L["Haiman Site"])
 				else
 					HM.Sysmsg("https://haimanchajian.com 或微信公众号【海鳗插件】")
 					HM.Sysmsg("https://haimanchajian.com 或微信公众号【海鳗插件】")

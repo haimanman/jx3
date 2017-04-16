@@ -11,7 +11,7 @@ HM.RegisterCustomData("HM_Secret")
 -- 本地函数和变量
 ---------------------------------------------------------------------
 local _HM_Secret = {
-	szName = "海鳗官网",
+	szName = _L["Haiman Site"],
 	szIniFile = "interface\\HM\\HM_Secret\\HM_Secret.ini",
 }
 

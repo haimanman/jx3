@@ -3,6 +3,7 @@ data = {
 	-- HM.lua --
 	["HM, JX3 Plug-in Collection"] = "海鰻、實用插件集",
 	["HM Plug"] = "海鰻插件",
+	["Haiman Site"] = "海鰻官網",
 	["General"] = "常用",
 	["Target"] = "目標",
 	["Battle"] = "戰斗",

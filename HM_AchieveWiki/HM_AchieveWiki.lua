@@ -6,6 +6,7 @@ local ACHI_ROOT_URL = "https://haimanchajian.com"
 local ACHI_CLIENT_LANG = select(3, GetVersion())
 local Achievement = {}
 local tinsert = table.insert
+local bConfirm = false
 
 HM_AchieveWiki = {
 	bAutoSync = false,
@@ -96,6 +97,7 @@ function HM_AchieveWiki.OnLButtonClick()
 		end):fail(function()
 			HM.Sysmsg(_L["Request failed"])
 		end)
+		bConfirm = true
 	end
 end
 
@@ -264,6 +266,12 @@ function Achievement.OpenEncyclopedia(dwID, dwIcon, szTitle, szDesc)
 	PlaySound(SOUND.UI_SOUND, g_sound.OpenFrame)
 	frame.warn:Show()
 	frame.view:Show()
+	if bConfirm then
+		local _this = this
+		this = frame.view
+		HM_AchieveWiki.OnLButtonClick()
+		this = _this
+	end
 end
 
 function Achievement.AppendBoxEvent(handle)
