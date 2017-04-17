@@ -29,7 +29,7 @@ HM_ToolBox = {
 	bAutoDiamond2 = false,	-- 五行石精炼完成后自动再摆上次材料
 	-- bAnyDiamond = false,	-- 忽略五行石颜色，只考虑等级
 	bChatTime = true,		-- 聊天复制党
-	--bWhisperAt = true,	-- 记录点名聊天
+	bWhisperAt = true,	-- 记录点名聊天
 	bSplitter2 = false,	-- 分组拆分
 	bGuildBankSort = true,	-- 帮会仓库排序
 	nBroadType = 0,
@@ -1163,17 +1163,17 @@ _HM_ToolBox.OnRecordWhisperAt = function(szMsg)
 	if not me or not HM_ToolBox.bWhisperAt or not hM then
 		return
 	end
-	for _, v in ipairs(me.GetTalkData() or {}) do
-		if v.type == "name" and v.name == me.szName then
-			hM:AppendItemFromString(szMsg)
-			hM:FormatAllItemPos()
-			local _, h = hM:GetSize()
-			local _, hA = hM:GetAllItemSize()
-			local scroll = hM:GetParent():GetParent():Lookup("Scroll_Msg")
-			scroll:SetStepCount((hA - h) / 10)
-			scroll:ScrollEnd()
-			return PlaySound(SOUND.UI_SOUND,g_sound.Whisper)
-		end
+	local szText = "text=" .. EncodeComponentsString("[" .. me.szName .. "]")
+	local nPos = StringFindW(szMsg, g_tStrings.STR_TALK_HEAD_SAY1)
+	if nPos and StringFindW(szMsg, szText, nPos) then
+		hM:AppendItemFromString(szMsg)
+		hM:FormatAllItemPos()
+		local _, h = hM:GetSize()
+		local _, hA = hM:GetAllItemSize()
+		local scroll = hM:GetParent():GetParent():Lookup("Scroll_Msg")
+		scroll:SetStepCount((hA - h) / 10)
+		scroll:ScrollEnd()
+		PlaySound(SOUND.UI_SOUND,g_sound.Whisper)
 	end
 end
 
@@ -1250,7 +1250,7 @@ _HM_ToolBox.PS.OnPanelActive = function(frame)
 		HM_ToolBox.bChatTime = bChecked
 	end)
 	-- record
-	ui:Append("WndCheckBox", { txt = _L["Record @message into whisper panel"], x = nX + 10, y = 204, checked = HM_ToolBox.bWhisperAt, enable = false })
+	ui:Append("WndCheckBox", { txt = _L["Record @message into whisper panel"], x = nX + 10, y = 204, checked = HM_ToolBox.bWhisperAt })
 	:Click(function(bChecked)
 		HM_ToolBox.bWhisperAt = bChecked
 	end)
@@ -1312,10 +1312,10 @@ HM.RegisterEvent("CHAT_PANEL_OPEN", function() _HM_ToolBox.HookChatPanel(arg0) e
 HM.RegisterEvent("RELOAD_UI_ADDON_BEGIN", _HM_ToolBox.OnReloadUIAddon)
 HM.RegisterEvent("RELOAD_UI_ADDON_END", _HM_ToolBox.OnChatPanelInit)
 -- 记录点名聊天
---RegisterMsgMonitor(_HM_ToolBox.OnRecordWhisperAt, {
---	"MSG_NORMAL", "MSG_MAP", "MSG_BATTLE_FILED", "MSG_PARTY", "MSG_SCHOOL",
---	"MSG_GUILD", "MSG_WORLD", "MSG_CAMP", "MSG_TEAM", "MSG_FRIEND"
---})
+RegisterMsgMonitor(_HM_ToolBox.OnRecordWhisperAt, {
+	"MSG_NORMAL", "MSG_MAP", "MSG_BATTLE_FILED", "MSG_PARTY", "MSG_SCHOOL",
+	"MSG_GUILD", "MSG_WORLD", "MSG_CAMP", "MSG_TEAM", "MSG_FRIEND"
+})
 HM.RegisterBgMsg("HM_BROAD", _HM_ToolBox.OnBgBroad)
 
 -- add to HM collector
