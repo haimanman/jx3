@@ -15,7 +15,7 @@ HM_Camp = {
 	bQuestAccept = true,	-- 自动接日常
 	bBossTime = false,			-- boss 刷新提醒
 	bBossTimeGF = true,		-- 攻防 BOSS 计时
-	bAutoCampQueue = true,	-- 攻防排队自动进
+	--bAutoCampQueue = true,	-- 攻防排队自动进
 	bForgetGoods = true,	-- 跑商忘记买货时提醒：城防物资/独山玉/湘莲/和田玉雕/紫砂/普洱，（100个以下）
 	tBossList = {
 		[_n(6219)--[[方超]]] = 5,
@@ -624,7 +624,7 @@ end
 
 -- 地图加载完毕，判断是否在浩气、恶人
 _HM_Camp.OnLoadingEnd = function()
-	local dwMapID = GetClientPlayer().GetScene().dwMapID
+	local dwMapID = GetClientPlayer().GetMapID()
 	if dwMapID == 27 or dwMapID == 25 then
 		_HM_Camp.HookCampPanel()
 		RegisterMsgMonitor(_HM_Camp.OnNpcYell, { "MSG_NPC_YELL" })
@@ -633,6 +633,16 @@ _HM_Camp.OnLoadingEnd = function()
 	end
 	-- remove unused
 	HM_Camp.tBossList[_n(36505)--[[库瓦察姆]]] = nil
+	-- hide gf
+	if HM_Camp.bHideEnable then
+		_HM_Camp.HideGF(_HM_Camp.bEnter == true, _HM_Camp.bEnter == true)
+		if not _HM_Camp.bEnter then
+			if HM_Camp.bHideForever then
+				_HM_Camp.HideGF(true, false)
+			end
+			_HM_Camp.bEnter = true
+		end
+	end
 end
 
 -------------------------------------
@@ -730,11 +740,11 @@ _HM_Camp.PS.OnPanelActive = function(frame)
 	:Text(_L["Record BOSS time in camp fight (click icons of camp bar)"]):Click(function(bChecked)
 		HM_Camp.bBossTimeGF = bChecked
 	end)
-	ui:Append("WndCheckBox", { x = 10, y = 296, checked = HM_Camp.bAutoCampQueue })
-	:Text(_L["Auto enter map when over of the queue"]):Click(function(bChecked)
-		HM_Camp.bAutoCampQueue = bChecked
-	end)
-	ui:Append("WndCheckBox", { x = 10, y = 324, checked = HM_Camp.bForgetGoods })
+	--ui:Append("WndCheckBox", { x = 10, y = 296, checked = HM_Camp.bAutoCampQueue })
+	--:Text(_L["Auto enter map when over of the queue"]):Click(function(bChecked)
+	--	HM_Camp.bAutoCampQueue = bChecked
+	--end)
+	ui:Append("WndCheckBox", { x = 10, y = 296, checked = HM_Camp.bForgetGoods })
 	:Text(_L["Alert when forget buy goods for trade quest"]):Click(function(bChecked)
 		HM_Camp.bForgetGoods = bChecked
 	end)
@@ -767,17 +777,6 @@ HM.RegisterEvent("PARTY_UPDATE_MEMBER_INFO", function()
 	if _HM_Camp.tAddParty[arg1] then
 		_HM_Camp.tAddParty[arg1] = nil
 		_HM_Camp.OnPartyAdd(arg1)
-	end
-end)
-HM.RegisterEvent("SYNC_ROLE_DATA_END", function()
-	if HM_Camp.bHideEnable then
-		_HM_Camp.HideGF(_HM_Camp.bEnter == true, _HM_Camp.bEnter == true)
-		if not _HM_Camp.bEnter then
-			if HM_Camp.bHideForever then
-				_HM_Camp.HideGF(true, false)
-			end
-			_HM_Camp.bEnter = true
-		end
 	end
 end)
 HM.RegisterEvent("ON_CAN_ENTER_MAP_NOTIFY", function()
