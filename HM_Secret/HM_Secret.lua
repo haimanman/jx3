@@ -461,8 +461,10 @@ _HM_Secret.PS.OnPanelActive = function(frame)
 	--nX = ui:Append("WndButton", { x = nX, y = 0, txt = "发布秘密" }):Click(_HM_Secret.PostNew):Pos_()
 	-- Tips
 	ui:Append("Text", { x = 0, y = 0, txt = "关于官网", font = 27 })
-	ui:Append("Text", { x = 0, y = 28, txt = "海鳗插件官网由海鳗鳗及其团队开发并维护，与剑网3游戏官方无关。在游戏之外及手机端提供相关辅助功能，包括数据查询、成就百科、科举答题、开服监控、日常提醒、情缘证书、玩家交流等。", multi = true, w = 520, h = 70 })
-	nX = ui:Append("Text", { x = 0, y = 100, font = 214, txt = "<https://haimanchajian.com>" }):Color(6, 204, 178):Pos_()
+	ui:Append("Text", { x = 0, y = 28, txt = "海鳗插件官网由海鳗鳗及其团队开发并维护，与剑网3游戏官方无关。在游戏之外提供相关辅助功能，包括数据查询、成就百科、科举答题、开服监控、日常提醒、情缘证书、玩家交流等。", multi = true, w = 520, h = 70 })
+	nX = ui:Append("Text", { x = 0, y = 100, font = 214, txt = "网址 <https://haimanchajian.com>" }):Color(6, 204, 178):Click(function()
+		OpenInternetExplorer("https://haimanchajian.com")
+	end):Pos_()
 	--ui:Append("Text", {x = nX + 5,  y = 100, txt = "或公众号【海鳗插件】"}):Color(6, 204, 178)
 	local bY = 142
 	ui:Append("Text", { x = 0, y = bY, txt = "海鳗茶馆", font = 27 })
@@ -661,4 +663,4 @@ HM.RegisterEvent("FIRST_LOADING_END", function()
 end)
 
 -- add to HM collector
-HM.RegisterPanel(_HM_Secret.szName, 656, _L["Recreation"], _HM_Secret.PS)
+HM.RegisterPanel(_HM_Secret.szName, 2651, _L["Recreation"], _HM_Secret.PS)
