@@ -492,7 +492,7 @@ _HM_Secret.PS.OnPanelActive = function(frame)
 			local data = {}
 			data.gid = GetClientPlayer().GetGlobalID()
 			data.isOpenVerify = "0"
-			HM.PostJson(ROOT_URL .. "/api/data/roles", data):done(function(res)
+			HM.PostJson(ROOT_URL .. "/api/jx3/roles", data):done(function(res)
 				HM_Secret.bAutoSync = false
 				HM.OpenPanel(_HM_Secret.szName)
 			end)
@@ -508,7 +508,7 @@ _HM_Secret.PS.OnPanelActive = function(frame)
 		if GetClientPlayer().nLevel < 95 then
 			return HM.Alert(g_tStrings.tCraftResultString[CRAFT_RESULT_CODE.TOO_LOW_LEVEL])
 		end
-		HM.PostJson(ROOT_URL .. "/api/data/roles", data):done(function(res)
+		HM.PostJson(ROOT_URL .. "/api/jx3/roles", data):done(function(res)
 			HM_Secret.bAutoSync = true
 			if not res then
 				-- unknown error
@@ -529,9 +529,9 @@ _HM_Secret.PS.OnPanelActive = function(frame)
 			btn:Enable(true)
 		end)
 	end):Pos_()
-	-- /api/data/roles/{gid}
+	-- /api/jx3/roles/{gid}
 	_HM_Secret.PS.active = true
-	HM.GetJson(ROOT_URL .. "/api/data/roles/" .. GetClientPlayer().GetGlobalID()):done(function(res)
+	HM.GetJson(ROOT_URL .. "/api/jx3/roles/" .. GetClientPlayer().GetGlobalID()):done(function(res)
 		if not _HM_Secret.PS.active then
 			return
 		end
@@ -658,7 +658,7 @@ end)
 HM.RegisterEvent("FIRST_LOADING_END", function()
 	if HM_Secret.bAutoSync then
 		local data = HM_About.GetSyncData()
-		HM.PostJson(ROOT_URL .. "/api/data/roles", data)
+		HM.PostJson(ROOT_URL .. "/api/jx3/roles", data)
 	end
 end)
 

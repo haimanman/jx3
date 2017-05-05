@@ -556,7 +556,7 @@ end
 
 -- œ¬‘ÿª÷∏¥«È‘µ
 _HM_Love.DownloadLover = function()
-	HM.GetJson(ROOT_URL .. "/api/data/lover/" .. GetClientPlayer().GetGlobalID()):done(function(res)
+	HM.GetJson(ROOT_URL .. "/api/jx3/lover/" .. GetClientPlayer().GetGlobalID()):done(function(res)
 		if not res or res.errcode ~= 0 then
 			HM.Alert(g_tStrings.tFellowshipErrorString[PLAYER_FELLOWSHIP_RESPOND.ERROR_INVALID_NAME])
 		else
@@ -574,7 +574,7 @@ end
 
 -- …æ≥˝‘∂≥Ã«È‘µ (post used)
 _HM_Love.DeleteRemote = function()
-	HM.PostJson(ROOT_URL .. "/api/data/lovers", {
+	HM.PostJson(ROOT_URL .. "/api/jx3/lovers", {
 		gid = GetClientPlayer().GetGlobalID(),
 		__delete = 1,
 		__lang = CLIENT_LANG,
@@ -600,7 +600,7 @@ _HM_Love.UploadRemote = function(__qrcode)
 			nStartTime = _HM_Love.nStartTime,
 		})
 	end
-	HM.PostJson(ROOT_URL .. "/api/data/lovers", data):done(function(res)
+	HM.PostJson(ROOT_URL .. "/api/jx3/lovers", data):done(function(res)
 		if not res or res.errcode ~= 0 then
 			HM.Alert(res.errmsg)
 		elseif res.qrcode then
