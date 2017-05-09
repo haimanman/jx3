@@ -233,7 +233,6 @@ _HM_Target.InitBuffPos = function(frame, nSize)
 	for _, v in ipairs(tName) do
 		local h = frame:Lookup("", "Handle_" .. v)
 		if h then
-			local nW, nH = h:GetSize()
 			if not nY then
 				_, nY = h:GetRelPos()
 				if h.nRelPosY then
@@ -257,13 +256,11 @@ _HM_Target.InitBuffPos = function(frame, nSize)
 			if v == "Buff" or v == "Debuff" then
 				nY = nY + nSize + 5
 				if v == "Debuff" then
-					local h2 = frame:Lookup("", "Handle_Bar")
-					local nX, _ = h2:GetRelPos()
-					h2:SetRelPos(nX, nY)
+					frame:Lookup("", "Handle_Bar"):SetRelY(nY)
 				end
-				h:SetSize(nW, nSize + 5)
+				h:SetH(nSize + 5)
 			else
-				h:SetSize(nW, 20)
+				h:SetH(20)
 				nY = nY + 20
 			end
 		end
@@ -969,7 +966,7 @@ _HM_Target.PS.OnPanelActive = function(frame)
 		HM_Target.bAdjustBuff = bChecked
 		ui:Fetch("Combo_Size1"):Enable(bChecked)
 		ui:Fetch("Combo_Size2"):Enable(bChecked)
-		ui:Fetch("Check_Spark"):Enable(bChecked)
+		-- ui:Fetch("Check_Spark"):Enable(bChecked)
 		_HM_Target.RefreshBuff()
 	end):Pos_()
 	nX = ui:Append("WndComboBox", "Combo_Size1", { x = nX, y = 56, w = 60, h = 25 })
