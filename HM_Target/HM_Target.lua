@@ -220,13 +220,15 @@ end
 _HM_Target.RefreshBuff = function()
 	local frame = Station.Lookup("Normal/Target")
 	if frame then
-		_HM_Target.InitBuffPos(frame, HM_Target.nSizeBuff)
-		_HM_Target.InitBuffSize(frame.dwBuffMgrID, HM_Target.nSizeBuff)
+		local nSize = HM_Target.bAdjustBuff and HM_Target.nSizeBuff or 20
+		_HM_Target.InitBuffPos(frame, nSize)
+		_HM_Target.InitBuffSize(frame.dwBuffMgrID, nSize)
 	end
 	local frame = Station.Lookup("Normal/TargetTarget")
 	if frame then
-		_HM_Target.InitBuffPos(frame, HM_Target.nSizeTTBuff)
-		_HM_Target.InitBuffSize(frame.dwMgrID, HM_Target.nSizeTTBuff)
+		local nSize = HM_Target.bAdjustBuff and HM_Target.nSizeTTBuff or 20
+		_HM_Target.InitBuffPos(frame, nSize)
+		_HM_Target.InitBuffSize(frame.dwMgrID, nSize)
 	end
 end
 
@@ -299,6 +301,9 @@ end
 -- update buff size
 _HM_Target.InitBuffSize = function(dwMgrID, nSize)
 	local info = BuffMgr.GetInfo(dwMgrID)
+	if not info then
+		return
+	end
 	local boxtexts = {}
 	for i, boxtext in ipairs(info.boxtexts) do
 		boxtexts[i] = boxtext:gsub("w=%d+", "w=" .. nSize):gsub("h=%d+", "h=" .. nSize)
