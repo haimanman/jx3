@@ -217,18 +217,30 @@ _HM_Target.UpdateAction = function(frame)
 end
 
 -- refresh buff size
-_HM_Target.RefreshBuff = function()
-	local frame = Station.Lookup("Normal/Target")
-	if frame then
-		local nSize = HM_Target.bAdjustBuff and HM_Target.nSizeBuff or 20
-		_HM_Target.InitBuffPos(frame, nSize)
-		_HM_Target.InitBuffSize(frame.dwBuffMgrID, nSize)
+_HM_Target.RefreshBuff = function(bTTarget)
+	if bTTarget == nil or bTTarget == false then
+		local frame = Station.Lookup("Normal/Target")
+		if frame then
+			frame.bBuffSizeAdjusted = false
+			if frame.dwBuffMgrID then
+				local nSize = HM_Target.bAdjustBuff and HM_Target.nSizeBuff or 20
+				_HM_Target.InitBuffPos(frame, nSize)
+				_HM_Target.InitBuffSize(frame.dwBuffMgrID, nSize)
+				frame.bBuffSizeAdjusted = true
+			end
+		end
 	end
-	local frame = Station.Lookup("Normal/TargetTarget")
-	if frame then
-		local nSize = HM_Target.bAdjustBuff and HM_Target.nSizeTTBuff or 20
-		_HM_Target.InitBuffPos(frame, nSize)
-		_HM_Target.InitBuffSize(frame.dwMgrID, nSize)
+	if bTTarget == nil or bTTarget == true then
+		local frame = Station.Lookup("Normal/TargetTarget")
+		if frame then
+			frame.bBuffSizeAdjusted = false
+			if frame.dwMgrID then
+				local nSize = HM_Target.bAdjustBuff and HM_Target.nSizeTTBuff or 20
+				_HM_Target.InitBuffPos(frame, nSize)
+				_HM_Target.InitBuffSize(frame.dwMgrID, nSize)
+				frame.bBuffSizeAdjusted = true
+			end
+		end
 	end
 end
 
@@ -465,6 +477,10 @@ _HM_Target.AddBreathe = function(frame, bTTarget)
 				_HM_Target.bChange = nil
 			end
 		end
+	end
+	-- update buff size
+	if not frame.bBuffSizeAdjusted then
+		_HM_Target.RefreshBuff(bTTarget)
 	end
 	-- update action(channel)
 	_HM_Target.UpdateAction(frame)
@@ -1072,26 +1088,6 @@ HM.RegisterEvent("PLAYER_ENTER_GAME", function()
 		buff.bShowTime = 1
 	end
 end)
-HM.RegisterEvent("ON_FRAME_CREATE", function()
-	if not HM_Target.bAdjustBuff then
-		return
-	end
-	local frame = arg0
-	local name = frame:GetName()
-	if name == "Target" then
-		_HM_Target.InitBuffPos(frame, HM_Target.nSizeBuff)
-		_HM_Target.InitBuffSize(frame.dwBuffMgrID, HM_Target.nSizeBuff)
-	elseif name == "TargetTarget" then
-		_HM_Target.InitBuffPos(frame, HM_Target.nSizeTTBuff)
-		_HM_Target.InitBuffSize(frame.dwMgrID, HM_Target.nSizeTTBuff)
-	end
-end)
-HM.RegisterEvent("CUSTOM_DATA_LOADED", function()
-	if arg0 == "Role" then
-		_HM_Target.RefreshBuff()
-	end
-end)
-HM.RegisterEvent("FIRST_LOADING_END", _HM_Target.RefreshBuff)
 
 -- add to HM panel
 HM.RegisterPanel(_L["Target enhancement"], 303, _L["Target"], _HM_Target.PS)
