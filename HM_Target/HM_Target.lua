@@ -218,12 +218,15 @@ end
 
 -- refresh buff size
 _HM_Target.RefreshBuff = function()
-	Wnd.CloseWindow("Target")
-	Wnd.CloseWindow("TargetTarget")
-	local dwType, dwID = GetClientPlayer().GetTarget()
-	if dwID ~= 0 then
-		HM.SetTarget(TARGET.NO_TARGET, 0)
-		HM.SetTarget(dwType, dwID)
+	local frame = Station.Lookup("Normal/Target")
+	if frame then
+		_HM_Target.InitBuffPos(frame, HM_Target.nSizeBuff)
+		_HM_Target.InitBuffSize(frame.dwBuffMgrID, HM_Target.nSizeBuff)
+	end
+	local frame = Station.Lookup("Normal/TargetTarget")
+	if frame then
+		_HM_Target.InitBuffPos(frame, HM_Target.nSizeTTBuff)
+		_HM_Target.InitBuffSize(frame.dwMgrID, HM_Target.nSizeTTBuff)
 	end
 end
 
@@ -266,7 +269,6 @@ _HM_Target.InitBuffPos = function(frame, nSize)
 		end
 	end
 	frame:Lookup("", ""):FormatAllItemPos()
-	frame.bAdjustInit = true
 	frame.bIsEnemy = IsEnemy(GetClientPlayer().dwID, frame.dwID)
 end
 
@@ -295,41 +297,13 @@ _HM_Target.GetBuffTime = function(nEnd)
 end
 
 -- update buff size
-_HM_Target.UpdateBuffSize = function(frame, bTTarget)
-	if frame.bAdjustInit and not frame.bBuffUpdate and frame.dwID2 == frame.dwID then
-		return
+_HM_Target.InitBuffSize = function(dwMgrID, nSize)
+	local info = BuffMgr.GetInfo(dwMgrID)
+	local boxtexts = {}
+	for i, boxtext in ipairs(info.boxtexts) do
+		boxtexts[i] = boxtext:gsub("w=%d+", "w=" .. nSize):gsub("h=%d+", "h=" .. nSize)
 	end
-	local nSize = (bTTarget and HM_Target.nSizeTTBuff) or HM_Target.nSizeBuff
-	if not frame.bAdjustInit then
-		_HM_Target.InitBuffPos(frame, nSize)
-	end
-	for _, v in ipairs({ "Buff", "Debuff" }) do
-		local hBuff = frame:Lookup("", "Handle_" .. v)
-		for i = 0, 1 do
-			local nW = nSize + (1 - i) * 5
-			local hB = hBuff:Lookup(i)
-			if hB.boxW ~= nW then
-				hB.boxW, hB.boxH = nW, nW
-			end
-			for j = 0, hB:GetItemCount() - 1 do
-				local box = hB:Lookup(j)
-				if box:IsVisible() then
-					-- resize box
-					if box.nW ~= nW then
-						box:SetSize(nW, nW)
-						box.nW = nW
-					end
-					-- clear time
-					box.szTime = nil
-				end
-			end
-			hB:FormatAllItemPos()
-			if hT then
-				hT:FormatAllItemPos()
-			end
-		end
-	end
-	frame.bBuffUpdate, frame.dwID2 = false, frame.dwID
+	BuffMgr.Modify(dwMgrID, {boxtexts = boxtexts})
 end
 
 -- get simple num
@@ -486,11 +460,6 @@ _HM_Target.AddBreathe = function(frame, bTTarget)
 				_HM_Target.bChange = nil
 			end
 		end
-	end
-	-- adjust buff
-	if HM_Target.bAdjustBuff then
-		-- buffsize
-		_HM_Target.UpdateBuffSize(frame, bTTarget)
 	end
 	-- update action(channel)
 	_HM_Target.UpdateAction(frame)
@@ -1086,6 +1055,10 @@ end
 ---------------------------------------------------------------------
 -- 注册事件、初始化
 ---------------------------------------------------------------------
+HM.BreatheCall("HM_Target", function()
+	_HM_Target.AddBreathe(Station.Lookup("Normal/Target"))
+	_HM_Target.AddBreathe(Station.Lookup("Normal/TargetTarget"), true)
+end)
 HM.RegisterEvent("PLAYER_ENTER_GAME", function()
 	_HM_Target.UpdateDir()
 	-- show bufftime of 374
@@ -1094,10 +1067,26 @@ HM.RegisterEvent("PLAYER_ENTER_GAME", function()
 		buff.bShowTime = 1
 	end
 end)
-HM.BreatheCall("HM_Target", function()
-	_HM_Target.AddBreathe(Station.Lookup("Normal/Target"))
-	_HM_Target.AddBreathe(Station.Lookup("Normal/TargetTarget"), true)
+HM.RegisterEvent("ON_FRAME_CREATE", function()
+	if not HM_Target.bAdjustBuff then
+		return
+	end
+	local frame = arg0
+	local name = frame:GetName()
+	if name == "Target" then
+		_HM_Target.InitBuffPos(frame, HM_Target.nSizeBuff)
+		_HM_Target.InitBuffSize(frame.dwBuffMgrID, HM_Target.nSizeBuff)
+	elseif name == "TargetTarget" then
+		_HM_Target.InitBuffPos(frame, HM_Target.nSizeTTBuff)
+		_HM_Target.InitBuffSize(frame.dwMgrID, HM_Target.nSizeTTBuff)
+	end
 end)
+HM.RegisterEvent("CUSTOM_DATA_LOADED", function()
+	if arg0 == "Role" then
+		_HM_Target.RefreshBuff()
+	end
+end)
+HM.RegisterEvent("FIRST_LOADING_END", _HM_Target.RefreshBuff)
 
 -- add to HM panel
 HM.RegisterPanel(_L["Target enhancement"], 303, _L["Target"], _HM_Target.PS)
