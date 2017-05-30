@@ -942,7 +942,7 @@ _HM_Love.PS = {}
 
 -- refresh
 _HM_Love.PS.Refresh = function()
-	if _HM_Love.ui then
+	if _HM_Love.ui and HM.IsPanelOpened() then
 		HM.OpenPanel(HM_Love.szTitle)
 	end
 end
