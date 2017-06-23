@@ -9,7 +9,7 @@ end
 HM_Camp = {
 	bHideEnable = false,
 	bHideForever = false,	-- 下线再上线也保持屏蔽
-	tHideExclude = { [4] = true, [6] = true, [7] = true },
+	tHideExclude = { [4] = true, [6] = true, [7] = true, [9] = true, [10] = true, [11] = true, [12] = true, [13] = true },
 	tHideSave = {},
 	bPartyAlert = true,			-- 不同阵营的成员进队发出提示
 	bQuestAccept = true,	-- 自动接日常
