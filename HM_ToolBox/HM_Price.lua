@@ -22,7 +22,7 @@ _HM_Price.WalkInventory = function(dwBox, fnAction)
 	local dwSize = me.GetBoxSize(dwBox)
 	for dwX = 0, dwSize - 1, 1 do
 		local item = GetPlayerItem(me, dwBox, dwX)
-		if item then
+		if item and item.bBind then
 			pcall(fnAction, item)
 		end
 	end
@@ -274,7 +274,8 @@ _HM_Price.PS.OnPanelActive = function(frame)
 			end
 		end)
 	end)
-	ui:Append("Text", { x = 3, y = bY + 130, font = 62, txt = "市场价格波动较快，结果数值仅供此时参考。" })	
+	ui:Append("Text", { x = 3, y = bY + 130, font = 218, txt = "注1：估价不包括未绑定物品、通宝、积分等" })
+	ui:Append("Text", { x = 3, y = bY + 155, font = 218, txt = "注2：市场价格波动较快，结果数值仅供此时参考" })
 end
 
 ---------------------------------------------------------------------
