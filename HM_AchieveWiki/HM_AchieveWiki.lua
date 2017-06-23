@@ -2,14 +2,14 @@
 -- 海鳗插件：成就百科，源于菊花插件
 --
 local ACHI_ANCHOR  = { s = "CENTER", r = "CENTER", x = 0, y = 0 }
-local ACHI_ROOT_URL = "https://haimanchajian.com"
-local ACHI_CLIENT_LANG = select(3, GetVersion())
+local ACHI_ROOT_URL = HM.szRemoteHost
+local ACHI_CLIENT_LANG = HM.szClientLang
 local Achievement = {}
 local tinsert = table.insert
 local bConfirm = false
 
 HM_AchieveWiki = {
-	bAutoSync = false,
+	bAutoSync = true,
 	nSyncPoint = 0,
 }
 HM.RegisterCustomData("HM_AchieveWiki")
@@ -424,11 +424,7 @@ function PS.OnPanelActive(frame)
 				btn:Enable(true)
 				ui:Fetch("Text_Time"):Text(FormatTime("%Y/%m/%d %H:%M:%S", GetCurrentTime()))
 				if res and res.qrcode then
-					local w, h = 240, 240
-					local frm = HM.UI.CreateFrame("HM_ImageView", { w = w + 90, h = h + 90 + 20, bgcolor = {222, 210, 190, 240}, title = _L["Scan by wechat"], close = true })
-					frm:Append("Image", { x = 0, y = 0, w = w, h = h }):Raw():FromRemoteFile(res.qrcode:gsub("https:", "http:"), true)
-					frm:Append("Text", { x = 0, y = h + 10, w = w, h = 36, align = 1, font = 6, txt = _L["View your achievements"] })
-					frm:Raw():GetRoot():SetPoint("CENTER", 0, 0, "CENTER", 0, 0)
+					HM.ViewQrcode(res.qrcode, _L["View your achievements"])
 					--ui:Fetch("Image_Wechat"):Toggle(false)
 				end
 			end, 1)
@@ -471,16 +467,13 @@ HM.RegisterEvent("ON_FRAME_CREATE.wiki", function()
 end)
 
 -- sync events
-HM.RegisterEvent("FIRST_LOADING_END", function()
-	if HM_AchieveWiki.bAutoSync then
+local fnSyncUserData = function()
+	if HM_AchieveWiki.bAutoSync and (not JH_Achievement or not JH_Achievement.bAutoSync) then
 		local nPoint = GetClientPlayer().GetAchievementRecord()
 		if HM_AchieveWiki.nSyncPoint ~= nPoint then
 			Achievement.SyncUserData()
 		end
 	end
-end)
-HM.RegisterEvent("UPDATE_ACHIEVEMENT_POINT", function()
-	if HM_AchieveWiki.bAutoSync then
-		Achievement.SyncUserData()
-	end
-end)
+end
+HM.RegisterEvent("FIRST_LOADING_END", fnSyncUserData)
+HM.RegisterEvent("UPDATE_ACHIEVEMENT_POINT", fnSyncUserData)

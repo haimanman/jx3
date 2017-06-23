@@ -3,7 +3,7 @@
 -- @Author webster-jx3
 -- @Modifier hightman
 --
-local CLIENT_LANG = select(3, GetVersion())
+local CLIENT_LANG = HM.szClientLang
 local nSerial = 1		-- 请求流水号
 local tRequest = {}	-- 请求回调映射表
 local tDefaultOption = {

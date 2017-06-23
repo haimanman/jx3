@@ -525,6 +525,10 @@ HM = {
 }
 RegisterCustomData("HM.nBuildDate")
 
+-- add two global variables
+HM.szRemoteHost = "https://haimanchajian.com"
+HM.szClientLang = select(3, GetVersion())
+
 -- (string, number) HM.GetVersion()		-- 取得字符串版本号和整型版本号
 HM.GetVersion = function()
 	local v = _HM.dwVersion
@@ -1600,6 +1604,17 @@ HM.GetCustomFile = function(szName, szDefault)
 		return szPath
 	end
 	return szDefault
+end
+
+-- 查看扫描二维码
+HM.ViewQrcode = function(szUrl, szDesc)
+	local w, h = 240, 240
+	local frm = HM.UI.CreateFrame("HM_ViewQrcode", { w = w + 90, h = h + 90 + 20, bgcolor = {222, 210, 190, 240}, title = _L["Scan by wechat"], close = true })
+	frm:Append("Image", { x = 0, y = 0, w = w, h = h }):Raw():FromRemoteFile(szUrl:gsub("https:", "http:"), true)
+	if szDesc then
+		frm:Append("Text", { x = 0, y = h + 10, w = w, h = 36, align = 1, font = 6, txt = szDesc })
+	end
+	frm:Raw():GetRoot():SetPoint("CENTER", 0, 0, "CENTER", 0, 0)
 end
 
 ---------------------------------------------------------------------

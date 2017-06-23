@@ -41,8 +41,8 @@ HM_Love.szTitle = _L["Lover of JX3"]
 ---------------------------------------------------------------------
 -- 本地函数和变量
 ---------------------------------------------------------------------
-local ROOT_URL = "https://haimanchajian.com"
-local CLIENT_LANG = select(3, GetVersion())
+local ROOT_URL = HM.szRemoteHost
+local CLIENT_LANG = HM.szClientLang
 local _i = Table_GetItemName
 local _HM_Love = {
 	dwID = 0,				-- 情缘 ID
@@ -604,11 +604,7 @@ _HM_Love.UploadRemote = function(__qrcode)
 		if not res or res.errcode ~= 0 then
 			HM.Alert(res.errmsg)
 		elseif res.qrcode then
-			local w, h = 240, 240
-			local frm = HM.UI.CreateFrame("HM_ImageView", { w = w + 90, h = h + 90 + 20, bgcolor = {222, 210, 190, 240}, title = _L["Scan by wechat"], close = true })
-			frm:Append("Image", { x = 0, y = 0, w = w, h = h }):Raw():FromRemoteFile(res.qrcode:gsub("https:", "http:"), true)
-			frm:Append("Text", { x = 0, y = h + 10, w = w, h = 36, align = 1, font = 6, txt = _L["view cert"] })
-			frm:Raw():GetRoot():SetPoint("CENTER", 0, 0, "CENTER", 0, 0)
+			HM.ViewQrcode(res.qrcode, _L["view cert"])
 		else
 			HM.Alert(g_tStrings.STR_MAIL_SUCCEED)
 		end

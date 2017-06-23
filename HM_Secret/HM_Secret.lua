@@ -445,8 +445,8 @@ end
 -------------------------------------
 -- 事件处理
 -------------------------------------
-local ROOT_URL = "https://haimanchajian.com"
-local CLIENT_LANG = select(3, GetVersion())
+local ROOT_URL = HM.szRemoteHost
+local CLIENT_LANG = HM.szClientLang
 
 -------------------------------------
 -- 设置界面
@@ -462,8 +462,8 @@ _HM_Secret.PS.OnPanelActive = function(frame)
 	-- Tips
 	ui:Append("Text", { x = 0, y = 0, txt = "关于官网", font = 27 })
 	ui:Append("Text", { x = 0, y = 28, txt = "海鳗插件官网由海鳗鳗及其团队开发并维护，与剑网3游戏官方无关。在游戏之外提供相关辅助功能，包括数据查询、成就百科、科举答题、开服监控、日常提醒、情缘证书、玩家交流等。", multi = true, w = 520, h = 70 })
-	nX = ui:Append("Text", { x = 0, y = 100, font = 214, txt = "网址 <https://haimanchajian.com>" }):Color(6, 204, 178):Click(function()
-		OpenInternetExplorer("https://haimanchajian.com")
+	nX = ui:Append("Text", { x = 0, y = 100, font = 214, txt = "网址 <" .. ROOT_URL .. ">" }):Color(6, 204, 178):Click(function()
+		OpenInternetExplorer(ROOT_URL)
 	end):Pos_()
 	--ui:Append("Text", {x = nX + 5,  y = 100, txt = "或公众号【海鳗插件】"}):Color(6, 204, 178)
 	local bY = 142
@@ -510,20 +510,12 @@ _HM_Secret.PS.OnPanelActive = function(frame)
 		end
 		HM.PostJson(ROOT_URL .. "/api/jx3/roles", data):done(function(res)
 			HM_Secret.bAutoSync = true
-			if not res then
-				-- unknown error
-			elseif res.errcode ~= 0 then
-				ui:Fetch("Text_Verify"):Text(res.errmsg):Color(255, 0, 0)
+			if not res or res.errcode ~= 0 then
+				ui:Fetch("Text_Verify"):Text(res and res.errmsg or "Unknown"):Color(255, 0, 0)
 			elseif res.qrcode then
-				local w, h = 240, 240
-				local frm = HM.UI.CreateFrame("HM_ImageView", { w = w + 90, h = h + 90 + 20, bgcolor = {222, 210, 190, 240}, title = _L["Scan by wechat"], close = true })
-				frm:Append("Image", { x = 0, y = 0, w = w, h = h }):Raw():FromRemoteFile(res.qrcode:gsub("https:", "http:"), true)
-				frm:Append("Text", { x = 0, y = h + 10, w = w, h = 36, align = 1, font = 6, txt = "微信扫码完成认证" })
-				frm:Raw():GetRoot():SetPoint("CENTER", 0, 0, "CENTER", 0, 0)
+				HM.ViewQrcode(res.qrcode, "微信扫码完成认证")				
 				ui:Fetch("Image_Wechat"):Toggle(false)
 				ui:Fetch("Text_Verify"):Text("扫码后请点击左侧菜单刷新")
-			elseif res.errcode ~= 0 then
-				ui:Fetch("Text_Verify"):Text(res.errmsg):Color(255, 0, 0)
 			end
 			btn:Text("重新认证")
 			btn:Enable(true)
