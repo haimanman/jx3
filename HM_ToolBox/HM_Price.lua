@@ -66,24 +66,8 @@ _HM_Price.GetBasicInfo = function()
 		coin = me.nCoin,
 		gold = me.GetMoney().nGold,
 	}
-	-- 心法装备类型，武器魔法属性ID
-	-- AttributeStringToID("atDecriticalDamagePowerBase") = 100
-	-- AttributeStringToID("atDecriticalDamagePowerPercent") = 101
-	-- AttributeStringToID("atToughnessBase") = 97
-	-- AttributeStringToID("atToughnessPercent") = 98
-	t.score = me.GetTotalEquipScore()
-	t.score_kungfu = me.GetKungfuMount().szSkillName
-	t.score_type = "PVE"
-	local weapon = me.GetItem(INVENTORY_INDEX.EQUIP, EQUIPMENT_INVENTORY.MELEE_WEAPON)
-	if weapon then
-		local attrib = weapon.GetMagicAttrib()
-		for _, v in pairs(attrib) do
-			if v.nID == 100 or v.nID == 97 or v.nID == 101 or v.nID == 98 then
-				t.score_type = "PVP"
-				break
-			end
-		end
-	end
+	-- 装备分全记录
+	t.scores = _HM_Price.scores
 	-- 二内
 	t.slaves = {}
 	local _exists = {}
@@ -220,6 +204,71 @@ _HM_Price.GetAllInfo = function()
 	_HM_Price.LoadAdventures(t)
 	return t
 end
+
+-- 获取全套装备分
+_HM_Price.GetCurrentScore = function()
+	-- 心法装备类型，武器魔法属性ID
+	-- AttributeStringToID("atDecriticalDamagePowerBase") = 100
+	-- AttributeStringToID("atDecriticalDamagePowerPercent") = 101
+	-- AttributeStringToID("atToughnessBase") = 97
+	-- AttributeStringToID("atToughnessPercent") = 98
+	local me = GetClientPlayer()
+	local item = me.GetItem(INVENTORY_INDEX.EQUIP, EQUIPMENT_INVENTORY.MELEE_WEAPON)
+	if not item then
+		return
+	end
+	-- pvp or pve
+	local pvx = "PVE"
+	local attrib = item.GetMagicAttrib()
+	for _, v in pairs(attrib) do
+		if v.nID == 100 or v.nID == 97 or v.nID == 101 or v.nID == 98 then
+			pvx = "PVP"
+			break
+		end
+	end
+	-- fir for kungfu
+	local info = GetItemInfo(item.dwTabType, item.dwIndex)
+	local school = GetForceTitle(me.dwForceID)
+	if info.nRecommendID and g_tTable.EquipRecommend then
+		local t = g_tTable.EquipRecommend:Search(info.nRecommendID)
+		if StringFindW(t.szDesc, school) == 1 then
+			local skill = GetSkill(tonumber(t.kungfu_ids), 1)
+			if skill then
+				local score = me.GetTotalEquipScore()
+				local name = skill.szSkillName
+				local s = _HM_Price.scores
+				if not s[name] then
+					s[name] = {}
+				end
+				if not s[name][pvx] or s[name][pvx] < score then
+					s[name][pvx] = score
+				end
+			end
+		end
+	end
+end
+
+_HM_Price.GetScoreAndNext = function()
+	local nCur = GetClientPlayer().GetEquipIDArray(0)
+	local nNext = (nCur + 1) % 4
+	_HM_Price.GetCurrentScore()
+	_HM_Price.nCurSuit = nNext
+	if nNext == _HM_Price.nOrgSuit then
+		HM.UnRegisterEvent("EQUIP_CHANGE.p")
+		if _HM_Price.ui then
+			_HM_Price.ui:Fetch("Btn_Submit"):Enable(true)
+		end
+	end
+	PlayerChangeSuit(nNext + 1)
+end
+
+_HM_Price.GetAllScores = function()
+	_HM_Price.scores = {}
+	_HM_Price.nCurSuit = GetClientPlayer().GetEquipIDArray(0)
+	_HM_Price.nOrgSuit = _HM_Price.nCurSuit
+	HM.RegisterEvent("EQUIP_CHANGE.p", _HM_Price.GetScoreAndNext)
+	_HM_Price.GetScoreAndNext()
+end
 -------------------------------------
 -- 事件处理
 -------------------------------------
@@ -228,6 +277,12 @@ end
 -- 设置界面
 -------------------------------------
 _HM_Price.PS = {}
+
+-- deinit
+_HM_Price.PS.OnPanelDeactive = function(frame)
+	HM.UnRegisterEvent("EQUIP_ITEM_UPDATE.p")
+	_HM_Price.ui = nil
+end
 
 -- init
 _HM_Price.PS.OnPanelActive = function(frame)
@@ -238,7 +293,7 @@ _HM_Price.PS.OnPanelActive = function(frame)
 	ui:Append("Text", { x = 0, y = bY, txt = GetUserRoleName() .. "（" .. select(6, GetUserServer()) .. "）的价值大约为：", font = 27 })
 	nX = ui:Append("Text", "Text_Price", { x = 3, y = bY + 45, txt = "???", font = 24 }):Pos_()
 	ui:Append("Text", "Text_Unit", { x = nX + 5, y = bY + 45, txt = "元" })
-	nX = ui:Append("WndButton", "Btn_Submit", { x = 0, y =  bY + 90, txt = "获取估价" }):Click(function()
+	nX = ui:Append("WndButton", "Btn_Submit", { x = 0, y =  bY + 90, txt = "获取估价", enable = false }):Click(function()
 		-- check level
 		local me = GetClientPlayer()
 		if me.nLevel ~= me.nMaxLevel then
@@ -276,6 +331,10 @@ _HM_Price.PS.OnPanelActive = function(frame)
 	end)
 	ui:Append("Text", { x = 3, y = bY + 130, font = 218, txt = "注1：估价不包括未绑定物品、通宝、积分等" })
 	ui:Append("Text", { x = 3, y = bY + 155, font = 218, txt = "注2：市场价格波动较快，结果数值仅供此时参考" })
+	ui:Append("Text", { x = 3, y = bY + 180, font = 218, txt = "注3：能对估价器提供报价或改进建议的，请加Q群：???" })
+	-- load equip scores
+	_HM_Price.ui = ui
+	_HM_Price.GetAllScores()
 end
 
 ---------------------------------------------------------------------
