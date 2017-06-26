@@ -248,7 +248,7 @@ _HM_Price.GetCurrentScore = function()
 	end
 end
 
-_HM_Price.GetScoreAndNext = function()
+_HM_Price.LoadScoreAndNext = function()
 	local nCur = GetClientPlayer().GetEquipIDArray(0)
 	local nNext = (nCur + 1) % 4
 	_HM_Price.GetCurrentScore()
@@ -256,18 +256,18 @@ _HM_Price.GetScoreAndNext = function()
 	if nNext == _HM_Price.nOrgSuit then
 		HM.UnRegisterEvent("EQUIP_CHANGE.p")
 		if _HM_Price.ui then
-			_HM_Price.ui:Fetch("Btn_Submit"):Enable(true)
+			_HM_Price.ui:Fetch("Btn_Submit"):Text("获取估价"):Enable(true)
 		end
 	end
 	PlayerChangeSuit(nNext + 1)
 end
 
-_HM_Price.GetAllScores = function()
+_HM_Price.LoadAllScores = function()
 	_HM_Price.scores = {}
 	_HM_Price.nCurSuit = GetClientPlayer().GetEquipIDArray(0)
 	_HM_Price.nOrgSuit = _HM_Price.nCurSuit
-	HM.RegisterEvent("EQUIP_CHANGE.p", _HM_Price.GetScoreAndNext)
-	_HM_Price.GetScoreAndNext()
+	HM.RegisterEvent("EQUIP_CHANGE.p", _HM_Price.LoadScoreAndNext)
+	_HM_Price.LoadScoreAndNext()
 end
 -------------------------------------
 -- 事件处理
@@ -280,8 +280,11 @@ _HM_Price.PS = {}
 
 -- deinit
 _HM_Price.PS.OnPanelDeactive = function(frame)
-	HM.UnRegisterEvent("EQUIP_ITEM_UPDATE.p")
+	HM.UnRegisterEvent("EQUIP_CHANGE.p")
 	_HM_Price.ui = nil
+	if _HM_Price.nOrgSuit then
+		PlayerChangeSuit(_HM_Price.nOrgSuit + 1)
+	end
 end
 
 -- init
@@ -293,7 +296,7 @@ _HM_Price.PS.OnPanelActive = function(frame)
 	ui:Append("Text", { x = 0, y = bY, txt = GetUserRoleName() .. "（" .. select(6, GetUserServer()) .. "）的价值大约为：", font = 27 })
 	nX = ui:Append("Text", "Text_Price", { x = 3, y = bY + 45, txt = "???", font = 24 }):Pos_()
 	ui:Append("Text", "Text_Unit", { x = nX + 5, y = bY + 45, txt = "元" })
-	nX = ui:Append("WndButton", "Btn_Submit", { x = 0, y =  bY + 90, txt = "获取估价", enable = false }):Click(function()
+	nX = ui:Append("WndButton", "Btn_Submit", { x = 0, y =  bY + 90, txt = "请稍候", enable = false }):Click(function()
 		-- check level
 		local me = GetClientPlayer()
 		if me.nLevel ~= me.nMaxLevel then
@@ -320,8 +323,9 @@ _HM_Price.PS.OnPanelActive = function(frame)
 			end
 		end)
 	end):Pos_()
+	local gid = GetClientPlayer().GetGlobalID()
 	ui:Append("WndButton", "Btn_Scan", { x = nX + 10, y =  bY + 90, txt = "生成图片", enable = false }):Click(function()
-		HM.GetJson(ROOT_URL .. "/api/jx3/price-images/" .. GetClientPlayer().GetGlobalID()):done(function(res)
+		HM.GetJson(ROOT_URL .. "/api/jx3/price-images/" .. gid):done(function(res)
 			if res.errcode == 0 and res.qrcode then
 				HM.ViewQrcode(res.qrcode, "获取角色估价图片")
 			else
@@ -331,10 +335,15 @@ _HM_Price.PS.OnPanelActive = function(frame)
 	end)
 	ui:Append("Text", { x = 3, y = bY + 130, font = 218, txt = "注1：估价不包括未绑定物品、通宝、积分等" })
 	ui:Append("Text", { x = 3, y = bY + 155, font = 218, txt = "注2：市场价格波动较快，结果数值仅供此时参考" })
-	ui:Append("Text", { x = 3, y = bY + 180, font = 218, txt = "注3：能对估价器提供报价或改进建议的，请加Q群：???" })
+	ui:Append("Text", { x = 3, y = bY + 180, font = 218, txt = "注3：有兴趣提供报价或改进建议的，请加Q群：231377316" })
+	-- url
+	ui:Append("Text", { x = 0, y = bY + 226 , txt = "估价器官网", font = 27 })
+	ui:Append("WndEdit", { x = 100, y = bY + 226 , w = 300, h = 28, txt = ROOT_URL .. "/jx3/gujia", color = { 255, 255, 200 } })
+	ui:Append("Text", { x = 0, y = bY + 254 , txt = _L["Global ID"], font = 27 })
+	ui:Append("WndEdit", { x = 100, y = bY + 254 , w = 300, h = 28, txt = gid, color = { 255, 255, 200 } })
 	-- load equip scores
 	_HM_Price.ui = ui
-	_HM_Price.GetAllScores()
+	_HM_Price.LoadAllScores()
 end
 
 ---------------------------------------------------------------------
@@ -342,4 +351,4 @@ end
 ---------------------------------------------------------------------
 
 -- add to HM collector
-HM.RegisterPanel(_HM_Price.szName, 2490, _L["Recreation"], _HM_Price.PS)
+HM.RegisterPanel(_HM_Price.szName, 301, _L["Recreation"], _HM_Price.PS)

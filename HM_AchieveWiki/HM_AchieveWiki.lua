@@ -375,8 +375,8 @@ function PS.OnPanelActive(frame)
 	if ACHI_CLIENT_LANG == "zhcn" then
 		nX, nY = ui:Append("Text", { x = 0, y = nY, txt = _L["Sync game info"], font = 27 }):Pos_()
 		-- name
-		nX = ui:Append("Text", { x = 10, y = nY + 5 , txt = _L["Role name:"], color = { 255, 255, 200 } }):Pos_()
-		nX, nY = ui:Append("Text", { x = nX + 5, y = nY + 5 , txt = GetUserRoleName() }):Pos_()
+		nX = ui:Append("Text", { x = 10, y = nY + 10 , txt = _L["Role name:"], color = { 255, 255, 200 } }):Pos_()
+		nX, nY = ui:Append("Text", { x = nX + 5, y = nY + 10 , txt = GetUserRoleName() }):Pos_()
 		nX = ui:Append("Text", { x = 10, y = nY + 5 , txt = _L["Last sync time:"], color = { 255, 255, 200 } }):Pos_()
 		nX, nY = ui:Append("Text", "Text_Time", { x = nX + 5, y = nY + 5 , txt = _L["Loading..."] }):Pos_()
 		-- /api/wiki/data/{gid}
@@ -431,11 +431,10 @@ function PS.OnPanelActive(frame)
 		end):Pos_()
 		nY = nY + 8
 	end
-	nX, nY = ui:Append("Text", { x = 0, y = nY, txt = _L["Others"], font = 27 }):Pos_()
-	nX = ui:Append("Text", { x = 10, y = nY + 10 , txt = _L["Achievepedia Website"], color = { 255, 255, 200 } }):Pos_()
-	nX, nY = ui:Append("WndEdit", { x = 120, y = nY + 10 , txt = ACHI_ROOT_URL .. "/wiki" }):Pos_()
-	nX = ui:Append("Text", { x = 10, y = nY + 5 , txt = _L["Global ID"], color = { 255, 255, 200 } }):Pos_()
-	nX, nY = ui:Append("WndEdit", { x = 120, y = nY + 5 , txt = gid }):Pos_()
+	nX = ui:Append("Text", { x = 0, y = nY + 10 , txt = _L["Achievepedia Website"], font = 27 }):Pos_()
+	nX, nY = ui:Append("WndEdit", { x = 120, y = nY + 10 , w = 280, h = 28, txt = ACHI_ROOT_URL .. "/wiki", color = { 255, 255, 200 } }):Pos_()
+	nX = ui:Append("Text", { x = 0, y = nY + 5 , txt = _L["Global ID"], font = 27 }):Pos_()
+	nX, nY = ui:Append("WndEdit", { x = 120, y = nY + 5 , w = 280, h = 28, txt = gid, color = { 255, 255, 200 } }):Pos_()
 	--ui:Append("Image", "Image_Wechat", { x = 360, y = nY - 150, h = 150, w = 150 }):File(HM.GetCustomFile("image.UiTeX", "interface\\HM\\HM_0Base\\image.UiTex"), 2)
 end
 
