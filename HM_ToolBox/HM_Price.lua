@@ -86,7 +86,7 @@ end
 -- 提取橙武、玄晶
 _HM_Price.LoadBestItems = function(t)
 	local nMaxLevel = GetClientPlayer().nMaxLevel
-	t.oranges = {}
+	t.oranges = _HM_Price.oranges
 	_HM_Price.WalkAllItems(function(item)
 		if item.nGenre == ITEM_GENRE.EQUIPMENT 
 			and (item.nSub == EQUIPMENT_SUB.MELEE_WEAPON or item.nSub == EQUIPMENT_SUB.RANGE_WEAPON)
@@ -102,7 +102,7 @@ _HM_Price.LoadBestItems = function(t)
 				table.insert(t.oranges, item.nUiId)
 			end
 		end
-	end)
+	end, false)
 end
 
 -- 提取坐骑、马具
@@ -249,7 +249,8 @@ _HM_Price.GetCurrentScore = function()
 end
 
 _HM_Price.LoadScoreAndNext = function()
-	local nCur = GetClientPlayer().GetEquipIDArray(0)
+	local me = GetClientPlayer()
+	local nCur = me.GetEquipIDArray(0)
 	local nNext = (nCur + 1) % 4
 	_HM_Price.GetCurrentScore()
 	_HM_Price.nCurSuit = nNext
@@ -259,11 +260,23 @@ _HM_Price.LoadScoreAndNext = function()
 			_HM_Price.ui:Fetch("Btn_Submit"):Text("获取估价"):Enable(true)
 		end
 	end
+	-- weapons
+	local item = me.GetItem(INVENTORY_INDEX.EQUIP, EQUIPMENT_INVENTORY.MELEE_WEAPON)
+	if item and item.nQuality == 5 then
+		table.insert(_HM_Price.oranges, item.nUiId)
+	end
+	if me.dwForceID == 8 then
+		local item = me.GetItem(INVENTORY_INDEX.EQUIP, EQUIPMENT_INVENTORY.BIG_SWORD)
+		if item and item.nQuality == 5 then
+			table.insert(_HM_Price.oranges, item.nUiId)
+		end
+	end
 	PlayerChangeSuit(nNext + 1)
 end
 
 _HM_Price.LoadAllScores = function()
 	_HM_Price.scores = {}
+	_HM_Price.oranges = {}	-- 套装上的 cw
 	_HM_Price.nCurSuit = GetClientPlayer().GetEquipIDArray(0)
 	_HM_Price.nOrgSuit = _HM_Price.nCurSuit
 	HM.RegisterEvent("EQUIP_CHANGE.p", _HM_Price.LoadScoreAndNext)
