@@ -105,7 +105,7 @@ function HM_AchieveWiki.OnItemLButtonClick()
 	local szName = this:GetName()
 	if szName == "Text_Link" then
 		local frame = this:GetRoot()
-		OpenInternetExplorer(ACHI_ROOT_URL .. "/wiki/view/" .. frame.dwAchievement)
+		OpenInternetExplorer(ACHI_ROOT_URL .. "/wiki/details/" .. frame.dwAchievement)
 		Achievement.ClosePanel()
 	end
 end
@@ -261,7 +261,7 @@ function Achievement.OpenEncyclopedia(dwID, dwIcon, szTitle, szDesc)
 	frame.desc:SetText(szDesc)
 	frame:Lookup("Btn_Edit"):Enable(false)
 	frame.pedia:Clear()
-	frame.link:SetText(_L("Link(Open URL):%s", ACHI_ROOT_URL .. "/wiki/view/" .. dwID))
+	frame.link:SetText(_L("Link(Open URL):%s", ACHI_ROOT_URL .. "/wiki/details/" .. dwID))
 	frame.link:AutoSize()
 	PlaySound(SOUND.UI_SOUND, g_sound.OpenFrame)
 	frame.warn:Show()

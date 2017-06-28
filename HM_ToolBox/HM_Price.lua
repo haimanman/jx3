@@ -316,12 +316,14 @@ _HM_Price.PS.OnPanelActive = function(frame)
 			ui:Fetch("Text_Unit"):Toggle(false)
 			return ui:Fetch("Text_Price"):Text("请先满级")
 		end
+		ui:Fetch("Btn_Submit"):Enable(false)
 		-- update role
 		local data = HM_About.GetSyncData()
 		data.__qrcode = "0"
 		HM.PostJson(ROOT_URL .. "/api/jx3/roles", data):done(function(res)
 			if not res or  res.errcode ~= 0 then
 				ui:Fetch("Text_Price"):Text(res and res.errmsg or "Unknown")
+				ui:Fetch("Btn_Submit"):Enable(true)
 			else
 				local data = _HM_Price.GetAllInfo()
 				HM.PostJson(ROOT_URL .. "/api/jx3/price-records", HM.JsonEncode(data)):done(function(res)
@@ -348,12 +350,11 @@ _HM_Price.PS.OnPanelActive = function(frame)
 	end)
 	ui:Append("Text", { x = 3, y = bY + 130, font = 218, txt = "注1：估价不包括未绑定物品、通宝、积分等" })
 	ui:Append("Text", { x = 3, y = bY + 152, font = 218, txt = "注2：市场价格波动较快，结果数值仅供此时参考" })
-	ui:Append("Text", { x = 3, y = bY + 174, font = 218, txt = "注3：有兴趣提供报价或改进建议的，请加Q群：231377316" })
 	-- url
-	ui:Append("Text", { x = 0, y = bY + 226 , txt = "估价器官网", font = 27 })
-	ui:Append("WndEdit", { x = 100, y = bY + 226 , w = 300, h = 28, txt = ROOT_URL .. "/jx3/gujia", color = { 255, 255, 200 } })
-	ui:Append("Text", { x = 0, y = bY + 254 , txt = _L["Global ID"], font = 27 })
-	ui:Append("WndEdit", { x = 100, y = bY + 254 , w = 300, h = 28, txt = gid, color = { 255, 255, 200 } })
+	ui:Append("Text", { x = 0, y = bY + 206 , txt = "估价器官网", font = 27 })
+	ui:Append("WndEdit", { x = 100, y = bY + 206 , w = 300, h = 28, txt = ROOT_URL .. "/jx3/gujia", color = { 255, 255, 200 } })
+	ui:Append("Text", { x = 0, y = bY + 234 , txt = _L["Global ID"], font = 27 })
+	ui:Append("WndEdit", { x = 100, y = bY + 234 , w = 300, h = 28, txt = gid, color = { 255, 255, 200 } })
 	-- load equip scores
 	_HM_Price.ui = ui
 	_HM_Price.LoadAllScores()
