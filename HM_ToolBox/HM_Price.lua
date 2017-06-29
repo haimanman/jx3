@@ -10,6 +10,7 @@ HM_Price = {}
 -- 本地函数和变量
 ---------------------------------------------------------------------
 local ROOT_URL = HM.szRemoteHost
+local OFFICAL_URL = ROOT_URL .. "/jx3/gujia"
 local _HM_Price = {
 	szName = "角色估价",
 	nBagCount = 6,
@@ -165,11 +166,11 @@ end
 -- 提取称号、奇遇等
 _HM_Price.LoadAdventures = function(t)
 	local me = GetClientPlayer()
-	-- 前缀：300=侠客行, 120=济世菩萨, 266=红尘,  158=老江湖, new: id > 360
+	-- 前缀：300=侠客行, 120=济世菩萨, 266=红尘,  168=老江湖, new: id > 360
 	-- 后缀：251=傲岸,  194=追梦人, new: id > 268
 	t.designations = {}
 	for _, v in ipairs(me.GetAcquiredDesignationPrefix() or {}) do
-		if v == 300 or v == 120 or v == 266 or v == 158 or v > 360 then
+		if v == 300 or v == 120 or v == 266 or v == 168 or v > 360 then
 			table.insert(t.designations, v)
 		end
 	end
@@ -232,7 +233,7 @@ _HM_Price.GetCurrentScore = function()
 	if info.nRecommendID and g_tTable.EquipRecommend then
 		local t = g_tTable.EquipRecommend:Search(info.nRecommendID)
 		if StringFindW(t.szDesc, school) == 1 then
-			local skill = GetSkill(tonumber(t.kungfu_ids), 1)
+			local skill = GetSkill(tonumber(string.match(t.kungfu_ids, "^%d+")), 1)
 			if skill then
 				local score = me.GetTotalEquipScore()
 				local name = skill.szSkillName
@@ -282,6 +283,17 @@ _HM_Price.LoadAllScores = function()
 	HM.RegisterEvent("EQUIP_CHANGE.p", _HM_Price.LoadScoreAndNext)
 	_HM_Price.LoadScoreAndNext()
 end
+
+_HM_Price.GetImage = function()
+	HM.GetJson(ROOT_URL .. "/api/jx3/price-images/" .. GetClientPlayer().GetGlobalID()):done(function(res)
+		if res.errcode == 0 and res.qrcode then
+			HM.ViewQrcode(res.qrcode, "获取估价图片")
+		else
+			HM.Alert(res.errmsg)
+		end
+	end)
+end
+
 -------------------------------------
 -- 事件处理
 -------------------------------------
@@ -304,7 +316,7 @@ end
 _HM_Price.PS.OnPanelActive = function(frame)
 	local ui, nX = HM.UI(frame), 0
 	ui:Append("Text", { x = 0, y = 0, txt = "估价原理", font = 27 })
-	ui:Append("Text", { x = 0, y = 28, txt = "根据您当前装备、成就、商城外观发型等角色数据，结合市场上的参考价格综合动态评测。", multi = true, w = 520, h = 50 })
+	ui:Append("Text", { x = 0, y = 28, txt = "根据您当前装备、成就、商城外观发型等角色数据，依据近期市场成交价综合动态评测。", multi = true, w = 520, h = 50 })
 	local bY = 90
 	ui:Append("Text", { x = 0, y = bY, txt = GetUserRoleName() .. "（" .. select(6, GetUserServer()) .. "）的价值大约为：", font = 27 })
 	nX = ui:Append("Text", "Text_Price", { x = 3, y = bY + 45, txt = "???", font = 24 }):Pos_()
@@ -316,50 +328,152 @@ _HM_Price.PS.OnPanelActive = function(frame)
 			ui:Fetch("Text_Unit"):Toggle(false)
 			return ui:Fetch("Text_Price"):Text("请先满级")
 		end
-		ui:Fetch("Btn_Submit"):Enable(false)
-		-- update role
-		local data = HM_About.GetSyncData()
-		data.__qrcode = "0"
-		HM.PostJson(ROOT_URL .. "/api/jx3/roles", data):done(function(res)
-			if not res or  res.errcode ~= 0 then
-				ui:Fetch("Text_Price"):Text(res and res.errmsg or "Unknown")
-				ui:Fetch("Btn_Submit"):Enable(true)
-			else
-				local data = _HM_Price.GetAllInfo()
-				HM.PostJson(ROOT_URL .. "/api/jx3/price-records", HM.JsonEncode(data)):done(function(res)
-					local _nX = ui:Fetch("Text_Price"):Text(res.nPrice or res.errmsg):Pos_()
-					ui:Fetch("Text_Unit"):Pos(_nX + 5, bY + 45)
-					if res.errcode == 0 then
-						ui:Fetch("Btn_Scan"):Enable(true)
-					else
-						HM.Debug(res.data or res.errmsg)
-					end
-				end)
-			end
-		end)
+		HM.Confirm("声明：此价格由插件自动评估，仅供参考和娱乐，切勿用于交易！", function()
+			ui:Fetch("Btn_Submit"):Enable(false)
+			-- update role
+			local data = HM_About.GetSyncData()
+			data.__qrcode = "0"
+			HM.PostJson(ROOT_URL .. "/api/jx3/roles", data):done(function(res)
+				if not res or  res.errcode ~= 0 then
+					ui:Fetch("Text_Price"):Text(res and res.errmsg or "Unknown")
+					ui:Fetch("Btn_Submit"):Enable(true)
+				else
+					local data = _HM_Price.GetAllInfo()
+					HM.PostJson(ROOT_URL .. "/api/jx3/price-records", HM.JsonEncode(data)):done(function(res)
+						local _nX = ui:Fetch("Text_Price"):Text(res.nPrice or res.errmsg):Pos_()
+						ui:Fetch("Text_Unit"):Pos(_nX + 5, bY + 45)
+						if res.errcode == 0 then
+							ui:Fetch("Btn_Scan"):Enable(true)
+							_HM_Price.result = res
+						else
+							HM.Debug(res.data or res.errmsg)
+						end
+					end)
+				end
+			end)
+		end, nil, "同意", "拒绝")
 	end):Pos_()
-	local gid = GetClientPlayer().GetGlobalID()
-	ui:Append("WndButton", "Btn_Scan", { x = nX + 10, y =  bY + 90, txt = "生成图片", enable = false }):Click(function()
-		HM.GetJson(ROOT_URL .. "/api/jx3/price-images/" .. gid):done(function(res)
-			if res.errcode == 0 and res.qrcode then
-				HM.ViewQrcode(res.qrcode, "获取角色估价图片")
-			else
-				HM.Alert(res.errmsg)
-			end
-		end)
+	-- 查看详情
+	ui:Append("WndButton", "Btn_Scan", { x = nX + 10, y =  bY + 90, txt = "查看详情", enable = false }):Click(function()
+		--HM_Price.OpenDetail()
+		_HM_Price.GetImage()
 	end)
-	ui:Append("Text", { x = 3, y = bY + 130, font = 218, txt = "注1：估价不包括未绑定物品、通宝、积分等" })
-	ui:Append("Text", { x = 3, y = bY + 152, font = 218, txt = "注2：市场价格波动较快，结果数值仅供此时参考" })
+	ui:Append("Text", { x = 3, y = bY + 130, font = 218, txt = "注1：不计算未绑定物品、通宝、积分等" })
+	ui:Append("Text", { x = 3, y = bY + 152, font = 218, txt = "注2：如需模拟估价，请自行至官网配置生成" })
 	-- url
 	ui:Append("Text", { x = 0, y = bY + 206 , txt = "估价器官网", font = 27 })
-	ui:Append("WndEdit", { x = 100, y = bY + 206 , w = 300, h = 28, txt = ROOT_URL .. "/jx3/gujia", color = { 255, 255, 200 } })
-	ui:Append("Text", { x = 0, y = bY + 234 , txt = _L["Global ID"], font = 27 })
-	ui:Append("WndEdit", { x = 100, y = bY + 234 , w = 300, h = 28, txt = gid, color = { 255, 255, 200 } })
+	ui:Append("WndEdit", { x = 0, y = bY + 234 , w = 300, h = 28, txt = ROOT_URL .. "/jx3/gujia", color = { 255, 255, 200 } })
 	-- load equip scores
 	_HM_Price.ui = ui
 	_HM_Price.LoadAllScores()
 end
 
+---------------------------------------------------------------------
+-- 界面函数
+---------------------------------------------------------------------
+local ACHI_ANCHOR  = { s = "CENTER", r = "CENTER", x = 0, y = 0 }
+function HM_Price.IsOpened()
+	return Station.Lookup("Normal/HM_Price")
+end
+
+function HM_Price.GetFrame()
+	local frame = HM_Price.IsOpened()
+	if not frame then
+		frame = Wnd.OpenWindow("interface\\HM\\HM_ToolBox\\HM_Price.ini", "HM_Price")
+	end
+	return frame
+end
+
+function HM_Price.ClosePanel()
+	local frame = HM_Price.IsOpened()
+	if frame then
+		Wnd.CloseWindow(frame)
+		PlaySound(SOUND.UI_SOUND, g_sound.CloseFrame)
+	end
+end
+
+function HM_Price.UpdateAnchor(frame)
+	frame:SetPoint(ACHI_ANCHOR.s, 0, 0, ACHI_ANCHOR.r, ACHI_ANCHOR.x, ACHI_ANCHOR.y)
+end
+
+function HM_Price.GetLinkScript(szLink)
+	return [[
+		this.OnItemLButtonClick = function()
+			OpenInternetExplorer(]] .. EncodeComponentsString(szLink) .. [[)
+		end
+		this.OnItemMouseEnter = function()
+			this:SetFontColor(255, 0, 0)
+		end
+		this.OnItemMouseLeave = function()
+			this:SetFontColor(20, 150, 220)
+		end
+	]]
+end
+
+function HM_Price.OpenDetail()
+	local res = _HM_Price.result
+	if not res then
+		return
+	end
+	local frame = HM_Price.GetFrame()
+	frame:Lookup("", "Text_Title"):SetText(GetUserRoleName() .. "≈" .. res.nPrice .. "元")
+	frame:Lookup("", "Text_Link"):SetText("估价官网：" .. OFFICAL_URL)
+	frame:Lookup("", "Text_Link"):AutoSize()
+	frame:Lookup("Btn_Edit"):Lookup("", "Text_Edit"):SetText("生成图片")
+	frame:BringToTop()
+	handle:Clear()
+	handle:AppendItemFromString(GetFormatText(res.szText or "", 6))
+	handle:FormatAllItemPos()
+	PlaySound(SOUND.UI_SOUND, g_sound.OpenFrame)
+end
+
+function HM_Price.OnFrameCreate()
+	this:RegisterEvent("UI_SCALED")
+	RegisterGlobalEsc("HM_Price", HM_Price.IsOpened, HM_Price.ClosePanel)
+	HM_Price.UpdateAnchor(this)
+end
+
+function HM_Price.OnItemMouseEnter()
+	local szName = this:GetName()
+	if szName == "Text_Link" then
+		this:SetFontColor(139, 46, 28)
+	end
+end
+
+function HM_Price.OnItemMouseLeave()
+	local szName = this:GetName()
+	if szName == "Text_Link" then
+		this:SetFontColor(0, 126, 255)
+	end
+end
+
+function HM_Price.OnFrameDragEnd()
+	ACHI_ANCHOR = GetFrameAnchor(this)
+end
+
+function HM_Price.OnEvent(szEvent)
+	if szEvent == "UI_SCALED" then
+		HM_Price.UpdateAnchor(this)
+	end
+end
+
+function HM_Price.OnLButtonClick()
+	local szName = this:GetName()
+	if szName == "Btn_Close" then
+		HM_Price.ClosePanel()
+	elseif szName == "Btn_Edit" then
+		_HM_Price.GetImage()
+	end
+end
+
+function HM_Price.OnItemLButtonClick()
+	local szName = this:GetName()
+	if szName == "Text_Link" then
+		local frame = this:GetRoot()
+		OpenInternetExplorer(OFFICAL_URL)
+		HM_Price.ClosePanel()
+	end
+end
 ---------------------------------------------------------------------
 -- 注册事件、初始化
 ---------------------------------------------------------------------
