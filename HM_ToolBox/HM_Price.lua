@@ -332,13 +332,14 @@ _HM_Price.PS.OnPanelActive = function(frame)
 			ui:Fetch("Btn_Submit"):Enable(false)
 			-- update role
 			local data = HM_About.GetSyncData()
-			data.__qrcode = "0"
+			data.__qrcode = 0
 			HM.PostJson(ROOT_URL .. "/api/jx3/roles", data):done(function(res)
 				if not res or  res.errcode ~= 0 then
 					ui:Fetch("Text_Price"):Text(res and res.errmsg or "Unknown")
 					ui:Fetch("Btn_Submit"):Enable(true)
 				else
 					local data = _HM_Price.GetAllInfo()
+					data.__text = 1
 					HM.PostJson(ROOT_URL .. "/api/jx3/price-records", HM.JsonEncode(data)):done(function(res)
 						local _nX = ui:Fetch("Text_Price"):Text(res.nPrice or res.errmsg):Pos_()
 						ui:Fetch("Text_Unit"):Pos(_nX + 5, bY + 45)
@@ -355,14 +356,15 @@ _HM_Price.PS.OnPanelActive = function(frame)
 	end):Pos_()
 	-- 查看详情
 	ui:Append("WndButton", "Btn_Scan", { x = nX + 10, y =  bY + 90, txt = "查看详情", enable = false }):Click(function()
-		--HM_Price.OpenDetail()
-		_HM_Price.GetImage()
+		HM_Price.OpenDetail()
+		--_HM_Price.GetImage()
 	end)
-	ui:Append("Text", { x = 3, y = bY + 130, font = 218, txt = "注1：不计算未绑定物品、通宝、积分等" })
-	ui:Append("Text", { x = 3, y = bY + 152, font = 218, txt = "注2：如需模拟估价，请自行至官网配置生成" })
+	ui:Append("Text", { x = 3, y = bY + 130, font = 221, txt = "注1：不计算未绑定物品、通宝、积分等" })
+	ui:Append("Text", { x = 3, y = bY + 152, font = 221, txt = "注2：估价数据不包含敏感信息，也不保存在服务端" })
+	ui:Append("Text", { x = 3, y = bY + 174, font = 221, txt = "注3：如需模拟估价，请自行前往“海鳗官网”配置生成" })
 	-- url
-	ui:Append("Text", { x = 0, y = bY + 206 , txt = "估价器官网", font = 27 })
-	ui:Append("WndEdit", { x = 0, y = bY + 234 , w = 300, h = 28, txt = ROOT_URL .. "/jx3/gujia", color = { 255, 255, 200 } })
+	--ui:Append("Text", { x = 0, y = bY + 220 , txt = "估价器官网", font = 27 })
+	--ui:Append("WndEdit", { x = 0, y = bY + 248 , w = 300, h = 28, txt = ROOT_URL .. "/jx3/gujia", color = { 255, 255, 200 } })
 	-- load equip scores
 	_HM_Price.ui = ui
 	_HM_Price.LoadAllScores()
@@ -417,10 +419,10 @@ function HM_Price.OpenDetail()
 	end
 	local frame = HM_Price.GetFrame()
 	frame:Lookup("", "Text_Title"):SetText(GetUserRoleName() .. "≈" .. res.nPrice .. "元")
-	frame:Lookup("", "Text_Link"):SetText("估价官网：" .. OFFICAL_URL)
-	frame:Lookup("", "Text_Link"):AutoSize()
 	frame:Lookup("Btn_Edit"):Lookup("", "Text_Edit"):SetText("生成图片")
 	frame:BringToTop()
+	
+	local handle = frame:Lookup("WndScroll_Pedia", "")
 	handle:Clear()
 	handle:AppendItemFromString(GetFormatText(res.szText or "", 6))
 	handle:FormatAllItemPos()
