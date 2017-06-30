@@ -288,6 +288,11 @@ _HM_Price.GetImage = function()
 	HM.GetJson(ROOT_URL .. "/api/jx3/price-images/" .. GetClientPlayer().GetGlobalID()):done(function(res)
 		if res.errcode == 0 and res.qrcode then
 			HM.ViewQrcode(res.qrcode, "ªÒ»°π¿º€Õº∆¨")
+			local frame = HM_Price.IsOpened()
+			if frame then
+				local x, y = frame:Lookup("WndScroll_Pedia"):GetAbsPos()
+				Station.Lookup("Normal/HM_ViewQrcode"):SetPoint(x + 180, y)
+			end
 		else
 			HM.Alert(res.errmsg)
 		end
