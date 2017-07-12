@@ -556,16 +556,17 @@ end
 
 -- 下载恢复情缘
 _HM_Love.DownloadLover = function()
-	HM.GetJson(ROOT_URL .. "/api/jx3/lover/" .. GetClientPlayer().GetGlobalID()):done(function(res)
+	HM.GetJson(ROOT_URL .. "/api/jx3/couples/" .. GetClientPlayer().GetGlobalID()):done(function(res)
 		if not res or res.errcode ~= 0 then
 			HM.Alert(g_tStrings.tFellowshipErrorString[PLAYER_FELLOWSHIP_RESPOND.ERROR_INVALID_NAME])
 		else
-			local aInfo = _HM_Love.GetFellowDataByID(res.dwID)
+			local data = res.data
+			local aInfo = _HM_Love.GetFellowDataByID(data.dwID)
 			if not aInfo then
 				HM.Alert(g_tStrings.tFellowshipErrorString[PLAYER_FELLOWSHIP_RESPOND.ERROR_NOT_FOUND])
 			else
 				HM.Confirm(_L("Are you sure restore love relation with [%s]?", aInfo.name), function()
-					_HM_Love.SaveLover(aInfo, res.nLoveType, res.nStartTime)
+					_HM_Love.SaveLover(aInfo, data.nLoveType, data.nStartTime)
 				end)
 			end
 		end
@@ -574,23 +575,24 @@ end
 
 -- 删除远程情缘 (post used)
 _HM_Love.DeleteRemote = function()
-	HM.PostJson(ROOT_URL .. "/api/jx3/lovers", {
+	local data = {
 		gid = GetClientPlayer().GetGlobalID(),
 		__delete = 1,
 		__lang = CLIENT_LANG,
-	})
+	}
+	HM.PostJson(ROOT_URL .. "/api/jx3/couples", HM.JsonEncode(data))
 end
 
 -- 上传情缘
 _HM_Love.UploadRemote = function(__qrcode)
 	local data = HM_About.GetSyncData()
-	data.__qrcode = __qrcode or "0"
-	if data.__qrcode ~= "2" then
+	data.__qrcode = __qrcode or 0
+	if data.__qrcode ~= 2 then
 		local _, aInfo, aCard = _HM_Love.GetFellowDataByKey("LOVER", true)
 		if not aInfo or not aCard then
 			return
 		end
-		data.lover = HM.JsonEncode({
+		data.lover = {
 			dwID = aInfo.id,
 			szName = aInfo.name,
 			dwAvatar = aCard.dwMiniAvatarID,
@@ -598,13 +600,13 @@ _HM_Love.UploadRemote = function(__qrcode)
 			dwForceID = aCard.dwForceID,
 			nLoveType = _HM_Love.nLoveType,
 			nStartTime = _HM_Love.nStartTime,
-		})
+		}
 	end
-	HM.PostJson(ROOT_URL .. "/api/jx3/lovers", data):done(function(res)
+	HM.PostJson(ROOT_URL .. "/api/jx3/couples", HM.JsonEncode(data)):done(function(res)
 		if not res or res.errcode ~= 0 then
 			HM.Alert(res.errmsg)
-		elseif res.qrcode then
-			HM.ViewQrcode(res.qrcode, _L["view cert"])
+		elseif res.data and res.data.qrcode then
+			HM.ViewQrcode(res.data.qrcode, _L["view cert"])
 		else
 			HM.Alert(g_tStrings.STR_MAIL_SUCCEED)
 		end
@@ -613,12 +615,12 @@ end
 
 -- 查看证书，等同于上传
 _HM_Love.ViewCert = function()
-	return _HM_Love.UploadRemote("1")
+	return _HM_Love.UploadRemote(1)
 end
 
 -- 单身证书
 _HM_Love.SingleCert = function()
-	return _HM_Love.UploadRemote("2")
+	return _HM_Love.UploadRemote(2)
 end
 
 -------------------------------------
