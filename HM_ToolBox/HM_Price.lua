@@ -285,9 +285,9 @@ _HM_Price.LoadAllScores = function()
 end
 
 _HM_Price.GetImage = function()
-	HM.GetJson(ROOT_URL .. "/api/jx3/price-images/" .. GetClientPlayer().GetGlobalID()):done(function(res)
-		if res.errcode == 0 and res.qrcode then
-			HM.ViewQrcode(res.qrcode, "获取估价图片")
+	HM.GetJson(ROOT_URL .. "/api/jx3/gujia-images/" .. GetClientPlayer().GetGlobalID()):done(function(res)
+		if res.errcode == 0 and res.data and res.data.qrcode then
+			HM.ViewQrcode(res.data.qrcode, "获取估价图片")
 			local frame = HM_Price.IsOpened()
 			if frame then
 				local x, y = frame:Lookup("WndScroll_Pedia"):GetAbsPos()
@@ -338,19 +338,19 @@ _HM_Price.PS.OnPanelActive = function(frame)
 			-- update role
 			local data = HM_About.GetSyncData()
 			data.__qrcode = 0
-			HM.PostJson(ROOT_URL .. "/api/jx3/roles", data):done(function(res)
+			HM.PostJson(ROOT_URL .. "/api/jx3/game-roles", HM.JsonEncode(data)):done(function(res)
 				if not res or  res.errcode ~= 0 then
 					ui:Fetch("Text_Price"):Text(res and res.errmsg or "Unknown")
 					ui:Fetch("Btn_Submit"):Enable(true)
 				else
 					local data = _HM_Price.GetAllInfo()
 					data.__text = 1
-					HM.PostJson(ROOT_URL .. "/api/jx3/price-records", HM.JsonEncode(data)):done(function(res)
-						local _nX = ui:Fetch("Text_Price"):Text(res.nPrice or res.errmsg):Pos_()
+					HM.PostJson(ROOT_URL .. "/api/jx3/gujia-records", HM.JsonEncode(data)):done(function(res)
+						local _nX = ui:Fetch("Text_Price"):Text(res.data and res.data.nPrice or res.errmsg):Pos_()
 						ui:Fetch("Text_Unit"):Pos(_nX + 5, bY + 45)
 						if res.errcode == 0 then
 							ui:Fetch("Btn_Scan"):Enable(true)
-							_HM_Price.result = res
+							_HM_Price.result = res.data
 						else
 							HM.Debug(res.data or res.errmsg)
 						end

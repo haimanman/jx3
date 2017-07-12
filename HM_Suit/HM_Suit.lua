@@ -101,7 +101,7 @@ end
 -- 循环换装处理
 _HM_Suit.ChangeSuit = function()
 	local me = GetClientPlayer()
-	if not me or me and me.bFightState then
+	if not me or me.bFightState then
 		return OutputMessage("MSG_ANNOUNCE_YELLOW", g_tStrings.tItem_Msg[ITEM_RESULT_CODE.PLAYER_IN_FIGHT])
 	end
 	local nCur, nTo = me.GetEquipIDArray(0), 1
@@ -118,7 +118,7 @@ end
 -- 循环脱装备、穿装备
 _HM_Suit.UnmountEquip = function()
 	local me = GetClientPlayer()
-	if not me or me and me.bFightState then
+	if not me or me.bFightState then
 		return OutputMessage("MSG_ANNOUNCE_YELLOW", g_tStrings.tItem_Msg[ITEM_RESULT_CODE.PLAYER_IN_FIGHT])
 	end
 	local txt = Player_GetFrame():Lookup("Btn_Umount"):Lookup("", "Text_Umount")

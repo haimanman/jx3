@@ -48,10 +48,11 @@ _HM_Secret.PS.OnPanelActive = function(frame)
 	nX = ui:Append("WndCheckBox", "Check_Equip", { x = nX + 10, y = bY + 56, txt = "武器&坐骑", checked = true }):Pos_()
 	nX = ui:Append("WndButton", "Btn_Delete", { x = 0, y =  bY + 90, txt = "解除认证", enable = false }):Click(function()
 		HM.Confirm("确定要解除认证吗？", function()
-			local data = {}
-			data.gid = GetClientPlayer().GetGlobalID()
-			data.isOpenVerify = "0"
-			HM.PostJson(ROOT_URL .. "/api/jx3/roles", data):done(function(res)
+			local data = {
+				gid = GetClientPlayer().GetGlobalID(),
+				isOpenVerify = false
+			}
+			HM.PostJson(ROOT_URL .. "/api/jx3/game-roles", HM.JsonEncode(data)):done(function(res)
 				HM_Secret.bAutoSync = false
 				HM.OpenPanel(_HM_Secret.szName)
 			end)
@@ -62,17 +63,17 @@ _HM_Secret.PS.OnPanelActive = function(frame)
 		local data = HM_About.GetSyncData()
 		data.isOpenName = ui:Fetch("Check_Name"):Check() and 1 or 0
 		data.isOpenEquip = ui:Fetch("Check_Equip"):Check() and 1 or 0
-		data.__qrcode = "1"
+		data.__qrcode = 1
 		btn:Enable(false)
 		if GetClientPlayer().nLevel < 95 then
 			return HM.Alert(g_tStrings.tCraftResultString[CRAFT_RESULT_CODE.TOO_LOW_LEVEL])
 		end
-		HM.PostJson(ROOT_URL .. "/api/jx3/roles", data):done(function(res)
+		HM.PostJson(ROOT_URL .. "/api/jx3/game-roles", HM.JsonEncode(data)):done(function(res)
 			HM_Secret.bAutoSync = true
 			if not res or res.errcode ~= 0 then
 				ui:Fetch("Text_Verify"):Text(res and res.errmsg or "Unknown"):Color(255, 0, 0)
-			elseif res.qrcode then
-				HM.ViewQrcode(res.qrcode, "微信扫码完成认证")				
+			elseif res.data and res.data.qrcode then
+				HM.ViewQrcode(res.data.qrcode, "微信扫码完成认证")				
 				ui:Fetch("Image_Wechat"):Toggle(false)
 				ui:Fetch("Text_Verify"):Text("扫码后请点击左侧菜单刷新")
 			end
@@ -82,15 +83,16 @@ _HM_Secret.PS.OnPanelActive = function(frame)
 	end):Pos_()
 	-- /api/jx3/roles/{gid}
 	_HM_Secret.PS.active = true
-	HM.GetJson(ROOT_URL .. "/api/jx3/roles/" .. GetClientPlayer().GetGlobalID()):done(function(res)
+	HM.GetJson(ROOT_URL .. "/api/jx3/game-roles/" .. GetClientPlayer().GetGlobalID()):done(function(res)
 		if not _HM_Secret.PS.active then
 			return
 		end
-		if res.verify then
-			local szText = res.verify .. " (" .. FormatTime("%Y/%m/%d %H:%M", res.time_update) .. ")"
+		if res.data and res.data.verify then
+			local data = res.data
+			local szText = data.verify .. " (" .. FormatTime("%Y/%m/%d %H:%M", data.time_update) .. ")"
 			ui:Fetch("Text_Verify"):Text(szText)
-			ui:Fetch("Check_Name"):Check(res.open_name == true)
-			ui:Fetch("Check_Equip"):Check(res.open_equip == true)
+			ui:Fetch("Check_Name"):Check(data.open_name == true)
+			ui:Fetch("Check_Equip"):Check(data.open_equip == true)
 			ui:Fetch("Btn_Delete"):Enable(true)
 			ui:Fetch("Btn_Submit"):Text("重新认证")
 			HM_Secret.bAutoSync = true
@@ -116,7 +118,7 @@ end
 HM.RegisterEvent("FIRST_LOADING_END", function()
 	if HM_Secret.bAutoSync then
 		local data = HM_About.GetSyncData()
-		HM.PostJson(ROOT_URL .. "/api/jx3/roles", data)
+		HM.PostJson(ROOT_URL .. "/api/jx3/game-roles", HM.JsonEncode(data))
 	end
 end)
 

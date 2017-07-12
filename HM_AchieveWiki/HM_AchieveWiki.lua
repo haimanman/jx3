@@ -87,10 +87,10 @@ function HM_AchieveWiki.OnLButtonClick()
 		frame.view:Hide()
 		frame.pedia:AppendItemFromString(GetFormatText(_L["Loading..."], 6))
 		frame.pedia:FormatAllItemPos()
-		HM.GetJson(ACHI_ROOT_URL .. "/api/wiki/" .. frame.dwAchievement .. "?__lang=" .. ACHI_CLIENT_LANG):done(function(res)
+		HM.GetJson(ACHI_ROOT_URL .. "/api/wiki/details/" .. frame.dwAchievement .. "?__lang=" .. ACHI_CLIENT_LANG):done(function(res)
 			frame:Lookup("Btn_Edit"):Enable(true)
-			if res.aid then
-				Achievement.UpdateEncyclopedia(res)
+			if res.errcode == 0 then
+				Achievement.UpdateEncyclopedia(res.data)
 			elseif res.errmsg then
 				HM.Alert(res.errmsg)
 			end
@@ -351,10 +351,10 @@ function Achievement.SyncUserData(fnCallBack, __qrcode)
 	local data = HM_About.GetSyncData()
 	data.code = GetAchievementCode()
 	data.__qrcode = __qrcode
-	HM.PostJson(ACHI_ROOT_URL .. "/api/wiki/data", data):done(function(res)
+	HM.PostJson(ACHI_ROOT_URL .. "/api/wiki/game-data", HM.JsonEncode(data)):done(function(res)
 		HM_AchieveWiki.nSyncPoint = GetClientPlayer().GetAchievementRecord()
 		if fnCallBack then
-			fnCallBack(res)
+			fnCallBack(res.data)
 		end
 	end)
 end
@@ -380,12 +380,12 @@ function PS.OnPanelActive(frame)
 		nX = ui:Append("Text", { x = 10, y = nY + 5 , txt = _L["Last sync time:"], color = { 255, 255, 200 } }):Pos_()
 		nX, nY = ui:Append("Text", "Text_Time", { x = nX + 5, y = nY + 5 , txt = _L["Loading..."] }):Pos_()
 		-- /api/wiki/data/{gid}
-		HM.GetJson(ACHI_ROOT_URL .. "/api/wiki/data/" .. gid):done(function(res)
+		HM.GetJson(ACHI_ROOT_URL .. "/api/wiki/game-data/" .. gid):done(function(res)
 			if not PS.active then
 				return
 			end
-			if res.time_update then
-				ui:Fetch("Text_Time"):Text(FormatTime("%Y/%m/%d %H:%M:%S", res.time_update))
+			if res.errcode == 0 then
+				ui:Fetch("Text_Time"):Text(FormatTime("%Y/%m/%d %H:%M:%S", res.data.time_update))
 			else
 				ui:Fetch("Text_Time"):Text(res.errmsg or _L["No record"])
 			end
