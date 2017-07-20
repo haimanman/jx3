@@ -317,7 +317,7 @@ _HM_About.PS.OnTaboxCheck = function(frame, nIndex, szTitle)
 	--end)
 	ui:Append("Shadow", { x = 0, y = 5, w = 532, h = 168, alpha = 128 }):Color(128, 128, 128)
 	if HM.szClientLang == "zhcn" then
-		ui:Append("Text", { x = 5, y = 5, font = 239,  w = 532, h = 100, txt = "海鳗插件官网" }):Align(1, 1):Click(function()
+		ui:Append("Text", { x = 0, y = 5, font = 239,  w = 532, h = 100, txt = "海鳗插件官网" }):Align(1, 1):Click(function()
 			if HM_Secret then
 				HM.OpenPanel(_L["Haiman Site"])
 			else
@@ -325,8 +325,8 @@ _HM_About.PS.OnTaboxCheck = function(frame, nIndex, szTitle)
 				HM.Sysmsg(HM.szRemoteHost .. " 或微信公众号【海鳗插件】")
 			end
 		end)
-		ui:Append("Text", { x = 5, y = 90, font = 61,  w = 532, h = 20, txt = "游戏辅助  资料查询  科举题库" }):Align(1, 1)
-		ui:Append("Text", { x = 5, y = 120, font = 61,  w = 532, h = 20, txt = "开服监控  日常提醒  玩家交流" }):Align(1, 1)
+		ui:Append("Text", { x = 0, y = 90, font = 61,  w = 532, h = 20, txt = "游戏辅助  资料查询  科举题库" }):Align(1, 1)
+		ui:Append("Text", { x = 0, y = 120, font = 61,  w = 532, h = 20, txt = "开服监控  日常提醒  玩家交流" }):Align(1, 1)
 	else
 		ui:Append("Text", { x = 0, y = 5, font = 239,  w = 532, h = 100, txt = "Empty color is the color that is empty." }):Align(1, 1)
 	end

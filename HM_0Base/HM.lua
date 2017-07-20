@@ -112,14 +112,16 @@ end
 
 -- initlization
 _HM.Init = function()
-	local pFrame = Player_GetFrame()
 	local hFrame = _HM.OpenPanel(true)
 	-- button
+	--[[
+	local pFrame = Player_GetFrame()
 	local button = pFrame:Lookup("HM_Button")
 	if not button then
 		button = hFrame:Lookup("Btn_Menu")
 		button:SetName("HM_Button")
 		button:ChangeRelation(pFrame, true, true)
+		button:SetRelPos(pFrame:GetSize() - 27 * 3 - button:GetSize(), 15)		
 		button.OnMouseEnter = function()
 			local nX, nY = this:GetAbsPos()
 			local nW, nH = this:GetSize()
@@ -127,11 +129,12 @@ _HM.Init = function()
 			OutputTip(szTip, 400, {nX, nY, nW, nH})
 		end
 		button.OnLButtonClick = _HM.TogglePanel
-		button.OnRButtonClick = function()
+		button.OnRButtonClick = function()s
 			this:Destroy()
 		end
 		button:Show()
 	end
+	--]]
 	--  hide
 	hFrame:Hide()
 	-- hotkey
