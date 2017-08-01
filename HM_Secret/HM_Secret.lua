@@ -73,7 +73,7 @@ _HM_Secret.PS.OnPanelActive = function(frame)
 			if not res or res.errcode ~= 0 then
 				ui:Fetch("Text_Verify"):Text(res and res.errmsg or "Unknown"):Color(255, 0, 0)
 			elseif res.data and res.data.qrcode then
-				HM.ViewQrcode(res.data.qrcode, "微信扫码完成认证")				
+				HM.ViewQrcode(res.data.qrcode, "微信扫码完成认证")
 				--ui:Fetch("Image_Wechat"):Toggle(false)
 				ui:Fetch("Text_Verify"):Text("扫码后请点击左侧菜单刷新")
 			end
