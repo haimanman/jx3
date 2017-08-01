@@ -12,7 +12,7 @@ HM_Price = {}
 local ROOT_URL = HM.szRemoteHost
 local OFFICAL_URL = ROOT_URL .. "/jx3/gujia"
 local _HM_Price = {
-	szName = "角色估价",
+	szName = "角色卖点",
 	nBagCount = 6,
 	nBankCount = 6,
 }
@@ -258,7 +258,7 @@ _HM_Price.LoadScoreAndNext = function()
 	if nNext == _HM_Price.nOrgSuit then
 		HM.UnRegisterEvent("EQUIP_CHANGE.p")
 		if _HM_Price.ui then
-			_HM_Price.ui:Fetch("Btn_Submit"):Text("获取估价"):Enable(true)
+			_HM_Price.ui:Fetch("Btn_Submit"):Text("查看详情"):Enable(true)
 		end
 	end
 	-- weapons
@@ -284,6 +284,7 @@ _HM_Price.LoadAllScores = function()
 	_HM_Price.LoadScoreAndNext()
 end
 
+--[[
 _HM_Price.GetImage = function()
 	HM.GetJson(ROOT_URL .. "/api/jx3/gujia-images/" .. GetClientPlayer().GetGlobalID()):done(function(res)
 		if res.errcode == 0 and res.data and res.data.qrcode then
@@ -297,6 +298,13 @@ _HM_Price.GetImage = function()
 			HM.Alert(res.errmsg)
 		end
 	end)
+end
+--]]
+
+_HM_Price.ExportData = function()
+	local szFile = "interface\\HMP-" .. select(6, GetUserServer())  .. "-" .. GetUserRoleName() .. ".json"
+	Log(szFile, HM.JsonEncode(_HM_Price.data), "clear close")
+	HM.Sysmsg("角色卖点数据已导出：" .. GetRootPath() ..  "\\" .. szFile)
 end
 
 -------------------------------------
@@ -312,6 +320,7 @@ _HM_Price.PS = {}
 _HM_Price.PS.OnPanelDeactive = function(frame)
 	HM.UnRegisterEvent("EQUIP_CHANGE.p")
 	_HM_Price.ui = nil
+	_HM_Price.result = nil
 	if _HM_Price.nOrgSuit then
 		PlayerChangeSuit(_HM_Price.nOrgSuit + 1)
 	end
@@ -320,56 +329,47 @@ end
 -- init
 _HM_Price.PS.OnPanelActive = function(frame)
 	local ui, nX = HM.UI(frame), 0
-	ui:Append("Text", { x = 0, y = 0, txt = "估价原理", font = 27 })
-	ui:Append("Text", { x = 0, y = 28, txt = "根据您当前装备、成就、商城外观发型等角色数据，依据近期市场成交价综合动态评测。", multi = true, w = 520, h = 50 })
-	local bY = 90
-	ui:Append("Text", { x = 0, y = bY, txt = GetUserRoleName() .. "（" .. select(6, GetUserServer()) .. "）的价值大约为：", font = 27 })
-	nX = ui:Append("Text", "Text_Price", { x = 3, y = bY + 45, txt = "???", font = 24 }):Pos_()
-	ui:Append("Text", "Text_Unit", { x = nX + 5, y = bY + 45, txt = "元" })
-	nX = ui:Append("WndButton", "Btn_Submit", { x = 0, y =  bY + 90, txt = "请稍候", enable = false }):Click(function()
+	ui:Append("Text", { x = 0, y = 0, txt = "说明", font = 27 })
+	ui:Append("Text", { x = 0, y = 28, txt = "帐号角色上值钱的项目主要为装备、成就、商城外观发型等信息，依据近期市场动态整理。", multi = true, w = 520, h = 50 })
+	local bY = 60
+	ui:Append("Text", "Text_Price", { x = 3, y = bY + 45, txt = "???", font = 24 })
+	ui:Append("WndButton", "Btn_Submit", { x = 0, y =  bY + 90, txt = "请稍候..",  enable = false }):Click(function()
 		-- check level
 		local me = GetClientPlayer()
 		if me.nLevel ~= me.nMaxLevel then
 			ui:Fetch("Text_Unit"):Toggle(false)
 			return ui:Fetch("Text_Price"):Text("请先满级")
+		elseif _HM_Price.result then
+			return HM_Price.OpenDetail()
 		end
-		HM.Confirm("声明：此价格由插件自动评估，仅供参考和娱乐，切勿用于交易！", function()
-			ui:Fetch("Btn_Submit"):Enable(false)
-			-- update role
-			local data = HM_About.GetSyncData()
-			data.__qrcode = 0
-			HM.PostJson(ROOT_URL .. "/api/jx3/game-roles", HM.JsonEncode(data)):done(function(res)
-				if not res or  res.errcode ~= 0 then
-					ui:Fetch("Text_Price"):Text(res and res.errmsg or "Unknown")
+		ui:Fetch("Btn_Submit"):Enable(false)
+		-- update role
+		local data = HM_About.GetSyncData()
+		data.__qrcode = 0
+		HM.PostJson(ROOT_URL .. "/api/jx3/game-roles", HM.JsonEncode(data)):done(function(res)
+			if not res or  res.errcode ~= 0 then
+				ui:Fetch("Btn_Submit"):Enable(true)
+				ui:Fetch("Text_Price"):Text(res and res.errmsg or "Unknown Error")
+			else
+				local data = _HM_Price.GetAllInfo()
+				data.__text = 1
+				_HM_Price.data = data
+				HM.PostJson(ROOT_URL .. "/api/jx3/gujia-records", HM.JsonEncode(data)):done(function(res)
 					ui:Fetch("Btn_Submit"):Enable(true)
-				else
-					local data = _HM_Price.GetAllInfo()
-					data.__text = 1
-					HM.PostJson(ROOT_URL .. "/api/jx3/gujia-records", HM.JsonEncode(data)):done(function(res)
-						local _nX = ui:Fetch("Text_Price"):Text(res.data and res.data.nPrice or res.errmsg):Pos_()
-						ui:Fetch("Text_Unit"):Pos(_nX + 5, bY + 45)
-						if res.errcode == 0 then
-							ui:Fetch("Btn_Scan"):Enable(true)
-							_HM_Price.result = res.data
-						else
-							HM.Debug(res.data or res.errmsg)
-						end
-					end)
-				end
-			end)
-		end, nil, "同意", "拒绝")
-	end):Pos_()
-	-- 查看详情
-	ui:Append("WndButton", "Btn_Scan", { x = nX + 10, y =  bY + 90, txt = "查看详情", enable = false }):Click(function()
-		HM_Price.OpenDetail()
-		--_HM_Price.GetImage()
+					if res.errcode == 0 then
+						_HM_Price.result = res.data
+						HM_Price.OpenDetail()
+					else
+						ui:Fetch("Text_Price"):Text(res.data or res.errmsg)
+					end
+				end)
+			end
+		end)
 	end)
-	ui:Append("Text", { x = 3, y = bY + 130, font = 221, txt = "注1：不计算未绑定物品、通宝、积分等" })
-	ui:Append("Text", { x = 3, y = bY + 152, font = 221, txt = "注2：估价数据不包含敏感信息，也不保存在服务端" })
-	ui:Append("Text", { x = 3, y = bY + 174, font = 221, txt = "注3：如需模拟估价，请自行前往“海鳗官网”配置生成" })
-	-- url
-	--ui:Append("Text", { x = 0, y = bY + 220 , txt = "估价器官网", font = 27 })
-	--ui:Append("WndEdit", { x = 0, y = bY + 248 , w = 300, h = 28, txt = ROOT_URL .. "/jx3/gujia", color = { 255, 255, 200 } })
+	bY = bY + 10
+	ui:Append("Text", { x = 0, y = bY + 130, font = 221, txt = "注1：不包含未绑定物品、通宝、积分等" })
+	ui:Append("Text", { x = 0, y = bY + 152, font = 221, txt = "注2：如需模拟估价，请自行前往“海鳗官网”配置生成" })
+	ui:Append("Text", { x = 0, y = bY + 174, font = 221, txt = "注3：此功能由第三方插件提供，仅供参考和娱乐" })
 	-- load equip scores
 	_HM_Price.ui = ui
 	_HM_Price.LoadAllScores()
@@ -424,7 +424,7 @@ function HM_Price.OpenDetail()
 	end
 	local frame = HM_Price.GetFrame()
 	frame:Lookup("", "Text_Title"):SetText(GetUserRoleName() .. "≈" .. res.nPrice .. "元")
-	frame:Lookup("Btn_Edit"):Lookup("", "Text_Edit"):SetText("生成图片")
+	frame:Lookup("Btn_Edit"):Lookup("", "Text_Edit"):SetText("导出数据")
 	frame:BringToTop()
 	
 	local handle = frame:Lookup("WndScroll_Pedia", "")
@@ -469,7 +469,8 @@ function HM_Price.OnLButtonClick()
 	if szName == "Btn_Close" then
 		HM_Price.ClosePanel()
 	elseif szName == "Btn_Edit" then
-		_HM_Price.GetImage()
+		_HM_Price.ExportData()
+		this:Enable(false)
 	end
 end
 

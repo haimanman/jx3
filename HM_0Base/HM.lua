@@ -66,7 +66,11 @@ local _HM = {
 -------------------------------------
 -- open
 _HM.OpenPanel = function(bDisableSound)
-	local frame = Station.Lookup("Normal/HM") or Wnd.OpenWindow(_HM.szIniFile, "HM")
+	local szIniFile = StringReplaceW(_HM.szIniFile, "\\HM_0Base", "__Test")
+	if not IsFileExist(szIniFile) then
+		szIniFile = _HM.szIniFile
+	end
+	local frame = Station.Lookup("Normal/HM") or Wnd.OpenWindow(szIniFile, "HM")
 	frame:Show()
 	frame:BringToTop()
 	if not bDisableSound then
