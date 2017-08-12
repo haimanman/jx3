@@ -4,6 +4,7 @@
 
 HM_About = {
 	bPlayOpen = true,	-- 播放开场音乐
+	bShowButton = false, -- 始终显示 HM 小按钮
 	szCheckDate = "",	-- 更新检测日期
 	nSkipAlert = 0,			-- 忽略更新提醒天数（取消后忽略7天）
 }
@@ -278,12 +279,17 @@ _HM_About.PS.OnPanelActive = function(frame)
 	-- other
 	nX = 0
 	ui:Append("Text", { txt = _L["Others"], x = 0, y = 244, font = 27 })
-	--nX = ui:Append("WndCheckBox", { x = 0, y = 272, checked = HM_About.bPlayOpen })
+	ui:Append("WndCheckBox", { x = 0, y = 272, checked = HM_About.bShowButton })
+	:Text(_L["Always display HM button near the player avatar"]):Click(function(bChecked)
+		HM_About.bShowButton = bChecked
+		HM.InitButton()
+	end)
+	--nX = ui:Append("WndCheckBox", { x = 0, y = 300 checked = HM_About.bPlayOpen })
 	--:Text(_L["Play music on hourly first time to open panel"]):Click(function(bChecked) HM_About.bPlayOpen = bChecked end):Pos_()
-	nX = ui:Append("WndCheckBox", { x = nX, y = 272, checked = HM_About.bDebug == true }):Text("Enable Debug"):Click(function(bChecked)
+	nX = ui:Append("WndCheckBox", { x = nX, y = 300, checked = HM_About.bDebug == true }):Text("Enable Debug"):Click(function(bChecked)
 		HM_About.bDebug = bChecked
 	end):Pos_()
-	ui:Append("Text", { x = nX + 10, y = 272, txt = "<" .. _L["Haiman Site"] .. ">" }):Click(function()
+	ui:Append("Text", { x = nX + 10, y = 300, txt = "<" .. _L["Haiman Site"] .. ">" }):Click(function()
 		if HM_Secret then
 			HM.OpenPanel(_L["Haiman Site"])
 		else

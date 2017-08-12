@@ -114,18 +114,16 @@ _HM.TogglePanel = function()
 	end
 end
 
--- initlization
-_HM.Init = function()
-	local hFrame = _HM.OpenPanel(true)
-	-- button
-	--[[
+-- init button
+_HM.InitButton = function()
 	local pFrame = Player_GetFrame()
 	local button = pFrame:Lookup("HM_Button")
+	local bShow = (HM_About and HM_About.bShowButton) or GetClientPlayer().dwMiniAvatarID == 0
 	if not button then
-		button = hFrame:Lookup("Btn_Menu")
+		button = _HM.frame:Lookup("Btn_Menu")
 		button:SetName("HM_Button")
 		button:ChangeRelation(pFrame, true, true)
-		button:SetRelPos(pFrame:GetSize() - 27 * 3 - button:GetSize(), 15)		
+		--button:SetRelPos(pFrame:GetSize() - 27 * 3 - button:GetSize(), 15)		
 		button.OnMouseEnter = function()
 			local nX, nY = this:GetAbsPos()
 			local nW, nH = this:GetSize()
@@ -133,12 +131,22 @@ _HM.Init = function()
 			OutputTip(szTip, 400, {nX, nY, nW, nH})
 		end
 		button.OnLButtonClick = _HM.TogglePanel
-		button.OnRButtonClick = function()s
-			this:Destroy()
+		button.OnRButtonClick = function()
+			this:Hide()
 		end
-		button:Show()
 	end
-	--]]
+	if bShow then
+		button:Show()
+	else
+		button:Hide()
+	end
+end
+
+-- initlization
+_HM.Init = function()
+	local hFrame = _HM.OpenPanel(true)
+	-- button
+	_HM.InitButton()
 	--  hide
 	hFrame:Hide()
 	-- hotkey
@@ -587,6 +595,9 @@ HM.ClosePanel = _HM.ClosePanel
 
 -- (void) HM.TogglePanel()			-- 显示/隐藏设置面板
 HM.TogglePanel= _HM.TogglePanel
+
+-- (void) HM.InitButton()				-- 初始化头像按钮
+HM.InitButton = _HM.InitButton
 
 -- 往插件集添加一个插件设置按纽及界面
 -- (void) HM.RegisterPanel(string szTitle, number dwIcon, string szClass, table fn)
