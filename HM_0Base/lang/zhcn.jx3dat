@@ -29,6 +29,7 @@ data = {
 	["About HMM"] = "关于海鳗鳗",
 	["A pure PVP TianCe player of evil camp. Third-class operation, but first-class crazy and lazy!"] = "一个纯 PVP 的休闲恶人天策，可在新浪微博找到他。",
 	["Others"] = "其它",
+	["Always display HM button near the player avatar"] = "总是在头像附近显示 HM 按钮",
 	["Play music on hourly first time to open panel"] = "每小时首次打开插件设置时播放开场音乐",
 	["Use old version of background music"] = "使用旧版开场音乐（琵琶语）",
 	["HMM@Buliantai"] = "海鳗鳗（非官方）",
