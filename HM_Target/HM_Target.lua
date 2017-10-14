@@ -21,7 +21,7 @@ HM_Target = {
 	bDirBuff = true,					-- 显示目标的特殊BUFF
 	bDirLarge = true,					-- 增大显示指向图标
 	tDirAnchor = {},					-- 目标指标的位置
-	bAdjustBuff = true,				-- 启用目标 BUFF 放大
+	bAdjustBuff = false,				-- 启用目标 BUFF 放大
 	nSizeBuff = 35,					-- 目标 BUFF 新尺寸
 	nSizeTTBuff = 30,				-- 目标的目标 BUFF 大小
 }
@@ -528,12 +528,14 @@ _HM_Target.OnBuffUpdate = function()
 			if v == "Target" and not arg1 and not arg7 then
 				local szType = (arg3 and "Buff") or "Debuff"
 				local hL = frame:Lookup("", "Handle_Text" .. szType)
-				for i = 0, 1 do
-					local hI = hL:Lookup(i)
-					if hI then
-						if hT then
-							hT:SetFontScheme(163)
-							break
+				if hL then
+					for i = 0, 1 do
+						local hI = hL:Lookup(i)
+						if hI then
+							if hT then
+								hT:SetFontScheme(163)
+								break
+							end
 						end
 					end
 				end
