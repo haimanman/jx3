@@ -117,13 +117,16 @@ end
 -- init button
 _HM.InitButton = function()
 	local pFrame = Player_GetFrame()
+	if not pFrame then
+		return HM.DelayCall(200, _HM.InitButton)
+	end
 	local button = pFrame:Lookup("HM_Button")
 	local bShow = (HM_About and HM_About.bShowButton) or GetClientPlayer().dwMiniAvatarID == 0
 	if not button then
 		button = _HM.frame:Lookup("Btn_Menu")
 		button:SetName("HM_Button")
 		button:ChangeRelation(pFrame, true, true)
-		--button:SetRelPos(pFrame:GetSize() - 27 * 3 - button:GetSize(), 15)		
+		--button:SetRelPos(pFrame:GetSize() - 27 * 3 - button:GetSize(), 15)
 		button.OnMouseEnter = function()
 			local nX, nY = this:GetAbsPos()
 			local nW, nH = this:GetSize()
