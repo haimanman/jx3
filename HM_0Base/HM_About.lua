@@ -3,7 +3,7 @@
 --
 
 HM_About = {
-	bPlayOpen = true,	-- 播放开场音乐
+	bPlayOpen = false,	-- 播放开场音乐
 	bShowButton = false, -- 始终显示 HM 小按钮
 	szCheckDate = "",	-- 更新检测日期
 	nSkipAlert = 0,			-- 忽略更新提醒天数（取消后忽略7天）
@@ -296,7 +296,7 @@ _HM_About.PS.OnPanelActive = function(frame)
 			HM.Sysmsg(HM.szRemoteHost .. " 或微信公众号【海鳗插件】")
 			HM.Sysmsg(HM.szRemoteHost .. " 或微信公众号【海鳗插件】")
 		end
-	end)	
+	end)
 end
 
 -- author

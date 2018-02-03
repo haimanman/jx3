@@ -116,12 +116,13 @@ end
 
 -- init button
 _HM.InitButton = function()
+	local me = GetClientPlayer()
 	local pFrame = Player_GetFrame()
-	if not pFrame then
+	if not pFrame or not me then
 		return HM.DelayCall(200, _HM.InitButton)
 	end
 	local button = pFrame:Lookup("HM_Button")
-	local bShow = (HM_About and HM_About.bShowButton) or GetClientPlayer().dwMiniAvatarID == 0
+	local bShow = (HM_About and HM_About.bShowButton) or me.dwMiniAvatarID == 0
 	if not button then
 		button = _HM.frame:Lookup("Btn_Menu")
 		button:SetName("HM_Button")
