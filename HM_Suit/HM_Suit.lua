@@ -193,6 +193,9 @@ end
 -- 按纽 HOOK (人物进入游戏后)
 _HM_Suit.OnEnterGame = function()
 	local frame = Player_GetFrame()
+	if not frame then
+		return HM.DelayCall(200, _HM_Suit.OnEnterGame)
+	end
 	local nW, _ = frame:GetSize()
 	local temp = Wnd.OpenWindow("interface\\HM\\HM_Suit\\HM_Suit.ini")
 	for k, v in ipairs({"Btn_Three", "Btn_Change", "Btn_Umount"}) do
