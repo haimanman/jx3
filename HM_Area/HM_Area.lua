@@ -400,8 +400,8 @@ _HM_Area.DrawCake = function(sha, tar, col, nRadius, nAlpha)
 		if dwCurRad > dwMaxRad then
 			dwCurRad = dwMaxRad
 		end
-		nX = tar.nX + math.ceil(math.cos(dwCurRad) * nRadius)
-		nY = tar.nY + math.ceil(math.sin(dwCurRad) * nRadius)
+		local nX = tar.nX + math.ceil(math.cos(dwCurRad) * nRadius)
+		local nY = tar.nY + math.ceil(math.sin(dwCurRad) * nRadius)
 		sha:AppendTriangleFan3DPoint(nX, nY, tar.nZ, r, g, b, nAlpha)
 	until dwMaxRad <= dwCurRad
 end
@@ -424,7 +424,7 @@ _HM_Area.DrawArea = function(tar)
 		nRadius = nRadius + 64
 	end
 	-- Ð×Äê +5 ³ß
-	if tar.dwTemplateID == 4976 and tar.dwEmployer == UI_GetClientPlayerID() 
+	if tar.dwTemplateID == 4976 and tar.dwEmployer == UI_GetClientPlayerID()
 		and GetClientPlayer().GetSkillLevel(14835) ~= 0
 	then
 		nRadius = nRadius + 320

@@ -833,7 +833,7 @@ HM_TargetDir.OnFrameCreate = function()
 	HM_TargetDir.UpdateAnchor(this)
 	UpdateCustomModeWindow(this, _L["HM target direction"])
 	-- update box
-	box = this:Lookup("", "Box_Buff")
+	local box = this:Lookup("", "Box_Buff")
 	box:SetOverTextFontScheme(0, 15)
 	box:SetOverTextFontScheme(1, 16)
 	box:SetOverTextPosition(1, ITEM_POSITION.LEFT_TOP)
