@@ -20,7 +20,7 @@ HM.RegisterCustomData("HM_AchieveWiki")
 function HM_AchieveWiki.OnFrameCreate()
 	this:RegisterEvent("UI_SCALED")
 	RegisterGlobalEsc("HM_AchieveWiki", Achievement.IsOpened, Achievement.ClosePanel)
-	
+
 	local handle = this:Lookup("", "")
 	this.pedia = this:Lookup("WndScroll_Pedia", "")
 	this.link = handle:Lookup("Text_Link")
@@ -105,7 +105,7 @@ function HM_AchieveWiki.OnItemLButtonClick()
 	local szName = this:GetName()
 	if szName == "Text_Link" then
 		local frame = this:GetRoot()
-		OpenInternetExplorer(ACHI_ROOT_URL .. "/wiki/details/" .. frame.dwAchievement)
+		OpenInternetExplorer(ACHI_ROOT_URL .. "/jx3/wiki/details/" .. frame.dwAchievement)
 		Achievement.ClosePanel()
 	end
 end
@@ -159,7 +159,7 @@ function HM_AchieveWiki.OnItemUpdateSize()
 end
 
 ---------------------------------------------------------------------
--- 本地函数集
+-- 本地函数�?
 ---------------------------------------------------------------------
 function Achievement.IsOpened()
 	return Station.Lookup("Normal/HM_AchieveWiki")
@@ -261,7 +261,7 @@ function Achievement.OpenEncyclopedia(dwID, dwIcon, szTitle, szDesc)
 	frame.desc:SetText(szDesc)
 	frame:Lookup("Btn_Edit"):Enable(false)
 	frame.pedia:Clear()
-	frame.link:SetText(_L("Link(Open URL):%s", ACHI_ROOT_URL .. "/wiki/details/" .. dwID))
+	frame.link:SetText(_L("Link(Open URL):%s", ACHI_ROOT_URL .. "/jx3/wiki/details/" .. dwID))
 	frame.link:AutoSize()
 	PlaySound(SOUND.UI_SOUND, g_sound.OpenFrame)
 	frame.warn:Show()
