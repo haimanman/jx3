@@ -368,8 +368,11 @@ HM.RegisterEvent("LOADING_END", function()
 		--_HM_About.CheckUpdate()
 	end
 end)
+if not ECHO_LUA_ERROR then
+	ECHO_LUA_ERROR = { ID = 'HM' }
+end
 HM.RegisterEvent("CALL_LUA_ERROR", function()
-	if HM_About.bDebug then
+	if HM_About.bDebug and ECHO_LUA_ERROR and ECHO_LUA_ERROR.ID == 'HM' then
 		OutputMessage("MSG_SYS", arg0)
 	end
 end)

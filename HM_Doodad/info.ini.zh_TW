@@ -1,6 +1,6 @@
 [HM_Doodad]
-name=采集拾取助手
-desc=显示物品头顶名称/小地图标记，拾取过滤
+name=鎺￠泦鎷惧彇鍔╂墜
+desc=椤ず鐗╁搧闋爞鍚嶇ū/灏忓湴鍦栨瑷橈紝鎷惧彇閬庢烤
 version=1.0
 default=1
 dependence=HM_0Base

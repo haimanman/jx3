@@ -1,6 +1,6 @@
 [HM_Locker]
-name=目标锁定/选择
-desc=防止战斗中丢失目标，TAB 选择增强
+name=鐩閹栧畾/閬告搰
+desc=闃叉鎴伴涓笩澶辩洰妯欙紝TAB 閬告搰澧炲挤
 version=1.0
 default=1
 dependence=HM_0Base

@@ -1,6 +1,6 @@
 [HM_0Base]
-name=º£÷©»ù´¡¿â
-desc=ÆäËüº£÷©ÏµÁÐ²å¼þ¾ùÒÀÀµÕâ¸ö¿â£¬±ØÐë¼ÓÔØ
+name=æµ·é°»åŸºç¤Žåº«
+desc=å…¶å®ƒæµ·é°»ç³»åˆ—æ’ä»¶å‡ä¾è³´é€™å€‹åº«ï¼Œå¿…é ˆè¼‰å…¥
 version=1.0
 default=1
 lua_0=HM.lua

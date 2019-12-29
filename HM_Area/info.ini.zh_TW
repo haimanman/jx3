@@ -1,0 +1,8 @@
+[HM_Area]
+name=氣場/機關範圍
+desc=顯示純陽氣場，唐門機關範圍/歸屬/消失倒計時
+version=1.0
+default=1
+dependence=HM_0Base
+lua_0=HM_Area.lua
+package=HM

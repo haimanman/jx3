@@ -1,6 +1,6 @@
 [HM_Battle]
-name=战场/竞技助手
-desc=战场守点方位，播报九宫箱子，击杀特效
+name=鎴板牬/绔舵妧鍔╂墜
+desc=鎴板牬瀹堥粸鏂逛綅锛屾挱鍫变節瀹瀛愶紝鎿婃鐗规晥
 version=1.0
 default=1
 dependence=HM_0Base

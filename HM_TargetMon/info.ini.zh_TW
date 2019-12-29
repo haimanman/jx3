@@ -1,6 +1,6 @@
 [HM_TargetMon]
-name=Ä¿±êBUFF/CD
-desc=Í»³öÏÔÊ¾µ±Ç°Ä¿±êµÄÖØÒª BUFF ºÍ¼¼ÄÜ CD
+name=ç›®æ¨™BUFF/CD
+desc=çªå‡ºé¡¯ç¤ºç•¶å‰ç›®æ¨™çš„é‡è¦ BUFF å’ŒæŠ€èƒ½ CD
 version=1.0
 default=1
 dependence=HM_0Base

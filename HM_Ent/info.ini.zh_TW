@@ -1,0 +1,8 @@
+[HM_Ent]
+name=娛樂休閑助手
+desc=發佈趣味聊天，發佈個人威望戰階等數據
+version=1.0
+default=1
+dependence=HM_0Base
+lua_0=HM_Ent.lua
+package=HM

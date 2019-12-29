@@ -434,7 +434,9 @@ local function encode_value(value, parents, indent)
 end
 
 -- public API
-HM = HM or {}
+if not HM then
+	HM = {}
+end
 
 -- 解析 JSON 数据，成功返回数据，失败返回 nil 加错误信息
 -- (mixed) HM.JsonDecode(string szData)

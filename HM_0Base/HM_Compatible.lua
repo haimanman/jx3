@@ -32,19 +32,39 @@ if not POSE_TYPE then
 	}
 end
 
-GLOBAL_HEAD_CLIENTPLAYER = GLOBAL_HEAD_CLIENTPLAYER or 0
-GLOBAL_HEAD_OTHERPLAYER = GLOBAL_HEAD_OTHERPLAYER or 1
-GLOBAL_HEAD_NPC = GLOBAL_HEAD_NPC or 2
+if not GLOBAL_HEAD_CLIENTPLAYER then
+	GLOBAL_HEAD_CLIENTPLAYER = 0
+end
+if not GLOBAL_HEAD_OTHERPLAYER then
+	GLOBAL_HEAD_OTHERPLAYER = 1
+end
+if not GLOBAL_HEAD_NPC then
+	GLOBAL_HEAD_NPC = 2
+end
 
-GLOBAL_HEAD_LEFE = GLOBAL_HEAD_LEFE or 0
-GLOBAL_HEAD_GUILD = GLOBAL_HEAD_GUILD or 1
-GLOBAL_HEAD_TITLE = GLOBAL_HEAD_TITLE or 2
-GLOBAL_HEAD_NAME = GLOBAL_HEAD_NAME or 3
-BigBagPanel_nCount = 6
+if not GLOBAL_HEAD_LEFE then
+	GLOBAL_HEAD_LEFE = 0
+end
+if not GLOBAL_HEAD_GUILD then
+	GLOBAL_HEAD_GUILD = 1
+end
+if not GLOBAL_HEAD_TITLE then
+	GLOBAL_HEAD_TITLE = 2
+end
+if not GLOBAL_HEAD_NAME then
+	GLOBAL_HEAD_NAME = 3
+end
+if not BigBagPanel_nCount then
+	BigBagPanel_nCount = 6
+end
 
 --帮会仓库界面虚拟一个背包位置
-INVENTORY_GUILD_BANK = INVENTORY_GUILD_BANK or INVENTORY_INDEX.TOTAL + 1
-INVENTORY_GUILD_PAGE_SIZE = INVENTORY_GUILD_PAGE_SIZE or 100
+if not INVENTORY_GUILD_BANK then
+	INVENTORY_GUILD_BANK = INVENTORY_INDEX.TOTAL + 1
+end
+if not INVENTORY_GUILD_PAGE_SIZE then
+	INVENTORY_GUILD_PAGE_SIZE = 100
+end
 
 -- middle map
 if not CloseWorldMap then
@@ -133,6 +153,7 @@ function IsInternetExplorerOpened(nIndex)
 	return false
 end
 
+if not IE_GetNewIEFramePos then
 function IE_GetNewIEFramePos()
 	local nLastTime = 0
 	local nLastIndex = nil
@@ -155,7 +176,9 @@ function IE_GetNewIEFramePos()
 	end
 	return 40, 40
 end
+end
 
+if not OpenInternetExplorer then
 function OpenInternetExplorer(szAddr, bDisableSound)
 	local nIndex, nLast = nil, nil
 	for i = 1, 10, 1 do
@@ -194,6 +217,7 @@ function OpenInternetExplorer(szAddr, bDisableSound)
 		PlaySound(SOUND.UI_SOUND,g_sound.OpenFrame)
 	end
 	return webPage
+end
 end
 end
 
@@ -244,6 +268,7 @@ end
 end
 
 -- hotkey panel
+if not HotkeyPanel_Open then
 function HotkeyPanel_Open(szGroup)
 	local frame = Station.Lookup("Topmost/HotkeyPanel")
 	if not frame then
@@ -366,6 +391,7 @@ function HotkeyPanel_Open(szGroup)
 		end
 		scroll:SetScrollPos(nStep)
 	end
+end
 end
 
 ---------------------------------------------------------------------

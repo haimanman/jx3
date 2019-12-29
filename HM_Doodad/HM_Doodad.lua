@@ -31,7 +31,7 @@ local function _d(dwID)
 end
 
 local function IsAutoInteract()
-	return HM_Doodad.bInteract and not IsShiftKeyDown()
+	return HM_Doodad.bInteract and not IsShiftKeyDown() and not Station.Lookup("Normal/MY_GKP_Loot")
 end
 
 local _HM_Doodad = {
@@ -43,8 +43,8 @@ local _HM_Doodad = {
 		5659, 5660,
 		0,	-- switch
 		1020, 1021, 1022, 1023, 1024, 1025, 1027, 2644, 2645,
-		4229, 4230, 5661, 5662, 
-		
+		4229, 4230, 5661, 5662,
+
 	},
 	tDoodad = {},	-- 待处理的 doodad 列表
 	szIniFile = "interface\\HM\\HM_Doodad\\HM_Doodad.ini",

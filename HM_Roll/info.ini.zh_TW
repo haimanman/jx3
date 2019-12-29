@@ -1,6 +1,6 @@
 [HM_Roll]
-name=RollµãÓéÀÖ
-desc=ÍÅ³¤×ø¶«£¬×Ô¶¯¼ÇÂ¼ÍÅ¶Ó ROLL µã½á¹û
+name=Rollé»å¨›æ¨‚
+desc=åœ˜é•·åæ±ï¼Œè‡ªå‹•è¨˜éŒ„åœ˜éšŠ ROLL é»çµæœ
 version=1.0
 default=0
 dependence=HM_0Base

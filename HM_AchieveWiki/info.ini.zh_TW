@@ -1,0 +1,8 @@
+[HM_AchieveWiki]
+name=成就百科
+desc=菊花出品，點擊成就圖標查看成就攻略。
+package=HM
+version=1.0
+default=1
+dependence=HM_0Base
+lua_0=HM_AchieveWiki.lua
